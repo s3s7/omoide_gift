@@ -112,3 +112,5 @@ AWS s3 （拡張予定の機能で使用）
 
 LINE Messaging API
 
+##画面遷移図
+Figma：https://www.figma.com/design/sWr8c1NOlXmtgciSjGa4qQ/giftApp?node-id=0-1&p=f&t=eRLWYUXpuCbIHNnY-0
