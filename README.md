@@ -116,4 +116,3 @@ LINE Messaging API
 Figma：https://www.figma.com/design/sWr8c1NOlXmtgciSjGa4qQ/giftApp?node-id=0-1&p=f&t=eRLWYUXpuCbIHNnY-0
 
 ##ER図
-[![Image from Gyazo](https://i.gyazo.com/149b5d000c238a46e42d4e77553ac423.png)](https://gyazo.com/149b5d000c238a46e42d4e77553ac423)
