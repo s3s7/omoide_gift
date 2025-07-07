@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_07_035242) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_07_124739) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,6 +18,23 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_07_035242) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "gift_people", force: :cascade do |t|
+    t.string "name"
+    t.string "likes"
+    t.string "dislikes"
+    t.date "birthday"
+    t.string "memo"
+    t.string "gift_persons_image"
+    t.bigint "user_id", null: false
+    t.bigint "gift_record_id", null: false
+    t.bigint "relationship_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gift_record_id"], name: "index_gift_people_on_gift_record_id"
+    t.index ["relationship_id"], name: "index_gift_people_on_relationship_id"
+    t.index ["user_id"], name: "index_gift_people_on_user_id"
   end
 
   create_table "gift_records", force: :cascade do |t|
@@ -49,4 +66,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_07_035242) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "gift_people", "gift_records"
+  add_foreign_key "gift_people", "relationships"
+  add_foreign_key "gift_people", "users"
 end

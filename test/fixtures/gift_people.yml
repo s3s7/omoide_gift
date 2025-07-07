@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  likes: MyString
+  dislikes: MyString
+  birthday: 2025-07-07
+  memo: MyString
+  gift_persons_image: MyString
+  user: one
+  gift_record: one
+  relationship: one
+
+two:
+  name: MyString
+  likes: MyString
+  dislikes: MyString
+  birthday: 2025-07-07
+  memo: MyString
+  gift_persons_image: MyString
+  user: two
+  gift_record: two
+  relationship: two
