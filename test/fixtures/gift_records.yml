@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  memo: MyString
+  gift_image: MyString
+  item_name: MyString
+  amount: 1
+  is_public: false
+  gift_at: 2025-07-07
+  user: one
+  event: one
+  gift_person: one
+
+two:
+  memo: MyString
+  gift_image: MyString
+  item_name: MyString
+  amount: 1
+  is_public: false
+  gift_at: 2025-07-07
+  user: two
+  event: two
+  gift_person: two

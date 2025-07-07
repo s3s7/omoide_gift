@@ -1,0 +1,35 @@
+ja:
+  helpers:
+    submit:
+      create: 登録
+      submit: 保存
+      update: 更新
+    label:
+      email: メールアドレス
+      password: パスワード
+  defaults:
+      flash_message:
+      created: "%{item}を作成しました"
+      not_created: "%{item}を作成出来ませんでした"
+      updated: "%{item}を更新しました"
+      not_updated: "%{item}を更新出来ませんでした"
+      deleted: "%{item}を削除しました"
+      require_login: ログインしてください
+      not_authorized: 権限がありません
+  devise:
+    registrations:
+      new:
+        title: ユーザー登録
+        subtitle: ユーザー登録を行います
+        name: 名前
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード確認
+        submit: 登録
+        to_register_page: 登録ページへ
+    edit:
+      title: ユーザー編集
+      subtitle: ユーザー情報を編集します
+    show:
+      title: ユーザープロフィール
+      subtitle: ユーザープロフィールを表示します
