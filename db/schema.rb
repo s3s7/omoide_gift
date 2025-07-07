@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_07_124739) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_07_125817) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,6 +46,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_07_124739) do
     t.date "gift_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.bigint "event_id"
+    t.bigint "gift_person_id"
+    t.index ["event_id"], name: "index_gift_records_on_event_id"
+    t.index ["gift_person_id"], name: "index_gift_records_on_gift_person_id"
+    t.index ["user_id"], name: "index_gift_records_on_user_id"
   end
 
   create_table "relationships", force: :cascade do |t|
@@ -70,4 +76,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_07_124739) do
   add_foreign_key "gift_people", "gift_records"
   add_foreign_key "gift_people", "relationships"
   add_foreign_key "gift_people", "users"
+  add_foreign_key "gift_records", "events"
+  add_foreign_key "gift_records", "gift_people"
+  add_foreign_key "gift_records", "users"
 end
