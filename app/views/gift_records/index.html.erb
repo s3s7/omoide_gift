@@ -1,1 +1,17 @@
 <h1 class="text-4xl text-green-700 font-semibold underline">思い出ギフト</h1>
+
+<%# ログイン/新規ユーザー登録へ %>
+
+<div class="flex justify-end">
+       <%= link_to "新規登録", new_user_registration_path, class: "btn btn-primary" %>
+       </div>
+
+
+<div class="flex justify-end">
+       <%= link_to "ログイン", new_user_session_path, class: "btn btn-primary" %>
+       </div>
+
+<div class="flex justify-end">
+       <%= link_to "ログアウト", destroy_user_session_path, class: "btn btn-primary" %>
+       </div>
+
