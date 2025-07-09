@@ -4,9 +4,9 @@ one:
   name: MyString
   likes: MyString
   dislikes: MyString
-  birthday: 2025-07-07
+  birthday: 2025-07-09
   memo: MyString
-  gift_persons_image: MyString
+  gift_peoples_image: MyString
   user: one
   gift_record: one
   relationship: one
@@ -15,9 +15,9 @@ two:
   name: MyString
   likes: MyString
   dislikes: MyString
-  birthday: 2025-07-07
+  birthday: 2025-07-09
   memo: MyString
-  gift_persons_image: MyString
+  gift_peoples_image: MyString
   user: two
   gift_record: two
   relationship: two
