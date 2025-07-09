@@ -9,7 +9,6 @@ class CreateGiftRecords < ActiveRecord::Migration[7.2]
       t.date :gift_at
       t.references :user, null: false, foreign_key: true
       t.references :event, null: false, foreign_key: true
-      t.references :gift_person, null: false, foreign_key: true
 
       t.timestamps
     end

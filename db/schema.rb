@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_07_125817) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_09_021216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,7 +26,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_07_125817) do
     t.string "dislikes"
     t.date "birthday"
     t.string "memo"
-    t.string "gift_persons_image"
+    t.string "gift_peoples_image"
     t.bigint "user_id", null: false
     t.bigint "gift_record_id", null: false
     t.bigint "relationship_id", null: false
@@ -44,13 +44,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_07_125817) do
     t.integer "amount"
     t.boolean "is_public"
     t.date "gift_at"
+    t.bigint "user_id", null: false
+    t.bigint "event_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
-    t.bigint "event_id"
-    t.bigint "gift_person_id"
+    t.bigint "gift_people_id"
     t.index ["event_id"], name: "index_gift_records_on_event_id"
-    t.index ["gift_person_id"], name: "index_gift_records_on_gift_person_id"
+    t.index ["gift_people_id"], name: "index_gift_records_on_gift_people_id"
     t.index ["user_id"], name: "index_gift_records_on_user_id"
   end
 
@@ -77,6 +77,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_07_125817) do
   add_foreign_key "gift_people", "relationships"
   add_foreign_key "gift_people", "users"
   add_foreign_key "gift_records", "events"
-  add_foreign_key "gift_records", "gift_people"
+  add_foreign_key "gift_records", "gift_people", column: "gift_people_id"
   add_foreign_key "gift_records", "users"
 end

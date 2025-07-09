@@ -6,10 +6,9 @@ one:
   item_name: MyString
   amount: 1
   is_public: false
-  gift_at: 2025-07-07
+  gift_at: 2025-07-09
   user: one
   event: one
-  gift_person: one
 
 two:
   memo: MyString
@@ -17,7 +16,6 @@ two:
   item_name: MyString
   amount: 1
   is_public: false
-  gift_at: 2025-07-07
+  gift_at: 2025-07-09
   user: two
   event: two
-  gift_person: two
