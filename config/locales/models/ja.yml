@@ -63,23 +63,23 @@ ja:
   #     image: ギフト画像
   #     submit: 更新
   #     to_gift_record_index: ギフト記録一覧へ
-  #   show:
-  #     title: ギフト記録詳細
-  #     subtitle: ギフト記録の詳細を表示します
-  #     name: ギフト名
-  #     description: ギフトの説明
-  #     image: ギフト画像
-  #     created_at: 作成日時
-  #     updated_at: 更新日時
-  #     to_gift_record_index: ギフト記録一覧へ
-  #     edit: 編集
-  #     delete: 削除
-  #     confirm_delete: 本当に削除しますか？
-  #     delete_success: ギフト記録を削除しました
-  #     delete_failure: ギフト記録の削除に失敗しました
-  #     not_found: ギフト記録が見つかりません
-  #     not_authorized: ギフト記録の編集権限がありません
-  #     require_login: ギフト記録を表示するにはログインが必要です
+    show:
+      title: ギフト記録詳細
+      subtitle: ギフト記録の詳細を表示します
+      name: ギフト名
+      description: ギフトの説明
+      image: ギフト画像
+      created_at: 作成日時
+      updated_at: 更新日時
+      to_gift_record_index: ギフト記録一覧へ
+      edit: 編集
+      delete: 削除
+      confirm_delete: 本当に削除しますか？
+      delete_success: ギフト記録を削除しました
+      delete_failure: ギフト記録の削除に失敗しました
+      not_found: ギフト記録が見つかりません
+      not_authorized: ギフト記録の編集権限がありません
+      require_login: ギフト記録を表示するにはログインが必要です
   # shared:
   #   error_messages:
   #     title: エラー
