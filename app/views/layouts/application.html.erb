@@ -7,6 +7,12 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <style>
+      body {
+        background-color: #F6ECDC; /* 任意の色 */
+      }
+    </style>
+
     <%= yield :head %>
 
     <link rel="manifest" href="/manifest.json">
@@ -24,6 +30,8 @@
     <main class="container mx-auto mt-28 px-5 flex">
       <%= yield %>
     </main>
+      <%= render 'shared/flash_message' %>
+
     <%= render 'shared/footer' %>
   </body>
 </html>

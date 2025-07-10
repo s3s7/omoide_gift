@@ -1,0 +1,30 @@
+<%= form_with model: gift_record do |f| %>
+  <%= render 'shared/error_messages', object: f.object %>
+  <%# <div class="mb-3">
+    <%= f.text_field :event, class: "form-control" , placeholder: t('gift_records.new.event') %>
+  <%# </div> %>
+  <%# <div class="mb-3">
+    <%= f.text_field :gift_people, class: "form-control" , placeholder: t('gift_records.new.gift_people') %>
+  <%# </div> %> %>
+  <%# <div class="mb-3">
+    <%= f.text_field :relationship, class: "form-control" , placeholder: t('gift_records.new.relationship') %>
+  <%# </div> %> %> %>
+<div class="mb-3">
+    <%= f.text_field :gift_at, class: "form-control" , placeholder: t('gift_records.new.date') %>
+  </div>
+  <div class="mb-3">
+    <%= f.text_field :item_name, class: "form-control" , placeholder: t('gift_records.new.item') %>
+  </div>
+  <div class="mb-3">
+    <%= f.text_field :amount, class: "form-control" , placeholder: t('gift_records.new.amount') %>
+  </div>
+  
+
+ <%# <div class="mb-3">
+    <%= f.label :image %>
+    <%# <%= f.file_field :image, class: "form-control", accept: 'image/*' , placeholder: t('gift_records.new.image') %>
+    <%# <%= f.hidden_field :board_image_cache %>
+  <%# </div> %>
+
+  <%= f.submit nil, class: "btn btn-primary" %>
+<% end %>
