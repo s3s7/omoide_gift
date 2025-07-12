@@ -10,6 +10,4 @@ class GiftPerson < ApplicationRecord
   # validates :gift_people_id, presence: true
 
   validates :gift_at, presence: true
-
-
 end

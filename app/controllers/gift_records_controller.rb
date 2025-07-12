@@ -12,15 +12,15 @@ class GiftRecordsController < ApplicationController
 
       @gift_record = current_user.gift_records.build(gift_record_params)
       if @gift_record.save
-        redirect_to gift_records_path, success: t('defaults.flash_message.created', item: GiftRecord.model_name.human)
+        redirect_to gift_records_path, success: t("defaults.flash_message.created", item: GiftRecord.model_name.human)
       else
-        flash.now[:danger] = t('defaults.flash_message.not_created', item: GiftRecord.model_name.human)
+        flash.now[:danger] = t("defaults.flash_message.not_created", item: GiftRecord.model_name.human)
         render :new, status: :unprocessable_entity
       end
 
     else
       @gift_record = GiftRecord.new
-       flash.now[:danger] = t('defaults.flash_message.not_created', item: GiftRecord.model_name.human)
+      flash.now[:danger] = t("defaults.flash_message.not_created", item: GiftRecord.model_name.human)
       render :new, status: :unprocessable_entity
     end
   end
