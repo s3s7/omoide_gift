@@ -2,20 +2,20 @@ ja:
   helpers:
     submit:
       create: 登録
-      submit: 保存
+      # submit: 保存
       update: 更新
     label:
       email: メールアドレス
       password: パスワード
   defaults:
       flash_message:
-      created: "%{item}を作成しました"
-      not_created: "%{item}を作成出来ませんでした"
-      updated: "%{item}を更新しました"
-      not_updated: "%{item}を更新出来ませんでした"
-      deleted: "%{item}を削除しました"
-      require_login: ログインしてください
-      not_authorized: 権限がありません
+        created: "%{item}を作成しました"
+        not_created: "新しいギフト記録を作成出来ませんでした"
+        updated: "%{item}を更新しました"
+        not_updated: "%{item}を更新出来ませんでした"
+        deleted: "%{item}を削除しました"
+        require_login: ログインしてください
+        not_authorized: 権限がありません
   devise:
     registrations:
       new:
@@ -33,3 +33,80 @@ ja:
     show:
       title: ユーザープロフィール
       subtitle: ユーザープロフィールを表示します
+  gift_records:
+    index:
+      title: ギフト記録一覧
+      subtitle: ギフト記録の一覧を表示します
+      gift_record: ギフト記録
+      no_gift_records: ギフト記録がありません
+    new:
+      title: ギフト記録登録
+      subtitle: ギフト記録を登録します
+      event: イベント名
+      gift_people: ギフト相手
+      relationship: 関係性
+      date: 日付
+      item: アイテム名
+      amount: 金額目安
+      image: ギフト画像(準備中)
+      memo: ギフトの説明
+
+      image_placeholder: ギフト画像を選択してください
+      image_upload: ギフト画像をアップロード
+      submit: 登録
+      to_gift_record_index: ギフト記録一覧へ
+  #   edit:
+  #     title: ギフト記録編集
+  #     subtitle: ギフト記録を編集します
+  #     name: ギフト名
+  #     description: ギフトの説明
+  #     image: ギフト画像
+  #     submit: 更新
+  #     to_gift_record_index: ギフト記録一覧へ
+    show:
+      title: ギフト記録詳細
+      subtitle: ギフト記録の詳細を表示します
+      name: ギフト名
+      description: ギフトの説明
+      image: ギフト画像
+      created_at: 作成日時
+      updated_at: 更新日時
+      to_gift_record_index: ギフト記録一覧へ
+      edit: 編集
+      delete: 削除
+      confirm_delete: 本当に削除しますか？
+      delete_success: ギフト記録を削除しました
+      delete_failure: ギフト記録の削除に失敗しました
+      not_found: ギフト記録が見つかりません
+      not_authorized: ギフト記録の編集権限がありません
+      require_login: ギフト記録を表示するにはログインが必要です
+  # shared:
+  #   error_messages:
+  #     title: エラー
+  #     message: 以下のエラーが発生しました:
+  #     item: アイテム
+  #     errors: エラー
+  #     not_found: アイテムが見つかりません
+  #     not_authorized: アクセス権限がありません
+  #     require_login: ログインが必要です
+  # layouts:
+  #   application:
+  #     title: Omoide Gift
+  #     subtitle: 思い出のギフトを共有する
+  #     home: ホーム
+  #     gift_records: ギフト記録
+  #     new_gift_record: ギフト記録登録
+  #     edit_gift_record: ギフト記録編集
+  #     user_profile: ユーザープロフィール
+  #     login: ログイン
+  #     logout: ログアウト
+  #     register: ユーザー登録
+  #     edit_profile: プロフィール編集
+  #     submit: 保存
+  #     cancel: キャンセル
+  #     back: 戻る
+  #     footer: © 2023 Omoide Gift. All rights reserved.
+  #     powered_by: Powered by Omoide Gift
+  #     privacy_policy: プライバシーポリシー
+  #     terms_of_service: 利用規約
+  #     contact: お問い合わせ
