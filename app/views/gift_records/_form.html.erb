@@ -1,15 +1,56 @@
 <%= form_with model: gift_record do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
-  <%# <div class="mb-3">
-    <%= f.text_field :event, class: "form-control" , placeholder: t('gift_records.new.event') %>
-  <%# </div> %>
-  <%# <div class="mb-3">
-    <%= f.text_field :gift_people, class: "form-control" , placeholder: t('gift_records.new.gift_people') %>
-  <%# </div> %> %>
-  <%# <div class="mb-3">
-    <%= f.text_field :relationship, class: "form-control" , placeholder: t('gift_records.new.relationship') %>
-  <%# </div> %> %> %>
-<div class="mb-3">
+  
+  <div class="mb-3">
+    <%= f.label :gift_people_id, "贈る相手", class: "form-label" %>
+    <% gift_people_options = options_from_collection_for_select(@gift_people, :id, :name, gift_record.gift_people_id) %>
+    <% gift_people_options += options_for_select([["新たに追加する", "new"]]) %>
+    <%= f.select :gift_people_id, 
+        gift_people_options, 
+        { prompt: "贈る相手を選択してください" }, 
+        { class: "form-control", id: "gift_people_select" } %>
+  </div>
+  
+  <!-- 新しいギフト相手の入力フィールド -->
+  <div id="new_gift_person_fields" class="mb-3" style="display: none;">
+    <div class="border p-3 rounded bg-light">
+      <h6>新しいギフト相手の情報</h6>
+      
+      <div class="mb-3">
+        <%= label_tag "gift_person_name", "名前", class: "form-label" %>
+        <%= text_field_tag "gift_person[name]", "", class: "form-control", placeholder: "相手の名前を入力" %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag "gift_person_relationship_id", "関係性", class: "form-label" %>
+        <%= select_tag "gift_person[relationship_id]", 
+            options_from_collection_for_select(Relationship.all, :id, :name), 
+            { prompt: "関係性を選択", class: "form-control" } %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag "gift_person_birthday", "誕生日", class: "form-label" %>
+        <%= date_field_tag "gift_person[birthday]", "", class: "form-control" %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag "gift_person_likes", "好きなもの", class: "form-label" %>
+        <%= text_field_tag "gift_person[likes]", "", class: "form-control", placeholder: "好きなものを入力" %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag "gift_person_dislikes", "嫌いなもの", class: "form-label" %>
+        <%= text_field_tag "gift_person[dislikes]", "", class: "form-control", placeholder: "嫌いなものを入力" %>
+      </div>
+      
+      <div class="mb-3">
+        <%= label_tag "gift_person_memo", "メモ", class: "form-label" %>
+        <%= text_area_tag "gift_person[memo]", "", class: "form-control", rows: 3, placeholder: "メモを入力" %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="mb-3">
     <%= f.text_field :gift_at, class: "form-control" , placeholder: t('gift_records.new.date') %>
   </div>
   <div class="mb-3">
@@ -28,3 +69,20 @@
 
   <%= f.submit nil, class: "btn btn-primary" %>
 <% end %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const giftPeopleSelect = document.getElementById('gift_people_select');
+  const newGiftPersonFields = document.getElementById('new_gift_person_fields');
+  
+  if (giftPeopleSelect && newGiftPersonFields) {
+    giftPeopleSelect.addEventListener('change', function() {
+      if (this.value === 'new') {
+        newGiftPersonFields.style.display = 'block';
+      } else {
+        newGiftPersonFields.style.display = 'none';
+      }
+    });
+  }
+});
+</script>

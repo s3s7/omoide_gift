@@ -1,1 +1,25 @@
-思い出ギフトロゴ
+<header class="fixed top-0 left-0 right-0 bg-white shadow-md z-10">
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <div class="text-xl font-bold text-gray-800">
+      思い出ギフトロゴ
+    </div>
+    
+    <!-- ハンバーガーメニュー -->
+    <div class="relative">
+      <button id="menu-toggle" class="focus:outline-none p-2">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+      <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border">
+        <% if user_signed_in? %>
+          <%= link_to "ギフト記録", gift_records_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+          <%= link_to "ログアウト", destroy_user_session_path, method: :delete, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        <% else %>
+          <%= link_to "ログイン", new_user_session_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+          <%= link_to "新規登録", new_user_registration_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</header>
