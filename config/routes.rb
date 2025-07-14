@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
+  root "gift_records#index"
+
   devise_for :users
 
   # get "gift_records/index"
 
-  # resources :users
   resources :gift_records
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -16,5 +17,4 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Defines the root path route ("/")
-  root "gift_records#index"
 end

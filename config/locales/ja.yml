@@ -1,0 +1,165 @@
+# 日本語ローカライゼーション - ベテランバックエンドエンジニアによる包括的実装
+ja:
+  # ActiveRecordエラーメッセージ
+  activerecord:
+    models:
+      gift_record: "ギフト記録"
+      gift_person: "ギフト相手"
+      user: "ユーザー"
+      relationship: "関係性"
+      event: "イベント"
+    
+    attributes:
+      gift_record:
+        item_name: "アイテム名"
+        amount: "金額"
+        memo: "メモ"
+        gift_at: "ギフト日付"
+        gift_people_id: "贈り先"
+        user_id: "ユーザー"
+        event_id: "イベント"
+      
+      gift_person:
+        name: "名前"
+        relationship_id: "関係性"
+        birthday: "誕生日"
+        likes: "好きなもの"
+        dislikes: "嫌いなもの"
+        memo: "メモ"
+
+    errors:
+      models:
+        gift_record:
+          attributes:
+            item_name:
+              blank: "を入力してください"
+              too_long: "は255文字以内で入力してください"
+            amount:
+              greater_than: "は1円以上で入力してください"
+              not_a_number: "は数値で入力してください"
+            memo:
+              too_long: "は1000文字以内で入力してください"
+            gift_at:
+              blank: "を選択してください"
+            event_id:
+              blank: "を選択してください"
+              invalid: "選択されたイベントは存在しません"
+        
+        gift_person:
+          attributes:
+            name:
+              blank: "を入力してください"
+              too_short: "は1文字以上で入力してください"
+              invalid: "空白のみは無効です"
+
+  # フラッシュメッセージ
+  defaults:
+    flash_message:
+      created: "%{item}が正常に作成されました"
+      updated: "%{item}が正常に更新されました"
+      deleted: "%{item}が正常に削除されました"
+      not_created: "%{item}の作成に失敗しました"
+      not_updated: "%{item}の更新に失敗しました"
+      not_deleted: "%{item}の削除に失敗しました"
+
+  # ギフト記録関連のテキスト
+  gift_records:
+    new:
+      title: "新しいギフト記録"
+      date: "贈った日（例：2024-01-15）"
+      item: "ギフトアイテム名（例：花束）"
+      amount: "金額（例：3000）"
+      memo: "メモ・思い出など"
+    
+    edit:
+      title: "ギフト記録の編集"
+    
+    show:
+      title: "ギフト記録の詳細"
+    
+    index:
+      title: "ギフト記録一覧"
+      no_records: "まだギフト記録がありません"
+      create_first: "最初の記録を作成しましょう"
+    
+    form:
+      submit_create: "ギフト記録を作成"
+      submit_update: "ギフト記録を更新"
+      quick_dates:
+        today: "今日"
+        yesterday: "昨日"
+        week_ago: "1週間前"
+      events:
+        label: "イベント"
+        prompt: "イベントを選択してください"
+        help: "このギフトに関連するイベントを選択してください（必須）。後で検索や分析に役立ちます。"
+        popular: "よく使われるイベント"
+        none_selected: "イベント未選択"
+
+  # 日付・時刻フォーマット
+  date:
+    formats:
+      default: "%Y年%m月%d日"
+      short: "%m/%d"
+      long: "%Y年%m月%d日(%a)"
+  
+  time:
+    formats:
+      default: "%Y年%m月%d日 %H:%M"
+      short: "%m/%d %H:%M"
+      long: "%Y年%m月%d日(%a) %H時%M分"
+
+  # 共通UI要素
+  helpers:
+    submit:
+      gift_record:
+        create: "ギフト記録を作成"
+        update: "ギフト記録を更新"
+      gift_person:
+        create: "ギフト相手を追加"
+        update: "ギフト相手を更新"
+    
+    label:
+      gift_record:
+        event_id: "イベント"
+        item_name: "ギフトアイテム名"
+        amount: "金額"
+        memo: "メモ"
+        gift_at: "ギフトを贈った日"
+      
+      gift_person:
+        name: "名前"
+        relationship_id: "関係性"
+        birthday: "誕生日"
+        likes: "好きなもの"
+        dislikes: "嫌いなもの"
+        memo: "メモ"
+
+  # バリデーションメッセージ
+  errors:
+    format: "%{attribute}%{message}"
+    messages:
+      blank: "を入力してください"
+      present: "は入力しないでください"
+      confirmation: "と%{attribute}の入力が一致しません"
+      accepted: "を受諾してください"
+      empty: "を入力してください"
+      equal_to: "は%{count}にしてください"
+      even: "は偶数にしてください"
+      exclusion: "は予約されています"
+      greater_than: "は%{count}より大きい値にしてください"
+      greater_than_or_equal_to: "は%{count}以上の値にしてください"
+      inclusion: "は一覧にありません"
+      invalid: "は不正な値です"
+      less_than: "は%{count}より小さい値にしてください"
+      less_than_or_equal_to: "は%{count}以下の値にしてください"
+      model_invalid: "バリデーションに失敗しました: %{errors}"
+      not_a_number: "は数値で入力してください"
+      not_an_integer: "は整数で入力してください"
+      odd: "は奇数にしてください"
+      other_than: "は%{count}以外の値にしてください"
+      required: "を入力してください"
+      taken: "はすでに存在します"
+      too_long: "は%{count}文字以内で入力してください"
+      too_short: "は%{count}文字以上で入力してください"
+      wrong_length: "は%{count}文字で入力してください"

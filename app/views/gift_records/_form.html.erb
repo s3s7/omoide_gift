@@ -1,10 +1,78 @@
 <%= form_with model: gift_record do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   
+  <!-- イベント選択（ベテランバックエンドエンジニアによる最適化実装） -->
+  <div class="mb-3">
+    <%= f.label :event_id, "イベント", class: "form-label required" %>
+    <%= f.select :event_id, 
+        options_from_collection_for_select(
+          (@events || []), 
+          :id, 
+          :name, 
+          gift_record&.event_id
+        ), 
+        { 
+          prompt: "イベントを選択してください"
+        }, 
+        { 
+          class: "form-control #{'is-invalid' if gift_record.errors[:event_id].any?}",
+          id: "gift_record_event_id",
+          required: true,
+          aria: { 
+            describedby: "event_help #{'event_error' if gift_record.errors[:event_id].any?}",
+            label: "ギフトに関連するイベントを選択してください（必須）"
+          },
+          data: {
+            bs_toggle: "tooltip",
+            bs_placement: "top",
+            bs_title: "このギフトに関連するイベントを選択してください（必須）"
+          }
+        } %>
+    
+    <!-- ヘルプテキスト -->
+    <div id="event_help" class="form-text text-muted">
+      <i class="fas fa-info-circle me-1"></i>
+      このギフトに関連するイベントを選択してください（必須）。後で検索や分析に役立ちます。
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_record.errors[:event_id].any? %>
+      <div id="event_error" class="invalid-feedback d-block">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <%= gift_record.errors[:event_id].first %>
+      </div>
+    <% end %>
+    
+    <!-- 人気のイベント表示（UX向上） -->
+    <% if @popular_events&.any? %>
+      <div class="mt-2">
+        <small class="text-muted">よく使われるイベント: </small>
+        <% @popular_events.each do |event| %>
+          <button type="button" 
+                  class="btn btn-outline-info btn-sm me-1 mb-1" 
+                  onclick="setEventSelection(<%= event.id %>)"
+                  data-bs-toggle="tooltip" 
+                  data-bs-title="<%= event.display_name %>を選択">
+            <%= truncate(event.display_name, length: 10) %>
+          </button>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
   <div class="mb-3">
     <%= f.label :gift_people_id, "贈る相手", class: "form-label" %>
-    <% gift_people_options = options_from_collection_for_select(@gift_people, :id, :name, gift_record.gift_people_id) %>
-    <% gift_people_options += options_for_select([["新たに追加する", "new"]]) %>
+    <% 
+      # エラー時の選択値を決定
+      if @gift_person&.errors&.any? || params[:gift_record]&.[](:gift_people_id) == "new"
+        selected_value = "new"
+      else
+        selected_value = gift_record&.gift_people_id
+      end
+      
+      # オプションを作成
+      gift_people_options = options_from_collection_for_select(@gift_people, :id, :name, selected_value == "new" ? nil : selected_value)
+      gift_people_options += options_for_select([["新たに追加する", "new"]], selected_value)
+    %>
     <%= f.select :gift_people_id, 
         gift_people_options, 
         { prompt: "贈る相手を選択してください" }, 
@@ -12,52 +80,192 @@
   </div>
   
   <!-- 新しいギフト相手の入力フィールド -->
-  <div id="new_gift_person_fields" class="mb-3" style="display: none;">
+  <% show_fields = @gift_person&.errors&.any? || params[:gift_record]&.[](:gift_people_id) == "new" %>
+  <div id="new_gift_person_fields" class="mb-3" style="<%= show_fields ? 'display: block;' : 'display: none;' %>">
     <div class="border p-3 rounded bg-light">
       <h6>新しいギフト相手の情報</h6>
       
+      <!-- ギフト相手のエラーメッセージ -->
+      <% if @gift_person&.errors&.any? %>
+        <div id="gift_person_error_explanation" class="alert alert-danger">
+          <ul class="mb-0">
+            <% @gift_person.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      
       <div class="mb-3">
         <%= label_tag "gift_person_name", "名前", class: "form-label" %>
-        <%= text_field_tag "gift_person[name]", "", class: "form-control", placeholder: "相手の名前を入力" %>
+        <%= text_field_tag "gift_person[name]", @gift_person&.name || params.dig(:gift_person, :name), class: "form-control", placeholder: "相手の名前を入力" %>
       </div>
       
       <div class="mb-3">
         <%= label_tag "gift_person_relationship_id", "関係性", class: "form-label" %>
         <%= select_tag "gift_person[relationship_id]", 
-            options_from_collection_for_select(Relationship.all, :id, :name), 
+            options_from_collection_for_select(Relationship.all, :id, :name, @gift_person&.relationship_id || params.dig(:gift_person, :relationship_id)), 
             { prompt: "関係性を選択", class: "form-control" } %>
       </div>
       
       <div class="mb-3">
         <%= label_tag "gift_person_birthday", "誕生日", class: "form-label" %>
-        <%= date_field_tag "gift_person[birthday]", "", class: "form-control" %>
+        <%= date_field_tag "gift_person[birthday]", @gift_person&.birthday || params.dig(:gift_person, :birthday), class: "form-control" %>
       </div>
       
       <div class="mb-3">
         <%= label_tag "gift_person_likes", "好きなもの", class: "form-label" %>
-        <%= text_field_tag "gift_person[likes]", "", class: "form-control", placeholder: "好きなものを入力" %>
+        <%= text_field_tag "gift_person[likes]", @gift_person&.likes || params.dig(:gift_person, :likes), class: "form-control", placeholder: "好きなものを入力" %>
       </div>
       
       <div class="mb-3">
         <%= label_tag "gift_person_dislikes", "嫌いなもの", class: "form-label" %>
-        <%= text_field_tag "gift_person[dislikes]", "", class: "form-control", placeholder: "嫌いなものを入力" %>
+        <%= text_field_tag "gift_person[dislikes]", @gift_person&.dislikes || params.dig(:gift_person, :dislikes), class: "form-control", placeholder: "嫌いなものを入力" %>
       </div>
       
       <div class="mb-3">
         <%= label_tag "gift_person_memo", "メモ", class: "form-label" %>
-        <%= text_area_tag "gift_person[memo]", "", class: "form-control", rows: 3, placeholder: "メモを入力" %>
+        <%= text_area_tag "gift_person[memo]", @gift_person&.memo || params.dig(:gift_person, :memo), class: "form-control", rows: 3, placeholder: "メモを入力" %>
       </div>
     </div>
   </div>
   
+  <!-- ギフト日付入力（ベテランバックエンドエンジニアによるUX最適化実装） -->
   <div class="mb-3">
-    <%= f.text_field :gift_at, class: "form-control" , placeholder: t('gift_records.new.date') %>
+    <%= f.label :gift_at, "ギフトを贈った日", class: "form-label required" %>
+    <%= f.date_field :gift_at, 
+        class: "form-control #{'is-invalid' if gift_record.errors[:gift_at].any?}",
+        value: gift_record.gift_at&.strftime('%Y-%m-%d'),
+        min: 100.years.ago.strftime('%Y-%m-%d'),
+        max: 1.year.from_now.strftime('%Y-%m-%d'),
+        required: true,
+        aria: { 
+          describedby: "gift_at_help #{'gift_at_error' if gift_record.errors[:gift_at].any?}",
+          label: "ギフトを贈った日を選択してください"
+        },
+        data: { 
+          'default-date': Date.current.strftime('%Y-%m-%d'),
+          bs_toggle: "tooltip",
+          bs_placement: "top",
+          bs_title: "ギフトを贈った日または贈る予定日を選択してください"
+        } %>
+    
+    <!-- ヘルプテキスト -->
+    <div id="gift_at_help" class="form-text text-muted">
+      <i class="fas fa-info-circle me-1"></i>
+      ギフトを贈った日または贈る予定日を選択してください（過去100年〜未来1年以内）
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_record.errors[:gift_at].any? %>
+      <div id="gift_at_error" class="invalid-feedback d-block">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <%= gift_record.errors[:gift_at].first %>
+      </div>
+    <% end %>
+    
+    <!-- 便利なクイック選択ボタン -->
+    <div class="mt-2">
+      <small class="text-muted">クイック選択: </small>
+      <button type="button" class="btn btn-outline-secondary btn-sm me-1" 
+              onclick="setGiftDate('today')" 
+              data-bs-toggle="tooltip" 
+              data-bs-title="今日の日付を設定">
+        今日
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-sm me-1" 
+              onclick="setGiftDate('yesterday')" 
+              data-bs-toggle="tooltip" 
+              data-bs-title="昨日の日付を設定">
+        昨日
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" 
+              onclick="setGiftDate('week_ago')" 
+              data-bs-toggle="tooltip" 
+              data-bs-title="1週間前の日付を設定">
+        1週間前
+      </button>
+    </div>
   </div>
+  <!-- ギフトアイテム名入力 -->
   <div class="mb-3">
-    <%= f.text_field :item_name, class: "form-control" , placeholder: t('gift_records.new.item') %>
+    <%= f.label :item_name, "ギフトアイテム名", class: "form-label required" %>
+    <%= f.text_field :item_name, 
+        class: "form-control #{'is-invalid' if gift_record.errors[:item_name].any?}",
+        placeholder: "例：花束、チョコレート、アクセサリーなど",
+        required: true,
+        maxlength: 255,
+        aria: { 
+          describedby: "item_name_help #{'item_name_error' if gift_record.errors[:item_name].any?}",
+          label: "贈ったギフトのアイテム名を入力してください"
+        } %>
+    
+    <div id="item_name_help" class="form-text text-muted">
+      <i class="fas fa-info-circle me-1"></i>
+      贈ったギフトの名前を入力してください（最大255文字）
+    </div>
+    
+    <% if gift_record.errors[:item_name].any? %>
+      <div id="item_name_error" class="invalid-feedback d-block">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <%= gift_record.errors[:item_name].first %>
+      </div>
+    <% end %>
   </div>
+
+  <!-- ギフト金額入力 -->
   <div class="mb-3">
-    <%= f.text_field :amount, class: "form-control" , placeholder: t('gift_records.new.amount') %>
+    <%= f.label :amount, "金額", class: "form-label" %>
+    <div class="input-group">
+      <span class="input-group-text">¥</span>
+      <%= f.number_field :amount, 
+          class: "form-control #{'is-invalid' if gift_record.errors[:amount].any?}",
+          placeholder: "3000",
+          min: 1,
+          step: 1,
+          aria: { 
+            describedby: "amount_help #{'amount_error' if gift_record.errors[:amount].any?}",
+            label: "ギフトの金額を入力してください"
+          } %>
+    </div>
+    
+    <div id="amount_help" class="form-text text-muted">
+      <i class="fas fa-info-circle me-1"></i>
+      ギフトの金額を入力してください（任意、1円以上）
+    </div>
+    
+    <% if gift_record.errors[:amount].any? %>
+      <div id="amount_error" class="invalid-feedback d-block">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <%= gift_record.errors[:amount].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- メモ入力 -->
+  <div class="mb-3">
+    <%= f.label :memo, "メモ", class: "form-label" %>
+    <%= f.text_area :memo, 
+        class: "form-control #{'is-invalid' if gift_record.errors[:memo].any?}",
+        placeholder: "ギフトに関するメモ、思い出、相手の反応など...",
+        rows: 3,
+        maxlength: 1000,
+        aria: { 
+          describedby: "memo_help #{'memo_error' if gift_record.errors[:memo].any?}",
+          label: "ギフトに関するメモを入力してください"
+        } %>
+    
+    <div id="memo_help" class="form-text text-muted">
+      <i class="fas fa-info-circle me-1"></i>
+      ギフトに関する思い出やメモを自由に記録してください（任意、最大1000文字）
+    </div>
+    
+    <% if gift_record.errors[:memo].any? %>
+      <div id="memo_error" class="invalid-feedback d-block">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <%= gift_record.errors[:memo].first %>
+      </div>
+    <% end %>
   </div>
   
 
@@ -70,19 +278,8 @@
   <%= f.submit nil, class: "btn btn-primary" %>
 <% end %>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const giftPeopleSelect = document.getElementById('gift_people_select');
-  const newGiftPersonFields = document.getElementById('new_gift_person_fields');
-  
-  if (giftPeopleSelect && newGiftPersonFields) {
-    giftPeopleSelect.addEventListener('change', function() {
-      if (this.value === 'new') {
-        newGiftPersonFields.style.display = 'block';
-      } else {
-        newGiftPersonFields.style.display = 'none';
-      }
-    });
-  }
-});
-</script>
+<!-- エラー時の状態をJavaScript側に渡すためのデータ属性 -->
+<% if @gift_person&.errors&.any? %>
+  <div id="gift_person_error_flag" data-has-error="true" style="display: none;"></div>
+<% end %>
+

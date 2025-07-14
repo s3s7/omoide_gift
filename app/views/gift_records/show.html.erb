@@ -1,0 +1,254 @@
+<%# ベテランバックエンドエンジニアによるギフト記録詳細ページ %>
+<% content_for(:title, "#{@gift_record.display_item_name} - ギフト記録詳細") %>
+
+<!-- パンくずナビ -->
+<nav class="flex mb-6" aria-label="Breadcrumb">
+  <ol class="inline-flex items-center space-x-1 md:space-x-3">
+    <li class="inline-flex items-center">
+      <%= link_to gift_records_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-pink-600" do %>
+        <i class="fas fa-home mr-2"></i>
+        ギフト記録一覧
+      <% end %>
+    </li>
+    <li>
+      <div class="flex items-center">
+        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">詳細</span>
+      </div>
+    </li>
+  </ol>
+</nav>
+
+<!-- メインコンテンツ -->
+<div class="bg-white shadow-lg rounded-lg overflow-hidden">
+  <!-- ヘッダー -->
+  <div class="px-6 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+    <div class="flex justify-between items-start">
+      <div>
+        <h1 class="text-2xl font-bold">
+          <i class="fas fa-gift mr-2"></i>
+          <%= @gift_record.display_item_name %>
+        </h1>
+        <p class="text-pink-100 mt-1">
+          <%= @gift_record.display_gift_date %>に贈ったギフト
+        </p>
+      </div>
+      <div class="flex space-x-2">
+        <%= link_to edit_gift_record_path(@gift_record), 
+            class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
+            aria: { label: "このギフト記録を編集" } do %>
+          <i class="fas fa-edit mr-1"></i>
+          編集
+        <% end %>
+        <%= link_to gift_record_path(@gift_record), 
+            method: :delete,
+            data: { 
+              confirm: "本当に削除しますか？この操作は取り消せません。",
+              turbo_method: :delete
+            },
+            class: "inline-flex items-center px-3 py-2 border border-red-300 rounded-md text-sm font-medium text-red-100 hover:bg-red-600 transition-colors",
+            aria: { label: "このギフト記録を削除" } do %>
+          <i class="fas fa-trash mr-1"></i>
+          削除
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- 詳細情報 -->
+  <div class="px-6 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- 基本情報 -->
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+          基本情報
+        </h2>
+        
+        <div class="space-y-4">
+          <!-- アイテム名 -->
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-24 text-sm font-medium text-gray-500">
+              アイテム名
+            </div>
+            <div class="flex-1 text-sm text-gray-900">
+              <%= @gift_record.display_item_name %>
+            </div>
+          </div>
+
+          <!-- 金額 -->
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-24 text-sm font-medium text-gray-500">
+              金額
+            </div>
+            <div class="flex-1 text-sm text-gray-900">
+              <span class="<%= @gift_record.amount.present? ? 'font-semibold text-green-600' : 'text-gray-400' %>">
+                <%= @gift_record.display_amount %>
+              </span>
+            </div>
+          </div>
+
+          <!-- 贈った日 -->
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-24 text-sm font-medium text-gray-500">
+              贈った日
+            </div>
+            <div class="flex-1 text-sm text-gray-900">
+              <%= @gift_record.display_gift_date %>
+            </div>
+          </div>
+
+          <!-- イベント -->
+          <% if @gift_record.event.present? %>
+            <div class="flex items-start">
+              <div class="flex-shrink-0 w-24 text-sm font-medium text-gray-500">
+                イベント
+              </div>
+              <div class="flex-1 text-sm text-gray-900">
+                <%= @gift_record.event.name %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- 贈り先情報 -->
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <i class="fas fa-user text-pink-500 mr-2"></i>
+          贈り先情報
+        </h2>
+        
+        <% if @gift_record.gift_people.present? %>
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div class="space-y-3">
+              <!-- 名前 -->
+              <div class="flex items-center">
+                <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
+                  名前
+                </div>
+                <div class="flex-1 text-sm font-semibold text-gray-900">
+                  <%= @gift_record.gift_people.name %>
+                </div>
+              </div>
+
+              <!-- 関係性 -->
+              <% if @gift_record.gift_people.relationship.present? %>
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
+                    関係性
+                  </div>
+                  <div class="flex-1 text-sm text-gray-900">
+                    <%= @gift_record.gift_people.relationship.name %>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- 誕生日 -->
+              <% if @gift_record.gift_people.birthday.present? %>
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
+                    誕生日
+                  </div>
+                  <div class="flex-1 text-sm text-gray-900">
+                    <%= l(@gift_record.gift_people.birthday, format: :long) %>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- 好きなもの -->
+              <% if @gift_record.gift_people.likes.present? %>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
+                    好きなもの
+                  </div>
+                  <div class="flex-1 text-sm text-gray-900">
+                    <%= simple_format(@gift_record.gift_people.likes) %>
+                  </div>
+                </div>
+              <% end %>
+
+              <!-- 嫌いなもの -->
+              <% if @gift_record.gift_people.dislikes.present? %>
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
+                    嫌いなもの
+                  </div>
+                  <div class="flex-1 text-sm text-gray-900">
+                    <%= simple_format(@gift_record.gift_people.dislikes) %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% else %>
+          <div class="text-gray-400 text-sm">
+            贈り先情報が設定されていません
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- メモ -->
+    <% if @gift_record.memo.present? %>
+      <div class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <i class="fas fa-sticky-note text-yellow-500 mr-2"></i>
+          メモ
+        </h2>
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div class="text-sm text-gray-700 whitespace-pre-line">
+            <%= simple_format(@gift_record.memo) %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- ギフト画像（将来実装用） -->
+    <%# if @gift_record.gift_image.present? %>
+      <!-- 画像表示エリア -->
+    <%# end %>
+  </div>
+
+  <!-- フッター -->
+  <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+    <div class="flex justify-between items-center text-sm text-gray-500">
+      <div>
+        作成日: <%= l(@gift_record.created_at, format: :long) %>
+        <% if @gift_record.updated_at != @gift_record.created_at %>
+          <span class="ml-4">
+            更新日: <%= l(@gift_record.updated_at, format: :long) %>
+          </span>
+        <% end %>
+      </div>
+      <div>
+        <%= link_to gift_records_path, 
+            class: "inline-flex items-center text-pink-600 hover:text-pink-700 font-medium" do %>
+          <i class="fas fa-arrow-left mr-1"></i>
+          一覧に戻る
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 関連アクション -->
+<div class="mt-6 text-center">
+  <div class="inline-flex rounded-md shadow-sm" role="group">
+    <%= link_to new_gift_record_path, 
+        class: "px-4 py-2 text-sm font-medium text-pink-600 bg-white border border-pink-600 rounded-l-lg hover:bg-pink-50 focus:z-10 focus:ring-2 focus:ring-pink-500" do %>
+      <i class="fas fa-plus mr-2"></i>
+      新しい記録を作成
+    <% end %>
+    <%= link_to edit_gift_record_path(@gift_record), 
+        class: "px-4 py-2 text-sm font-medium text-blue-600 bg-white border-t border-b border-blue-600 hover:bg-blue-50 focus:z-10 focus:ring-2 focus:ring-blue-500" do %>
+      <i class="fas fa-edit mr-2"></i>
+      この記録を編集
+    <% end %>
+    <%= link_to gift_records_path, 
+        class: "px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 focus:z-10 focus:ring-2 focus:ring-gray-500" do %>
+      <i class="fas fa-list mr-2"></i>
+      一覧を表示
+    <% end %>
+  </div>
+</div>

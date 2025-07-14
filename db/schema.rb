@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_09_021216) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_14_101824) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,7 +28,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_09_021216) do
     t.string "memo"
     t.string "gift_peoples_image"
     t.bigint "user_id", null: false
-    t.bigint "gift_record_id", null: false
+    t.bigint "gift_record_id"
     t.bigint "relationship_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -48,7 +48,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_09_021216) do
     t.bigint "event_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "gift_people_id"
+    t.bigint "gift_people_id", null: false
     t.index ["event_id"], name: "index_gift_records_on_event_id"
     t.index ["gift_people_id"], name: "index_gift_records_on_gift_people_id"
     t.index ["user_id"], name: "index_gift_records_on_user_id"

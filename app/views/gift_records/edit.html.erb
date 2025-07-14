@@ -1,0 +1,160 @@
+<%# ベテランバックエンドエンジニアによるギフト記録編集ページ %>
+<% content_for(:title, "#{@gift_record.display_item_name} - ギフト記録編集") %>
+
+<!-- パンくずナビ -->
+<nav class="flex mb-6" aria-label="Breadcrumb">
+  <ol class="inline-flex items-center space-x-1 md:space-x-3">
+    <li class="inline-flex items-center">
+      <%= link_to gift_records_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-pink-600" do %>
+        <i class="fas fa-home mr-2"></i>
+        ギフト記録一覧
+      <% end %>
+    </li>
+    <li>
+      <div class="flex items-center">
+        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+        <%= link_to @gift_record, class: "text-sm font-medium text-gray-700 hover:text-pink-600" do %>
+          <%= truncate(@gift_record.display_item_name, length: 20) %>
+        <% end %>
+      </div>
+    </li>
+    <li>
+      <div class="flex items-center">
+        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">編集</span>
+      </div>
+    </li>
+  </ol>
+</nav>
+
+<!-- メインコンテンツ -->
+<div class="bg-white shadow-lg rounded-lg overflow-hidden">
+  <!-- ヘッダー -->
+  <div class="px-6 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+    <div class="flex justify-between items-start">
+      <div>
+        <h1 class="text-2xl font-bold">
+          <i class="fas fa-edit mr-2"></i>
+          ギフト記録を編集
+        </h1>
+        <p class="text-blue-100 mt-1">
+          「<%= @gift_record.display_item_name %>」の情報を更新します
+        </p>
+      </div>
+      <div class="flex space-x-2">
+        <%= link_to @gift_record, 
+            class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
+            aria: { label: "編集をキャンセルして詳細を表示" } do %>
+          <i class="fas fa-eye mr-1"></i>
+          詳細表示
+        <% end %>
+        <%= link_to gift_records_path, 
+            class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
+            aria: { label: "編集をキャンセルして一覧に戻る" } do %>
+          <i class="fas fa-list mr-1"></i>
+          一覧に戻る
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- フォーム -->
+  <div class="px-6 py-6">
+    <!-- 進捗インジケーター -->
+    <div class="mb-6">
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <i class="fas fa-info-circle text-blue-500 text-lg"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-blue-800">
+              編集モード
+            </h3>
+            <p class="mt-1 text-sm text-blue-600">
+              フィールドを変更して「更新する」ボタンをクリックしてください。
+              必要な項目には<span class="text-red-500">*</span>が表示されています。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- エラーメッセージ（全体） -->
+    <% if @gift_record.errors.any? %>
+      <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-triangle text-red-400 text-lg"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">
+              入力内容にエラーがあります
+            </h3>
+            <div class="mt-2 text-sm text-red-700">
+              <ul class="list-disc list-inside space-y-1">
+                <% @gift_record.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- フォーム本体 -->
+    <div class="max-w-4xl mx-auto">
+      <%= render 'form', gift_record: @gift_record %>
+    </div>
+
+    <!-- 補助操作 -->
+    <div class="mt-8 pt-6 border-t border-gray-200">
+      <div class="flex justify-between items-center">
+        <div class="text-sm text-gray-500">
+          <i class="fas fa-clock mr-1"></i>
+          作成日: <%= l(@gift_record.created_at, format: :long) %>
+          <% if @gift_record.updated_at != @gift_record.created_at %>
+            <span class="ml-4">
+              <i class="fas fa-edit mr-1"></i>
+              最終更新: <%= l(@gift_record.updated_at, format: :long) %>
+            </span>
+          <% end %>
+        </div>
+        
+        <div class="flex space-x-3">
+          <%= link_to @gift_record, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+            <i class="fas fa-times mr-2"></i>
+            キャンセル
+          <% end %>
+          
+          <%= link_to gift_record_path(@gift_record), 
+              method: :delete,
+              data: { 
+                confirm: "本当に「#{@gift_record.display_item_name}」を削除しますか？\n\nこの操作は取り消せません。",
+                turbo_method: :delete
+              },
+              class: "inline-flex items-center px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
+            <i class="fas fa-trash mr-2"></i>
+            削除
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 使用方法のヒント -->
+<div class="mt-6 bg-gray-50 rounded-lg p-4">
+  <h3 class="text-sm font-medium text-gray-900 mb-2">
+    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+    編集のヒント
+  </h3>
+  <ul class="text-sm text-gray-600 space-y-1">
+    <li>• 日付フィールドではクイック選択ボタンを使用できます</li>
+    <li>• 金額は1円以上で入力してください（任意項目）</li>
+    <li>• メモ欄にはギフトの思い出や相手の反応を記録できます</li>
+    <li>• 必須項目を入力してから更新ボタンをクリックしてください</li>
+  </ul>
+</div>
