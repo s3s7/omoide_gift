@@ -20,7 +20,7 @@ function initializeHamburgerMenuDelegation() {
       targetClasses: event.target.className
     });
 
-    // ハンバーガーメニューボタンのクリック判定
+    // ハンバーガーメニューボタンのクリック判定 
     const menuToggleButton = event.target.closest('#menu-toggle');
     if (menuToggleButton) {
       console.log('hamburger_menu.js: ハンバーガーメニューボタンクリック検出');
