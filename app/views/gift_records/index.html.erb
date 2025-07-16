@@ -1,17 +1,200 @@
-<h1 class="text-4xl text-green-700 font-semibold underline">思い出ギフト</h1>
+<% content_for(:title, "ギフト記録一覧") %>
 
-<%# ログイン/新規ユーザー登録へ %>
+<!-- ギフト記録一覧（カードレイアウト - ベテランバックエンドエンジニアによる最適化実装） -->
+<div class="mb-0 mt-0">
+  <div class="flex justify-between items-center mb-0">
+    <h3 class="text-sm font-medium text-gray-800">
+      <i class="fas fa-th-large mr-1 text-pink-500 text-xs"></i>
+      記録一覧
+      <span class="text-xs text-gray-500 font-normal ml-1">
+        （<%= pluralize(@gift_records.count, "件") %>）
+      </span>
+    </h3>
+  </div>
 
-<div class="flex justify-end">
-       <%= link_to "新規登録", new_user_registration_path, class: "btn btn-primary" %>
-       </div>
+  <% if @gift_records.any? %>
+    <!-- カードグリッドレイアウト（2列表示） -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <% @gift_records.each do |record| %>
+        <%= link_to gift_record_path(record), class: "block" do %>
+          <div class="gift-record-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
+            <!-- 上半分：将来の画像表示エリア -->
+            <div class="gift-image-placeholder h-48 bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center relative">
+              <!-- 将来の画像配置用プレースホルダー -->
+              <div class="text-center">
+                <div class="w-16 h-16 mx-auto mb-3 bg-white rounded-full flex items-center justify-center shadow-sm">
+                  <i class="fas fa-gift text-2xl text-pink-500"></i>
+                </div>
+                <p class="text-sm text-gray-500">画像エリア</p>
+              </div>
+              
+              <!-- 操作ボタン（右上） - 編集・削除のみ -->
+              <% if user_signed_in? && current_user == record.user %>
+                <div class="absolute top-3 right-3 flex space-x-2" onclick="event.stopPropagation(); event.preventDefault();">
+                  <%= link_to edit_gift_record_path(record), 
+                      class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                      title: "編集",
+                      aria: { label: "#{record.item_name}を編集" } do %>
+                    <i class="fas fa-edit text-blue-600 text-sm"></i>
+                  <% end %>
+                  <%= link_to gift_record_path(record), 
+                      data: { 
+                        confirm: "「#{record.item_name}」を削除しますか？",
+                        turbo_method: :delete
+                      },
+                      class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                      title: "削除",
+                      aria: { label: "#{record.item_name}を削除" } do %>
+                    <i class="fas fa-trash text-red-600 text-sm"></i>
+                  <% end %>
+                </div>
+              <% end %>
 
+            <!-- 金額バッジ（左上） -->
+            <% if record.amount.present? %>
+              <div class="absolute top-3 left-3">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  ¥<%= number_with_delimiter(record.amount) %>
+                </span>
+              </div>
+            <% end %>
+          </div>
 
-<div class="flex justify-end">
-       <%= link_to "ログイン", new_user_session_path, class: "btn btn-primary" %>
-       </div>
+          <!-- 下半分：ギフト情報 -->
+          <div class="p-4">
+            <!-- ユーザー名（投稿者） -->
+            <div class="flex items-center mb-3">
+              <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                <i class="fas fa-user text-gray-500 text-sm"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">
+                  <%= record.user.name.presence || "ユーザー" %>
+                </p>
+                <p class="text-xs text-gray-500">
+                  <%= l(record.created_at, format: :short) %>に投稿
+                </p>
+              </div>
+            </div>
 
-<div class="flex justify-end">
-       <%= link_to "ログアウト", destroy_user_session_path, class: "btn btn-primary" %>
-       </div>
+            <!-- イベント名 -->
+            <div class="mb-2">
+              <span class="inline-flex items-center text-sm text-gray-600">
+                <i class="fas fa-calendar-star mr-2 text-purple-500"></i>
+                <strong class="mr-1">イベント:</strong>
+                <%= record.event&.name || "未設定" %>
+              </span>
+            </div>
 
+            <!-- 関係性 -->
+            <div class="mb-2">
+              <span class="inline-flex items-center text-sm text-gray-600">
+                <i class="fas fa-users mr-2 text-blue-500"></i>
+                <strong class="mr-1">関係性:</strong>
+                <%= record.gift_people&.relationship&.name || "未設定" %>
+              </span>
+            </div>
+
+            <!-- アイテム名 -->
+            <div class="mb-3">
+              <span class="inline-flex items-center text-sm text-gray-600">
+                <i class="fas fa-tag mr-2 text-pink-500"></i>
+                <strong class="mr-1">アイテム:</strong>
+              </span>
+              <h4 class="text-base font-semibold text-gray-900 mt-1">
+                <%= truncate(record.item_name.presence || "未設定", length: 40) %>
+              </h4>
+            </div>
+
+            <!-- 贈り先と日付 -->
+            <div class="border-t pt-3 mt-3">
+              <div class="flex justify-between items-center text-sm">
+                <div class="flex items-center text-gray-600">
+                  <i class="fas fa-heart mr-2 text-red-400"></i>
+                  <span><strong>贈り先:</strong> <%= record.gift_people&.name || "未設定" %></span>
+                </div>
+                <div class="flex items-center text-gray-500">
+                  <i class="fas fa-calendar mr-2"></i>
+                  <span>
+                    <%= record.gift_at.present? ? l(record.gift_at, format: :short) : "未設定" %>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- メモ（存在する場合） -->
+            <% if record.memo.present? %>
+              <div class="mt-3 pt-3 border-t">
+                <p class="text-xs text-gray-600 leading-relaxed">
+                  <i class="fas fa-sticky-note mr-1 text-yellow-500"></i>
+                  <%= truncate(record.memo, length: 80) %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <% end %>
+      <% end %>
+    </div>
+    <% else %>
+      <!-- 空状態 -->
+      <div class="text-center py-12">
+        <div class="mx-auto h-24 w-24 text-gray-300">
+          <i class="fas fa-gift text-6xl"></i>
+        </div>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">
+          ギフト記録がありません
+        </h3>
+        <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
+          最初のギフト記録を作成して、大切な思い出を記録しましょう。
+        </p>
+        <% if user_signed_in? %>
+          <div class="mt-6">
+            <%= link_to new_gift_record_path,
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+              <i class="fas fa-plus mr-2"></i>
+              最初の記録を作成
+            <% end %>
+          </div>
+        <% else %>
+          <div class="mt-6">
+            <%= link_to new_user_session_path,
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+              <i class="fas fa-sign-in-alt mr-2"></i>
+              ログインして記録を作成
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- ページ下部の補助情報 -->
+<div class="mt-8 text-center text-sm text-gray-500">
+  <p>
+    <i class="fas fa-info-circle mr-1"></i>
+ 
+  </p>
+</div>
+
+<script>
+// フィルタの開閉制御（モバイル対応）
+document.addEventListener('DOMContentLoaded', function() {
+  const filterToggle = document.getElementById('filter-toggle');
+  const filterContent = document.getElementById('filter-content');
+  
+  if (filterToggle && filterContent) {
+    filterToggle.addEventListener('click', function() {
+      const isHidden = filterContent.classList.contains('hidden');
+      if (isHidden) {
+        filterContent.classList.remove('hidden');
+        filterToggle.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
+      } else {
+        filterContent.classList.add('hidden');
+        filterToggle.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
+      }
+    });
+  }
+});
+</script>

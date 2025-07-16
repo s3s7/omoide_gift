@@ -1,0 +1,222 @@
+/* ギフト記録フォーム用スタイル - ベテランバックエンドエンジニアによるUX最適化 */
+
+/* selectフィールドの統一的なスタイリング（二重矢印問題の解決） */
+select.form-control {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* 必須フィールドのインジケーター */
+.form-label.required::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* 日付フィールドの強化 */
+input[type="date"] {
+  position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+/* フォームバリデーション状態 */
+.form-control.is-valid {
+  border-color: #198754;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='m2.3 6.73.8-.77-.1-.1.1.1-.8.77-.8-.77.1-.1-.1.1.8.77.8-.77.1.1-.1-.1.8.77L3.3 7.5l-.5-.5-.5.5-.5-.5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6 2.4 2.4M8.2 4.6l-2.4 2.4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* クイック選択ボタンのアニメーション */
+.btn-outline-secondary:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* 入力フィールドのフォーカス状態 */
+.form-control:focus {
+  border-color: #e91e63;
+  box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.25);
+}
+
+/* ヘルプテキストのアイコン */
+.form-text i {
+  opacity: 0.7;
+}
+
+/* エラーメッセージのスタイル */
+.invalid-feedback i {
+  margin-right: 0.25rem;
+}
+
+/* 金額入力フィールドの通貨アイコン */
+.input-group-text {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+  color: #6c757d;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .form-control {
+    font-size: 16px; /* iOS Safariでのズーム防止 */
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* アクセシビリティ向上 */
+@media (prefers-reduced-motion: reduce) {
+  .btn-outline-secondary:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* イベント選択プルダウンの強化 */
+#gift_record_event_id {
+  /* ブラウザデフォルトの矢印を非表示 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* カスタム矢印アイコン */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* 人気イベントボタンのスタイル */
+.btn-outline-info:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-info:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 123, 255, 0.1);
+}
+
+/* イベント選択フィールドのフォーカス状態 */
+#gift_record_event_id:focus {
+  border-color: #17a2b8;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+
+/* イベント選択フィールドの必須状態（未選択時の警告） */
+#gift_record_event_id.is-invalid {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-color: #dc3545;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6 2.4 2.4M8.2 4.6l-2.4 2.4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* イベント選択フィールドの有効状態 */
+#gift_record_event_id.is-valid {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-color: #198754;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='m2.3 6.73.8-.77-.1-.1.1.1-.8.77-.8-.77.1-.1-.1.1.8.77.8-.77.1.1-.1-.1.8.77L3.3 7.5l-.5-.5-.5.5-.5-.5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* フォームセクションの区切り */
+.form-section {
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* ダークモード対応（将来実装用） */
+@media (prefers-color-scheme: dark) {
+  .form-control {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+  
+  /* ダークモードでのselectフィールド統一スタイル */
+  select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a0aec0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+  
+  .form-text {
+    color: #a0aec0;
+  }
+  
+  #gift_record_event_id {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a0aec0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  }
+  
+  #gift_record_event_id.is-invalid {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-color: #f56565;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23f56565'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6 2.4 2.4M8.2 4.6l-2.4 2.4'/%3e%3c/svg%3e");
+  }
+  
+  #gift_record_event_id.is-valid {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-color: #68d391;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2368d391' d='m2.3 6.73.8-.77-.1-.1.1.1-.8.77-.8-.77.1-.1-.1.1.8.77.8-.77.1.1-.1-.1.8.77L3.3 7.5l-.5-.5-.5.5-.5-.5z'/%3e%3c/svg%3e");
+  }
+  
+  .form-section {
+    border-bottom-color: #4a5568;
+  }
+}

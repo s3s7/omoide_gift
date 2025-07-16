@@ -1,0 +1,264 @@
+/* ギフト記録カードレイアウト - ベテランバックエンドエンジニアによる最適化実装 */
+
+/* ==================== カード基本スタイル ==================== */
+
+.gift-record-card {
+  /* 縦長の長方形デザイン */
+  height: 420px; /* 固定高さで縦長を保証 */
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.gift-record-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #f9a8d4;
+}
+
+/* ==================== 画像プレースホルダーエリア ==================== */
+
+.gift-image-placeholder {
+  /* カードの上半分（画像エリア） */
+  flex: 0 0 50%; /* 固定で50%の高さ */
+  background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 50%, #fae8ff 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 210px;
+}
+
+.gift-image-placeholder::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* プレースホルダーアイコンとテキスト */
+.gift-image-placeholder .w-16 {
+  position: relative;
+  z-index: 2;
+  border: 2px solid #f9a8d4;
+  background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 100%);
+}
+
+.gift-image-placeholder p {
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
+  color: #6b7280;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* ==================== カード情報エリア ==================== */
+
+.gift-record-card .p-4 {
+  /* カードの下半分（情報エリア） */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+/* ==================== ユーザー情報エリア ==================== */
+
+.gift-record-card .w-8.h-8 {
+  background: linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%);
+  border: 1px solid #d1d5db;
+}
+
+/* ==================== バッジとラベル ==================== */
+
+/* 金額バッジ */
+.gift-record-card .bg-green-100 {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 1px solid #86efac;
+  font-weight: 600;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* 操作ボタン */
+.gift-record-card .absolute.top-3.right-3 a {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.gift-record-card .absolute.top-3.right-3 a:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ==================== アイコンの色分け ==================== */
+
+.text-purple-500 { color: #8b5cf6; }
+.text-blue-500 { color: #3b82f6; }
+.text-pink-500 { color: #ec4899; }
+.text-red-400 { color: #f87171; }
+.text-yellow-500 { color: #eab308; }
+
+/* ==================== レスポンシブデザイン ==================== */
+
+/* タブレット対応 */
+@media (max-width: 1024px) {
+  .gift-record-card {
+    height: 400px;
+  }
+  
+  .gift-image-placeholder {
+    min-height: 200px;
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .gift-record-card {
+    height: 380px;
+    margin-bottom: 1rem;
+  }
+  
+  .gift-image-placeholder {
+    min-height: 180px;
+  }
+  
+  .gift-record-card .p-4 {
+    padding: 0.75rem;
+  }
+  
+  /* モバイルでは文字サイズを調整 */
+  .gift-record-card .text-sm {
+    font-size: 0.825rem;
+  }
+  
+  .gift-record-card .text-xs {
+    font-size: 0.7rem;
+  }
+}
+
+/* 小さなモバイル対応 */
+@media (max-width: 480px) {
+  .gift-record-card {
+    height: 360px;
+  }
+  
+  .gift-image-placeholder {
+    min-height: 160px;
+  }
+  
+  .gift-image-placeholder .w-16 {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  .gift-record-card .absolute.top-3.right-3 {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  
+  .gift-record-card .absolute.top-3.left-3 {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+}
+
+/* ==================== アニメーション効果 ==================== */
+
+/* カード出現時のアニメーション */
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gift-record-card {
+  animation: cardFadeIn 0.6s ease-out;
+}
+
+/* ==================== アクセシビリティ対応 ==================== */
+
+/* フォーカス状態の強化 */
+.gift-record-card:focus-within {
+  outline: 2px solid #ec4899;
+  outline-offset: 2px;
+}
+
+/* 高コントラストモード対応 */
+@media (prefers-contrast: high) {
+  .gift-record-card {
+    border-width: 2px;
+    border-color: #000000;
+  }
+  
+  .gift-image-placeholder {
+    background: #f3f4f6;
+    border-bottom: 2px solid #000000;
+  }
+}
+
+/* 動きを控えめにする設定対応 */
+@media (prefers-reduced-motion: reduce) {
+  .gift-record-card {
+    animation: none;
+    transition: none;
+  }
+  
+  .gift-record-card:hover {
+    transform: none;
+  }
+  
+  .gift-record-card .absolute.top-3.right-3 a:hover {
+    transform: none;
+  }
+}
+
+/* ==================== デバッグモード（開発環境用） ==================== */
+
+/* 開発環境でのカード境界線表示 */
+.debug-cards .gift-record-card {
+  border: 2px dashed #ef4444;
+}
+
+.debug-cards .gift-image-placeholder {
+  border-bottom: 2px dashed #3b82f6;
+}
+
+/* ==================== プリント対応 ==================== */
+
+@media print {
+  .gift-record-card {
+    height: auto;
+    box-shadow: none;
+    border: 1px solid #000000;
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+  
+  .gift-record-card .absolute.top-3.right-3 {
+    display: none;
+  }
+  
+  .gift-image-placeholder {
+    background: #f9f9f9;
+    border-bottom: 1px solid #000000;
+  }
+}
