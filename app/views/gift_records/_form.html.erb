@@ -459,7 +459,7 @@
   </div>
 
   <!-- メモ入力 -->
-  <div style="margin-bottom: 32px; text-align: left;">
+  <div style="margin-bottom: 24px; text-align: left;">
     <%= f.label :memo, "メモ", style: "
       display: block;
       margin-bottom: 8px;
@@ -495,6 +495,89 @@
     <% end %>
   </div>
 
+  <!-- 公開設定 -->
+  <div style="margin-bottom: 32px; text-align: left;">
+    <%= f.label :is_public, "公開設定", style: "
+      display: block;
+      margin-bottom: 16px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    
+    <div style="
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+    ">
+      <!-- カスタムトグルスイッチ -->
+      <div style="position: relative; margin-right: 16px;">
+        <%= f.check_box :is_public, 
+            {
+              checked: gift_record.new_record? ? true : gift_record.is_public,
+              style: "display: none;",
+              id: "gift_record_is_public_toggle"
+            } %>
+        <label for="gift_record_is_public_toggle" style="
+          position: relative;
+          display: inline-block;
+          width: 60px;
+          height: 34px;
+          background-color: #28a745;
+          border-radius: 34px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        " id="toggle_label">
+          <span style="
+            position: absolute;
+            content: '';
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+          " id="toggle_slider"></span>
+        </label>
+      </div>
+      
+      <!-- ラベルテキスト -->
+      <div>
+        <div style="
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 4px;
+          font-size: 16px;
+        " id="toggle_text">
+          <i class="fas fa-globe" style="margin-right: 8px; color: #28a745;" id="toggle_icon"></i>
+          <span id="toggle_status">公開</span>
+        </div>
+        <div style="
+          font-size: 12px;
+          color: #666;
+        " id="toggle_description">
+          他のユーザーがこのギフト記録を見ることができます
+        </div>
+      </div>
+    </div>
+    
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      公開にすると他のユーザーがあなたのギフト記録を参考にできます
+    </div>
+    
+    <% if gift_record.errors[:is_public].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_record.errors[:is_public].first %>
+      </div>
+    <% end %>
+  </div>
+
   <!-- 送信ボタン -->
   <div style="margin-bottom: 32px;">
     <%= f.submit nil, style: "
@@ -516,4 +599,98 @@
 <% if @gift_person&.errors&.any? %>
   <div id="gift_person_error_flag" data-has-error="true" style="display: none;"></div>
 <% end %>
+
+<script>
+// ギフト記録フォームのJavaScript処理
+document.addEventListener('DOMContentLoaded', function() {
+  // 公開設定のトグルスイッチの処理
+  const toggle = document.getElementById('gift_record_is_public_toggle');
+  const toggleLabel = document.getElementById('toggle_label');
+  const toggleSlider = document.getElementById('toggle_slider');
+  const toggleIcon = document.getElementById('toggle_icon');
+  const toggleStatus = document.getElementById('toggle_status');
+  const toggleDescription = document.getElementById('toggle_description');
+
+  // 初期状態を設定
+  function updateToggleUI() {
+    if (toggle.checked) {
+      // 公開状態
+      toggleLabel.style.backgroundColor = '#28a745';
+      toggleSlider.style.transform = 'translateX(26px)';
+      toggleIcon.className = 'fas fa-globe';
+      toggleIcon.style.color = '#28a745';
+      toggleStatus.textContent = '公開';
+      toggleDescription.textContent = '他のユーザーがこのギフト記録を見ることができます';
+    } else {
+      // 非公開状態
+      toggleLabel.style.backgroundColor = '#6c757d';
+      toggleSlider.style.transform = 'translateX(0)';
+      toggleIcon.className = 'fas fa-lock';
+      toggleIcon.style.color = '#6c757d';
+      toggleStatus.textContent = '非公開';
+      toggleDescription.textContent = 'あなただけがこのギフト記録を見ることができます';
+    }
+  }
+
+  // 初期状態を適用
+  updateToggleUI();
+
+  // クリック時の処理
+  if (toggleLabel) {
+    toggleLabel.addEventListener('click', function() {
+      // チェックボックスの状態を切り替え（少し遅延させてからUI更新）
+      setTimeout(updateToggleUI, 10);
+    });
+  }
+
+  // ギフト相手選択の処理（既存の機能）
+  const giftPeopleSelect = document.getElementById('gift_people_select');
+  const newGiftPersonFields = document.getElementById('new_gift_person_fields');
+  
+  if (giftPeopleSelect && newGiftPersonFields) {
+    giftPeopleSelect.addEventListener('change', function() {
+      if (this.value === 'new') {
+        newGiftPersonFields.style.display = 'block';
+      } else {
+        newGiftPersonFields.style.display = 'none';
+      }
+    });
+  }
+
+  // イベント選択のクイック設定
+  window.setEventSelection = function(eventId) {
+    const eventSelect = document.getElementById('gift_record_event_id');
+    if (eventSelect) {
+      eventSelect.value = eventId;
+    }
+  };
+
+  // 日付のクイック設定
+  window.setGiftDate = function(dateType) {
+    const dateField = document.getElementById('gift_record_gift_at');
+    if (dateField) {
+      const today = new Date();
+      let targetDate;
+      
+      switch(dateType) {
+        case 'today':
+          targetDate = today;
+          break;
+        case 'yesterday':
+          targetDate = new Date(today);
+          targetDate.setDate(today.getDate() - 1);
+          break;
+        case 'week_ago':
+          targetDate = new Date(today);
+          targetDate.setDate(today.getDate() - 7);
+          break;
+        default:
+          targetDate = today;
+      }
+      
+      dateField.value = targetDate.toISOString().split('T')[0];
+    }
+  };
+});
+</script>
 

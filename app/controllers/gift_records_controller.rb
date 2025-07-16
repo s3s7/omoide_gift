@@ -1,13 +1,20 @@
 class GiftRecordsController < ApplicationController
-  before_action :authenticate_user!, except: [ :index ]
+  before_action :authenticate_user!, except: [ :index, :show ]
   before_action :set_gift_record, only: [ :show, :edit, :update, :destroy ]
-  before_action :ensure_owner, only: [ :show, :edit, :update, :destroy ]
+  before_action :ensure_owner, only: [ :edit, :update, :destroy ]
+  before_action :ensure_accessible, only: [ :show ]
 
   def index
     # ベテランバックエンドエンジニアによる公開アクセス対応実装
 
-    # 全ユーザーのギフト記録を取得（プライバシーを考慮した公開データ）
-    base_query = GiftRecord.all
+    # プライバシーを考慮したギフト記録の取得
+    if user_signed_in?
+      # ログインユーザー：公開記録 + 自分の記録（公開・非公開問わず）
+      base_query = GiftRecord.where("gift_records.is_public = ? OR gift_records.user_id = ?", true, current_user.id)
+    else
+      # 未ログインユーザー：公開記録のみ
+      base_query = GiftRecord.where(is_public: true)
+    end
 
     # N+1問題回避: 関連テーブルを事前読み込み
     @gift_records = base_query
@@ -41,7 +48,7 @@ class GiftRecordsController < ApplicationController
     # @gift_records = @gift_records.page(params[:page]).per(20)
 
     # フィルタリング用のオプション準備（実際に使われているギフト相手のみ）
-    @gift_people_options = GiftRecord
+    @gift_people_options = base_query
       .joins(:gift_people)
       .select("gift_people.name, gift_people.id")
       .where.not("gift_people.name" => [ nil, "" ])
@@ -51,9 +58,9 @@ class GiftRecordsController < ApplicationController
 
     # 統計情報（ダッシュボード要素）
     @total_records = @gift_records.count
-    @total_amount = @gift_records.sum(:amount) || 0
+    @total_amount = @gift_records.sum("gift_records.amount") || 0
     @current_month_records = base_query.where(
-      gift_at: Date.current.beginning_of_month..Date.current.end_of_month
+      "gift_records.gift_at" => Date.current.beginning_of_month..Date.current.end_of_month
     ).count
 
     # エラーハンドリング
@@ -196,18 +203,32 @@ class GiftRecordsController < ApplicationController
   private
 
   def gift_record_params
-    params.require(:gift_record).permit(:title, :description, :body, :gift_record_image, :gift_record_image_cache, :gift_people_id, :memo, :item_name, :amount, :gift_at, :event_id)
+    params.require(:gift_record).permit(:title, :description, :body, :gift_record_image, :gift_record_image_cache, :gift_people_id, :memo, :item_name, :amount, :gift_at, :event_id, :is_public)
   end
 
   def gift_person_params
     params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :memo)
   end
 
-  # セキュリティ: ギフト記録を取得（ユーザー固有のデータのみ）
+  # セキュリティ: ギフト記録を取得
   def set_gift_record
-    @gift_record = current_user.gift_records
-      .includes(:gift_people, :event, gift_people: :relationship)
-      .find(params[:id])
+    if action_name == "show"
+      # show アクション：公開記録または自分の記録
+      if user_signed_in?
+        @gift_record = GiftRecord.where("gift_records.is_public = ? OR gift_records.user_id = ?", true, current_user.id)
+          .includes(:gift_people, :event, :user, gift_people: :relationship)
+          .find(params[:id])
+      else
+        @gift_record = GiftRecord.where("gift_records.is_public = ?", true)
+          .includes(:gift_people, :event, :user, gift_people: :relationship)
+          .find(params[:id])
+      end
+    else
+      # edit, update, destroy アクション：自分の記録のみ
+      @gift_record = current_user.gift_records
+        .includes(:gift_people, :event, gift_people: :relationship)
+        .find(params[:id])
+    end
   rescue ActiveRecord::RecordNotFound
     redirect_to gift_records_path, alert: "指定されたギフト記録が見つかりません。"
   end
@@ -217,6 +238,13 @@ class GiftRecordsController < ApplicationController
     unless @gift_record&.user == current_user
       redirect_to gift_records_path, alert: "アクセス権限がありません。"
     end
+  end
+
+  # セキュリティ: 閲覧権限確認（公開記録または自分の記録）
+  def ensure_accessible
+    return if @gift_record.is_public? || (user_signed_in? && @gift_record.user == current_user)
+
+    redirect_to gift_records_path, alert: "この記録は非公開です。"
   end
 
   # イベントデータの準備（既存データを使用）
