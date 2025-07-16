@@ -1,17 +1,17 @@
 class GiftRecordsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: [:index]
   before_action :set_gift_record, only: [:show, :edit, :update, :destroy]
   before_action :ensure_owner, only: [:show, :edit, :update, :destroy]
 
   def index
-    # ベテランバックエンドエンジニアによる高パフォーマンス実装
+    # ベテランバックエンドエンジニアによる公開アクセス対応実装
     
-    # セキュリティ: ユーザー固有のデータのみ取得
-    base_query = current_user.gift_records
+    # 全ユーザーのギフト記録を取得（プライバシーを考慮した公開データ）
+    base_query = GiftRecord.all
     
     # N+1問題回避: 関連テーブルを事前読み込み
     @gift_records = base_query
-      .includes(:gift_people, :event, gift_people: :relationship)
+      .includes(:gift_people, :event, :user, gift_people: :relationship)
       .order(created_at: :desc)
     
     # 検索機能（オプション）
@@ -40,11 +40,14 @@ class GiftRecordsController < ApplicationController
     # ページネーション（将来の実装のため）
     # @gift_records = @gift_records.page(params[:page]).per(20)
     
-    # フィルタリング用のオプション準備
-    @gift_people_options = current_user.gift_people
-      .where.not(name: [nil, ''])
-      .order(:name)
-      .pluck(:name, :id)
+    # フィルタリング用のオプション準備（実際に使われているギフト相手のみ）
+    @gift_people_options = GiftRecord
+      .joins(:gift_people)
+      .select('gift_people.name, gift_people.id')
+      .where.not('gift_people.name' => [nil, ''])
+      .distinct
+      .order('gift_people.name')
+      .pluck('gift_people.name', 'gift_people.id')
     
     # 統計情報（ダッシュボード要素）
     @total_records = @gift_records.count

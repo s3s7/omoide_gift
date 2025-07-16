@@ -1,9 +1,15 @@
 <%= form_with model: gift_record do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   
-  <!-- イベント選択（ベテランバックエンドエンジニアによる最適化実装） -->
-  <div class="mb-3">
-    <%= f.label :event_id, "イベント", class: "form-label required" %>
+  <!-- イベント選択 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :event_id, "イベント", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
     <%= f.select :event_id, 
         options_from_collection_for_select(
           (@events || []), 
@@ -15,52 +21,69 @@
           prompt: "イベントを選択してください"
         }, 
         { 
-          class: "form-control #{'is-invalid' if gift_record.errors[:event_id].any?}",
+          style: "
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+          ",
           id: "gift_record_event_id",
-          required: true,
-          aria: { 
-            describedby: "event_help #{'event_error' if gift_record.errors[:event_id].any?}",
-            label: "ギフトに関連するイベントを選択してください（必須）"
-          },
-          data: {
-            bs_toggle: "tooltip",
-            bs_placement: "top",
-            bs_title: "このギフトに関連するイベントを選択してください（必須）"
-          }
+          required: true
         } %>
     
     <!-- ヘルプテキスト -->
-    <div id="event_help" class="form-text text-muted">
-      <i class="fas fa-info-circle me-1"></i>
-      このギフトに関連するイベントを選択してください（必須）。後で検索や分析に役立ちます。
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      このギフトに関連するイベントを選択してください（必須）
     </div>
     
     <!-- エラーメッセージ -->
     <% if gift_record.errors[:event_id].any? %>
-      <div id="event_error" class="invalid-feedback d-block">
-        <i class="fas fa-exclamation-triangle me-1"></i>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
         <%= gift_record.errors[:event_id].first %>
       </div>
     <% end %>
     
-    <!-- 人気のイベント表示（UX向上） -->
+    <!-- 人気のイベント表示 -->
     <% if @popular_events&.any? %>
-      <div class="mt-2">
-        <small class="text-muted">よく使われるイベント: </small>
+      <div style="margin-top: 12px;">
+        <small style="color: #888;">よく使われるイベント: </small>
         <% @popular_events.each do |event| %>
           <button type="button" 
-                  class="btn btn-outline-info btn-sm me-1 mb-1" 
+                  style="
+                    display: inline-block;
+                    padding: 4px 8px;
+                    margin-right: 6px;
+                    margin-bottom: 6px;
+                    border: 1px solid #007bff;
+                    background-color: transparent;
+                    color: #007bff;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                  " 
                   onclick="setEventSelection(<%= event.id %>)"
-                  data-bs-toggle="tooltip" 
-                  data-bs-title="<%= event.display_name %>を選択">
+                  onmouseover="this.style.backgroundColor='#007bff'; this.style.color='white';"
+                  onmouseout="this.style.backgroundColor='transparent'; this.style.color='#007bff';">
             <%= truncate(event.display_name, length: 10) %>
           </button>
         <% end %>
       </div>
     <% end %>
   </div>
-  <div class="mb-3">
-    <%= f.label :gift_people_id, "贈る相手", class: "form-label" %>
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :gift_people_id, "贈る相手", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
     <% 
       # エラー時の選択値を決定
       if @gift_person&.errors&.any? || params[:gift_record]&.[](:gift_people_id) == "new"
@@ -76,19 +99,48 @@
     <%= f.select :gift_people_id, 
         gift_people_options, 
         { prompt: "贈る相手を選択してください" }, 
-        { class: "form-control", id: "gift_people_select" } %>
+        { 
+          style: "
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+          ",
+          id: "gift_people_select" 
+        } %>
   </div>
   
   <!-- 新しいギフト相手の入力フィールド -->
   <% show_fields = @gift_person&.errors&.any? || params[:gift_record]&.[](:gift_people_id) == "new" %>
-  <div id="new_gift_person_fields" class="mb-3" style="<%= show_fields ? 'display: block;' : 'display: none;' %>">
-    <div class="border p-3 rounded bg-light">
-      <h6>新しいギフト相手の情報</h6>
+  <div id="new_gift_person_fields" style="margin-bottom: 24px; <%= show_fields ? 'display: block;' : 'display: none;' %>">
+    <div style="
+      border: 2px solid #e1e5e9;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      text-align: left;
+    ">
+      <h6 style="
+        margin: 0 0 20px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      ">新しいギフト相手の情報</h6>
       
       <!-- ギフト相手のエラーメッセージ -->
       <% if @gift_person&.errors&.any? %>
-        <div id="gift_person_error_explanation" class="alert alert-danger">
-          <ul class="mb-0">
+        <div style="
+          background-color: #f8d7da;
+          border: 1px solid #f5c6cb;
+          color: #721c24;
+          padding: 12px;
+          border-radius: 6px;
+          margin-bottom: 16px;
+        ">
+          <ul style="margin: 0; padding-left: 20px;">
             <% @gift_person.errors.each do |error| %>
               <li><%= error.full_message %></li>
             <% end %>
@@ -96,186 +148,368 @@
         </div>
       <% end %>
       
-      <div class="mb-3">
-        <%= label_tag "gift_person_name", "名前", class: "form-label" %>
-        <%= text_field_tag "gift_person[name]", @gift_person&.name || params.dig(:gift_person, :name), class: "form-control", placeholder: "相手の名前を入力" %>
+      <div style="margin-bottom: 16px;">
+        <%= label_tag "gift_person_name", "名前", style: "
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #555;
+          font-size: 14px;
+        " %>
+        <%= text_field_tag "gift_person[name]", @gift_person&.name || params.dig(:gift_person, :name), 
+            style: "
+              width: 100%;
+              padding: 12px 16px;
+              border: 2px solid #e1e5e9;
+              border-radius: 6px;
+              font-size: 14px;
+              box-sizing: border-box;
+            ",
+            placeholder: "相手の名前を入力" %>
       </div>
       
-      <div class="mb-3">
-        <%= label_tag "gift_person_relationship_id", "関係性", class: "form-label" %>
+      <div style="margin-bottom: 16px;">
+        <%= label_tag "gift_person_relationship_id", "関係性", style: "
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #555;
+          font-size: 14px;
+        " %>
         <%= select_tag "gift_person[relationship_id]", 
             options_from_collection_for_select(Relationship.all, :id, :name, @gift_person&.relationship_id || params.dig(:gift_person, :relationship_id)), 
-            { prompt: "関係性を選択", class: "form-control" } %>
+            { 
+              prompt: "関係性を選択",
+              style: "
+                width: 100%;
+                padding: 12px 16px;
+                border: 2px solid #e1e5e9;
+                border-radius: 6px;
+                font-size: 14px;
+                box-sizing: border-box;
+              "
+            } %>
       </div>
       
-      <div class="mb-3">
-        <%= label_tag "gift_person_birthday", "誕生日", class: "form-label" %>
-        <%= date_field_tag "gift_person[birthday]", @gift_person&.birthday || params.dig(:gift_person, :birthday), class: "form-control" %>
+      <div style="margin-bottom: 16px;">
+        <%= label_tag "gift_person_birthday", "誕生日", style: "
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #555;
+          font-size: 14px;
+        " %>
+        <%= date_field_tag "gift_person[birthday]", @gift_person&.birthday || params.dig(:gift_person, :birthday), 
+            style: "
+              width: 100%;
+              padding: 12px 16px;
+              border: 2px solid #e1e5e9;
+              border-radius: 6px;
+              font-size: 14px;
+              box-sizing: border-box;
+            " %>
       </div>
       
-      <div class="mb-3">
-        <%= label_tag "gift_person_likes", "好きなもの", class: "form-label" %>
-        <%= text_field_tag "gift_person[likes]", @gift_person&.likes || params.dig(:gift_person, :likes), class: "form-control", placeholder: "好きなものを入力" %>
+      <div style="margin-bottom: 16px;">
+        <%= label_tag "gift_person_likes", "好きなもの", style: "
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #555;
+          font-size: 14px;
+        " %>
+        <%= text_field_tag "gift_person[likes]", @gift_person&.likes || params.dig(:gift_person, :likes), 
+            style: "
+              width: 100%;
+              padding: 12px 16px;
+              border: 2px solid #e1e5e9;
+              border-radius: 6px;
+              font-size: 14px;
+              box-sizing: border-box;
+            ",
+            placeholder: "好きなものを入力" %>
       </div>
       
-      <div class="mb-3">
-        <%= label_tag "gift_person_dislikes", "嫌いなもの", class: "form-label" %>
-        <%= text_field_tag "gift_person[dislikes]", @gift_person&.dislikes || params.dig(:gift_person, :dislikes), class: "form-control", placeholder: "嫌いなものを入力" %>
+      <div style="margin-bottom: 16px;">
+        <%= label_tag "gift_person_dislikes", "嫌いなもの", style: "
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #555;
+          font-size: 14px;
+        " %>
+        <%= text_field_tag "gift_person[dislikes]", @gift_person&.dislikes || params.dig(:gift_person, :dislikes), 
+            style: "
+              width: 100%;
+              padding: 12px 16px;
+              border: 2px solid #e1e5e9;
+              border-radius: 6px;
+              font-size: 14px;
+              box-sizing: border-box;
+            ",
+            placeholder: "嫌いなものを入力" %>
       </div>
       
-      <div class="mb-3">
-        <%= label_tag "gift_person_memo", "メモ", class: "form-label" %>
-        <%= text_area_tag "gift_person[memo]", @gift_person&.memo || params.dig(:gift_person, :memo), class: "form-control", rows: 3, placeholder: "メモを入力" %>
+      <div style="margin-bottom: 0;">
+        <%= label_tag "gift_person_memo", "メモ", style: "
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #555;
+          font-size: 14px;
+        " %>
+        <%= text_area_tag "gift_person[memo]", @gift_person&.memo || params.dig(:gift_person, :memo), 
+            style: "
+              width: 100%;
+              padding: 12px 16px;
+              border: 2px solid #e1e5e9;
+              border-radius: 6px;
+              font-size: 14px;
+              box-sizing: border-box;
+              min-height: 80px;
+              resize: vertical;
+            ",
+            placeholder: "メモを入力" %>
       </div>
     </div>
   </div>
   
-  <!-- ギフト日付入力（ベテランバックエンドエンジニアによるUX最適化実装） -->
-  <div class="mb-3">
-    <%= f.label :gift_at, "ギフトを贈った日", class: "form-label required" %>
+  <!-- ギフト日付入力 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :gift_at, "ギフトを贈った日", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
     <%= f.date_field :gift_at, 
-        class: "form-control #{'is-invalid' if gift_record.errors[:gift_at].any?}",
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+        ",
         value: gift_record.gift_at&.strftime('%Y-%m-%d'),
         min: 100.years.ago.strftime('%Y-%m-%d'),
         max: 1.year.from_now.strftime('%Y-%m-%d'),
-        required: true,
-        aria: { 
-          describedby: "gift_at_help #{'gift_at_error' if gift_record.errors[:gift_at].any?}",
-          label: "ギフトを贈った日を選択してください"
-        },
-        data: { 
-          'default-date': Date.current.strftime('%Y-%m-%d'),
-          bs_toggle: "tooltip",
-          bs_placement: "top",
-          bs_title: "ギフトを贈った日または贈る予定日を選択してください"
-        } %>
+        required: true %>
     
     <!-- ヘルプテキスト -->
-    <div id="gift_at_help" class="form-text text-muted">
-      <i class="fas fa-info-circle me-1"></i>
-      ギフトを贈った日または贈る予定日を選択してください（過去100年〜未来1年以内）
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      ギフトを贈った日または贈る予定日を選択してください（必須）
     </div>
     
     <!-- エラーメッセージ -->
     <% if gift_record.errors[:gift_at].any? %>
-      <div id="gift_at_error" class="invalid-feedback d-block">
-        <i class="fas fa-exclamation-triangle me-1"></i>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
         <%= gift_record.errors[:gift_at].first %>
       </div>
     <% end %>
     
     <!-- 便利なクイック選択ボタン -->
-    <div class="mt-2">
-      <small class="text-muted">クイック選択: </small>
-      <button type="button" class="btn btn-outline-secondary btn-sm me-1" 
-              onclick="setGiftDate('today')" 
-              data-bs-toggle="tooltip" 
-              data-bs-title="今日の日付を設定">
+    <div style="margin-top: 12px;">
+      <small style="color: #888;">クイック選択: </small>
+      <button type="button" 
+              style="
+                display: inline-block;
+                padding: 4px 8px;
+                margin-right: 6px;
+                margin-bottom: 6px;
+                border: 1px solid #6c757d;
+                background-color: transparent;
+                color: #6c757d;
+                border-radius: 4px;
+                font-size: 12px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+              " 
+              onclick="setGiftDate('today')"
+              onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white';"
+              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d';">
         今日
       </button>
-      <button type="button" class="btn btn-outline-secondary btn-sm me-1" 
-              onclick="setGiftDate('yesterday')" 
-              data-bs-toggle="tooltip" 
-              data-bs-title="昨日の日付を設定">
+      <button type="button" 
+              style="
+                display: inline-block;
+                padding: 4px 8px;
+                margin-right: 6px;
+                margin-bottom: 6px;
+                border: 1px solid #6c757d;
+                background-color: transparent;
+                color: #6c757d;
+                border-radius: 4px;
+                font-size: 12px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+              " 
+              onclick="setGiftDate('yesterday')"
+              onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white';"
+              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d';">
         昨日
       </button>
-      <button type="button" class="btn btn-outline-secondary btn-sm" 
-              onclick="setGiftDate('week_ago')" 
-              data-bs-toggle="tooltip" 
-              data-bs-title="1週間前の日付を設定">
+      <button type="button" 
+              style="
+                display: inline-block;
+                padding: 4px 8px;
+                margin-right: 6px;
+                margin-bottom: 6px;
+                border: 1px solid #6c757d;
+                background-color: transparent;
+                color: #6c757d;
+                border-radius: 4px;
+                font-size: 12px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+              " 
+              onclick="setGiftDate('week_ago')"
+              onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white';"
+              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d';">
         1週間前
       </button>
     </div>
   </div>
   <!-- ギフトアイテム名入力 -->
-  <div class="mb-3">
-    <%= f.label :item_name, "ギフトアイテム名", class: "form-label required" %>
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :item_name, "ギフトアイテム名", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
     <%= f.text_field :item_name, 
-        class: "form-control #{'is-invalid' if gift_record.errors[:item_name].any?}",
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+        ",
         placeholder: "例：花束、チョコレート、アクセサリーなど",
         required: true,
-        maxlength: 255,
-        aria: { 
-          describedby: "item_name_help #{'item_name_error' if gift_record.errors[:item_name].any?}",
-          label: "贈ったギフトのアイテム名を入力してください"
-        } %>
+        maxlength: 255 %>
     
-    <div id="item_name_help" class="form-text text-muted">
-      <i class="fas fa-info-circle me-1"></i>
-      贈ったギフトの名前を入力してください（最大255文字）
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      贈ったギフトの名前を入力してください（必須、最大255文字）
     </div>
     
     <% if gift_record.errors[:item_name].any? %>
-      <div id="item_name_error" class="invalid-feedback d-block">
-        <i class="fas fa-exclamation-triangle me-1"></i>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
         <%= gift_record.errors[:item_name].first %>
       </div>
     <% end %>
   </div>
 
   <!-- ギフト金額入力 -->
-  <div class="mb-3">
-    <%= f.label :amount, "金額", class: "form-label" %>
-    <div class="input-group">
-      <span class="input-group-text">¥</span>
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :amount, "金額", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <div style="display: flex; align-items: center;">
+      <span style="
+        background-color: #e9ecef;
+        border: 2px solid #e1e5e9;
+        border-right: none;
+        border-radius: 8px 0 0 8px;
+        padding: 14px 16px;
+        font-size: 16px;
+        color: #6c757d;
+      ">¥</span>
       <%= f.number_field :amount, 
-          class: "form-control #{'is-invalid' if gift_record.errors[:amount].any?}",
+          style: "
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 0 8px 8px 0;
+            border-left: none;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+          ",
           placeholder: "3000",
           min: 1,
-          step: 1,
-          aria: { 
-            describedby: "amount_help #{'amount_error' if gift_record.errors[:amount].any?}",
-            label: "ギフトの金額を入力してください"
-          } %>
+          step: 1 %>
     </div>
     
-    <div id="amount_help" class="form-text text-muted">
-      <i class="fas fa-info-circle me-1"></i>
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
       ギフトの金額を入力してください（任意、1円以上）
     </div>
     
     <% if gift_record.errors[:amount].any? %>
-      <div id="amount_error" class="invalid-feedback d-block">
-        <i class="fas fa-exclamation-triangle me-1"></i>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
         <%= gift_record.errors[:amount].first %>
       </div>
     <% end %>
   </div>
 
   <!-- メモ入力 -->
-  <div class="mb-3">
-    <%= f.label :memo, "メモ", class: "form-label" %>
+  <div style="margin-bottom: 32px; text-align: left;">
+    <%= f.label :memo, "メモ", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
     <%= f.text_area :memo, 
-        class: "form-control #{'is-invalid' if gift_record.errors[:memo].any?}",
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+          min-height: 100px;
+          resize: vertical;
+        ",
         placeholder: "ギフトに関するメモ、思い出、相手の反応など...",
-        rows: 3,
-        maxlength: 1000,
-        aria: { 
-          describedby: "memo_help #{'memo_error' if gift_record.errors[:memo].any?}",
-          label: "ギフトに関するメモを入力してください"
-        } %>
+        maxlength: 1000 %>
     
-    <div id="memo_help" class="form-text text-muted">
-      <i class="fas fa-info-circle me-1"></i>
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
       ギフトに関する思い出やメモを自由に記録してください（任意、最大1000文字）
     </div>
     
     <% if gift_record.errors[:memo].any? %>
-      <div id="memo_error" class="invalid-feedback d-block">
-        <i class="fas fa-exclamation-triangle me-1"></i>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
         <%= gift_record.errors[:memo].first %>
       </div>
     <% end %>
   </div>
-  
 
- <%# <div class="mb-3">
-    <%= f.label :image %>
-    <%# <%= f.file_field :image, class: "form-control", accept: 'image/*' , placeholder: t('gift_records.new.image') %>
-    <%# <%= f.hidden_field :board_image_cache %>
-  <%# </div> %>
-
-  <%= f.submit nil, class: "btn btn-primary" %>
+  <!-- 送信ボタン -->
+  <div style="margin-bottom: 32px;">
+    <%= f.submit nil, style: "
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #F6B352 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    " %>
+  </div>
 <% end %>
 
 <!-- エラー時の状態をJavaScript側に渡すためのデータ属性 -->

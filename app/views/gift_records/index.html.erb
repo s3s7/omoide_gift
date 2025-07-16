@@ -1,87 +1,5 @@
-<%# ベテランバックエンドエンジニアによるエンタープライズレベル実装 %>
 <% content_for(:title, "ギフト記録一覧") %>
 
-<!-- ヘッダーセクション -->
-<%# <div class="bg-white shadow-sm border-b border-gray-200 mb-6">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center py-4">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900">
-          <i class="fas fa-gift text-pink-500 mr-2"></i>
-          ギフト記録一覧
-        </h1>
-        <p class="mt-1 text-sm text-gray-600">
-          あなたの大切な贈り物の記録を管理できます
-        </p>
-      </div>
-      <div class="flex space-x-3">
-        <%= link_to new_gift_record_path, 
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200",
-            data: { turbo: false },
-            aria: { label: "新しいギフト記録を作成" } do %>
-          <%# <i class="fas fa-plus mr-2"></i> %>
-          <%# 新規作成 %>
-        <%# <% end %> %>
-      <%# </div> %>
-    <%# </div> %>
-  <%# </div> %>
-<%# </div> %> %>
-
-
-<!-- 検索・フィルタセクション（ミニマル版） -->
-<%# <div class="bg-white border border-gray-200 rounded p-1 mb-0">
-  <div class="flex items-center justify-between mb-0">
-    <h3 class="text-sm font-medium text-gray-700">
-      <i class="fas fa-filter mr-1 text-xs"></i>
-      検索・絞込
-    </h3>
-    <button type="button" id="filter-toggle" class="text-gray-400 hover:text-gray-600 lg:hidden">
-      <i class="fas fa-chevron-down text-xs"></i>
-    </button>
-  </div>
-  
-  <div id="filter-content" class="hidden lg:block m-0 p-0">
-    <%= form_with url: gift_records_path, method: :get, local: true, 
-        class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-2 items-end m-0 p-0",
-        data: { turbo: false } do |form| %>
-      
-      <%# <div class="md:col-span-2">
-        <%= form.text_field :search, 
-            value: params[:search],
-            placeholder: "キーワード検索",
-            class: "w-full text-xs rounded border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 h-7 px-2" %>
-      <%# </div> %> %>
-
-      <%# <div> %>
-        <%# <%= form.select :gift_person_id,  %>
-            <%# options_for_select([["相手", ""]] + @gift_people_options, params[:gift_person_id]),
-            {},
-            { class: "w-full text-xs rounded border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 h-7" } %> %>
-      <%# </div> %>
-
-      <%# <div> %>
-        <%# <%= form.date_field :date_from,  %>
-            <%# # value: params[:date_from],
-            # title: "開始日",
-            # class: "w-full text-xs rounded border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 h-7" %> %>
-      <%# </div> %>
-
-      <%# <div> %>
-        <%# <%= form.date_field :date_to,  %>
-            <%# value: params[:date_to], %>
-            <%# title: "終了日",  %>
-            <%# class: "w-full text-xs rounded border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500 h-7" %> %>
-      <%# </div> %>
-
-      <%# <div class="flex space-x-1"> %>
-        <%# <%= form.submit "検索",  %>
-            <%# class: "px-2 py-1 border border-transparent rounded text-xs font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none transition-colors" %> %>
-        <%# <%= link_to "リセット", gift_records_path, %>
-            <%# class: "px-2 py-1 border border-gray-300 rounded text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors" %> %>
-      <%# </div> %>
-    <%# <% end %> %>
-  <%# </div> %>
-<%# </div> %> %>
 <!-- ギフト記録一覧（カードレイアウト - ベテランバックエンドエンジニアによる最適化実装） -->
 <div class="mb-0 mt-0">
   <div class="flex justify-between items-center mb-0">
@@ -98,43 +16,39 @@
     <!-- カードグリッドレイアウト（2列表示） -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <% @gift_records.each do |record| %>
-        <div class="gift-record-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-          <!-- 上半分：将来の画像表示エリア -->
-          <div class="gift-image-placeholder h-48 bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center relative">
-            <!-- 将来の画像配置用プレースホルダー -->
-            <div class="text-center">
-              <div class="w-16 h-16 mx-auto mb-3 bg-white rounded-full flex items-center justify-center shadow-sm">
-                <i class="fas fa-gift text-2xl text-pink-500"></i>
+        <%= link_to gift_record_path(record), class: "block" do %>
+          <div class="gift-record-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
+            <!-- 上半分：将来の画像表示エリア -->
+            <div class="gift-image-placeholder h-48 bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center relative">
+              <!-- 将来の画像配置用プレースホルダー -->
+              <div class="text-center">
+                <div class="w-16 h-16 mx-auto mb-3 bg-white rounded-full flex items-center justify-center shadow-sm">
+                  <i class="fas fa-gift text-2xl text-pink-500"></i>
+                </div>
+                <p class="text-sm text-gray-500">画像エリア</p>
               </div>
-              <p class="text-sm text-gray-500">画像エリア</p>
-            </div>
-            
-            <!-- 操作ボタン（右上） -->
-            <div class="absolute top-3 right-3 flex space-x-2">
-              <%= link_to gift_record_path(record), 
-                  class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
-                  title: "詳細表示",
-                  aria: { label: "#{record.item_name}の詳細を表示" } do %>
-                <i class="fas fa-eye text-pink-600 text-sm"></i>
+              
+              <!-- 操作ボタン（右上） - 編集・削除のみ -->
+              <% if user_signed_in? && current_user == record.user %>
+                <div class="absolute top-3 right-3 flex space-x-2" onclick="event.stopPropagation(); event.preventDefault();">
+                  <%= link_to edit_gift_record_path(record), 
+                      class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                      title: "編集",
+                      aria: { label: "#{record.item_name}を編集" } do %>
+                    <i class="fas fa-edit text-blue-600 text-sm"></i>
+                  <% end %>
+                  <%= link_to gift_record_path(record), 
+                      data: { 
+                        confirm: "「#{record.item_name}」を削除しますか？",
+                        turbo_method: :delete
+                      },
+                      class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                      title: "削除",
+                      aria: { label: "#{record.item_name}を削除" } do %>
+                    <i class="fas fa-trash text-red-600 text-sm"></i>
+                  <% end %>
+                </div>
               <% end %>
-              <%= link_to edit_gift_record_path(record), 
-                  class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
-                  title: "編集",
-                  aria: { label: "#{record.item_name}を編集" } do %>
-                <i class="fas fa-edit text-blue-600 text-sm"></i>
-              <% end %>
-              <%= link_to gift_record_path(record), 
-                  method: :delete,
-                  data: { 
-                    confirm: "「#{record.item_name}」を削除しますか？",
-                    turbo_method: :delete
-                  },
-                  class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
-                  title: "削除",
-                  aria: { label: "#{record.item_name}を削除" } do %>
-                <i class="fas fa-trash text-red-600 text-sm"></i>
-              <% end %>
-            </div>
 
             <!-- 金額バッジ（左上） -->
             <% if record.amount.present? %>
@@ -219,6 +133,7 @@
             <% end %>
           </div>
         </div>
+        <% end %>
       <% end %>
     </div>
     <% else %>
@@ -233,13 +148,23 @@
         <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
           最初のギフト記録を作成して、大切な思い出を記録しましょう。
         </p>
-        <div class="mt-6">
-          <%= link_to new_gift_record_path,
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
-            <i class="fas fa-plus mr-2"></i>
-            最初の記録を作成
-          <% end %>
-        </div>
+        <% if user_signed_in? %>
+          <div class="mt-6">
+            <%= link_to new_gift_record_path,
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+              <i class="fas fa-plus mr-2"></i>
+              最初の記録を作成
+            <% end %>
+          </div>
+        <% else %>
+          <div class="mt-6">
+            <%= link_to new_user_session_path,
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+              <i class="fas fa-sign-in-alt mr-2"></i>
+              ログインして記録を作成
+            <% end %>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>
