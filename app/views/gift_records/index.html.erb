@@ -119,9 +119,7 @@
                 <div class="flex justify-between items-center mb-3">
                   <div class="flex items-center">
                     <i class="fas fa-heart mr-2 text-red-400"></i>
-                    <span class="text-sm font-medium" style="color: #4b5563 !important;">
-                      <%= truncate(record.gift_people&.name || "未設定", length: 15) %>
-                    </span>
+                   
                   </div>
                   <% if record.amount.present? %>
                     <div class="text-right">
