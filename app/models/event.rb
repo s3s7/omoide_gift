@@ -29,4 +29,5 @@ class Event < ApplicationRecord
   def self.popular_events(limit = 5)
     frequently_used.limit(limit)
   end
+
 end
