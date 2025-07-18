@@ -82,7 +82,7 @@ class GiftRecord < ApplicationRecord
   # インスタンスメソッド
   def display_amount
     return "未設定" unless amount.present?
-    
+
     # ActiveSupport::NumberHelperを使用してフォーマット
     "¥#{ActiveSupport::NumberHelper.number_to_delimited(amount)}"
   end
