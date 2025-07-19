@@ -1,0 +1,160 @@
+<% content_for(:title, "使い方 - 思い出ギフト") %>
+
+<div class="w-full">
+  <!-- ページヘッダー -->
+  <div class="w-full text-center py-16 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg mb-12">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">
+      <i class="fas fa-question-circle mr-3 text-blue-600"></i>
+      使い方ガイド
+    </h1>
+    <p class="text-xl text-gray-600">
+      思い出ギフトの基本的な使い方をご説明します
+    </p>
+  </div>
+
+  <!-- ステップバイステップガイド -->
+  <div class="w-full space-y-8">
+    <!-- ステップ1 -->
+    <div class="bg-white rounded-lg shadow-md p-8">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg mr-4">
+          1
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">アカウント登録・ログイン</h2>
+      </div>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        まずはアカウントを作成してログインしましょう。メールアドレスとパスワードだけで簡単に始められます。
+      </p>
+      <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+        <p class="text-blue-800">
+          <i class="fas fa-info-circle mr-2"></i>
+          登録は無料で、個人情報は厳重に保護されます。
+        </p>
+      </div>
+    </div>
+
+    <!-- ステップ2 -->
+    <div class="bg-white rounded-lg shadow-md p-8">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg mr-4">
+          2
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">ギフト相手を登録</h2>
+      </div>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        ギフトを贈る相手の情報を登録します。名前、関係性、誕生日、好みなどを記録できます。
+      </p>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li>相手の名前（ニックネームでもOK）</li>
+        <li>あなたとの関係性（家族、友人、恋人など）</li>
+        <li>誕生日（任意）</li>
+        <li>好きなもの・嫌いなもの（任意）</li>
+      </ul>
+    </div>
+
+    <!-- ステップ3 -->
+    <div class="bg-white rounded-lg shadow-md p-8">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg mr-4">
+          3
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">ギフト記録を作成</h2>
+      </div>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        実際に贈ったギフトの記録を作成しましょう。詳細な情報を記録することで、後で振り返ったときに素敵な思い出になります。
+      </p>
+      <ul class="list-disc list-inside text-gray-600 space-y-2">
+        <li>ギフトの名前・商品名</li>
+        <li>贈った相手</li>
+        <li>贈った日付</li>
+        <li>イベント（誕生日、記念日など）</li>
+        <li>金額（任意）</li>
+        <li>メモ・感想（任意）</li>
+      </ul>
+    </div>
+
+    <!-- ステップ4 -->
+    <div class="bg-white rounded-lg shadow-md p-8">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-lg mr-4">
+          4
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">記録を活用する</h2>
+      </div>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        記録したギフトの履歴を確認し、次回のギフト選びに活用しましょう。また、公開設定にすることで他のユーザーと情報を共有できます。
+      </p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h3 class="font-bold text-gray-800 mb-2">
+            <i class="fas fa-eye mr-2 text-blue-600"></i>
+            記録の確認
+          </h3>
+          <p class="text-sm text-gray-600">過去のギフト履歴を一覧で確認</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h3 class="font-bold text-gray-800 mb-2">
+            <i class="fas fa-share mr-2 text-green-600"></i>
+            情報の共有
+          </h3>
+          <p class="text-sm text-gray-600">公開設定でアイデアを共有</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- よくある質問 -->
+  <div class="w-full mt-12">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">よくある質問</h2>
+    <div class="space-y-4">
+      <div class="bg-white rounded-lg shadow-md">
+        <details class="p-6">
+          <summary class="font-bold text-gray-800 cursor-pointer hover:text-blue-600">
+            Q. 記録したギフト情報は他の人に見られますか？
+          </summary>
+          <p class="mt-4 text-gray-600">
+            A. デフォルトでは非公開設定になっています。公開設定に変更することで、他のユーザーと情報を共有できますが、個人情報（相手の名前など）は表示されません。
+          </p>
+        </details>
+      </div>
+      <div class="bg-white rounded-lg shadow-md">
+        <details class="p-6">
+          <summary class="font-bold text-gray-800 cursor-pointer hover:text-blue-600">
+            Q. 無料で利用できますか？
+          </summary>
+          <p class="mt-4 text-gray-600">
+            A. はい、基本機能は全て無料でご利用いただけます。
+          </p>
+        </details>
+      </div>
+      <div class="bg-white rounded-lg shadow-md">
+        <details class="p-6">
+          <summary class="font-bold text-gray-800 cursor-pointer hover:text-blue-600">
+            Q. スマートフォンでも利用できますか？
+          </summary>
+          <p class="mt-4 text-gray-600">
+            A. はい、スマートフォンやタブレットでもご利用いただけるレスポンシブデザインになっています。
+          </p>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- アクションエリア -->
+  <div class="w-full text-center mt-12 py-8 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+    <h3 class="text-2xl font-bold text-gray-800 mb-4">さあ、始めましょう！</h3>
+    <% if user_signed_in? %>
+      <%= link_to new_gift_record_path, 
+          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-300 shadow-lg hover:shadow-xl" do %>
+        <i class="fas fa-plus mr-2"></i>
+        最初の記録を作成
+      <% end %>
+    <% else %>
+      <%= link_to new_user_session_path, 
+          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl" do %>
+        <i class="fas fa-sign-in-alt mr-2"></i>
+        今すぐ始める
+      <% end %>
+    <% end %>
+  </div>
+</div>

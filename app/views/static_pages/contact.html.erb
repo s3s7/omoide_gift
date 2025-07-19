@@ -1,0 +1,108 @@
+<% content_for(:title, "お問い合わせ - 思い出ギフト") %>
+
+<div class="w-full">
+  <!-- ページヘッダー -->
+  <div class="w-full text-center py-16 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg mb-12">
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">
+      <i class="fas fa-envelope mr-3 text-purple-600"></i>
+      お問い合わせ
+    </h1>
+    <p class="text-xl text-gray-600">
+      現在、お問い合わせフォームを準備中です
+    </p>
+  </div>
+
+  <!-- 準備中のお知らせ -->
+  <div class="w-full text-center py-12 bg-white rounded-lg shadow-md mb-12">
+    <div class="mx-auto h-24 w-24 text-purple-300 mb-6">
+      <i class="fas fa-tools text-6xl"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">
+      お問い合わせフォーム準備中
+    </h2>
+    <p class="text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+      より便利にご利用いただけるよう、お問い合わせフォーム機能を開発中です。<br>
+      現在は以下の方法でお問い合わせを承っております。
+    </p>
+    
+    <!-- 一時的な連絡方法 -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-md mx-auto">
+      <h3 class="text-lg font-bold text-gray-800 mb-3">
+        <i class="fas fa-envelope mr-2 text-blue-600"></i>
+        メールでのお問い合わせ
+      </h3>
+      <p class="text-blue-800 font-semibold mb-2">
+        contact@omoide-gift.com
+      </p>
+      <p class="text-sm text-gray-600">
+        ご質問・ご要望・不具合報告など<br>
+        お気軽にお問い合わせください
+      </p>
+    </div>
+  </div>
+
+  <!-- 近日リリース予定の機能 -->
+  <div class="w-full bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-8 mb-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+      <i class="fas fa-rocket mr-2 text-purple-600"></i>
+      近日リリース予定
+    </h2>
+    
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-lg p-6 text-center shadow-sm">
+        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-wpforms text-xl text-purple-600"></i>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">お問い合わせフォーム</h3>
+        <p class="text-sm text-gray-600">
+          カテゴリ別の便利なフォーム
+        </p>
+      </div>
+      
+      <div class="bg-white rounded-lg p-6 text-center shadow-sm">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-headset text-xl text-green-600"></i>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">FAQ充実</h3>
+        <p class="text-sm text-gray-600">
+          よくある質問の詳細化
+        </p>
+      </div>
+      
+      <div class="bg-white rounded-lg p-6 text-center shadow-sm">
+        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-clock text-xl text-blue-600"></i>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">迅速サポート</h3>
+        <p class="text-sm text-gray-600">
+          お問い合わせ管理システム
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 他のページへのナビゲーション -->
+  <div class="w-full text-center py-8 bg-white rounded-lg shadow-md">
+    <h3 class="text-2xl font-bold text-gray-800 mb-6">その他の情報</h3>
+    
+    <div class="space-y-4">
+      <%= link_to how_to_use_path, 
+          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-sm hover:shadow-md mr-4 mb-4" do %>
+        <i class="fas fa-question-circle mr-2"></i>
+        使い方ガイド
+      <% end %>
+      
+      <%= link_to terms_path, 
+          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 shadow-sm hover:shadow-md mr-4 mb-4" do %>
+        <i class="fas fa-file-contract mr-2"></i>
+        利用規約
+      <% end %>
+      
+      <%= link_to privacy_path, 
+          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-300 shadow-sm hover:shadow-md mb-4" do %>
+        <i class="fas fa-shield-alt mr-2"></i>
+        プライバシーポリシー
+      <% end %>
+    </div>
+  </div>
+</div>
