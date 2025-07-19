@@ -1,15 +1,15 @@
 class GiftRecord < ApplicationRecord
   # リレーション
   belongs_to :user
-  belongs_to :event  # イベントは必須
+  belongs_to :event
   belongs_to :gift_people, class_name: "GiftPerson"
 
-  # バリデーション（ベテランバックエンドエンジニアによる堅牢性の確保）
+  # バリデーション
   validates :item_name, presence: true, length: { maximum: 255 }
   validates :amount, numericality: { greater_than: 0, allow_nil: true }
   validates :memo, length: { maximum: 1000 }
 
-  # 日付バリデーション（包括的な日付妥当性チェック）
+  # 日付バリデーション
   validates :gift_at, presence: { message: "を選択してください" }
   validate :gift_at_is_valid_date
   validate :gift_at_is_reasonable_date
@@ -81,7 +81,10 @@ class GiftRecord < ApplicationRecord
 
   # インスタンスメソッド
   def display_amount
-    amount.present? ? "¥#{amount.to_s(:delimited)}" : "未設定"
+    return "未設定" unless amount.present?
+
+    # ActiveSupport::NumberHelperを使用してフォーマット
+    "¥#{ActiveSupport::NumberHelper.number_to_delimited(amount)}"
   end
 
   def display_gift_date

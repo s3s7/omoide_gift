@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root "gift_records#index"
+  root "static_pages#top"
 
   devise_for :users
 
