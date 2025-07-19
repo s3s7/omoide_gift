@@ -15,48 +15,47 @@
   <% if @gift_records.any? %>
 
     <!-- カードグリッドレイアウト（レスポンシブ対応） -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-3">
       <% @gift_records.each do |record| %>
         <div class="gift-card-container bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" onclick="window.location.href='<%= gift_record_path(record) %>'" style="cursor: pointer;">
             <!-- 上半分：将来の画像表示エリア -->
-            <div class="h-48 bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center relative">
+            <div class="h-32 sm:h-40 lg:h-48 bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center relative">
               <!-- 将来の画像配置用プレースホルダー -->
               <div class="text-center">
-                <div class="w-16 h-16 mx-auto mb-3 bg-white rounded-full flex items-center justify-center shadow-sm">
-                  <i class="fas fa-gift text-2xl text-pink-500"></i>
+                <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-3 bg-white rounded-full flex items-center justify-center shadow-sm">
+                  <i class="fas fa-gift text-lg sm:text-2xl text-pink-500"></i>
                 </div>
-                <p class="text-sm text-gray-500">画像エリア</p>
+                <p class="text-xs sm:text-sm text-gray-500">画像エリア</p>
               </div>
             
               <!-- 操作ボタン（右上） - 編集・削除のみ -->
               <% if user_signed_in? && current_user == record.user %>
-                <div class="absolute top-3 right-3 flex space-x-2" onclick="event.stopPropagation();">
+                <div class="absolute top-2 right-2 sm:top-3 sm:right-3 flex space-x-1 sm:space-x-2" onclick="event.stopPropagation();">
                   <%= link_to edit_gift_record_path(record), 
-                      class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                      class: "p-1 sm:p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
                       title: "編集",
                       onclick: "event.stopPropagation();",
                       aria: { label: "#{record.item_name}を編集" } do %>
-                    <i class="fas fa-edit text-blue-600 text-sm"></i>
+                    <i class="fas fa-edit text-blue-600 text-xs sm:text-sm"></i>
                   <% end %>
                   <%= link_to gift_record_path(record), 
                       data: { 
                         confirm: "「#{record.item_name}」を削除しますか？",
                         turbo_method: :delete
                       },
-                      class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                      class: "p-1 sm:p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
                       title: "削除",
                       onclick: "event.stopPropagation();",
                       aria: { label: "#{record.item_name}を削除" } do %>
-                    <i class="fas fa-trash text-red-600 text-sm"></i>
+                    <i class="fas fa-trash text-red-600 text-xs sm:text-sm"></i>
                   <% end %>
                 </div>
               <% end %>
-              
 
               <!-- 金額バッジ（左下） -->
               <% if record.amount.present? %>
-                <div class="absolute bottom-3 left-3">
-                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
+                  <span class="inline-flex items-center px-2 py-0.5 sm:px-2.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     <%# ¥<%= number_with_delimiter(record.amount) %>
                   </span>
                 </div>
@@ -64,16 +63,15 @@
             </div>
 
             <!-- 下半分：ギフト情報 -->
-            <div class="p-4 bg-white">
-              
+            <div class="p-3 sm:p-4 bg-white">
               <!-- モバイル版表示項目 -->
               <div class="sm:hidden">
-                <!-- ニックネーム -->
+                <!-- 投稿者名 -->
                 <div class="mb-2">
                   <div class="flex items-center text-sm">
-                    <i class="fas fa-heart mr-2 text-red-400"></i>
-                    <span class="font-medium" style="color: #4b5563 !important;">
-                      <%= truncate(record.gift_people&.name || "未設定", length: 15) %>
+                    <i class="fas fa-user mr-2 text-blue-500"></i>
+                    <span class="font-medium" style="color: #374151 !important;">
+                      <%= truncate(record.user.name.presence || "ユーザー", length: 15) %>
                     </span>
                   </div>
                 </div>
@@ -84,6 +82,16 @@
                     <i class="fas fa-calendar-star mr-2 text-purple-500"></i>
                     <span style="color: #4b5563 !important;">
                       <%= truncate(record.event&.name || "未設定", length: 20) %>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- ニックネーム -->
+                <div class="mb-2">
+                  <div class="flex items-center text-sm">
+                    <i class="fas fa-heart mr-2 text-red-400"></i>
+                    <span class="font-medium" style="color: #4b5563 !important;">
+                      <%= truncate(record.gift_people&.name || "未設定", length: 15) %>
                     </span>
                   </div>
                 </div>
@@ -100,7 +108,7 @@
 
                 <!-- アイテム名 -->
                 <div class="mb-2">
-                  <h4 class="text-lg font-bold leading-tight" style="color: #111827 !important;">
+                  <h4 class="text-base sm:text-lg font-bold leading-tight" style="color: #111827 !important;">
                     <%= record.item_name.presence || "未設定" %>
                   </h4>
                 </div>
@@ -119,7 +127,7 @@
                 <div class="flex justify-between items-center mb-3">
                   <div class="flex items-center">
                     <i class="fas fa-heart mr-2 text-red-400"></i>
-                   
+
                   </div>
                   <% if record.amount.present? %>
                     <div class="text-right">
