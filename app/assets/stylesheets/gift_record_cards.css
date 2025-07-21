@@ -1,4 +1,4 @@
-/* ギフト記録カードレイアウト - ベテランバックエンドエンジニアによる最適化実装 */
+/* ギフト記録カードレイアウト - シンプル版 */
 
 /* ==================== カード基本スタイル ==================== */
 
@@ -114,9 +114,23 @@
 
 /* ==================== レスポンシブデザイン ==================== */
 
+/* デスクトップ5列レイアウト対応 */
+@media (min-width: 1024px) {
+  .gift-card-container {
+    height: 480px; /* 5列レイアウト用の高さ */
+  }
+}
+
+@media (min-width: 1280px) {
+  .gift-card-container {
+    height: 500px; /* xl画面での高さ */
+  }
+}
+
 /* タブレット対応 */
-@media (max-width: 1024px) {
-  .gift-record-card {
+@media (max-width: 1023px) {
+  .gift-record-card,
+  .gift-card-container {
     height: 400px;
   }
   
@@ -125,54 +139,111 @@
   }
 }
 
-/* モバイル対応 */
+/* モバイル対応 - より大きなカード（重なり防止） */
 @media (max-width: 768px) {
-  .gift-record-card {
-    height: 380px;
-    margin-bottom: 1rem;
+  .gift-record-card,
+  .gift-card-container {
+    height: 520px !important; /* カードを大幅に拡大 */
+    margin-bottom: 0.25rem;
+    /* グリッドアイテムの幅制限 */
+    width: 100% !important;
+    overflow: hidden !important;
   }
   
   .gift-image-placeholder {
-    min-height: 180px;
+    min-height: 240px !important; /* 画像エリアを大幅拡大 */
   }
   
+  .gift-record-card .p-3,
   .gift-record-card .p-4 {
-    padding: 0.75rem;
+    padding: 1.25rem !important; /* パディングを大きく */
   }
   
   /* モバイルでは文字サイズを調整 */
   .gift-record-card .text-sm {
-    font-size: 0.825rem;
+    font-size: 0.9rem !important; /* より大きく */
   }
   
   .gift-record-card .text-xs {
-    font-size: 0.7rem;
+    font-size: 0.8rem !important; /* より大きく */
+  }
+  
+  .gift-record-card .text-base {
+    font-size: 1.1rem !important; /* より大きく */
+  }
+  
+  .gift-record-card .text-lg {
+    font-size: 1.25rem !important; /* より大きく */
   }
 }
 
-/* 小さなモバイル対応 */
+/* 小さなモバイル対応 - 重なり防止 */
 @media (max-width: 480px) {
-  .gift-record-card {
-    height: 360px;
+  .gift-record-card,
+  .gift-card-container {
+    height: 500px !important; /* 大幅拡大 */
+    /* 正確な計算で重なりを防止 */
+    min-width: calc((100vw - 1rem - 0.5rem) / 2) !important;
+    max-width: calc((100vw - 1rem - 0.5rem) / 2) !important;
+    flex: 0 0 auto !important;
   }
   
   .gift-image-placeholder {
-    min-height: 160px;
+    min-height: 220px !important; /* 大幅拡大 */
   }
   
-  .gift-image-placeholder .w-16 {
-    width: 3rem;
-    height: 3rem;
+  .gift-image-placeholder .w-14,
+  .gift-image-placeholder .w-16,
+  .gift-image-placeholder .w-18 {
+    width: 4rem !important; /* より大きく */
+    height: 4rem !important;
   }
   
+  .gift-record-card .absolute.top-2.right-2,
   .gift-record-card .absolute.top-3.right-3 {
     top: 0.5rem;
     right: 0.5rem;
   }
   
+  .gift-record-card .absolute.top-2.left-2,
   .gift-record-card .absolute.top-3.left-3 {
     top: 0.5rem;
     left: 0.5rem;
+  }
+  
+  /* 特小モバイル専用の適切な間隔 */
+  .grid[class*="grid-cols-2"] {
+    gap: 0.5rem !important; /* 重なり防止のため適切な間隔 */
+  }
+  
+  /* 親コンテナーのパディング調整 */
+  .mb-0.mt-0 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+}
+
+/* モバイル専用の画面幅最大活用 - 重なり防止 */
+@media (max-width: 640px) {
+  .grid[class*="grid-cols-2"] {
+    gap: 0.5rem !important; /* 適切な間隔で重なりを防止 */
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .gift-card-container {
+    width: 100% !important;
+    /* 正確な計算：(100vw - 親パディング - gap) / 2 */
+    min-width: calc((100vw - 1rem - 0.5rem) / 2) !important;
+    max-width: calc((100vw - 1rem - 0.5rem) / 2) !important;
+    flex: 0 0 auto !important;
+  }
+  
+  /* 親コンテナーも最適化 */
+  .mb-0.mt-0 {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
 }
 
@@ -231,15 +302,31 @@
   }
 }
 
-/* ==================== デバッグモード（開発環境用） ==================== */
+/* ==================== グリッドレイアウト基本設定 ==================== */
 
-/* 開発環境でのカード境界線表示 */
-.debug-cards .gift-record-card {
-  border: 2px dashed #ef4444;
-}
-
-.debug-cards .gift-image-placeholder {
-  border-bottom: 2px dashed #3b82f6;
+/* モバイル版の安全なグリッド設定 */
+@media (max-width: 767px) {
+  .grid[class*="grid-cols-2"] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important; /* 確実に2列 */
+    grid-auto-rows: auto !important;
+    align-items: start !important;
+    box-sizing: border-box !important;
+  }
+  
+  .gift-card-container {
+    box-sizing: border-box !important;
+    position: relative !important;
+    width: 100% !important;
+    min-width: 0 !important; /* flexboxでの収縮を許可 */
+  }
+  
+  /* 親コンテナの最終調整 */
+  .mb-0.mt-0 {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    overflow-x: hidden !important; /* 横スクロール防止 */
+  }
 }
 
 /* ==================== プリント対応 ==================== */
