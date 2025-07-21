@@ -1,0 +1,109 @@
+<% content_for(:title, "思い出ギフト") %>
+
+<div class="w-full">
+<!-- ヒーローセクション -->
+<div class="w-full text-center py-20 bg-gradient-to-r rounded-lg mb-12">
+  <h1 class="text-4xl font-bold text-gray-800 mb-4 flex justify-center items-center gap-4">
+    <%= image_tag "omoide_gift_icon_flower.png", alt: "思い出ギフトロゴ", class: "w-12 h-12" %>
+    <span>思い出ギフト</span>
+    <%= image_tag "omoide_gift_icon_gift.png", alt: "思い出ギフトロゴ", class: "w-13 h-17 -ml-4" %>
+  </h1>
+  <p class="text-xl text-gray-600 mb-8">
+    誰かの定番が誰かの特別なギフトに
+  </p>
+  <p class="text-lg text-gray-700 mb-8">
+    思い出ギフトは、自分が贈ったギフトを記録し、思い出を振り返るとともにギフト選びのサポートをするサービスです。
+  </p>
+  
+  <% if user_signed_in? %>
+    <%= link_to new_gift_record_path, 
+        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-300 shadow-lg hover:shadow-xl" do %>
+      <i class="fas fa-plus mr-2"></i>
+      思い出を記録する
+    <% end %>
+  <% else %>
+    <%= link_to new_user_session_path, 
+        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl" do %>
+      <i class="fas fa-sign-in-alt mr-2"></i>
+      ログイン・新規登録
+    <% end %>
+  <% end %>
+</div>
+
+<!-- 機能紹介セクション -->
+<div class="w-full mb-12">
+  <div class="w-full block">
+    <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-16 h-16 mb-4 bg-pink-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-gift text-2xl text-pink-600"></i>
+        </div>
+        <p class="text-gray-600 leading-relaxed mb-6">
+          思い出を記録しよう！<br><br>
+          いつ、誰に、何を贈ったのかを<br>
+          ギフト相手ごとに記録が出来ます
+        </p>
+        <% if user_signed_in? %>
+          <%= link_to new_gift_record_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+            <i class="fas fa-plus mr-2"></i>
+            記録する！
+          <% end %>
+        <% else %>
+          <%= link_to new_user_session_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+            <i class="fas fa-sign-in-alt mr-2"></i>
+            記録する！
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-16 h-16 mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-users text-2xl text-blue-600"></i>
+        </div>
+        <p class="text-gray-600 leading-relaxed mb-6">
+          ギフト相手の詳細を登録しよう！<br><br>
+          ギフト相手を登録することで、ギフト相手ごとに記録を見ることが出来ます。<br>
+          また、好き嫌いを登録しておくことで、より喜んでもらえるギフト選びが可能です
+        </p>
+        <% if user_signed_in? %>
+          <%= link_to new_gift_record_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+            <i class="fas fa-user-plus mr-2"></i>
+            記録する！
+          <% end %>
+        <% else %>
+          <%= link_to new_user_session_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+            <i class="fas fa-sign-in-alt mr-2"></i>
+            登録する！
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
+      <div class="flex flex-col items-center text-center">
+        <div class="w-16 h-16 mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-chart-line text-2xl text-purple-600"></i>
+        </div>
+        <p class="text-gray-600 leading-relaxed mb-6">
+          みんなのギフトを見に行こう！<br><br>
+          記録した思い出を公開出来ます。<br>
+          ギフト選びを迷った際にあっと驚くようなアイディが見つかるかも
+        </p>
+        <%= link_to gift_records_path, 
+            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+          <i class="fas fa-eye mr-2"></i>
+          見に行く！
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>

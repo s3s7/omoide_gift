@@ -1,33 +1,21 @@
-<header class="fixed top-0 left-0 right-0 bg-white shadow-md z-10">
+<header class="fixed top-0 left-0 right-0 shadow-md z-10" style="background-color: #F6B352;">
   <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-    <div class="text-xl font-bold text-gray-800">
-      思い出ギフトロゴ
+    <div class="text-xl font-bold text-gray-900">
+      <%= link_to "思い出ギフトロゴ", root_path, class: "hover:text-gray-700 transition-colors duration-200" %>
     </div>
     
-    <!-- 新規作成ボタン（ログイン時のみ表示） -->
-    <% if user_signed_in? %>
-      <div class="hidden md:block">
-        <%= link_to new_gift_record_path, 
-            class: "inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition-colors duration-200",
-            data: { turbo: false },
-            aria: { label: "新しいギフト記録を作成" } do %>
-          <i class="fas fa-plus mr-2"></i>
-          新規作成
-        <% end %>
-      </div>
-    <% end %>
     
     <!-- ハンバーガーメニュー -->
     <div class="relative">
       <button id="menu-toggle" class="focus:outline-none p-2">
-        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
         </svg>
       </button>
       <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border">
 
         <% if user_signed_in? %>
-          <%= link_to "思い出を追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
+          <%= link_to "思い出を追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "ログアウト", destroy_user_session_path, 
               data: { 
                 turbo_method: :delete,
@@ -38,6 +26,15 @@
           <%= link_to "ログイン/新規登録", new_user_session_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
         <% end %>
         <%= link_to "みんなのギフト", gift_records_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        
+        <!-- Divider -->
+        <div class="border-t border-gray-200 my-2"></div>
+        
+        <!-- Additional Pages -->
+        <%= link_to "使い方", how_to_use_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        <%= link_to "利用規約", terms_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        <%= link_to "プライバシーポリシー", privacy_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        <%= link_to "お問い合わせ", contact_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
 
       </div>
     </div>

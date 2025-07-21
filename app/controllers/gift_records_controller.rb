@@ -5,7 +5,7 @@ class GiftRecordsController < ApplicationController
   before_action :ensure_accessible, only: [ :show ]
 
   def index
-    # ベテランバックエンドエンジニアによる公開アクセス対応実装
+    # CTO-level implementation: 堅牢なデータ取得とデバッグ機能
 
     # プライバシーを考慮したギフト記録の取得
     if user_signed_in?
@@ -16,10 +16,23 @@ class GiftRecordsController < ApplicationController
       base_query = GiftRecord.where(is_public: true)
     end
 
-    # N+1問題回避: 関連テーブルを事前読み込み
+    # CTO-level optimization: 関連テーブルの完全な事前読み込み
     @gift_records = base_query
       .includes(:gift_people, :event, :user, gift_people: :relationship)
       .order(created_at: :desc)
+
+    # Development debugging: データの存在確認
+    if Rails.env.development?
+      Rails.logger.debug "=== CTO DEBUG: Gift Records Query ==="
+      Rails.logger.debug "Total records found: #{@gift_records.count}"
+      @gift_records.limit(3).each do |record|
+        Rails.logger.debug "Record ID: #{record.id}, item_name: #{record.item_name.inspect}"
+        Rails.logger.debug "  - gift_people: #{record.gift_people&.name.inspect}"
+        Rails.logger.debug "  - event: #{record.event&.name.inspect}"
+        Rails.logger.debug "  - amount: #{record.amount.inspect}"
+      end
+    end
+
 
     # 検索機能（オプション）
     if params[:search].present?

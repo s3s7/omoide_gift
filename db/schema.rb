@@ -10,9 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_14_101824) do
+ActiveRecord::Schema[7.2].define(version: 2025_07_17_111217) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "ages", force: :cascade do |t|
+    t.string "year"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "events", force: :cascade do |t|
     t.string "name"
@@ -49,6 +55,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_14_101824) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "gift_people_id", null: false
+    t.bigint "age_id"
+    t.index ["age_id"], name: "index_gift_records_on_age_id"
     t.index ["event_id"], name: "index_gift_records_on_event_id"
     t.index ["gift_people_id"], name: "index_gift_records_on_gift_people_id"
     t.index ["user_id"], name: "index_gift_records_on_user_id"
@@ -76,6 +84,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_14_101824) do
   add_foreign_key "gift_people", "gift_records"
   add_foreign_key "gift_people", "relationships"
   add_foreign_key "gift_people", "users"
+  add_foreign_key "gift_records", "ages"
   add_foreign_key "gift_records", "events"
   add_foreign_key "gift_records", "gift_people", column: "gift_people_id"
   add_foreign_key "gift_records", "users"

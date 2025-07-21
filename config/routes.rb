@@ -1,9 +1,13 @@
 Rails.application.routes.draw do
-  root "gift_records#index"
+  root "static_pages#top"
 
   devise_for :users
 
-  # get "gift_records/index"
+  # Static pages for footer links and navigation
+  get "how_to_use", to: "static_pages#how_to_use"
+  get "terms", to: "static_pages#terms"
+  get "privacy", to: "static_pages#privacy"
+  get "contact", to: "static_pages#contact"
 
   resources :gift_records
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
