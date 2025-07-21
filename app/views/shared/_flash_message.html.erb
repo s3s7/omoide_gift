@@ -1,5 +1,150 @@
-<% flash.each do |message_type, message| %>
-  <div class="alert alert-<%= message_type %>">
-    <%= message %>
-  </div>
-<% end %>
+<!-- フラッシュメッセージ表示 - ベテランバックエンドエンジニアによる実装 -->
+<div id="flash-messages" class="fixed top-20 right-4 z-50 space-y-3">
+  <% flash.each do |message_type, message| %>
+    <% 
+      # メッセージタイプに応じたスタイリングを設定
+      case message_type.to_s
+      when 'notice', 'success'
+        bg_color = "bg-green-50"
+        border_color = "border-green-200"
+        text_color = "text-green-800"
+        icon_color = "text-green-500"
+        icon_class = "fas fa-check-circle"
+      when 'alert', 'error'
+        bg_color = "bg-red-50"
+        border_color = "border-red-200"
+        text_color = "text-red-800"
+        icon_color = "text-red-500"
+        icon_class = "fas fa-exclamation-circle"
+      when 'warning'
+        bg_color = "bg-yellow-50"
+        border_color = "border-yellow-200"
+        text_color = "text-yellow-800"
+        icon_color = "text-yellow-500"
+        icon_class = "fas fa-exclamation-triangle"
+      else
+        bg_color = "bg-blue-50"
+        border_color = "border-blue-200"
+        text_color = "text-blue-800"
+        icon_color = "text-blue-500"
+        icon_class = "fas fa-info-circle"
+      end
+    %>
+    
+    <div class="flash-message <%= bg_color %> <%= border_color %> <%= text_color %> border rounded-lg shadow-lg max-w-md w-full p-4 transform transition-all duration-300 ease-in-out opacity-0 translate-x-full"
+         data-message-type="<%= message_type %>"
+         style="animation: slideInRight 0.5s ease-out forwards;">
+      <div class="flex items-start">
+        <!-- アイコン -->
+        <div class="flex-shrink-0">
+          <i class="<%= icon_class %> <%= icon_color %> text-lg mr-3 mt-0.5"></i>
+        </div>
+        
+        <!-- メッセージ内容 -->
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium leading-5">
+            <%= message %>
+          </p>
+        </div>
+        
+        <!-- 閉じるボタン -->
+        <div class="ml-4 flex-shrink-0 flex">
+          <button type="button" 
+                  class="inline-flex <%= text_color %> hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-<%= bg_color.split('-')[1] %>-50 focus:ring-<%= icon_color.split('-')[1] %>-500 rounded-md p-1.5 transition-opacity duration-150"
+                  onclick="dismissFlashMessage(this)">
+            <span class="sr-only">閉じる</span>
+            <i class="fas fa-times text-sm"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- カスタムCSS -->
+<style>
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+  
+  .flash-message {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+  
+  .flash-message.fade-out {
+    animation: slideOutRight 0.3s ease-in forwards;
+  }
+  
+  /* モバイル対応 */
+  @media (max-width: 640px) {
+    #flash-messages {
+      top: 80px;
+      left: 1rem;
+      right: 1rem;
+      max-width: none;
+    }
+    
+    .flash-message {
+      max-width: none;
+    }
+  }
+</style>
+
+<!-- JavaScript -->
+<script>
+  // フラッシュメッセージの自動消去とインタラクション
+  document.addEventListener('DOMContentLoaded', function() {
+    // 自動消去（5秒後）
+    const flashMessages = document.querySelectorAll('.flash-message');
+    flashMessages.forEach(function(message, index) {
+      // 段階的に表示（複数メッセージがある場合）
+      setTimeout(function() {
+        message.style.opacity = '1';
+        message.style.transform = 'translateX(0)';
+      }, index * 200);
+      
+      // 自動消去
+      setTimeout(function() {
+        dismissFlashMessage(message.querySelector('button'));
+      }, 5000 + (index * 200));
+    });
+  });
+  
+  // フラッシュメッセージを閉じる関数
+  function dismissFlashMessage(button) {
+    const messageElement = button.closest('.flash-message');
+    if (messageElement) {
+      messageElement.classList.add('fade-out');
+      setTimeout(function() {
+        messageElement.remove();
+      }, 300);
+    }
+  }
+  
+  // ページ遷移時にメッセージをクリア
+  document.addEventListener('turbo:before-visit', function() {
+    const flashContainer = document.getElementById('flash-messages');
+    if (flashContainer) {
+      flashContainer.innerHTML = '';
+    }
+  });
+</script>
