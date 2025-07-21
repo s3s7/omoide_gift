@@ -112,33 +112,47 @@
 <!-- JavaScript -->
 <script>
   // フラッシュメッセージの自動消去とインタラクション
-  document.addEventListener('DOMContentLoaded', function() {
-    // 自動消去（5秒後）
+  function initFlashMessages() {
+    // 自動消去（3秒後に短縮して、ハンバーガーメニューとの競合を減らす）
     const flashMessages = document.querySelectorAll('.flash-message');
     flashMessages.forEach(function(message, index) {
       // 段階的に表示（複数メッセージがある場合）
       setTimeout(function() {
-        message.style.opacity = '1';
-        message.style.transform = 'translateX(0)';
+        if (message) {
+          message.style.opacity = '1';
+          message.style.transform = 'translateX(0)';
+        }
       }, index * 200);
       
-      // 自動消去
+      // 自動消去（3秒後）
       setTimeout(function() {
-        dismissFlashMessage(message.querySelector('button'));
-      }, 5000 + (index * 200));
+        if (message && message.parentNode) {
+          dismissFlashMessage(message);
+        }
+      }, 3000 + (index * 200));
     });
-  });
+  }
   
-  // フラッシュメッセージを閉じる関数
-  function dismissFlashMessage(button) {
-    const messageElement = button.closest('.flash-message');
-    if (messageElement) {
+  // フラッシュメッセージを閉じる関数（改良版）
+  function dismissFlashMessage(messageElement) {
+    // button要素が渡された場合は親要素を取得
+    if (messageElement && messageElement.tagName === 'BUTTON') {
+      messageElement = messageElement.closest('.flash-message');
+    }
+    
+    if (messageElement && messageElement.classList.contains('flash-message')) {
       messageElement.classList.add('fade-out');
       setTimeout(function() {
-        messageElement.remove();
+        if (messageElement && messageElement.parentNode) {
+          messageElement.remove();
+        }
       }, 300);
     }
   }
+  
+  // DOMContentLoaded と Turbo 両方に対応
+  document.addEventListener('DOMContentLoaded', initFlashMessages);
+  document.addEventListener('turbo:load', initFlashMessages);
   
   // ページ遷移時にメッセージをクリア
   document.addEventListener('turbo:before-visit', function() {

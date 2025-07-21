@@ -12,7 +12,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
         </svg>
       </button>
-      <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border">
+      <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border" style="z-index: 9999;">
 
         <% if user_signed_in? %>
           <%= link_to "思い出を追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
