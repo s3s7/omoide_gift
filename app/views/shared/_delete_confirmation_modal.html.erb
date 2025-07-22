@@ -1,0 +1,125 @@
+<%# encoding: utf-8 %>
+<!-- 削除確認モーダル -->
+<div id="delete-confirmation-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3 text-center">
+      <!-- アイコン -->
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+      </div>
+      
+      <!-- タイトル -->
+      <h3 class="text-lg font-medium text-gray-900 mb-2">ギフト記録を削除しますか？</h3>
+      
+      <!-- 説明文 -->
+      <div class="mt-2 px-7 py-3">
+        <p class="text-sm text-gray-500 mb-2">
+          <span id="delete-item-name" class="font-medium text-gray-700"></span>を削除しようとしています。
+        </p>
+        <p class="text-sm text-gray-500">
+          <span class="text-red-600 font-medium">この操作は取り消すことができません。</span><br>
+          削除すると、このギフト記録に関連するすべての情報が永久に失われます。
+        </p>
+      </div>
+      
+      <!-- ボタン -->
+      <div class="flex items-center justify-center px-4 py-3 space-x-3">
+        <!-- キャンセルボタン -->
+        <button type="button" 
+                id="cancel-delete-btn"
+                class="px-4 py-2 bg-gray-300 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">
+          <i class="fas fa-times mr-2"></i>
+          キャンセル
+        </button>
+        
+        <!-- 削除実行ボタン -->
+        <button type="button" 
+                id="confirm-delete-btn"
+                class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+          <i class="fas fa-trash mr-2"></i>
+          削除する
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('delete-confirmation-modal');
+  const cancelBtn = document.getElementById('cancel-delete-btn');
+  const confirmBtn = document.getElementById('confirm-delete-btn');
+  const itemNameSpan = document.getElementById('delete-item-name');
+  let currentDeleteForm = null;
+  let currentDeleteUrl = null;
+  let currentCsrfToken = null;
+  
+  // モーダルを開く関数
+  window.showDeleteModal = function(itemName, deleteUrl, csrfToken, form) {
+    itemNameSpan.textContent = itemName || 'このギフト記録';
+    currentDeleteUrl = deleteUrl;
+    currentCsrfToken = csrfToken;
+    currentDeleteForm = form;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // スクロールを無効化
+  };
+  
+  // モーダルを閉じる関数
+  function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto'; // スクロールを有効化
+    currentDeleteForm = null;
+    currentDeleteUrl = null;
+    currentCsrfToken = null;
+  }
+  
+  // キャンセルボタンのクリック処理
+  cancelBtn.addEventListener('click', closeModal);
+  
+  // モーダル背景のクリック処理
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+  
+  // ESCキーでモーダルを閉じる
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+  
+  // 削除実行ボタンのクリック処理
+  confirmBtn.addEventListener('click', function() {
+    if (currentDeleteUrl && currentCsrfToken) {
+      // 削除を実行
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = currentDeleteUrl;
+      
+      // CSRF トークン
+      const csrfInput = document.createElement('input');
+      csrfInput.type = 'hidden';
+      csrfInput.name = 'authenticity_token';
+      csrfInput.value = currentCsrfToken;
+      form.appendChild(csrfInput);
+      
+      // HTTP メソッド
+      const methodInput = document.createElement('input');
+      methodInput.type = 'hidden';
+      methodInput.name = '_method';
+      methodInput.value = 'delete';
+      form.appendChild(methodInput);
+      
+      document.body.appendChild(form);
+      form.submit();
+    } else if (currentDeleteForm) {
+      // フォームが指定されている場合はそれを送信
+      currentDeleteForm.submit();
+    }
+    
+    closeModal();
+  });
+});
+</script>

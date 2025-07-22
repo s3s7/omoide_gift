@@ -613,6 +613,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // 初期状態を設定
   function updateToggleUI() {
+    if (!toggle) return;
+    
     if (toggle.checked) {
       // 公開状態
       toggleLabel.style.backgroundColor = '#28a745';
@@ -637,9 +639,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // クリック時の処理
   if (toggleLabel) {
-    toggleLabel.addEventListener('click', function() {
-      // チェックボックスの状態を切り替え（少し遅延させてからUI更新）
-      setTimeout(updateToggleUI, 10);
+    toggleLabel.addEventListener('click', function(e) {
+      e.preventDefault();
+      // チェックボックスの状態を手動で切り替え
+      toggle.checked = !toggle.checked;
+      // UIを即座に更新
+      updateToggleUI();
     });
   }
 
