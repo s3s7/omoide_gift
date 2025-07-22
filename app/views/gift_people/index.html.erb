@@ -1,65 +1,86 @@
 <% content_for(:title, "ギフト相手一覧") %>
 
+<!-- メインコンテナ - 中央寄せ -->
+<div class="max-w-6xl mx-auto">
 <!-- ヘッダー部分 -->
-<div class="mb-6 mt-4">
-  <div class="flex justify-between items-center mb-4">
-    <h2 class="text-2xl font-bold text-gray-800">
-      <i class="fas fa-users mr-2 text-pink-500"></i>
-      ギフト相手一覧
-    </h2>
-    <div class="flex gap-2">
-      <%= link_to new_gift_person_path,
-          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
-        <i class="fas fa-plus mr-2"></i>
-        新しい相手を追加
-      <% end %>
-    </div>
-  </div>
-
-  <!-- 検索・フィルター機能 -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-    <%= form_with url: gift_people_path, method: :get, local: true, class: "space-y-4" do |f| %>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- 検索キーワード -->
-        <div>
-          <%= f.label :search, "検索", class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.text_field :search, 
-              value: params[:search],
-              placeholder: "名前、好きなもの、メモで検索",
-              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" %>
-        </div>
-
-        <!-- 関係性フィルター -->
-        <div>
-          <%= f.label :relationship_id, "関係性", class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.select :relationship_id, 
-              options_for_select([["すべて", ""]] + @relationship_options, params[:relationship_id]),
-              {},
-              { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" } %>
-        </div>
-
-        <!-- 検索ボタン -->
-        <div class="flex items-end">
-          <%= f.submit "検索", class: "w-full px-4 py-2 bg-pink-600 text-white text-sm font-medium rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" %>
-        </div>
-      </div>
-
-      <% if params[:search].present? || params[:relationship_id].present? %>
-        <div class="flex items-center justify-between pt-2 border-t border-gray-200">
-          <span class="text-sm text-gray-600">
-            <%= pluralize(@gift_people.count, "件") %>の結果
-          </span>
-          <%= link_to "クリア", gift_people_path, class: "text-sm text-pink-600 hover:text-pink-700" %>
-        </div>
-      <% end %>
+<div class="mb-2 mt-2 text-center">
+  <h2 class="text-2xl font-bold text-gray-800 mb-3">
+    <i class="fas fa-users mr-2 text-pink-500"></i>
+    ギフト相手一覧
+  </h2>
+  <div class="flex justify-center">
+    <%= link_to new_gift_person_path,
+        class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+      <i class="fas fa-plus mr-2"></i>
+      新しい相手を追加
     <% end %>
   </div>
 </div>
 
-<!-- ギフト相手一覧 -->
-<div class="mb-0 mt-0">
-  <div class="flex justify-between items-center mb-4">
-    <h3 class="text-lg font-medium text-gray-800">
+  <!-- 検索・フィルター機能 -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto">
+    <%= form_with url: gift_people_path, method: :get, local: true, class: "space-y-2" do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <!-- 検索キーワード（オートコンプリート付き） -->
+        <div class="relative">
+          <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+          <%= f.text_field :search, 
+              value: params[:search],
+              placeholder: "名前、好きなもの、メモで検索",
+              id: "search-input",
+              autocomplete: "off",
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" %>
+          
+          <!-- オートコンプリートドロップダウン -->
+          <div id="autocomplete-dropdown" 
+               class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-md shadow-lg hidden max-h-48 overflow-y-auto">
+            <!-- 検索結果がここに動的に追加される -->
+          </div>
+          
+          <!-- ローディング表示 -->
+          <div id="search-loading" 
+               class="absolute right-2 top-7 hidden">
+            <i class="fas fa-spinner fa-spin text-gray-400 text-sm"></i>
+          </div>
+        </div>
+
+        <!-- 関係性フィルター -->
+        <div>
+          <%= f.label :relationship_id, "関係性", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+          <%= f.select :relationship_id, 
+              options_for_select([["すべて", ""]] + @relationship_options, params[:relationship_id]),
+              {},
+              { class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" } %>
+        </div>
+
+        <!-- 検索ボタン -->
+        <div class="flex items-end">
+          <%= f.submit "検索", class: "w-full px-3 py-1.5 bg-pink-600 text-white text-sm font-medium rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" %>
+        </div>
+      </div>
+
+      <% if params[:search].present? || params[:relationship_id].present? %>
+        <div class="flex items-center justify-between pt-1.5 border-t border-gray-200">
+          <span class="text-xs text-gray-600">
+            <%= pluralize(@gift_people.count, "件") %>の結果
+          </span>
+          <%= link_to "クリア", gift_people_path, class: "text-xs text-pink-600 hover:text-pink-700" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  
+  <!-- 補助情報 -->
+  <div class="text-center text-sm text-gray-600 mb-4 max-w-2xl mx-auto">
+    <p>
+      <i class="fas fa-info-circle mr-1 text-gray-400"></i>
+      ギフト相手を登録しておくと、ギフト記録作成時に選択できるようになります
+    </p>
+  </div>
+  
+  <!-- ギフト相手一覧 -->
+  <div class="text-center mb-3 mt-1">
+    <h3 class="text-base font-medium text-gray-800">
       <i class="fas fa-address-book mr-1 text-pink-500"></i>
       登録済み相手
       <span class="text-sm text-gray-500 font-normal ml-1">
@@ -70,7 +91,7 @@
 
   <% if @gift_people.any? %>
     <!-- カードグリッドレイアウト -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 justify-items-center">
       <% @gift_people.each do |person| %>
         <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-1 cursor-pointer" onclick="window.location.href='<%= gift_person_path(person) %>'">
           <!-- アイコンエリア -->
@@ -103,16 +124,16 @@
           </div>
 
           <!-- 相手情報 -->
-          <div class="p-4">
+          <div class="p-3">
             <!-- 名前 -->
-            <div class="mb-3">
+            <div class="mb-2">
               <h4 class="text-lg font-bold leading-tight text-gray-800">
                 <%= person.name %>
               </h4>
             </div>
 
             <!-- 関係性 -->
-            <div class="mb-3">
+            <div class="mb-2">
               <div class="flex items-center text-sm">
                 <i class="fas fa-heart mr-2 text-red-400"></i>
                 <span class="text-gray-600">
@@ -123,7 +144,7 @@
 
             <!-- 誕生日 -->
             <% if person.birthday.present? %>
-              <div class="mb-3">
+              <div class="mb-2">
                 <div class="flex items-center text-sm">
                   <i class="fas fa-birthday-cake mr-2 text-yellow-500"></i>
                   <span class="text-gray-600">
@@ -139,7 +160,7 @@
 
             <!-- 好きなもの（短縮表示） -->
             <% if person.likes.present? %>
-              <div class="mb-3">
+              <div class="mb-2">
                 <div class="flex items-start text-sm">
                   <i class="fas fa-thumbs-up mr-2 text-green-500 mt-0.5"></i>
                   <span class="text-gray-600 flex-1">
@@ -151,7 +172,7 @@
 
             <!-- ギフト記録数 -->
             <% gift_count = current_user.gift_records.where(gift_people_id: person.id).count %>
-            <div class="mt-4 pt-3 border-t border-gray-200">
+            <div class="mt-3 pt-2 border-t border-gray-200">
               <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-500">ギフト記録</span>
                 <span class="font-medium text-pink-600">
@@ -163,7 +184,7 @@
             <!-- 最後のギフト記録日 -->
             <% last_gift = current_user.gift_records.where(gift_people_id: person.id).order(gift_at: :desc).first %>
             <% if last_gift %>
-              <div class="mt-2">
+              <div class="mt-1">
                 <div class="flex items-center justify-between text-xs text-gray-500">
                   <span>最後のギフト</span>
                   <span><%= l(last_gift.gift_at, format: :short) %></span>
@@ -176,11 +197,11 @@
     </div>
   <% else %>
     <!-- 空状態 -->
-    <div class="text-center py-12">
+    <div class="text-center py-8">
       <div class="mx-auto h-24 w-24 text-gray-300">
         <i class="fas fa-users text-6xl"></i>
       </div>
-      <h3 class="mt-4 text-lg font-medium text-gray-900">
+      <h3 class="mt-3 text-lg font-medium text-gray-900">
         ギフト相手が登録されていません
       </h3>
       <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
@@ -190,7 +211,7 @@
           最初のギフト相手を登録して、ギフト記録の管理を始めましょう。
         <% end %>
       </p>
-      <div class="mt-6">
+      <div class="mt-4">
         <% if params[:search].present? || params[:relationship_id].present? %>
           <%= link_to gift_people_path,
               class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mr-3" do %>
@@ -208,37 +229,268 @@
   <% end %>
 </div>
 
-<!-- ページ下部の補助情報 -->
-<div class="mt-8 text-center text-sm text-gray-500">
-  <p>
-    <i class="fas fa-info-circle mr-1"></i>
-    ギフト相手を登録しておくと、ギフト記録作成時に選択できるようになります
-  </p>
+<!-- メインコンテナ終了 -->
 </div>
 
 <script>
-// ギフト相手一覧のJavaScript処理
-document.addEventListener('DOMContentLoaded', function() {
-  // 検索フォームの自動送信（エンターキー対応）
-  const searchInput = document.querySelector('input[name="search"]');
-  if (searchInput) {
-    searchInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        this.closest('form').submit();
+// ギフト相手一覧のオートコンプリート機能
+(function() {
+  let autocompleteInitialized = false;
+  let searchTimeout;
+  let currentRequest;
+  
+  function initializeAutocomplete() {
+    // 要素の存在確認
+    const searchInput = document.getElementById('search-input');
+    const dropdown = document.getElementById('autocomplete-dropdown');
+    const loading = document.getElementById('search-loading');
+    
+    // 必要な要素が存在しない場合は何もしない
+    if (!searchInput || !dropdown || !loading) {
+      return;
+    }
+    
+    // 既に初期化済みの場合はスキップ（data属性で管理）
+    if (searchInput.dataset.autocompleteInitialized === 'true') {
+      return;
+    }
+    
+    const form = searchInput.closest('form');
+    if (!form) return;
+    
+    // 初期化完了をマーク
+    searchInput.dataset.autocompleteInitialized = 'true';
+  
+  // 検索入力処理
+  searchInput.addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    // リクエストのデバウンス
+    clearTimeout(searchTimeout);
+    
+    if (query.length >= 1) {
+      searchTimeout = setTimeout(() => performAutocomplete(query), 300);
+    } else {
+      hideDropdown();
+    }
+  });
+
+  // CSRF トークンを取得
+  function getCSRFToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : null;
+  }
+
+  // オートコンプリート実行
+  function performAutocomplete(query) {
+    // 既存のリクエストをキャンセル
+    if (currentRequest) {
+      currentRequest.abort();
+    }
+
+    showLoading();
+
+    currentRequest = new AbortController();
+    
+    const headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    };
+
+    const csrfToken = getCSRFToken();
+    if (csrfToken) {
+      headers['X-CSRF-Token'] = csrfToken;
+    }
+    
+    fetch(`/gift_people/autocomplete?q=${encodeURIComponent(query)}`, {
+      signal: currentRequest.signal,
+      headers: headers
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
+    })
+    .then(data => {
+      hideLoading();
+      displayResults(data.results);
+    })
+    .catch(error => {
+      if (error.name !== 'AbortError') {
+        console.error('Autocomplete error:', error);
+        hideLoading();
+        hideDropdown();
       }
     });
   }
 
-  // カードのホバー効果は CSS で実装済み
-  
-  // フィルターの変更時自動検索（オプション）
-  const relationshipSelect = document.querySelector('select[name="relationship_id"]');
-  if (relationshipSelect) {
-    relationshipSelect.addEventListener('change', function() {
-      // 自動送信したい場合は以下のコメントを外す
-      // this.closest('form').submit();
+  // 検索結果表示
+  function displayResults(results) {
+    if (results.length === 0) {
+      hideDropdown();
+      return;
+    }
+
+    const html = results.map(result => {
+      const typeIcon = getTypeIcon(result.type);
+      const typeLabel = getTypeLabel(result.type);
+      
+      return `
+        <div class="autocomplete-item px-3 py-2 hover:bg-pink-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+             data-name="${escapeHtml(result.name)}" 
+             data-id="${result.id}">
+          <div class="flex items-start space-x-2">
+            <div class="flex-shrink-0 w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center">
+              <i class="${typeIcon} text-pink-600 text-xs"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs font-medium text-gray-900">
+                ${result.search_highlight}
+              </div>
+              <div class="text-xs text-gray-500 mt-0.5">
+                ${typeLabel} • ${escapeHtml(result.relationship)}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    dropdown.innerHTML = html;
+    showDropdown();
+    
+    // クリックイベントの追加
+    dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const name = this.dataset.name;
+        searchInput.value = name;
+        hideDropdown();
+        form.submit();
+      });
     });
   }
-});
+
+  // タイプ別アイコン
+  function getTypeIcon(type) {
+    switch(type) {
+      case 'name': return 'fas fa-user';
+      case 'likes': return 'fas fa-thumbs-up';
+      case 'memo': return 'fas fa-sticky-note';
+      default: return 'fas fa-search';
+    }
+  }
+
+  // タイプ別ラベル
+  function getTypeLabel(type) {
+    switch(type) {
+      case 'name': return '名前';
+      case 'likes': return '好きなもの';
+      case 'memo': return 'メモ';
+      default: return '検索';
+    }
+  }
+
+  // HTML エスケープ
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // ローディング表示
+  function showLoading() {
+    loading.classList.remove('hidden');
+  }
+
+  function hideLoading() {
+    loading.classList.add('hidden');
+  }
+
+  // ドロップダウン表示
+  function showDropdown() {
+    dropdown.classList.remove('hidden');
+  }
+
+  function hideDropdown() {
+    dropdown.classList.add('hidden');
+  }
+
+    // 外部クリック時にドロップダウンを閉じる
+    function handleOutsideClick(e) {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        hideDropdown();
+      }
+    }
+    
+    document.addEventListener('click', handleOutsideClick);
+
+  // キーボードナビゲーション
+  searchInput.addEventListener('keydown', function(e) {
+    const items = dropdown.querySelectorAll('.autocomplete-item');
+    const activeItem = dropdown.querySelector('.autocomplete-item.bg-pink-100');
+    
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (activeItem) {
+        activeItem.classList.remove('bg-pink-100');
+        const next = activeItem.nextElementSibling || items[0];
+        next.classList.add('bg-pink-100');
+      } else if (items.length > 0) {
+        items[0].classList.add('bg-pink-100');
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (activeItem) {
+        activeItem.classList.remove('bg-pink-100');
+        const prev = activeItem.previousElementSibling || items[items.length - 1];
+        prev.classList.add('bg-pink-100');
+      } else if (items.length > 0) {
+        items[items.length - 1].classList.add('bg-pink-100');
+      }
+    } else if (e.key === 'Enter') {
+      if (activeItem) {
+        e.preventDefault();
+        activeItem.click();
+      }
+    } else if (e.key === 'Escape') {
+      hideDropdown();
+    }
+  });
+
+    // フィルターの変更時自動検索（オプション）
+    const relationshipSelect = document.querySelector('select[name="relationship_id"]');
+    if (relationshipSelect) {
+      relationshipSelect.addEventListener('change', function() {
+        // 自動送信したい場合は以下のコメントを外す
+        // form.submit();
+      });
+    }
+  }
+
+  // クリーンアップ関数
+  function cleanupAutocomplete() {
+    if (currentRequest) {
+      currentRequest.abort();
+    }
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    // data属性をクリア
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.dataset.autocompleteInitialized = 'false';
+    }
+    
+    autocompleteInitialized = false;
+  }
+
+  // Turbo対応のイベントリスナー
+  document.addEventListener('turbo:load', initializeAutocomplete);
+  document.addEventListener('DOMContentLoaded', initializeAutocomplete);
+  
+  // ページ離脱時のクリーンアップ
+  document.addEventListener('turbo:before-visit', cleanupAutocomplete);
+  document.addEventListener('beforeunload', cleanupAutocomplete);
+})();
 </script>

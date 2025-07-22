@@ -17,3 +17,35 @@
 .header {
   background-color: #F6B352; /* ヘッダーの色を指定 */
 }
+
+/* オートコンプリート用スタイル */
+.autocomplete-item mark {
+  background-color: #fdf2f8; /* pink-50 */
+  color: #be185d; /* pink-700 */
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.autocomplete-item:hover mark {
+  background-color: #fce7f3; /* pink-100 */
+  color: #a21caf; /* pink-800 */
+}
+
+/* オートコンプリートドロップダウンのスクロールバー */
+#autocomplete-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+#autocomplete-dropdown::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+#autocomplete-dropdown::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+#autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

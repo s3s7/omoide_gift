@@ -41,6 +41,88 @@ class GiftPeopleController < ApplicationController
     redirect_to root_path, alert: "データの取得中にエラーが発生しました。"
   end
 
+  # オートコンプリート用API
+  def autocomplete
+    query = params[:q]&.strip
+    
+    if query.present? && query.length >= 1
+      search_term = "%#{query}%"
+      
+      # 名前検索結果
+      name_results = current_user.gift_people
+        .includes(:relationship)
+        .where.not(name: [ nil, "" ])
+        .where("gift_people.name ILIKE ?", search_term)
+        .limit(5)
+        .map do |person|
+          {
+            id: person.id,
+            name: person.name,
+            relationship: person.relationship&.name || "未設定",
+            type: "name",
+            display_text: person.name,
+            search_highlight: highlight_match(person.name, query)
+          }
+        end
+
+      # 好きなもの検索結果
+      likes_results = current_user.gift_people
+        .includes(:relationship)
+        .where.not(name: [ nil, "" ])
+        .where.not(likes: [ nil, "" ])
+        .where("gift_people.likes ILIKE ?", search_term)
+        .limit(3)
+        .map do |person|
+          {
+            id: person.id,
+            name: person.name,
+            relationship: person.relationship&.name || "未設定",
+            type: "likes",
+            display_text: "#{person.name} (好き: #{truncate_text(person.likes, 20)})",
+            search_highlight: highlight_match(person.likes, query)
+          }
+        end
+
+      # メモ検索結果
+      memo_results = current_user.gift_people
+        .includes(:relationship)
+        .where.not(name: [ nil, "" ])
+        .where.not(memo: [ nil, "" ])
+        .where("gift_people.memo ILIKE ?", search_term)
+        .limit(3)
+        .map do |person|
+          {
+            id: person.id,
+            name: person.name,
+            relationship: person.relationship&.name || "未設定",
+            type: "memo",
+            display_text: "#{person.name} (メモ: #{truncate_text(person.memo, 20)})",
+            search_highlight: highlight_match(person.memo, query)
+          }
+        end
+
+      results = (name_results + likes_results + memo_results).uniq { |item| item[:id] }.take(8)
+      
+      render json: {
+        results: results,
+        total_count: results.length
+      }
+    else
+      render json: {
+        results: [],
+        total_count: 0
+      }
+    end
+
+  rescue StandardError => e
+    Rails.logger.error "GiftPeople autocomplete error: #{e.message}"
+    render json: { 
+      results: [], 
+      total_count: 0,
+      error: "検索中にエラーが発生しました"
+    }, status: :internal_server_error
+  end
+
   def show
     # セキュリティ: set_gift_personとensure_ownerで処理済み
     @gift_records = @gift_person.user.gift_records
@@ -121,5 +203,22 @@ class GiftPeopleController < ApplicationController
 
   def prepare_relationships_for_form
     @relationships = Relationship.active.ordered
+  end
+
+  # オートコンプリート用ヘルパーメソッド
+  def highlight_match(text, query)
+    return text unless text.present? && query.present?
+    
+    text.gsub(Regexp.new(Regexp.escape(query), Regexp::IGNORECASE)) do |match|
+      "<mark>#{match}</mark>"
+    end
+  rescue StandardError
+    text
+  end
+
+  def truncate_text(text, length = 20)
+    return "" unless text.present?
+    
+    text.length > length ? "#{text[0..length-1]}..." : text
   end
 end

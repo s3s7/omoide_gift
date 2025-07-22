@@ -16,7 +16,11 @@ Rails.application.routes.draw do
   get "contact", to: "static_pages#contact"
 
   resources :gift_records
-  resources :gift_people
+  resources :gift_people do
+    collection do
+      get :autocomplete
+    end
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
