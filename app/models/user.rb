@@ -10,12 +10,11 @@ class User < ApplicationRecord
 
   # バリデーション
   validates :name, presence: true, length: { maximum: 50 }
-  
+
   # LINEログインユーザーの場合はemailを必須にしない
   def email_required?
     provider.blank?
   end
-  
   def email_changed?
     provider.blank? && super
   end
@@ -59,7 +58,7 @@ class User < ApplicationRecord
   def display_name
     name.present? ? name : email.split("@").first
   end
-  
+
   def display_email
     email.present? ? email : "メールアドレス登録なし"
   end
