@@ -23,13 +23,27 @@
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto">
     <%= form_with url: gift_records_path, method: :get, local: true, class: "space-y-2" do |f| %>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <!-- 検索キーワード -->
+        <!-- 検索キーワード（オートコンプリート付き） -->
         <div class="relative">
           <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
           <%= f.text_field :search, 
               value: params[:search],
               placeholder: "アイテム名、贈り先、メモで検索",
+              id: "gift-records-search-input",
+              autocomplete: "off",
               class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" %>
+          
+          <!-- オートコンプリートドロップダウン -->
+          <div id="gift-records-autocomplete-dropdown" 
+               class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-md shadow-lg hidden max-h-48 overflow-y-auto">
+            <!-- 検索結果がここに動的に追加される -->
+          </div>
+          
+          <!-- ローディング表示 -->
+          <div id="gift-records-search-loading" 
+               class="absolute right-2 top-7 hidden">
+            <i class="fas fa-spinner fa-spin text-gray-400 text-sm"></i>
+          </div>
         </div>
 
         <!-- 検索ボタン -->
@@ -302,26 +316,252 @@
 </div>
 
 <script>
-// フィルタの開閉制御（モバイル対応）
-document.addEventListener('DOMContentLoaded', function() {
-  const filterToggle = document.getElementById('filter-toggle');
-  const filterContent = document.getElementById('filter-content');
+// ギフト記録一覧のオートコンプリート機能
+(function() {
+  let searchTimeout;
+  let currentRequest;
   
-  if (filterToggle && filterContent) {
-    filterToggle.addEventListener('click', function() {
-      const isHidden = filterContent.classList.contains('hidden');
-      if (isHidden) {
-        filterContent.classList.remove('hidden');
-        filterToggle.querySelector('i').classList.replace('fa-chevron-down', 'fa-chevron-up');
-      } else {
-        filterContent.classList.add('hidden');
-        filterToggle.querySelector('i').classList.replace('fa-chevron-up', 'fa-chevron-down');
+  function initializeGiftRecordsAutocomplete() {
+    // 要素の存在確認
+    const searchInput = document.getElementById('gift-records-search-input');
+    const dropdown = document.getElementById('gift-records-autocomplete-dropdown');
+    const loading = document.getElementById('gift-records-search-loading');
+    
+    // 必要な要素が存在しない場合は何もしない
+    if (!searchInput || !dropdown || !loading) {
+      return;
+    }
+    
+    // 既に初期化済みの場合はスキップ（data属性で管理）
+    if (searchInput.dataset.autocompleteInitialized === 'true') {
+      return;
+    }
+    
+    const form = searchInput.closest('form');
+    if (!form) return;
+    
+    // 初期化完了をマーク
+    searchInput.dataset.autocompleteInitialized = 'true';
+  
+  // 検索入力処理
+  searchInput.addEventListener('input', function(e) {
+    const query = e.target.value.trim();
+    
+    // リクエストのデバウンス
+    clearTimeout(searchTimeout);
+    
+    if (query.length >= 1) {
+      searchTimeout = setTimeout(() => performAutocomplete(query), 300);
+    } else {
+      hideDropdown();
+    }
+  });
+
+  // CSRF トークンを取得
+  function getCSRFToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : null;
+  }
+
+  // オートコンプリート実行
+  function performAutocomplete(query) {
+    // 既存のリクエストをキャンセル
+    if (currentRequest) {
+      currentRequest.abort();
+    }
+
+    showLoading();
+
+    currentRequest = new AbortController();
+    
+    const headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    };
+
+    const csrfToken = getCSRFToken();
+    if (csrfToken) {
+      headers['X-CSRF-Token'] = csrfToken;
+    }
+    
+    fetch(`/gift_records/autocomplete?q=${encodeURIComponent(query)}`, {
+      signal: currentRequest.signal,
+      headers: headers
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
+    })
+    .then(data => {
+      hideLoading();
+      displayResults(data.results);
+    })
+    .catch(error => {
+      if (error.name !== 'AbortError') {
+        console.error('Autocomplete error:', error);
+        hideLoading();
+        hideDropdown();
       }
     });
   }
+
+  // 検索結果表示
+  function displayResults(results) {
+    if (results.length === 0) {
+      hideDropdown();
+      return;
+    }
+
+    const html = results.map(result => {
+      const typeIcon = getTypeIcon(result.type);
+      const typeLabel = getTypeLabel(result.type);
+      
+      return `
+        <div class="autocomplete-item px-3 py-2 hover:bg-pink-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+             data-display-text="${escapeHtml(result.display_text)}" 
+             data-id="${result.id}">
+          <div class="flex items-start space-x-2">
+            <div class="flex-shrink-0 w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center">
+              <i class="${typeIcon} text-pink-600 text-xs"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-xs font-medium text-gray-900">
+                ${result.search_highlight}
+              </div>
+              <div class="text-xs text-gray-500 mt-0.5">
+                ${typeLabel} • ${escapeHtml(result.user_name)}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    dropdown.innerHTML = html;
+    showDropdown();
+    
+    // クリックイベントの追加
+    dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const displayText = this.dataset.displayText;
+        searchInput.value = displayText;
+        hideDropdown();
+        form.submit();
+      });
+    });
+  }
+
+  // タイプ別アイコン
+  function getTypeIcon(type) {
+    switch(type) {
+      case 'item': return 'fas fa-gift';
+      case 'memo': return 'fas fa-sticky-note';
+      default: return 'fas fa-search';
+    }
+  }
+
+  // タイプ別ラベル
+  function getTypeLabel(type) {
+    switch(type) {
+      case 'item': return 'アイテム';
+      case 'memo': return 'メモ';
+      default: return '検索';
+    }
+  }
+
+  // HTML エスケープ
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // ローディング表示
+  function showLoading() {
+    loading.classList.remove('hidden');
+  }
+
+  function hideLoading() {
+    loading.classList.add('hidden');
+  }
+
+  // ドロップダウン表示
+  function showDropdown() {
+    dropdown.classList.remove('hidden');
+  }
+
+  function hideDropdown() {
+    dropdown.classList.add('hidden');
+  }
+
+    // 外部クリック時にドロップダウンを閉じる
+    function handleOutsideClick(e) {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        hideDropdown();
+      }
+    }
+    
+    document.addEventListener('click', handleOutsideClick);
+
+  // キーボードナビゲーション
+  searchInput.addEventListener('keydown', function(e) {
+    const items = dropdown.querySelectorAll('.autocomplete-item');
+    const activeItem = dropdown.querySelector('.autocomplete-item.bg-pink-100');
+    
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (activeItem) {
+        activeItem.classList.remove('bg-pink-100');
+        const next = activeItem.nextElementSibling || items[0];
+        next.classList.add('bg-pink-100');
+      } else if (items.length > 0) {
+        items[0].classList.add('bg-pink-100');
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (activeItem) {
+        activeItem.classList.remove('bg-pink-100');
+        const prev = activeItem.previousElementSibling || items[items.length - 1];
+        prev.classList.add('bg-pink-100');
+      } else if (items.length > 0) {
+        items[items.length - 1].classList.add('bg-pink-100');
+      }
+    } else if (e.key === 'Enter') {
+      if (activeItem) {
+        e.preventDefault();
+        activeItem.click();
+      }
+    } else if (e.key === 'Escape') {
+      hideDropdown();
+    }
+  });
+  }
+
+  // クリーンアップ関数
+  function cleanupGiftRecordsAutocomplete() {
+    if (currentRequest) {
+      currentRequest.abort();
+    }
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    // data属性をクリア
+    const searchInput = document.getElementById('gift-records-search-input');
+    if (searchInput) {
+      searchInput.dataset.autocompleteInitialized = 'false';
+    }
+  }
+
+  // Turbo対応のイベントリスナー
+  document.addEventListener('turbo:load', initializeGiftRecordsAutocomplete);
+  document.addEventListener('DOMContentLoaded', initializeGiftRecordsAutocomplete);
   
-  // カードのホバー効果は CSS で実装済み
-});
+  // ページ離脱時のクリーンアップ
+  document.addEventListener('turbo:before-visit', cleanupGiftRecordsAutocomplete);
+  document.addEventListener('beforeunload', cleanupGiftRecordsAutocomplete);
+})();
 </script>
 
 <!-- 削除確認モーダル -->

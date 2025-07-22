@@ -15,7 +15,11 @@ Rails.application.routes.draw do
   get "privacy", to: "static_pages#privacy"
   get "contact", to: "static_pages#contact"
 
-  resources :gift_records
+  resources :gift_records do
+    collection do
+      get :autocomplete
+    end
+  end
   resources :gift_people do
     collection do
       get :autocomplete

@@ -44,10 +44,10 @@ class GiftPeopleController < ApplicationController
   # オートコンプリート用API
   def autocomplete
     query = params[:q]&.strip
-    
+
     if query.present? && query.length >= 1
       search_term = "%#{query}%"
-      
+
       # 名前検索結果
       name_results = current_user.gift_people
         .includes(:relationship)
@@ -102,7 +102,7 @@ class GiftPeopleController < ApplicationController
         end
 
       results = (name_results + likes_results + memo_results).uniq { |item| item[:id] }.take(8)
-      
+
       render json: {
         results: results,
         total_count: results.length
@@ -116,8 +116,8 @@ class GiftPeopleController < ApplicationController
 
   rescue StandardError => e
     Rails.logger.error "GiftPeople autocomplete error: #{e.message}"
-    render json: { 
-      results: [], 
+    render json: {
+      results: [],
       total_count: 0,
       error: "検索中にエラーが発生しました"
     }, status: :internal_server_error
@@ -208,7 +208,7 @@ class GiftPeopleController < ApplicationController
   # オートコンプリート用ヘルパーメソッド
   def highlight_match(text, query)
     return text unless text.present? && query.present?
-    
+
     text.gsub(Regexp.new(Regexp.escape(query), Regexp::IGNORECASE)) do |match|
       "<mark>#{match}</mark>"
     end
@@ -218,7 +218,7 @@ class GiftPeopleController < ApplicationController
 
   def truncate_text(text, length = 20)
     return "" unless text.present?
-    
+
     text.length > length ? "#{text[0..length-1]}..." : text
   end
 end
