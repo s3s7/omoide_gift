@@ -53,8 +53,8 @@ class ApplicationController < ActionController::Base
   # Deviseのストロングパラメータ設定
   def configure_permitted_parameters
     # 新規登録時にnameパラメータを許可
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :name ])
     # アカウント更新時にnameパラメータを許可
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name])
+    devise_parameter_sanitizer.permit(:account_update, keys: [ :name ])
   end
 end
