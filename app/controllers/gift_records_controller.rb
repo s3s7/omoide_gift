@@ -243,8 +243,8 @@ class GiftRecordsController < ApplicationController
   def prepare_events_for_form
     @events = Event.all.order(:name)
     @popular_events = Event.joins(:gift_records)
-      .group('events.id')
-      .order('COUNT(gift_records.id) DESC')
+      .group("events.id")
+      .order("COUNT(gift_records.id) DESC")
       .limit(5)
   end
 end
