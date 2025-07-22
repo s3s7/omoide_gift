@@ -107,11 +107,9 @@ class GiftRecordsController < ApplicationController
       if @gift_person.save
         # ギフト記録を作成してギフト相手と関連付け
         @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
-        @gift_record.gift_people = @gift_person
+        @gift_record.gift_person = @gift_person
 
         if @gift_record.save
-          # ギフト相手にgift_record_idを設定
-          @gift_person.update(gift_record_id: @gift_record.id)
           flash_success(:created, item: GiftRecord.model_name.human)
           redirect_to gift_records_path
           return
@@ -208,17 +206,17 @@ class GiftRecordsController < ApplicationController
       # show アクション：公開記録または自分の記録
       if user_signed_in?
         @gift_record = GiftRecord.where("gift_records.is_public = ? OR gift_records.user_id = ?", true, current_user.id)
-          .includes(:gift_people, :event, :user, gift_people: :relationship)
+          .includes(:gift_person, :event, :user, gift_person: :relationship)
           .find(params[:id])
       else
         @gift_record = GiftRecord.where("gift_records.is_public = ?", true)
-          .includes(:gift_people, :event, :user, gift_people: :relationship)
+          .includes(:gift_person, :event, :user, gift_person: :relationship)
           .find(params[:id])
       end
     else
       # edit, update, destroy アクション：自分の記録のみ
       @gift_record = current_user.gift_records
-        .includes(:gift_people, :event, gift_people: :relationship)
+        .includes(:gift_person, :event, gift_person: :relationship)
         .find(params[:id])
     end
   rescue ActiveRecord::RecordNotFound
