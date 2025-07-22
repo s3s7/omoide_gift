@@ -1,0 +1,199 @@
+
+<% content_for(:title, "ギフト相手の追加") %>
+
+<!-- ヘッダー部分 -->
+<div class="mb-6 mt-4">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center">
+      <%= link_to gift_people_path, class: "mr-4 text-gray-600 hover:text-gray-800" do %>
+        <i class="fas fa-arrow-left text-lg"></i>
+      <% end %>
+      <h2 class="text-2xl font-bold text-gray-800">
+        <i class="fas fa-user-plus mr-2 text-pink-500"></i>
+        ギフト相手の追加
+      </h2>
+    </div>
+  </div>
+
+  <!-- 説明文 -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex items-start">
+      <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
+      <div>
+        <h3 class="text-sm font-medium text-blue-800">ギフト相手について</h3>
+        <p class="mt-1 text-sm text-blue-700">
+          ギフト相手を登録しておくと、ギフト記録作成時に簡単に選択でき、その人の好みや過去のギフト履歴を参考にできます。
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- フォーム部分 -->
+<div class="max-w-2xl mx-auto">
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="mb-6">
+      <h3 class="text-lg font-medium text-gray-800 mb-2">
+        <i class="fas fa-edit mr-2 text-gray-600"></i>
+        基本情報
+      </h3>
+      <p class="text-sm text-gray-600">
+        ギフトを贈る相手の基本的な情報を入力してください。
+      </p>
+    </div>
+
+    <%= render 'form', gift_person: @gift_person %>
+
+    <!-- 戻るボタン -->
+    <div class="mt-6 pt-6 border-t border-gray-200">
+      <%= link_to gift_people_path, 
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+        <i class="fas fa-times mr-2"></i>
+        キャンセル
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- サイドバー（ヒント） -->
+<div class="fixed right-4 top-1/2 transform -translate-y-1/2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 p-4 hidden xl:block">
+  <h4 class="font-medium text-gray-800 mb-3">
+    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
+    入力のヒント
+  </h4>
+  
+  <div class="space-y-3 text-sm text-gray-600">
+    <div class="border-l-4 border-pink-200 pl-3">
+      <strong class="text-gray-800">名前</strong><br>
+      本名でもニックネームでも構いません。識別しやすい名前を入力してください。
+    </div>
+    
+    <div class="border-l-4 border-blue-200 pl-3">
+      <strong class="text-gray-800">関係性</strong><br>
+      家族、友人、同僚など、その人との関係を選択してください。
+    </div>
+    
+    <div class="border-l-4 border-green-200 pl-3">
+      <strong class="text-gray-800">好きなもの</strong><br>
+      趣味、好きな色、食べ物、ブランドなど、プレゼント選びの参考になる情報を記録しましょう。
+    </div>
+    
+    <div class="border-l-4 border-red-200 pl-3">
+      <strong class="text-gray-800">苦手なもの</strong><br>
+      アレルギーや嫌いなものを記録して、適切なギフト選びに役立てましょう。
+    </div>
+  </div>
+  
+  <div class="mt-4 pt-3 border-t border-gray-200">
+    <p class="text-xs text-gray-500">
+      <i class="fas fa-shield-alt mr-1"></i>
+      ここで入力した情報は、あなたのアカウントでのみ利用され、他のユーザーには公開されません。
+    </p>
+  </div>
+</div>
+
+<style>
+/* フォームのカスタムスタイル */
+.form-container {
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff5f5 100%);
+}
+
+/* フォーカス時のスタイル調整 */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #F6B352 !important;
+  box-shadow: 0 0 0 3px rgba(246, 179, 82, 0.1);
+}
+
+/* モバイルレスポンシブ対応 */
+@media (max-width: 768px) {
+  .max-w-2xl {
+    max-width: 100%;
+    margin: 0 1rem;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // フォームバリデーション
+  const form = document.querySelector('form');
+  const nameField = document.getElementById('gift_person_name');
+  const relationshipField = document.getElementById('gift_person_relationship_id');
+  
+  if (form && nameField && relationshipField) {
+    form.addEventListener('submit', function(e) {
+      let hasErrors = false;
+      
+      // 名前の必須チェック
+      if (!nameField.value.trim()) {
+        alert('名前を入力してください。');
+        nameField.focus();
+        hasErrors = true;
+        e.preventDefault();
+        return;
+      }
+      
+      // 関係性の必須チェック
+      if (!relationshipField.value) {
+        alert('関係性を選択してください。');
+        relationshipField.focus();
+        hasErrors = true;
+        e.preventDefault();
+        return;
+      }
+      
+      if (!hasErrors) {
+        // 送信ボタンを無効化して重複送信を防ぐ
+        const submitButton = form.querySelector('input[type="submit"]');
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.value = '登録中...';
+        }
+      }
+    });
+  }
+  
+  // 名前フィールドの入力制限（空白のみを防ぐ）
+  if (nameField) {
+    nameField.addEventListener('blur', function() {
+      if (this.value.trim() === '') {
+        this.style.borderColor = '#ef4444';
+      } else {
+        this.style.borderColor = '#e1e5e9';
+      }
+    });
+  }
+  
+  // 自動保存機能（オプション - ローカルストレージ利用）
+  const autoSaveFields = ['gift_person_name', 'gift_person_likes', 'gift_person_dislikes', 'gift_person_memo'];
+  
+  autoSaveFields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      // 入力時にローカルストレージに保存
+      field.addEventListener('input', function() {
+        localStorage.setItem(`draft_${fieldId}`, this.value);
+      });
+      
+      // ページ読み込み時にドラフトを復元
+      const draftValue = localStorage.getItem(`draft_${fieldId}`);
+      if (draftValue && !field.value) {
+        field.value = draftValue;
+      }
+    }
+  });
+  
+  // フォーム送信成功時にドラフトをクリア
+  if (form) {
+    form.addEventListener('submit', function() {
+      // 成功時のクリア処理は別途実装
+      setTimeout(() => {
+        autoSaveFields.forEach(fieldId => {
+          localStorage.removeItem(`draft_${fieldId}`);
+        });
+      }, 1000);
+    });
+  }
+});
+</script>

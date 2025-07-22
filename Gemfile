@@ -63,3 +63,10 @@ gem "tailwindcss-ruby", "3.4.17"
 gem "rails-i18n", "~> 7.0.0"
 
 gem "devise"
+
+gem "omniauth-line"
+gem "omniauth-rails_csrf_protection"
+
+gem "dotenv-rails"
+
+gem "line-bot-api"

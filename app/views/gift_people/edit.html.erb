@@ -1,0 +1,151 @@
+<%# encoding: utf-8 %>
+<% content_for(:title, "ギフト相手の編集") %>
+
+<!-- ヘッダー部分 -->
+<div class="mb-6 mt-4">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center">
+      <%= link_to gift_person_path(@gift_person), class: "mr-4 text-gray-600 hover:text-gray-800" do %>
+        <i class="fas fa-arrow-left text-lg"></i>
+      <% end %>
+      <h2 class="text-2xl font-bold text-gray-800">
+        <i class="fas fa-user-edit mr-2 text-pink-500"></i>
+        ギフト相手の編集
+      </h2>
+    </div>
+    
+    <!-- 削除ボタン -->
+    <div>
+      <%= link_to gift_person_path(@gift_person), 
+          data: { 
+            confirm: "「#{@gift_person.name}」さんを削除しますか？\n\n※関連するギフト記録がある場合は削除できません。\n※この操作は取り消すことができません。",
+            turbo_method: :delete
+          },
+          class: "inline-flex items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
+        <i class="fas fa-trash mr-2"></i>
+        削除
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 現在の情報表示 -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex items-start">
+      <i class="fas fa-user-circle text-blue-500 text-2xl mt-1 mr-3"></i>
+      <div class="flex-1">
+        <h3 class="text-sm font-medium text-blue-800">編集中: <%= @gift_person.name %></h3>
+        <div class="mt-1 text-sm text-blue-700 space-y-1">
+          <div class="flex items-center">
+            <i class="fas fa-heart text-red-400 mr-2"></i>
+            <span><%= @gift_person.relationship&.name || "関係性未設定" %></span>
+          </div>
+          <% if @gift_person.birthday.present? %>
+            <div class="flex items-center">
+              <i class="fas fa-birthday-cake text-yellow-500 mr-2"></i>
+              <span><%= l(@gift_person.birthday, format: :short) %></span>
+            </div>
+          <% end %>
+          <% gift_count = current_user.gift_records.where(gift_people_id: @gift_person.id).count %>
+          <div class="flex items-center">
+            <i class="fas fa-gift text-pink-500 mr-2"></i>
+            <span>ギフト記録: <%= pluralize(gift_count, "件") %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- フォーム部分 -->
+<div class="max-w-2xl mx-auto">
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="mb-6">
+      <h3 class="text-lg font-medium text-gray-800 mb-2">
+        <i class="fas fa-edit mr-2 text-gray-600"></i>
+        情報の更新
+      </h3>
+      <p class="text-sm text-gray-600">
+        ギフト相手の情報を更新してください。変更したい項目のみ修正すれば大丈夫です。
+      </p>
+    </div>
+
+    <%= render 'form', gift_person: @gift_person %>
+
+    <!-- 操作ボタン -->
+    <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between">
+      <div class="flex space-x-3">
+        <%= link_to gift_person_path(@gift_person), 
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+          <i class="fas fa-eye mr-2"></i>
+          詳細を見る
+        <% end %>
+        
+        <%= link_to gift_people_path, 
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+          <i class="fas fa-list mr-2"></i>
+          一覧に戻る
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* フォーカス時のスタイル調整 */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #F6B352 !important;
+  box-shadow: 0 0 0 3px rgba(246, 179, 82, 0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form');
+  const formFields = form.querySelectorAll('input, select, textarea');
+  const originalValues = {};
+  
+  // 初期値を保存
+  formFields.forEach(field => {
+    originalValues[field.name] = field.value;
+  });
+  
+  // フォーム送信時の確認
+  form.addEventListener('submit', function(e) {
+    const hasChanges = Array.from(formFields).some(field => 
+      field.value !== originalValues[field.name]
+    );
+    
+    if (!hasChanges) {
+      e.preventDefault();
+      alert('変更がありません。');
+      return;
+    }
+    
+    // 必須フィールドチェック
+    const nameField = document.getElementById('gift_person_name');
+    const relationshipField = document.getElementById('gift_person_relationship_id');
+    
+    if (!nameField.value.trim()) {
+      e.preventDefault();
+      alert('名前を入力してください。');
+      nameField.focus();
+      return;
+    }
+    
+    if (!relationshipField.value) {
+      e.preventDefault();
+      alert('関係性を選択してください。');
+      relationshipField.focus();
+      return;
+    }
+    
+    // 送信ボタンを無効化
+    const submitButton = this.querySelector('input[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.value = '更新中...';
+    }
+  });
+});
+</script>

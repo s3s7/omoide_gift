@@ -1,0 +1,318 @@
+<%# encoding: utf-8 %>
+<% content_for(:title, "マイページ") %>
+
+<!-- ヘッダー部分 -->
+<div class="mb-6 mt-4">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center">
+      <h2 class="text-2xl font-bold text-gray-800">
+        <i class="fas fa-user-circle mr-2 text-pink-500"></i>
+        マイページ
+      </h2>
+    </div>
+    
+    <!-- 操作ボタン -->
+    <div class="flex space-x-3">
+      <%= link_to mypage_edit_path,
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+        <i class="fas fa-edit mr-2"></i>
+        プロフィール編集
+      <% end %>
+      
+      <%= link_to new_gift_record_path,
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+        <i class="fas fa-plus mr-2"></i>
+        新しいギフト記録
+      <% end %>
+    </div>
+  </div>
+
+  <!-- ユーザー情報カード -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+    <div class="flex items-center">
+      <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mr-4">
+        <i class="fas fa-user text-2xl text-pink-600"></i>
+      </div>
+      <div class="flex-1">
+        <h3 class="text-xl font-semibold text-gray-800"><%= @user.display_name %></h3>
+        <p class="text-gray-600"><%= @user.display_email %></p>
+        <p class="text-sm text-gray-500">登録日: <%= l(@user.created_at, format: :short) %></p>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-gray-500">総ギフト記録</div>
+        <div class="text-2xl font-bold text-pink-600"><%= @total_gift_records %>件</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 統計情報サマリー -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <!-- 総ギフト数 -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="flex items-center">
+      <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center mr-4">
+        <i class="fas fa-gift text-xl text-pink-600"></i>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-600">総ギフト数</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @total_gift_records %>件</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 総金額 -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="flex items-center">
+      <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+        <i class="fas fa-yen-sign text-xl text-green-600"></i>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-600">総金額</p>
+        <p class="text-2xl font-bold text-gray-900">¥<%= number_with_delimiter(@total_gift_amount) %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ギフト相手数 -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="flex items-center">
+      <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+        <i class="fas fa-users text-xl text-blue-600"></i>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-600">ギフト相手</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @total_gift_people %>人</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 今年の統計 -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="flex items-center">
+      <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+        <i class="fas fa-calendar-alt text-xl text-purple-600"></i>
+      </div>
+      <div>
+        <p class="text-sm font-medium text-gray-600">今年のギフト</p>
+        <p class="text-2xl font-bold text-gray-900"><%= @current_year_stats[:count] %>件</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- メインコンテンツ -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+  <!-- 最近のギフト記録 -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-medium text-gray-800">
+        <i class="fas fa-clock mr-2 text-green-500"></i>
+        最近のギフト記録
+      </h3>
+      <%= link_to gift_records_path, class: "text-sm text-pink-600 hover:text-pink-700 font-medium" do %>
+        すべて見る →
+      <% end %>
+    </div>
+
+    <% if @recent_gift_records.any? %>
+      <div class="space-y-3">
+        <% @recent_gift_records.each do |record| %>
+          <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="flex-1">
+              <h4 class="font-medium text-gray-800"><%= record.item_name %></h4>
+              <div class="text-sm text-gray-600">
+                <span class="mr-3">
+                  <i class="fas fa-user mr-1"></i>
+                  <%= record.gift_person&.name || "未設定" %>
+                </span>
+                <span>
+                  <i class="fas fa-calendar mr-1"></i>
+                  <%= l(record.gift_at, format: :short) %>
+                </span>
+              </div>
+            </div>
+            <% if record.amount.present? %>
+              <div class="text-right">
+                <span class="text-sm font-medium text-green-600">
+                  ¥<%= number_with_delimiter(record.amount) %>
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-8">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-gift text-2xl text-gray-400"></i>
+        </div>
+        <p class="text-gray-500">まだギフト記録がありません</p>
+        <%= link_to new_gift_record_path, class: "inline-flex items-center mt-2 text-sm text-pink-600 hover:text-pink-700 font-medium" do %>
+          <i class="fas fa-plus mr-1"></i>
+          最初の記録を作成
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 人気のギフト相手 -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-medium text-gray-800">
+        <i class="fas fa-star mr-2 text-yellow-500"></i>
+        よくギフトを贈る相手 TOP5
+      </h3>
+      <%= link_to gift_people_path, class: "text-sm text-pink-600 hover:text-pink-700 font-medium" do %>
+        管理する →
+      <% end %>
+    </div>
+
+    <% if @popular_gift_people.any? %>
+      <div class="space-y-3">
+        <% @popular_gift_people.each_with_index do |person, index| %>
+          <div class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
+              <span class="text-sm font-bold text-yellow-600"><%= index + 1 %></span>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-medium text-gray-800"><%= person.name %></h4>
+              <p class="text-sm text-gray-600">
+                <i class="fas fa-heart mr-1"></i>
+                <%= person.relationship&.name || "未設定" %>
+              </p>
+            </div>
+            <div class="text-right">
+              <% gift_count = current_user.gift_records.where(gift_people_id: person.id).count %>
+              <span class="text-sm font-medium text-pink-600">
+                <%= pluralize(gift_count, "件") %>
+              </span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-8">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-users text-2xl text-gray-400"></i>
+        </div>
+        <p class="text-gray-500">まだギフト相手が登録されていません</p>
+        <%= link_to new_gift_person_path, class: "inline-flex items-center mt-2 text-sm text-pink-600 hover:text-pink-700 font-medium" do %>
+          <i class="fas fa-plus mr-1"></i>
+          ギフト相手を追加
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- 月別統計 -->
+<div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-8">
+  <h3 class="text-lg font-medium text-gray-800 mb-4">
+    <i class="fas fa-chart-line mr-2 text-blue-500"></i>
+    月別ギフト統計（過去6ヶ月）
+  </h3>
+  
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <% @monthly_stats.each do |stat| %>
+      <div class="text-center p-4 border border-gray-200 rounded-lg">
+        <div class="text-sm text-gray-600 mb-1"><%= stat[:month] %></div>
+        <div class="text-xl font-bold text-gray-900 mb-1"><%= stat[:count] %>件</div>
+        <div class="text-sm text-green-600">¥<%= number_with_delimiter(stat[:amount]) %></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- プライバシー設定とアカウント情報 -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <!-- 公開設定統計 -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <h3 class="text-lg font-medium text-gray-800 mb-4">
+      <i class="fas fa-shield-alt mr-2 text-green-500"></i>
+      公開設定
+    </h3>
+    
+    <div class="space-y-4">
+      <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+        <div class="flex items-center">
+          <i class="fas fa-globe text-green-600 mr-2"></i>
+          <span class="font-medium text-gray-800">公開ギフト記録</span>
+        </div>
+        <span class="text-lg font-bold text-green-600"><%= @public_records_count %>件</span>
+      </div>
+      
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div class="flex items-center">
+          <i class="fas fa-lock text-gray-600 mr-2"></i>
+          <span class="font-medium text-gray-800">非公開ギフト記録</span>
+        </div>
+        <span class="text-lg font-bold text-gray-600"><%= @private_records_count %>件</span>
+      </div>
+    </div>
+    
+    <p class="text-sm text-gray-600 mt-4">
+      <i class="fas fa-info-circle mr-1"></i>
+      公開設定はギフト記録作成・編集時に個別に変更できます
+    </p>
+  </div>
+
+  <!-- アカウント管理 -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <h3 class="text-lg font-medium text-gray-800 mb-4">
+      <i class="fas fa-cog mr-2 text-gray-600"></i>
+      アカウント管理
+    </h3>
+    
+    <div class="space-y-3">
+      <%= link_to mypage_edit_path,
+          class: "flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+        <i class="fas fa-user-edit text-blue-600 mr-3"></i>
+        <div>
+          <div class="font-medium text-gray-800">プロフィール編集</div>
+          <div class="text-sm text-gray-600">名前やメールアドレスの変更</div>
+        </div>
+        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+      <% end %>
+      
+      <%= link_to edit_user_registration_path,
+          class: "flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+        <i class="fas fa-key text-green-600 mr-3"></i>
+        <div>
+          <div class="font-medium text-gray-800">パスワード変更</div>
+          <div class="text-sm text-gray-600">アカウントのセキュリティ設定</div>
+        </div>
+        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+      <% end %>
+      
+      <%= link_to gift_records_path,
+          class: "flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+        <i class="fas fa-list text-purple-600 mr-3"></i>
+        <div>
+          <div class="font-medium text-gray-800">ギフト記録管理</div>
+          <div class="text-sm text-gray-600">すべてのギフト記録を表示・編集</div>
+        </div>
+        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // 統計カードのホバー効果
+  const statsCards = document.querySelectorAll('.grid .bg-white');
+  
+  statsCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-2px)';
+      this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+    });
+  });
+});
+</script>

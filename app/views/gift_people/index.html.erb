@@ -1,0 +1,244 @@
+<% content_for(:title, "ギフト相手一覧") %>
+
+<!-- ヘッダー部分 -->
+<div class="mb-6 mt-4">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold text-gray-800">
+      <i class="fas fa-users mr-2 text-pink-500"></i>
+      ギフト相手一覧
+    </h2>
+    <div class="flex gap-2">
+      <%= link_to new_gift_person_path,
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+        <i class="fas fa-plus mr-2"></i>
+        新しい相手を追加
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 検索・フィルター機能 -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+    <%= form_with url: gift_people_path, method: :get, local: true, class: "space-y-4" do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- 検索キーワード -->
+        <div>
+          <%= f.label :search, "検索", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :search, 
+              value: params[:search],
+              placeholder: "名前、好きなもの、メモで検索",
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" %>
+        </div>
+
+        <!-- 関係性フィルター -->
+        <div>
+          <%= f.label :relationship_id, "関係性", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :relationship_id, 
+              options_for_select([["すべて", ""]] + @relationship_options, params[:relationship_id]),
+              {},
+              { class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" } %>
+        </div>
+
+        <!-- 検索ボタン -->
+        <div class="flex items-end">
+          <%= f.submit "検索", class: "w-full px-4 py-2 bg-pink-600 text-white text-sm font-medium rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" %>
+        </div>
+      </div>
+
+      <% if params[:search].present? || params[:relationship_id].present? %>
+        <div class="flex items-center justify-between pt-2 border-t border-gray-200">
+          <span class="text-sm text-gray-600">
+            <%= pluralize(@gift_people.count, "件") %>の結果
+          </span>
+          <%= link_to "クリア", gift_people_path, class: "text-sm text-pink-600 hover:text-pink-700" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<!-- ギフト相手一覧 -->
+<div class="mb-0 mt-0">
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-medium text-gray-800">
+      <i class="fas fa-address-book mr-1 text-pink-500"></i>
+      登録済み相手
+      <span class="text-sm text-gray-500 font-normal ml-1">
+        （<%= pluralize(@total_people, "人") %>）
+      </span>
+    </h3>
+  </div>
+
+  <% if @gift_people.any? %>
+    <!-- カードグリッドレイアウト -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+      <% @gift_people.each do |person| %>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-1 cursor-pointer" onclick="window.location.href='<%= gift_person_path(person) %>'">
+          <!-- アイコンエリア -->
+          <div class="h-32 bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center relative">
+            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
+              <i class="fas fa-user text-2xl text-pink-500"></i>
+            </div>
+            
+            <!-- 操作ボタン（右上） -->
+            <div class="absolute top-2 right-2 flex space-x-1" onclick="event.stopPropagation();">
+              <%= link_to edit_gift_person_path(person), 
+                  class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                  title: "編集",
+                  onclick: "event.stopPropagation();",
+                  aria: { label: "#{person.name}を編集" } do %>
+                <i class="fas fa-edit text-blue-600 text-sm"></i>
+              <% end %>
+              <%= link_to gift_person_path(person), 
+                  data: { 
+                    confirm: "「#{person.name}」さんを削除しますか？\n※関連するギフト記録がある場合は削除できません。",
+                    turbo_method: :delete
+                  },
+                  class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                  title: "削除",
+                  onclick: "event.stopPropagation();",
+                  aria: { label: "#{person.name}を削除" } do %>
+                <i class="fas fa-trash text-red-600 text-sm"></i>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- 相手情報 -->
+          <div class="p-4">
+            <!-- 名前 -->
+            <div class="mb-3">
+              <h4 class="text-lg font-bold leading-tight text-gray-800">
+                <%= person.name %>
+              </h4>
+            </div>
+
+            <!-- 関係性 -->
+            <div class="mb-3">
+              <div class="flex items-center text-sm">
+                <i class="fas fa-heart mr-2 text-red-400"></i>
+                <span class="text-gray-600">
+                  <%= person.relationship&.name || "未設定" %>
+                </span>
+              </div>
+            </div>
+
+            <!-- 誕生日 -->
+            <% if person.birthday.present? %>
+              <div class="mb-3">
+                <div class="flex items-center text-sm">
+                  <i class="fas fa-birthday-cake mr-2 text-yellow-500"></i>
+                  <span class="text-gray-600">
+                    <%= l(person.birthday, format: :short) %>
+                    <% age = ((Date.current - person.birthday) / 365.25).to_i %>
+                    <% if age > 0 %>
+                      <span class="text-xs text-gray-500">(<%= age %>歳)</span>
+                    <% end %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+
+            <!-- 好きなもの（短縮表示） -->
+            <% if person.likes.present? %>
+              <div class="mb-3">
+                <div class="flex items-start text-sm">
+                  <i class="fas fa-thumbs-up mr-2 text-green-500 mt-0.5"></i>
+                  <span class="text-gray-600 flex-1">
+                    <%= truncate(person.likes, length: 40) %>
+                  </span>
+                </div>
+              </div>
+            <% end %>
+
+            <!-- ギフト記録数 -->
+            <% gift_count = current_user.gift_records.where(gift_people_id: person.id).count %>
+            <div class="mt-4 pt-3 border-t border-gray-200">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-500">ギフト記録</span>
+                <span class="font-medium text-pink-600">
+                  <%= pluralize(gift_count, "件") %>
+                </span>
+              </div>
+            </div>
+
+            <!-- 最後のギフト記録日 -->
+            <% last_gift = current_user.gift_records.where(gift_people_id: person.id).order(gift_at: :desc).first %>
+            <% if last_gift %>
+              <div class="mt-2">
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                  <span>最後のギフト</span>
+                  <span><%= l(last_gift.gift_at, format: :short) %></span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- 空状態 -->
+    <div class="text-center py-12">
+      <div class="mx-auto h-24 w-24 text-gray-300">
+        <i class="fas fa-users text-6xl"></i>
+      </div>
+      <h3 class="mt-4 text-lg font-medium text-gray-900">
+        ギフト相手が登録されていません
+      </h3>
+      <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
+        <% if params[:search].present? || params[:relationship_id].present? %>
+          検索条件に一致する相手が見つかりませんでした。
+        <% else %>
+          最初のギフト相手を登録して、ギフト記録の管理を始めましょう。
+        <% end %>
+      </p>
+      <div class="mt-6">
+        <% if params[:search].present? || params[:relationship_id].present? %>
+          <%= link_to gift_people_path,
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mr-3" do %>
+            <i class="fas fa-list mr-2"></i>
+            すべて表示
+          <% end %>
+        <% end %>
+        <%= link_to new_gift_person_path,
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+          <i class="fas fa-plus mr-2"></i>
+          最初の相手を登録
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<!-- ページ下部の補助情報 -->
+<div class="mt-8 text-center text-sm text-gray-500">
+  <p>
+    <i class="fas fa-info-circle mr-1"></i>
+    ギフト相手を登録しておくと、ギフト記録作成時に選択できるようになります
+  </p>
+</div>
+
+<script>
+// ギフト相手一覧のJavaScript処理
+document.addEventListener('DOMContentLoaded', function() {
+  // 検索フォームの自動送信（エンターキー対応）
+  const searchInput = document.querySelector('input[name="search"]');
+  if (searchInput) {
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.closest('form').submit();
+      }
+    });
+  }
+
+  // カードのホバー効果は CSS で実装済み
+  
+  // フィルターの変更時自動検索（オプション）
+  const relationshipSelect = document.querySelector('select[name="relationship_id"]');
+  if (relationshipSelect) {
+    relationshipSelect.addEventListener('change', function() {
+      // 自動送信したい場合は以下のコメントを外す
+      // this.closest('form').submit();
+    });
+  }
+});
+</script>
