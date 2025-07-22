@@ -9,7 +9,7 @@ class User < ApplicationRecord
   has_many :gift_people, dependent: :destroy
 
   # バリデーション
-  validates :name, presence: true, length: { maximum: 50 }
+  validates :name, presence: true, length: { maximum: 20 }
 
   # LINEログインユーザーの場合はemailを必須にしない
   def email_required?

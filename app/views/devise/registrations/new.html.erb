@@ -36,14 +36,15 @@
       <%= render "devise/shared/error_messages", resource: resource %>
 
       <div style="margin-bottom: 24px; text-align: left;">
-        <%= f.label :メールアドレス, style: "
+        <%= f.label :name, "ユーザー名 *", style: "
           display: block;
           margin-bottom: 8px;
           font-weight: 600;
           color: #555;
           font-size: 14px;
         " %>
-        <%= f.email_field :email, autofocus: true, autocomplete: "email", style: "
+        <%= f.text_field :name, autofocus: true, autocomplete: "name", 
+            placeholder: "表示される名前を入力してください", style: "
           width: 100%;
           padding: 14px 16px;
           border: 2px solid #e1e5e9;
@@ -51,11 +52,36 @@
           font-size: 16px;
           box-sizing: border-box;
           transition: border-color 0.3s ease;
+          margin-top: 8px;
+        " %>
+        <small style="display: block; margin-top: 4px; color: #6c757d; font-size: 12px;">
+          20文字以内で入力してください。他のユーザーに表示される名前です。
+        </small>
+      </div>
+
+      <div style="margin-bottom: 24px; text-align: left;">
+        <%= f.label :email, "メールアドレス *", style: "
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #555;
+          font-size: 14px;
+        " %>
+        <%= f.email_field :email, autocomplete: "email", 
+            placeholder: "example@email.com", style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+          margin-top: 8px;
         " %>
       </div>
 
       <div style="margin-bottom: 24px; text-align: left;">
-        <%= f.label :パスワード, style: "
+        <%= f.label :password, "パスワード *", style: "
           display: block;
           margin-bottom: 8px;
           font-weight: 600;
@@ -63,7 +89,9 @@
           font-size: 14px;
         " %>
         <% if @minimum_password_length %>
-          <em style="font-size: 12px; color: #888;">(<%= @minimum_password_length %> 文字以上)</em>
+          <small style="display: block; margin-top: 4px; color: #6c757d; font-size: 12px;">
+            <%= @minimum_password_length %>文字以上で入力してください
+          </small>
         <% end %>
         <%= f.password_field :password, autocomplete: "new-password", style: "
           width: 100%;
@@ -78,7 +106,7 @@
       </div>
 
       <div style="margin-bottom: 32px; text-align: left;">
-        <%= f.label :パスワード再入力（確認用）, style: "
+        <%= f.label :password_confirmation, "パスワード再入力（確認用）*", style: "
           display: block;
           margin-bottom: 8px;
           font-weight: 600;
@@ -93,7 +121,18 @@
           font-size: 16px;
           box-sizing: border-box;
           transition: border-color 0.3s ease;
+          margin-top: 8px;
         " %>
+        <small style="display: block; margin-top: 4px; color: #6c757d; font-size: 12px;">
+          上記と同じパスワードを入力してください
+        </small>
+      </div>
+
+      <!-- 必須項目の説明 -->
+      <div style="margin-bottom: 16px; text-align: center;">
+        <small style="color: #6c757d; font-size: 12px;">
+          <span style="color: #e74c3c;">*</span>すべて必須項目です。
+        </small>
       </div>
 
       <div style="margin-bottom: 32px;">

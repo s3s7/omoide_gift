@@ -35,6 +35,7 @@
 
 <%- if devise_mapping.omniauthable? %>
   <%- resource_class.omniauth_providers.each do |provider| %>
-    <%= button_to "Sign in with #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider), data: { turbo: false } %><br />
+    <%= button_to image_tag('btn_login_base.png', alt: "#{OmniAuth::Utils.camelize(provider)}でログイン"), omniauth_authorize_path(resource_name, provider), data: { turbo: false } %>
+    <br />
   <% end %>
 <% end %>
