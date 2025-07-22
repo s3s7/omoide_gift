@@ -2,7 +2,7 @@ class GiftRecord < ApplicationRecord
   # リレーション
   belongs_to :user
   belongs_to :event
-  belongs_to :gift_people, class_name: "GiftPerson"
+  belongs_to :gift_person, foreign_key: "gift_people_id"
 
   # バリデーション
   validates :item_name, presence: true, length: { maximum: 255 }
@@ -104,7 +104,7 @@ class GiftRecord < ApplicationRecord
     where(user: user)
       .where(gift_at: date.beginning_of_month..date.end_of_month)
       .group(:gift_people_id)
-      .joins(:gift_people)
+      .joins(:gift_person)
       .pluck("gift_people.name", "COUNT(*)", "SUM(amount)")
   end
 end

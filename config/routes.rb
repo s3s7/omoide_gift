@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
   root "static_pages#top"
 
-  devise_for :users
+  devise_for :users, controllers: {
+    omniauth_callbacks: "omniauth_callbacks"
+  }
+  # User mypage routes
+  get "mypage", to: "users#show"
+  get "mypage/edit", to: "users#edit"
+  patch "mypage", to: "users#update"
 
   # Static pages for footer links and navigation
   get "how_to_use", to: "static_pages#how_to_use"
@@ -10,6 +16,7 @@ Rails.application.routes.draw do
   get "contact", to: "static_pages#contact"
 
   resources :gift_records
+  resources :gift_people
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

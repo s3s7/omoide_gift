@@ -1,0 +1,306 @@
+<%= form_with model: gift_person do |f| %>
+  <%= render 'shared/error_messages', object: f.object %>
+  
+  <!-- 名前入力 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :name, "名前", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <%= f.text_field :name, 
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+        ",
+        placeholder: "例：田中太郎、花子さん、おじいちゃんなど",
+        required: true,
+        maxlength: 255 %>
+    
+    <!-- ヘルプテキスト -->
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      ギフト相手の名前またはニックネームを入力してください（必須）
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_person.errors[:name].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_person.errors[:name].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 関係性選択 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :relationship_id, "関係性", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <%= f.select :relationship_id, 
+        options_from_collection_for_select(
+          (@relationships || []), 
+          :id, 
+          :name, 
+          gift_person&.relationship_id
+        ), 
+        { 
+          prompt: "関係性を選択してください"
+        }, 
+        { 
+          style: "
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+          ",
+          required: true
+        } %>
+    
+    <!-- ヘルプテキスト -->
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      この相手との関係性を選択してください（必須）
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_person.errors[:relationship_id].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_person.errors[:relationship_id].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 誕生日入力 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :birthday, "誕生日", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <%= f.date_field :birthday, 
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+        ",
+        max: Date.current.strftime('%Y-%m-%d') %>
+    
+    <!-- ヘルプテキスト -->
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      誕生日を入力すると、プレゼント時期の参考になります（任意）
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_person.errors[:birthday].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_person.errors[:birthday].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 好きなもの入力 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :likes, "好きなもの・趣味", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <%= f.text_area :likes, 
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+          min-height: 80px;
+          resize: vertical;
+        ",
+        placeholder: "例：読書、映画鑑賞、スイーツ、花、アクセサリーなど",
+        maxlength: 500 %>
+    
+    <!-- ヘルプテキスト -->
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      相手の好きなものや趣味を記録しておくと、ギフト選びの参考になります（任意、最大500文字）
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_person.errors[:likes].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_person.errors[:likes].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 嫌いなもの入力 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :dislikes, "苦手なもの・アレルギー", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <%= f.text_area :dislikes, 
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+          min-height: 80px;
+          resize: vertical;
+        ",
+        placeholder: "例：辛いもの、香りの強いもの、特定の食材アレルギーなど",
+        maxlength: 500 %>
+    
+    <!-- ヘルプテキスト -->
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      相手の苦手なものやアレルギーを記録して、適切なギフト選びに役立てましょう（任意、最大500文字）
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_person.errors[:dislikes].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_person.errors[:dislikes].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- メモ入力 -->
+  <div style="margin-bottom: 32px; text-align: left;">
+    <%= f.label :memo, "メモ", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <%= f.text_area :memo, 
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+          min-height: 100px;
+          resize: vertical;
+        ",
+        placeholder: "相手に関するその他のメモ、過去のギフトの反応、特記事項など...",
+        maxlength: 1000 %>
+    
+    <!-- ヘルプテキスト -->
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      相手に関する自由なメモを記録してください（任意、最大1000文字）
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_person.errors[:memo].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_person.errors[:memo].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 送信ボタン -->
+  <div style="margin-bottom: 32px;">
+    <%= f.submit nil, style: "
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #F6B352 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    " %>
+  </div>
+<% end %>
+
+<script>
+// ギフト相手フォームのJavaScript処理
+document.addEventListener('DOMContentLoaded', function() {
+  // フォームのフォーカス時のボーダー色変更
+  const inputs = document.querySelectorAll('input[type="text"], input[type="date"], select, textarea');
+  
+  inputs.forEach(function(input) {
+    input.addEventListener('focus', function() {
+      this.style.borderColor = '#F6B352';
+    });
+    
+    input.addEventListener('blur', function() {
+      this.style.borderColor = '#e1e5e9';
+    });
+  });
+
+  // 文字数カウンター（メモフィールド用）
+  const memoField = document.getElementById('gift_person_memo');
+  if (memoField) {
+    const maxLength = parseInt(memoField.getAttribute('maxlength'));
+    
+    // 文字数表示要素を作成
+    const counterDiv = document.createElement('div');
+    counterDiv.style.cssText = 'font-size: 11px; color: #999; text-align: right; margin-top: 4px;';
+    memoField.parentNode.appendChild(counterDiv);
+    
+    // 文字数更新関数
+    function updateCounter() {
+      const currentLength = memoField.value.length;
+      counterDiv.textContent = `${currentLength}/${maxLength}文字`;
+      
+      if (currentLength > maxLength * 0.9) {
+        counterDiv.style.color = '#dc3545';
+      } else if (currentLength > maxLength * 0.8) {
+        counterDiv.style.color = '#ffc107';
+      } else {
+        counterDiv.style.color = '#999';
+      }
+    }
+    
+    // 初期表示
+    updateCounter();
+    
+    // 入力時の処理
+    memoField.addEventListener('input', updateCounter);
+  }
+});
+</script>

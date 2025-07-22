@@ -119,7 +119,7 @@
           贈り先情報
         </h2>
         
-        <% if @gift_record.gift_people.present? %>
+        <% if @gift_record.gift_person.present? %>
           <div class="bg-gray-50 rounded-lg p-4">
             <div class="space-y-3">
               <!-- 名前 -->
@@ -128,54 +128,54 @@
                   名前
                 </div>
                 <div class="flex-1 text-sm font-semibold text-gray-900">
-                  <%= @gift_record.gift_people.name %>
+                  <%= @gift_record.gift_person.name %>
                 </div>
               </div>
 
               <!-- 関係性 -->
-              <% if @gift_record.gift_people.relationship.present? %>
+              <% if @gift_record.gift_person.relationship.present? %>
                 <div class="flex items-center">
                   <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
                     関係性
                   </div>
                   <div class="flex-1 text-sm text-gray-900">
-                    <%= @gift_record.gift_people.relationship.name %>
+                    <%= @gift_record.gift_person.relationship.name %>
                   </div>
                 </div>
               <% end %>
 
               <!-- 誕生日 -->
-              <% if @gift_record.gift_people.birthday.present? %>
+              <% if @gift_record.gift_person.birthday.present? %>
                 <div class="flex items-center">
                   <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
                     誕生日
                   </div>
                   <div class="flex-1 text-sm text-gray-900">
-                    <%= l(@gift_record.gift_people.birthday, format: :long) %>
+                    <%= l(@gift_record.gift_person.birthday, format: :long) %>
                   </div>
                 </div>
               <% end %>
 
               <!-- 好きなもの -->
-              <% if @gift_record.gift_people.likes.present? %>
+              <% if @gift_record.gift_person.likes.present? %>
                 <div class="flex items-start">
                   <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
                     好きなもの
                   </div>
                   <div class="flex-1 text-sm text-gray-900">
-                    <%= simple_format(@gift_record.gift_people.likes) %>
+                    <%= simple_format(@gift_record.gift_person.likes) %>
                   </div>
                 </div>
               <% end %>
 
               <!-- 嫌いなもの -->
-              <% if @gift_record.gift_people.dislikes.present? %>
+              <% if @gift_record.gift_person.dislikes.present? %>
                 <div class="flex items-start">
                   <div class="flex-shrink-0 w-16 text-sm font-medium text-gray-500">
                     嫌いなもの
                   </div>
                   <div class="flex-1 text-sm text-gray-900">
-                    <%= simple_format(@gift_record.gift_people.dislikes) %>
+                    <%= simple_format(@gift_record.gift_person.dislikes) %>
                   </div>
                 </div>
               <% end %>

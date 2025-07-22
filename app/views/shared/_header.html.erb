@@ -15,7 +15,9 @@
       <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border" style="z-index: 9999;">
 
         <% if user_signed_in? %>
+          <%= link_to "マイページ", mypage_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "思い出を追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+          <%= link_to "ギフト相手を追加", new_gift_person_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "ログアウト", destroy_user_session_path, 
               data: { 
                 turbo_method: :delete,
@@ -26,6 +28,9 @@
           <%= link_to "ログイン/新規登録", new_user_session_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
         <% end %>
         <%= link_to "みんなのギフト", gift_records_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        <% if user_signed_in? %>
+          <%= link_to "ギフト相手一覧", gift_people_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        <% end %>
         
         <!-- Divider -->
         <div class="border-t border-gray-200 my-2"></div>

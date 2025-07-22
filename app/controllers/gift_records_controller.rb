@@ -16,13 +16,13 @@ class GiftRecordsController < ApplicationController
 
     # 関連テーブルの完全な事前読み込み
     @gift_records = base_query
-      .includes(:gift_people, :event, :user, gift_people: :relationship)
+      .includes(:gift_person, :event, :user, gift_person: :relationship)
       .order(created_at: :desc)
 
     # 検索機能（オプション）
     if params[:search].present?
       search_term = "%#{params[:search]}%"
-      @gift_records = @gift_records.joins(:gift_people)
+      @gift_records = @gift_records.joins(:gift_person)
         .where(
           "gift_records.item_name ILIKE ? OR gift_records.memo ILIKE ? OR gift_people.name ILIKE ?",
           search_term, search_term, search_term
@@ -47,7 +47,7 @@ class GiftRecordsController < ApplicationController
 
     # フィルタリング用のオプション準備（実際に使われているギフト相手のみ）
     @gift_people_options = base_query
-      .joins(:gift_people)
+      .joins(:gift_person)
       .select("gift_people.name, gift_people.id")
       .where.not("gift_people.name" => [ nil, "" ])
       .distinct
