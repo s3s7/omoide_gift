@@ -5,6 +5,9 @@ class ApplicationController < ActionController::Base
   # CSRFトークン検証を有効化（セキュリティ強化）
   protect_from_forgery with: :exception
 
+  # Deviseのストロングパラメータ設定
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
   # Deviseのコールバックメソッドをオーバーライド
 
   # ログイン後のリダイレクト先を設定
@@ -45,5 +48,13 @@ class ApplicationController < ActionController::Base
   # 情報メッセージの設定
   def flash_info(key, options = {})
     set_flash_message(:info, key, options)
+  end
+
+  # Deviseのストロングパラメータ設定
+  def configure_permitted_parameters
+    # 新規登録時にnameパラメータを許可
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name])
+    # アカウント更新時にnameパラメータを許可
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name])
   end
 end
