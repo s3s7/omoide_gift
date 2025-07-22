@@ -213,7 +213,6 @@ class GiftRecordsController < ApplicationController
           {
             id: record.id,
             item_name: record.item_name,
-            user_name: record.user.name,
             type: "item",
             display_text: record.item_name,
             search_highlight: highlight_match(record.item_name, query)
@@ -230,7 +229,6 @@ class GiftRecordsController < ApplicationController
           {
             id: record.id,
             item_name: record.item_name,
-            user_name: record.user.name,
             type: "memo",
             display_text: "#{record.item_name} (メモ: #{truncate_text(record.memo, 15)})",
             search_highlight: highlight_match(record.memo, query)
