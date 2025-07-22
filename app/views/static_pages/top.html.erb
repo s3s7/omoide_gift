@@ -17,13 +17,19 @@
   
   <% if user_signed_in? %>
     <%= link_to new_gift_record_path, 
-        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-300 shadow-lg hover:shadow-xl" do %>
+        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white transition-colors duration-300 shadow-lg hover:shadow-xl",
+        style: "background-color: #FC913A;",
+        onmouseenter: "this.style.backgroundColor='#E8823A'",
+        onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
       <i class="fas fa-plus mr-2"></i>
       思い出を記録する
     <% end %>
   <% else %>
     <%= link_to new_user_session_path, 
-        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl" do %>
+        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white transition-colors duration-300 shadow-lg hover:shadow-xl",
+        style: "background-color: #FC913A;",
+        onmouseenter: "this.style.backgroundColor='#E8823A'",
+        onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
       <i class="fas fa-sign-in-alt mr-2"></i>
       ログイン・新規登録
     <% end %>
@@ -45,13 +51,19 @@
         </p>
         <% if user_signed_in? %>
           <%= link_to new_gift_record_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+              style: "background-color: #FC913A;",
+              onmouseenter: "this.style.backgroundColor='#E8823A'",
+              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
             <i class="fas fa-plus mr-2"></i>
             記録する！
           <% end %>
         <% else %>
           <%= link_to new_user_session_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+              style: "background-color: #FC913A;",
+              onmouseenter: "this.style.backgroundColor='#E8823A'",
+              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
             <i class="fas fa-sign-in-alt mr-2"></i>
             記録する！
           <% end %>
@@ -71,13 +83,19 @@
         </p>
         <% if user_signed_in? %>
           <%= link_to new_gift_record_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+              style: "background-color: #FC913A;",
+              onmouseenter: "this.style.backgroundColor='#E8823A'",
+              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
             <i class="fas fa-user-plus mr-2"></i>
             記録する！
           <% end %>
         <% else %>
           <%= link_to new_user_session_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+              style: "background-color: #FC913A;",
+              onmouseenter: "this.style.backgroundColor='#E8823A'",
+              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
             <i class="fas fa-sign-in-alt mr-2"></i>
             登録する！
           <% end %>
@@ -96,7 +114,10 @@
           ギフト選びを迷った際にあっと驚くようなアイディが見つかるかも
         </p>
         <%= link_to gift_records_path, 
-            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 transition-colors duration-300 shadow-sm hover:shadow-md" do %>
+            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+            style: "background-color: #FC913A;",
+            onmouseenter: "this.style.backgroundColor='#E8823A'",
+            onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
           <i class="fas fa-eye mr-2"></i>
           見に行く！
         <% end %>
