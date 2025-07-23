@@ -190,6 +190,73 @@ class GiftRecordsController < ApplicationController
     redirect_to gift_records_path
   end
 
+  # オートコンプリート用API
+  def autocomplete
+    query = params[:q]&.strip
+
+    if query.present? && query.length >= 1
+      search_term = "%#{query}%"
+
+      # プライバシーを考慮したベースクエリ
+      base_query = if user_signed_in?
+        GiftRecord.where("gift_records.is_public = ? OR gift_records.user_id = ?", true, current_user.id)
+      else
+        GiftRecord.where(is_public: true)
+      end
+
+      # アイテム名検索結果
+      item_results = base_query
+        .includes(:gift_person, :user, gift_person: :relationship)
+        .where("gift_records.item_name ILIKE ?", search_term)
+        .limit(4)
+        .map do |record|
+          {
+            id: record.id,
+            item_name: record.item_name,
+            type: "item",
+            display_text: record.item_name,
+            search_highlight: highlight_match(record.item_name, query)
+          }
+        end
+
+      # メモ検索結果
+      memo_results = base_query
+        .includes(:gift_person, :user, gift_person: :relationship)
+        .where.not(memo: [ nil, "" ])
+        .where("gift_records.memo ILIKE ?", search_term)
+        .limit(3)
+        .map do |record|
+          {
+            id: record.id,
+            item_name: record.item_name,
+            type: "memo",
+            display_text: "#{record.item_name} (メモ: #{truncate_text(record.memo, 15)})",
+            search_highlight: highlight_match(record.memo, query)
+          }
+        end
+
+      results = (item_results + memo_results).uniq { |item| item[:id] }.take(8)
+
+      render json: {
+        results: results,
+        total_count: results.length
+      }
+    else
+      render json: {
+        results: [],
+        total_count: 0
+      }
+    end
+
+  rescue StandardError => e
+    Rails.logger.error "GiftRecords autocomplete error: #{e.message}"
+    render json: {
+      results: [],
+      total_count: 0,
+      error: "検索中にエラーが発生しました"
+    }, status: :internal_server_error
+  end
+
   private
 
   def gift_record_params
@@ -244,5 +311,22 @@ class GiftRecordsController < ApplicationController
       .group("events.id")
       .order("COUNT(gift_records.id) DESC")
       .limit(5)
+  end
+
+  # オートコンプリート用ヘルパーメソッド
+  def highlight_match(text, query)
+    return text unless text.present? && query.present?
+
+    text.gsub(Regexp.new(Regexp.escape(query), Regexp::IGNORECASE)) do |match|
+      "<mark>#{match}</mark>"
+    end
+  rescue StandardError
+    text
+  end
+
+  def truncate_text(text, length = 20)
+    return "" unless text.present?
+
+    text.length > length ? "#{text[0..length-1]}..." : text
   end
 end
