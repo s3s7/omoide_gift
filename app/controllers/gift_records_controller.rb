@@ -34,6 +34,14 @@ class GiftRecordsController < ApplicationController
       @gift_records = @gift_records.where(gift_people_id: params[:gift_person_id])
     end
 
+    if params[:relationship_id].present?
+      @gift_records = @gift_records.joins(:gift_person).where(gift_people: { relationship_id: params[:relationship_id] })
+    end
+
+    if params[:event_id].present?
+      @gift_records = @gift_records.where(event_id: params[:event_id])
+    end
+
     if params[:date_from].present?
       @gift_records = @gift_records.where("gift_at >= ?", params[:date_from])
     end
@@ -54,12 +62,35 @@ class GiftRecordsController < ApplicationController
       .order("gift_people.name")
       .pluck("gift_people.name", "gift_people.id")
 
+    # 関係性オプション準備（実際に使われている関係性のみ）
+    @relationship_options = base_query
+      .joins(gift_person: :relationship)
+      .select("relationships.name, relationships.id")
+      .distinct
+      .order("relationships.name")
+      .pluck("relationships.name", "relationships.id")
+
+    # イベントオプション準備（実際に使われているイベントのみ）
+    @event_options = base_query
+      .joins(:event)
+      .select("events.name, events.id")
+      .distinct
+      .order("events.name")
+      .pluck("events.name", "events.id")
+
     # 統計情報（ダッシュボード要素）
     @total_records = @gift_records.count
     @total_amount = @gift_records.sum("gift_records.amount") || 0
     @current_month_records = base_query.where(
       "gift_records.gift_at" => Date.current.beginning_of_month..Date.current.end_of_month
     ).count
+
+    # シェア確認用データの準備
+    if params[:share_confirm] == "true" && params[:gift_record_id].present?
+      @share_gift_record = current_user.gift_records
+        .includes(:gift_person, :event, gift_person: :relationship)
+        .find_by(id: params[:gift_record_id])
+    end
 
     # エラーハンドリング
     rescue ActiveRecord::RecordNotFound
@@ -80,23 +111,14 @@ class GiftRecordsController < ApplicationController
     if params[:gift_record][:gift_people_id] == "new"
       # gift_personパラメータが存在しない場合
       unless params[:gift_person].present?
-        @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
+        # gift_recordは一時的なオブジェクトとして作成（バリデーションは実行しない）
+        @gift_record = GiftRecord.new(gift_record_params.except(:gift_people_id))
+        @gift_record.user = current_user
         @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
         prepare_events_for_form
         @gift_person = current_user.gift_people.build  # エラー表示用の空オブジェクト
-        @gift_person.errors.add(:name, "を入力してください")
-        flash.now[:alert] = "ギフト相手の情報を入力してください。"
-        render :new, status: :unprocessable_entity
-        return
-      end
-      # 名前が空でないかチェック
-      if params[:gift_person][:name].blank?
-        @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
-        @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-        prepare_events_for_form
-        @gift_person = current_user.gift_people.build(gift_person_params)  # エラー表示用
-        @gift_person.errors.add(:name, "を入力してください")
-        flash.now[:alert] = "ギフト相手の名前を入力してください。"
+        # ギフト相手のバリデーションのみ実行
+        @gift_person.valid?
         render :new, status: :unprocessable_entity
         return
       end
@@ -111,7 +133,7 @@ class GiftRecordsController < ApplicationController
 
         if @gift_record.save
           flash_success(:created, item: GiftRecord.model_name.human)
-          redirect_to gift_records_path
+          redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
           return
         else
           # ギフト記録の作成に失敗した場合、ギフト相手を削除
@@ -125,30 +147,32 @@ class GiftRecordsController < ApplicationController
           return
         end
       else
-        @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
+        # gift_recordは一時的なオブジェクトとして作成（バリデーションは実行しない）
+        @gift_record = GiftRecord.new(gift_record_params.except(:gift_people_id))
+        @gift_record.user = current_user
         @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
         prepare_events_for_form
 
-        # ギフト相手のエラーメッセージをflashに追加
-        error_messages = @gift_person.errors.full_messages.join(", ")
-        flash.now[:alert] = "ギフト相手の作成に失敗しました: #{error_messages}"
+        # ギフト相手のバリデーションエラーをフォームで表示
         render :new, status: :unprocessable_entity
         return
       end
     else
+      # 既存のギフト相手を選択する場合
       @gift_record = current_user.gift_records.build(gift_record_params)
       if @gift_record.save
         flash_success(:created, item: GiftRecord.model_name.human)
-        redirect_to gift_records_path
+        redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
+        return
+      else
+        # エラー時のフォーム再表示用データ準備
+        @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
+        prepare_events_for_form
+        render :new, status: :unprocessable_entity
         return
       end
     end
 
-    @gift_record ||= current_user.gift_records.build
-    @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-    prepare_events_for_form
-    flash.now[:alert] = t("defaults.flash_message.not_created", item: GiftRecord.model_name.human)
-    render :new, status: :unprocessable_entity
   end
 
   def show

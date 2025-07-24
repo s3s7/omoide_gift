@@ -10,6 +10,9 @@ class User < ApplicationRecord
 
   # バリデーション
   validates :name, presence: true, length: { maximum: 20 }
+  
+  # セキュリティを考慮したエラーメッセージの置き換え
+  after_validation :customize_validation_errors
 
   # LINEログインユーザーの場合はemailを必須にしない
   def email_required?
@@ -92,5 +95,22 @@ class User < ApplicationRecord
   def set_values_by_raw_info(raw_info)
     self.raw_info = raw_info.to_json
     self.save!
+  end
+
+  private
+
+  # バリデーションエラーメッセージのカスタマイズ
+  def customize_validation_errors
+    # emailエラーのカスタマイズ（セキュリティ考慮）
+    if errors[:email].any?
+      errors.delete(:email)
+      errors.add(:base, "登録できませんでした。入力内容をご確認ください")
+    end
+    
+    # パスワード確認エラーの日本語化
+    if errors[:password_confirmation].any?
+      errors.delete(:password_confirmation)
+      errors.add(:password_confirmation, "とパスワードの入力が一致しません")
+    end
   end
 end

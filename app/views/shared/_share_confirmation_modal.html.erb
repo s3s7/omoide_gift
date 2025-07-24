@@ -1,0 +1,99 @@
+<!-- ギフト記録シェア確認モーダル -->
+<div id="share-confirmation-modal" 
+     class="fixed inset-0 z-50 overflow-y-auto hidden" 
+     aria-labelledby="share-modal-title" 
+     role="dialog" 
+     aria-modal="true">
+  <!-- 背景オーバーレイ -->
+  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
+         aria-hidden="true"
+         onclick="closeShareModal()"></div>
+
+    <!-- モーダル位置調整用のスペーサー -->
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+    <!-- モーダルコンテンツ -->
+    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+      <!-- ヘッダー -->
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-white sm:mx-0 sm:h-10 sm:w-10">
+            <i class="fab fa-x-twitter text-blue-600 text-lg"></i>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-medium text-white" id="share-modal-title">
+              ギフト記録をシェアしませんか？
+            </h3>
+            <div class="mt-2">
+              <p class="text-sm text-blue-100">
+                今作成したギフト記録をXでシェアして、みんなにギフトのアイデアを共有しましょう！
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- メインコンテンツ -->
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <!-- ギフト記録のプレビュー -->
+        <div id="share-gift-preview" class="mb-4 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <!-- JavaScriptで動的に内容が挿入される -->
+        </div>
+
+        <!-- シェア文のプレビュー -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-quote-left mr-1"></i>
+            シェアする内容
+          </label>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <p id="share-text-preview" class="text-sm text-gray-800">
+              <!-- JavaScriptで動的に生成される -->
+            </p>
+            <div class="mt-2 text-xs text-gray-500">
+              <i class="fas fa-info-circle mr-1"></i>
+              文字数: <span id="share-text-length">0</span>/280
+            </div>
+          </div>
+        </div>
+
+        <!-- 注意事項 -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-xs font-medium text-yellow-800">
+                シェアする前にご確認ください
+              </h3>
+              <div class="mt-1 text-xs text-yellow-700">
+                <ul class="list-disc list-inside space-y-1">
+                  <li>個人情報や機密情報が含まれていないかご確認ください</li>
+                  <li>シェア設定が「公開」の記録のみシェアすることをお勧めします</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- フッター（ボタン） -->
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button type="button" 
+                onclick="shareToX()" 
+                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+          <i class="fab fa-x-twitter mr-2"></i>
+          Xでシェアする
+        </button>
+        <button type="button" 
+                onclick="closeShareModal()" 
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+          <i class="fas fa-times mr-2"></i>
+          今はしない
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

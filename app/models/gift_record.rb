@@ -4,19 +4,19 @@ class GiftRecord < ApplicationRecord
   belongs_to :event
   belongs_to :gift_person, foreign_key: "gift_people_id"
 
-  # バリデーション
-  validates :item_name, presence: true, length: { maximum: 255 }
+  # 必須フィールドのバリデーション（統一されたエラーメッセージ）
+  validates :item_name, presence: { message: "を入力してください" }, length: { maximum: 255 }
+  validates :gift_at, presence: { message: "を選択してください" }
+  validates :event_id, presence: { message: "を選択してください" }
+  validates :gift_people_id, presence: { message: "を選択してください" }
+  
+  # オプションフィールドのバリデーション
   validates :amount, numericality: { greater_than: 0, allow_nil: true }
   validates :memo, length: { maximum: 1000 }
 
-  # 日付バリデーション
-  validates :gift_at, presence: { message: "を選択してください" }
+  # カスタムバリデーション
   validate :gift_at_is_valid_date
   validate :gift_at_is_reasonable_date
-
-  # イベントバリデーション（必須フィールドとしての妥当性チェック）
-  validates :event_id, presence: { message: "を選択してください" }
-  validate :event_exists_and_valid
 
   private
 

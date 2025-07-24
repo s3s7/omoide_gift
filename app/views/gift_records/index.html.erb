@@ -22,13 +22,14 @@
   <!-- 検索・フィルター機能 -->
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto">
     <%= form_with url: gift_records_path, method: :get, local: true, class: "space-y-2" do |f| %>
+      <!-- 検索欄と検索ボタン -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <!-- 検索キーワード（オートコンプリート付き） -->
         <div class="relative">
           <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
           <%= f.text_field :search, 
               value: params[:search],
-              placeholder: "アイテム名、贈り先、メモで検索",
+              placeholder: "アイテム名、メモで検索",
               id: "gift-records-search-input",
               autocomplete: "off",
               class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" %>
@@ -52,7 +53,58 @@
         </div>
       </div>
 
-      <% if params[:search].present? %>
+      <!-- フィルターと値 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <!-- フィルタータイプ選択 -->
+        <div>
+          <%= f.label :filter_type, "フィルター", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+          <%= f.select :filter_type, 
+              options_for_select([
+                ["選択してください", ""],
+                ["関係性", "relationship"],
+                ["イベント", "event"]
+              ], params[:filter_type]),
+              {},
+              { 
+                id: "filter-type-select",
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" 
+              } %>
+          <%= f.hidden_field :filter_type, id: "filter-type-hidden" %>
+        </div>
+
+        <!-- 動的フィルター値選択 -->
+        <div>
+          <%= f.label :filter_value, "値", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+          
+          <!-- 関係性選択プルダウン -->
+          <%= f.select :relationship_id, 
+              options_for_select([["すべて", ""]] + @relationship_options, params[:relationship_id]),
+              {},
+              { 
+                id: "relationship-select",
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500",
+                style: (params[:filter_type] == "relationship" ? "" : "display: none;")
+              } %>
+          
+          <!-- イベント選択プルダウン -->
+          <%= f.select :event_id, 
+              options_for_select([["すべて", ""]] + @event_options, params[:event_id]),
+              {},
+              { 
+                id: "event-select",
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500",
+                style: (params[:filter_type] == "event" ? "" : "display: none;")
+              } %>
+          
+          <!-- プレースホルダー表示 -->
+          <div id="filter-placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500" 
+               style="<%= params[:filter_type].present? ? 'display: none;' : '' %>">
+            左でフィルターを選択してください
+          </div>
+        </div>
+      </div>
+
+      <% if params[:search].present? || params[:relationship_id].present? || params[:event_id].present? %>
         <div class="flex items-center justify-between pt-1.5 border-t border-gray-200">
           <span class="text-xs text-gray-600">
             <%= pluralize(@gift_records.count, "件") %>の結果
@@ -562,7 +614,222 @@
   document.addEventListener('turbo:before-visit', cleanupGiftRecordsAutocomplete);
   document.addEventListener('beforeunload', cleanupGiftRecordsAutocomplete);
 })();
+
+// 動的フィルター機能
+(function() {
+  function initializeDynamicFilter() {
+    const filterTypeSelect = document.getElementById('filter-type-select');
+    const filterTypeHidden = document.getElementById('filter-type-hidden');
+    const relationshipSelect = document.getElementById('relationship-select');
+    const eventSelect = document.getElementById('event-select');
+    const placeholder = document.getElementById('filter-placeholder');
+    
+    if (!filterTypeSelect || !filterTypeHidden || !relationshipSelect || !eventSelect || !placeholder) {
+      return;
+    }
+    
+    // 初期状態の設定
+    function updateFilterDisplay() {
+      const selectedType = filterTypeSelect.value;
+      
+      // hidden fieldを更新
+      filterTypeHidden.value = selectedType;
+      
+      // すべて非表示にする
+      relationshipSelect.style.display = 'none';
+      eventSelect.style.display = 'none';
+      placeholder.style.display = 'none';
+      
+      // 選択されたタイプに応じて表示
+      if (selectedType === 'relationship') {
+        relationshipSelect.style.display = 'block';
+        // イベント選択をクリア
+        eventSelect.value = '';
+      } else if (selectedType === 'event') {
+        eventSelect.style.display = 'block';
+        // 関係性選択をクリア
+        relationshipSelect.value = '';
+      } else {
+        placeholder.style.display = 'block';
+        // 両方クリア
+        relationshipSelect.value = '';
+        eventSelect.value = '';
+      }
+    }
+    
+    // フィルタータイプ変更時の処理
+    filterTypeSelect.addEventListener('change', updateFilterDisplay);
+    
+    // 初期表示の設定
+    updateFilterDisplay();
+  }
+  
+  // Turbo対応のイベントリスナー
+  document.addEventListener('turbo:load', initializeDynamicFilter);
+  document.addEventListener('DOMContentLoaded', initializeDynamicFilter);
+})();
+
+// ギフト記録シェア機能
+(function() {
+  // シェアデータを格納する変数
+  let shareGiftRecord = null;
+
+  // シェア確認モーダルの初期化
+  function initializeShareModal() {
+    <% if @share_gift_record %>
+      // サーバーサイドからデータを受け取り
+      shareGiftRecord = {
+        id: <%= @share_gift_record.id %>,
+        itemName: "<%= j(@share_gift_record.item_name) %>",
+        giftPersonName: "<%= j(@share_gift_record.gift_person&.name || '未設定') %>",
+        eventName: "<%= j(@share_gift_record.event&.name || '未設定') %>",
+        relationshipName: "<%= j(@share_gift_record.gift_person&.relationship&.name || '未設定') %>",
+        giftAt: "<%= @share_gift_record.gift_at&.strftime('%Y年%m月%d日') || '未設定' %>",
+        amount: "<%= @share_gift_record.amount&.to_s || '' %>",
+        memo: "<%= j(truncate(@share_gift_record.memo.to_s, length: 50)) %>"
+      };
+      
+      // モーダルを表示
+      showShareModal();
+    <% end %>
+  }
+
+  // シェアモーダル表示
+  function showShareModal() {
+    if (!shareGiftRecord) return;
+
+    const modal = document.getElementById('share-confirmation-modal');
+    const preview = document.getElementById('share-gift-preview');
+    const textPreview = document.getElementById('share-text-preview');
+    const lengthCounter = document.getElementById('share-text-length');
+
+    if (!modal || !preview || !textPreview) return;
+
+    // プレビュー内容を生成
+    const previewHTML = `
+      <div class="flex items-start space-x-3">
+        <div class="flex-shrink-0 w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-gift text-pink-600"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium text-gray-900">
+            ${escapeHtml(shareGiftRecord.itemName)}
+          </div>
+          <div class="text-xs text-gray-500 mt-1">
+            <span class="inline-flex items-center">
+              <i class="fas fa-user mr-1"></i>
+              ${escapeHtml(shareGiftRecord.giftPersonName)}
+            </span>
+            <span class="ml-3 inline-flex items-center">
+              <i class="fas fa-calendar mr-1"></i>
+              ${shareGiftRecord.eventName}
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // シェアテキストを生成
+    const shareText = generateShareText(shareGiftRecord);
+    
+    // UI更新
+    preview.innerHTML = previewHTML;
+    // 改行文字を<br>タグに変換してプレビュー表示
+    const shareTextForDisplay = escapeHtml(shareText).replace(/\n/g, '<br>');
+    textPreview.innerHTML = shareTextForDisplay;
+    lengthCounter.textContent = shareText.length;
+    
+    // 文字数チェック
+    if (shareText.length > 280) {
+      lengthCounter.classList.add('text-red-600');
+      lengthCounter.classList.remove('text-gray-500');
+    } else {
+      lengthCounter.classList.remove('text-red-600');
+      lengthCounter.classList.add('text-gray-500');
+    }
+
+    // モーダル表示
+    modal.classList.remove('hidden');
+  }
+
+  // シェアテキスト生成
+  function generateShareText(record) {
+    let text = `✨ ギフト記録を更新しました！\n\n`;
+    text += `🎁 ギフトアイテム: ${record.itemName}\n`;れ
+    text += `👥 関係性: ${record.relationshipName}\n`;
+    text += `📅 イベント: ${record.eventName}\n`;
+    
+    if (record.memo) {
+      text += `📝 ${record.memo}\n`;
+    }
+    
+    text += `\n#ギフト記録 #プレゼント #${record.eventName.replace(/\s+/g, '')}`;
+    
+    return text;
+  }
+
+  // Xでシェア
+  window.shareToX = function() {
+    if (!shareGiftRecord) return;
+
+    const shareText = generateShareText(shareGiftRecord);
+    const url = encodeURIComponent(window.location.origin);
+    const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${url}`;
+    
+    // 新しいウィンドウでXを開く
+    const width = 550;
+    const height = 420;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+    
+    window.open(
+      tweetUrl,
+      'share-twitter',
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+    
+    // モーダルを閉じる
+    closeShareModal();
+  };
+
+  // シェアモーダルを閉じる
+  window.closeShareModal = function() {
+    const modal = document.getElementById('share-confirmation-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+    }
+    
+    // URLからパラメータを削除（ブラウザ履歴に残さないため）
+    if (window.history && window.history.replaceState) {
+      const url = new URL(window.location);
+      url.searchParams.delete('share_confirm');
+      url.searchParams.delete('gift_record_id');
+      window.history.replaceState({}, document.title, url.toString());
+    }
+  };
+
+  // HTMLエスケープ関数
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // ESCキーでモーダルを閉じる
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeShareModal();
+    }
+  });
+
+  // 初期化
+  document.addEventListener('turbo:load', initializeShareModal);
+  document.addEventListener('DOMContentLoaded', initializeShareModal);
+})();
 </script>
 
 <!-- 削除確認モーダル -->
 <%= render 'shared/delete_confirmation_modal' %>
+
+<!-- シェア確認モーダル -->
+<%= render 'shared/share_confirmation_modal' %>
