@@ -7,7 +7,6 @@ class GiftPeopleController < ApplicationController
     @gift_people = current_user.gift_people
       .includes(:relationship)
       .where.not(name: [ nil, "" ])
-      .order(:name)
 
     # 検索機能
     if params[:search].present?
@@ -28,6 +27,24 @@ class GiftPeopleController < ApplicationController
       @gift_people = @gift_people.joins(:gift_records).where(gift_records: { event_id: params[:event_id] }).distinct
     end
 
+    # 統計情報用のカウント（並び替え前に計算）
+    @total_people = @gift_people.count
+
+    # 並び替え処理
+    sort_by = params[:sort_by].presence
+    sort_order = params[:sort_order].presence || "desc"
+
+    if sort_by == "gift_records_count"
+      # ギフト記録数順
+      @gift_people = @gift_people
+        .left_joins(:gift_records)
+        .group("gift_people.id")
+        .order("COUNT(gift_records.id) #{sort_order}, gift_people.name #{sort_order}")
+    else
+      # デフォルト：名前順
+      @gift_people = @gift_people.order(:name)
+    end
+
     # フィルタリング用のオプション準備
     @relationship_options = current_user.gift_people
       .joins(:relationship)
@@ -44,9 +61,6 @@ class GiftPeopleController < ApplicationController
       .distinct
       .order("events.name")
       .pluck("events.name", "events.id")
-
-    # 統計情報
-    @total_people = @gift_people.count
 
   rescue ActiveRecord::RecordNotFound
     redirect_to root_path, alert: "データが見つかりませんでした。"
