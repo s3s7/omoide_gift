@@ -1,0 +1,34 @@
+<%# ハートボタン - Twitterライクなお気に入り機能 %>
+<% if user_signed_in? %>
+  <% favorited = Favorite.favorited_by_user?(current_user, gift_record) %>
+  <% favorites_count = Favorite.favorites_count_for_gift_record(gift_record) %>
+  
+  <div class="favorite-button-container" data-gift-record-id="<%= gift_record.id %>">
+    <button type="button" 
+            class="favorite-button <%= favorited ? 'favorited' : '' %>"
+            data-favorited="<%= favorited %>"
+            onclick="event.stopPropagation(); toggleFavorite(<%= gift_record.id %>);"
+            title="<%= favorited ? 'お気に入りから削除' : 'お気に入りに追加' %>"
+            aria-label="<%= favorited ? 'お気に入りから削除' : 'お気に入りに追加' %>">
+      
+      <!-- ハートアイコン -->
+      <i class="favorite-heart <%= favorited ? 'fas' : 'far' %> fa-heart"></i>
+      
+      <!-- お気に入り数（1以上の場合のみ表示） -->
+      <% if favorites_count > 0 %>
+        <span class="favorite-count"><%= favorites_count %></span>
+      <% end %>
+    </button>
+  </div>
+<% else %>
+  <%# 未ログインユーザーには静的なハートアイコンのみ表示 %>
+  <% favorites_count = Favorite.favorites_count_for_gift_record(gift_record) %>
+  <% if favorites_count > 0 %>
+    <div class="favorite-button-container static">
+      <div class="favorite-button-static">
+        <i class="far fa-heart text-gray-400"></i>
+        <span class="favorite-count-static"><%= favorites_count %></span>
+      </div>
+    </div>
+  <% end %>
+<% end %>

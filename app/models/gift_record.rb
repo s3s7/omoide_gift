@@ -3,6 +3,7 @@ class GiftRecord < ApplicationRecord
   belongs_to :user
   belongs_to :event
   belongs_to :gift_person, foreign_key: "gift_people_id"
+  has_many :favorites, dependent: :destroy
 
   # 必須フィールドのバリデーション（統一されたエラーメッセージ）
   validates :item_name, presence: { message: "を入力してください" }, length: { maximum: 255 }

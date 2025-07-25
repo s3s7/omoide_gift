@@ -170,9 +170,14 @@
                 </div>
               <% end %>
 
-              <!-- 金額バッジ（左下） -->
+              <!-- お気に入りボタン（左上） -->
+              <div class="absolute top-2 left-2 sm:top-3 sm:left-3" onclick="event.stopPropagation();">
+                <%= render 'shared/favorite_button', gift_record: record %>
+              </div>
+
+              <!-- 金額バッジ（右下） -->
               <% if record.amount.present? %>
-                <div class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
+                <div class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
                   <span class="inline-flex items-center px-2 py-0.5 sm:px-2.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     <%# ¥<%= number_with_delimiter(record.amount) %>
                   </span>
@@ -200,16 +205,6 @@
                     <i class="fas fa-calendar-star mr-2 text-purple-500"></i>
                     <span style="color: #4b5563 !important;">
                       <%= truncate(record.event&.name || "未設定", length: 20) %>
-                    </span>
-                  </div>
-                </div>
-
-                <!-- ニックネーム -->
-                <div class="mb-2">
-                  <div class="flex items-center text-sm">
-                    <i class="fas fa-heart mr-2 text-red-400"></i>
-                    <span class="font-medium" style="color: #4b5563 !important;">
-                      <%= truncate(record.gift_person&.name || "未設定", length: 15) %>
                     </span>
                   </div>
                 </div>
@@ -243,10 +238,6 @@
 
                 <!-- 贈り先と金額 -->
                 <div class="flex justify-between items-center mb-3">
-                  <div class="flex items-center">
-                    <i class="fas fa-heart mr-2 text-red-400"></i>
-
-                  </div>
                   <% if record.amount.present? %>
                     <div class="text-right">
                       <span class="text-lg lg:text-xl xl:text-xl font-bold" style="color: #059669 !important;">
@@ -259,19 +250,9 @@
                 <!-- イベントと日付 -->
                 <div class="mb-2">
                   <div class="flex items-center text-sm">
-                    <i class="fas fa-calendar-star mr-2 text-purple-500"></i>
-                    <span style="color: #4b5563 !important;">
-                      <%= truncate(record.event&.name || "未設定", length: 20) %>
-                    </span>
-                  </div>
-                </div>
-
-                <!-- 贈った日付 -->
-                <div class="mb-2">
-                  <div class="flex items-center text-sm">
                     <i class="fas fa-calendar mr-2 text-blue-500"></i>
                     <span style="color: #4b5563 !important;">
-                      <%= record.gift_at.present? ? l(record.gift_at, format: :short) : "未設定" %>
+                      <%= truncate(record.event&.name || "未設定", length: 20) %>
                     </span>
                   </div>
                 </div>
