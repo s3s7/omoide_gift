@@ -84,6 +84,7 @@
       color: #555;
       font-size: 14px;
     " %>
+    <span style="color: #dc3545; margin-left: 4px;">*</span>
     <% 
       # エラー時の選択値を決定
       if @gift_person&.errors&.any? || params[:gift_record]&.[](:gift_people_id) == "new"
@@ -92,13 +93,15 @@
         selected_value = gift_record&.gift_people_id
       end
       
-      # オプションを作成
+      # オプションを作成（HTML5バリデーション対応）
+      default_option = options_for_select([["贈る相手を選択してください", ""]], selected_value.blank? ? "" : nil)
       gift_people_options = options_from_collection_for_select(@gift_people, :id, :name, selected_value == "new" ? nil : selected_value)
-      gift_people_options += options_for_select([["新たに追加する", "new"]], selected_value)
+      new_option = options_for_select([["新たに追加する", "new"]], selected_value)
+      all_options = default_option + gift_people_options + new_option
     %>
     <%= f.select :gift_people_id, 
-        gift_people_options, 
-        { prompt: "贈る相手を選択してください" }, 
+        all_options.html_safe, 
+        {}, 
         { 
           style: "
             width: 100%;
@@ -109,7 +112,8 @@
             box-sizing: border-box;
             transition: border-color 0.3s ease;
           ",
-          id: "gift_people_select" 
+          id: "gift_people_select",
+          required: true
         } %>
   </div>
   
@@ -602,100 +606,194 @@
 
 <script>
 // ギフト記録フォームのJavaScript処理
-document.addEventListener('DOMContentLoaded', function() {
-  // 公開設定のトグルスイッチの処理
-  const toggle = document.getElementById('gift_record_is_public_toggle');
-  const toggleLabel = document.getElementById('toggle_label');
-  const toggleSlider = document.getElementById('toggle_slider');
-  const toggleIcon = document.getElementById('toggle_icon');
-  const toggleStatus = document.getElementById('toggle_status');
-  const toggleDescription = document.getElementById('toggle_description');
+(function() {
+  let formInitialized = false;
 
-  // 初期状態を設定
-  function updateToggleUI() {
-    if (!toggle) return;
-    
-    if (toggle.checked) {
-      // 公開状態
-      toggleLabel.style.backgroundColor = '#28a745';
-      toggleSlider.style.transform = 'translateX(26px)';
-      toggleIcon.className = 'fas fa-globe';
-      toggleIcon.style.color = '#28a745';
-      toggleStatus.textContent = '公開';
-      toggleDescription.textContent = '他のユーザーがこのギフト記録を見ることができます';
-    } else {
-      // 非公開状態
-      toggleLabel.style.backgroundColor = '#6c757d';
-      toggleSlider.style.transform = 'translateX(0)';
-      toggleIcon.className = 'fas fa-lock';
-      toggleIcon.style.color = '#6c757d';
-      toggleStatus.textContent = '非公開';
-      toggleDescription.textContent = 'あなただけがこのギフト記録を見ることができます';
+  // グローバルなイベントハンドラー参照を保持
+  let toggleClickHandler = null;
+
+  // トグルスイッチの初期化を独立した関数として分離
+  function initializeToggleSwitch() {
+    const toggle = document.getElementById('gift_record_is_public_toggle');
+    const toggleLabel = document.getElementById('toggle_label');
+    const toggleSlider = document.getElementById('toggle_slider');
+    const toggleIcon = document.getElementById('toggle_icon');
+    const toggleStatus = document.getElementById('toggle_status');
+    const toggleDescription = document.getElementById('toggle_description');
+
+    // 必要な要素が存在しない場合は何もしない
+    if (!toggle || !toggleLabel || !toggleSlider || !toggleIcon || !toggleStatus || !toggleDescription) {
+      return false;
     }
-  }
 
-  // 初期状態を適用
-  updateToggleUI();
+    // 既存のイベントリスナーを削除（重複防止）
+    if (toggleClickHandler) {
+      toggleLabel.removeEventListener('click', toggleClickHandler);
+    }
 
-  // クリック時の処理
-  if (toggleLabel) {
-    toggleLabel.addEventListener('click', function(e) {
+    // 初期状態を設定
+    function updateToggleUI() {
+      if (toggle.checked) {
+        // 公開状態
+        toggleLabel.style.backgroundColor = '#28a745';
+        toggleSlider.style.transform = 'translateX(26px)';
+        toggleIcon.className = 'fas fa-globe';
+        toggleIcon.style.color = '#28a745';
+        toggleStatus.textContent = '公開';
+        toggleDescription.textContent = '他のユーザーがこのギフト記録を見ることができます';
+      } else {
+        // 非公開状態
+        toggleLabel.style.backgroundColor = '#6c757d';
+        toggleSlider.style.transform = 'translateX(0)';
+        toggleIcon.className = 'fas fa-lock';
+        toggleIcon.style.color = '#6c757d';
+        toggleStatus.textContent = '非公開';
+        toggleDescription.textContent = 'あなただけがこのギフト記録を見ることができます';
+      }
+    }
+
+    // 初期状態を適用
+    updateToggleUI();
+
+    // 新しいイベントハンドラーを作成
+    toggleClickHandler = function(e) {
       e.preventDefault();
+      e.stopPropagation();
       // チェックボックスの状態を手動で切り替え
       toggle.checked = !toggle.checked;
       // UIを即座に更新
       updateToggleUI();
+    };
+
+    // クリック時の処理を追加
+    toggleLabel.addEventListener('click', toggleClickHandler);
+    
+    // チェックボックス自体のchangeイベントも監視（フォールバック）
+    toggle.addEventListener('change', function() {
+      updateToggleUI();
     });
+
+    return true;
   }
 
-  // ギフト相手選択の処理（既存の機能）
-  const giftPeopleSelect = document.getElementById('gift_people_select');
-  const newGiftPersonFields = document.getElementById('new_gift_person_fields');
+  function initializeGiftRecordForm() {
+    // 重複初期化を防ぐ
+    if (formInitialized) return;
+    
+    // トグルスイッチの初期化
+    const toggleInitialized = initializeToggleSwitch();
+    if (!toggleInitialized) {
+      return;
+    }
+
+    // 初期化完了をマーク
+    formInitialized = true;
+
+    // ギフト相手選択の処理（既存の機能）
+    const giftPeopleSelect = document.getElementById('gift_people_select');
+    const newGiftPersonFields = document.getElementById('new_gift_person_fields');
+    
+    if (giftPeopleSelect && newGiftPersonFields) {
+      giftPeopleSelect.addEventListener('change', function() {
+        if (this.value === 'new') {
+          newGiftPersonFields.style.display = 'block';
+        } else {
+          newGiftPersonFields.style.display = 'none';
+        }
+        
+        // ギフト相手選択変更後にトグルスイッチを再初期化
+        // DOMの変更完了を待ってから再初期化
+        setTimeout(function() {
+          initializeToggleSwitch();
+        }, 200);
+        
+        // さらに安全のため、少し遅れて再度実行
+        setTimeout(function() {
+          initializeToggleSwitch();
+        }, 500);
+      });
+    }
+    
+    // フォーム送信時のカスタムバリデーション
+    const form = giftPeopleSelect ? giftPeopleSelect.closest('form') : null;
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        // ギフト相手が選択されていない場合
+        if (giftPeopleSelect && (!giftPeopleSelect.value || giftPeopleSelect.value === '')) {
+          e.preventDefault();
+          
+          // HTML5ライクなバリデーションメッセージを表示
+          giftPeopleSelect.setCustomValidity('このフィールドを入力してください');
+          giftPeopleSelect.reportValidity();
+          
+          // フォーカスを当てる
+          giftPeopleSelect.focus();
+          return false;
+        } else {
+          // バリデーションメッセージをクリア
+          giftPeopleSelect.setCustomValidity('');
+        }
+      });
+      
+      // 選択が変更されたらバリデーションメッセージをクリア
+      if (giftPeopleSelect) {
+        giftPeopleSelect.addEventListener('change', function() {
+          this.setCustomValidity('');
+        });
+      }
+    }
+  }
+
+  // クリーンアップ関数
+  function cleanupGiftRecordForm() {
+    formInitialized = false;
+  }
+
+  // イベント選択のクイック設定（グローバル関数を初回のみ定義）
+  if (typeof window.setEventSelection === 'undefined') {
+    window.setEventSelection = function(eventId) {
+      const eventSelect = document.getElementById('gift_record_event_id');
+      if (eventSelect) {
+        eventSelect.value = eventId;
+      }
+    };
+  }
+
+  // 日付のクイック設定（グローバル関数を初回のみ定義）
+  if (typeof window.setGiftDate === 'undefined') {
+    window.setGiftDate = function(dateType) {
+      const dateField = document.getElementById('gift_record_gift_at');
+      if (dateField) {
+        const today = new Date();
+        let targetDate;
+        
+        switch(dateType) {
+          case 'today':
+            targetDate = today;
+            break;
+          case 'yesterday':
+            targetDate = new Date(today);
+            targetDate.setDate(today.getDate() - 1);
+            break;
+          case 'week_ago':
+            targetDate = new Date(today);
+            targetDate.setDate(today.getDate() - 7);
+            break;
+          default:
+            targetDate = today;
+        }
+        
+        dateField.value = targetDate.toISOString().split('T')[0];
+      }
+    };
+  }
+
+  // Turbo対応のイベントリスナー
+  document.addEventListener('turbo:load', initializeGiftRecordForm);
+  document.addEventListener('DOMContentLoaded', initializeGiftRecordForm);
   
-  if (giftPeopleSelect && newGiftPersonFields) {
-    giftPeopleSelect.addEventListener('change', function() {
-      if (this.value === 'new') {
-        newGiftPersonFields.style.display = 'block';
-      } else {
-        newGiftPersonFields.style.display = 'none';
-      }
-    });
-  }
-
-  // イベント選択のクイック設定
-  window.setEventSelection = function(eventId) {
-    const eventSelect = document.getElementById('gift_record_event_id');
-    if (eventSelect) {
-      eventSelect.value = eventId;
-    }
-  };
-
-  // 日付のクイック設定
-  window.setGiftDate = function(dateType) {
-    const dateField = document.getElementById('gift_record_gift_at');
-    if (dateField) {
-      const today = new Date();
-      let targetDate;
-      
-      switch(dateType) {
-        case 'today':
-          targetDate = today;
-          break;
-        case 'yesterday':
-          targetDate = new Date(today);
-          targetDate.setDate(today.getDate() - 1);
-          break;
-        case 'week_ago':
-          targetDate = new Date(today);
-          targetDate.setDate(today.getDate() - 7);
-          break;
-        default:
-          targetDate = today;
-      }
-      
-      dateField.value = targetDate.toISOString().split('T')[0];
-    }
-  };
-});
+  // ページ離脱時のクリーンアップ
+  document.addEventListener('turbo:before-visit', cleanupGiftRecordForm);
+})();
 </script>
 

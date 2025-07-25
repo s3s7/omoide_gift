@@ -20,7 +20,8 @@
   <!-- 検索・フィルター機能 -->
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto">
     <%= form_with url: gift_people_path, method: :get, local: true, class: "space-y-2" do |f| %>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+      <!-- 検索欄と検索ボタン -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <!-- 検索キーワード（オートコンプリート付き） -->
         <div class="relative">
           <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
@@ -44,22 +45,64 @@
           </div>
         </div>
 
-        <!-- 関係性フィルター -->
-        <div>
-          <%= f.label :relationship_id, "関係性", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
-          <%= f.select :relationship_id, 
-              options_for_select([["すべて", ""]] + @relationship_options, params[:relationship_id]),
-              {},
-              { class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" } %>
-        </div>
-
         <!-- 検索ボタン -->
         <div class="flex items-end">
           <%= f.submit "検索", class: "w-full px-3 py-1.5 bg-pink-600 text-white text-sm font-medium rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" %>
         </div>
       </div>
 
-      <% if params[:search].present? || params[:relationship_id].present? %>
+      <!-- フィルターと値 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <!-- フィルタータイプ選択 -->
+        <div>
+          <%= f.label :filter_type, "フィルター", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+          <%= f.select :filter_type, 
+              options_for_select([
+                ["選択してください", ""],
+                ["関係性", "relationship"],
+                ["イベント", "event"]
+              ], params[:filter_type]),
+              {},
+              { 
+                id: "people-filter-type-select",
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" 
+              } %>
+          <%= f.hidden_field :filter_type, id: "people-filter-type-hidden" %>
+        </div>
+
+        <!-- 動的フィルター値選択 -->
+        <div>
+          <%= f.label :filter_value, "値", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+          
+          <!-- 関係性選択プルダウン -->
+          <%= f.select :relationship_id, 
+              options_for_select([["すべて", ""]] + @relationship_options, params[:relationship_id]),
+              {},
+              { 
+                id: "people-relationship-select",
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500",
+                style: (params[:filter_type] == "relationship" ? "" : "display: none;")
+              } %>
+          
+          <!-- イベント選択プルダウン -->
+          <%= f.select :event_id, 
+              options_for_select([["すべて", ""]] + @event_options, params[:event_id]),
+              {},
+              { 
+                id: "people-event-select",
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500",
+                style: (params[:filter_type] == "event" ? "" : "display: none;")
+              } %>
+          
+          <!-- プレースホルダー表示 -->
+          <div id="people-filter-placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500" 
+               style="<%= params[:filter_type].present? ? 'display: none;' : '' %>">
+            左でフィルターを選択してください
+          </div>
+        </div>
+      </div>
+
+      <% if params[:search].present? || params[:relationship_id].present? || params[:event_id].present? %>
         <div class="flex items-center justify-between pt-1.5 border-t border-gray-200">
           <span class="text-xs text-gray-600">
             <%= pluralize(@gift_people.count, "件") %>の結果
@@ -135,7 +178,7 @@
             <!-- 関係性 -->
             <div class="mb-2">
               <div class="flex items-center text-sm">
-                <i class="fas fa-heart mr-2 text-red-400"></i>
+                <i class="fas fa-users mr-2 text-indigo-500"></i>
                 <span class="text-gray-600">
                   <%= person.relationship&.name || "未設定" %>
                 </span>
@@ -458,13 +501,7 @@
   });
 
     // フィルターの変更時自動検索（オプション）
-    const relationshipSelect = document.querySelector('select[name="relationship_id"]');
-    if (relationshipSelect) {
-      relationshipSelect.addEventListener('change', function() {
-        // 自動送信したい場合は以下のコメントを外す
-        // form.submit();
-      });
-    }
+    // 動的フィルターに変更したため、個別のrelationship selectは削除
   }
 
   // クリーンアップ関数
@@ -492,5 +529,59 @@
   // ページ離脱時のクリーンアップ
   document.addEventListener('turbo:before-visit', cleanupAutocomplete);
   document.addEventListener('beforeunload', cleanupAutocomplete);
+})();
+
+// ギフト相手一覧用動的フィルター機能
+(function() {
+  function initializePeopleDynamicFilter() {
+    const filterTypeSelect = document.getElementById('people-filter-type-select');
+    const filterTypeHidden = document.getElementById('people-filter-type-hidden');
+    const relationshipSelect = document.getElementById('people-relationship-select');
+    const eventSelect = document.getElementById('people-event-select');
+    const placeholder = document.getElementById('people-filter-placeholder');
+    
+    if (!filterTypeSelect || !filterTypeHidden || !relationshipSelect || !eventSelect || !placeholder) {
+      return;
+    }
+    
+    // 初期状態の設定
+    function updateFilterDisplay() {
+      const selectedType = filterTypeSelect.value;
+      
+      // hidden fieldを更新
+      filterTypeHidden.value = selectedType;
+      
+      // すべて非表示にする
+      relationshipSelect.style.display = 'none';
+      eventSelect.style.display = 'none';
+      placeholder.style.display = 'none';
+      
+      // 選択されたタイプに応じて表示
+      if (selectedType === 'relationship') {
+        relationshipSelect.style.display = 'block';
+        // イベント選択をクリア
+        eventSelect.value = '';
+      } else if (selectedType === 'event') {
+        eventSelect.style.display = 'block';
+        // 関係性選択をクリア
+        relationshipSelect.value = '';
+      } else {
+        placeholder.style.display = 'block';
+        // 両方クリア
+        relationshipSelect.value = '';
+        eventSelect.value = '';
+      }
+    }
+    
+    // フィルタータイプ変更時の処理
+    filterTypeSelect.addEventListener('change', updateFilterDisplay);
+    
+    // 初期表示の設定
+    updateFilterDisplay();
+  }
+  
+  // Turbo対応のイベントリスナー
+  document.addEventListener('turbo:load', initializePeopleDynamicFilter);
+  document.addEventListener('DOMContentLoaded', initializePeopleDynamicFilter);
 })();
 </script>

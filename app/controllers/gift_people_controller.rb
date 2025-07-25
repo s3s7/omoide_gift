@@ -23,6 +23,11 @@ class GiftPeopleController < ApplicationController
       @gift_people = @gift_people.where(relationship_id: params[:relationship_id])
     end
 
+    # イベントでフィルタリング（ギフト記録経由）
+    if params[:event_id].present?
+      @gift_people = @gift_people.joins(:gift_records).where(gift_records: { event_id: params[:event_id] }).distinct
+    end
+
     # フィルタリング用のオプション準備
     @relationship_options = current_user.gift_people
       .joins(:relationship)
@@ -30,6 +35,15 @@ class GiftPeopleController < ApplicationController
       .distinct
       .order("relationships.name")
       .pluck("relationships.name", "relationships.id")
+
+    # イベントオプション準備（ギフト記録経由で実際に使われているイベントのみ）
+    @event_options = current_user.gift_people
+      .joins(:gift_records)
+      .joins("INNER JOIN events ON gift_records.event_id = events.id")
+      .select("events.name, events.id")
+      .distinct
+      .order("events.name")
+      .pluck("events.name", "events.id")
 
     # 統計情報
     @total_people = @gift_people.count

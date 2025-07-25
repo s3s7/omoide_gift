@@ -1,26 +1,8 @@
 <%# ギフト記録詳細ページ %>
 <% content_for(:title, "#{@gift_record.display_item_name} - ギフト記録詳細") %>
 
-<!-- パンくずナビ -->
-<nav class="flex mb-6" aria-label="Breadcrumb">
-  <ol class="inline-flex items-center space-x-1 md:space-x-3">
-    <li class="inline-flex items-center">
-      <%= link_to gift_records_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-pink-600" do %>
-        <i class="fas fa-home mr-2"></i>
-        ギフト記録一覧
-      <% end %>
-    </li>
-    <li>
-      <div class="flex items-center">
-        <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">詳細</span>
-      </div>
-    </li>
-  </ol>
-</nav>
-
 <!-- メインコンテンツ -->
-<div class="bg-white shadow-lg rounded-lg overflow-hidden">
+<div class="bg-white shadow-lg rounded-lg overflow-hidden mt-6">
   <!-- ヘッダー -->
   <div class="px-6 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white">
     <div class="flex justify-between items-start">
@@ -33,23 +15,30 @@
           <%= @gift_record.display_gift_date %>に贈ったギフト
         </p>
       </div>
-      <% if user_signed_in? && @gift_record.user == current_user %>
-        <div class="flex space-x-2">
-          <%= link_to edit_gift_record_path(@gift_record), 
-              class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
-              aria: { label: "このギフト記録を編集" } do %>
-            <i class="fas fa-edit mr-1"></i>
-            編集
-          <% end %>
-          <button type="button" 
-                  onclick="showDeleteModal('<%= j(@gift_record.display_item_name) %>', '<%= gift_record_path(@gift_record) %>', '<%= form_authenticity_token %>')"
-                  class="inline-flex items-center px-3 py-2 border border-red-300 rounded-md text-sm font-medium text-red-100 hover:bg-red-600 transition-colors"
-                  aria-label="このギフト記録を削除">
-            <i class="fas fa-trash mr-1"></i>
-            削除
-          </button>
+      <div class="flex items-center space-x-3">
+        <!-- お気に入りボタン -->
+        <div class="favorite-show-page">
+          <%= render 'shared/favorite_button', gift_record: @gift_record %>
         </div>
-      <% end %>
+        
+        <% if user_signed_in? && @gift_record.user == current_user %>
+          <div class="flex space-x-2">
+            <%= link_to edit_gift_record_path(@gift_record), 
+                class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
+                aria: { label: "このギフト記録を編集" } do %>
+              <i class="fas fa-edit mr-1"></i>
+              編集
+            <% end %>
+            <button type="button" 
+                    onclick="showDeleteModal('<%= j(@gift_record.display_item_name) %>', '<%= gift_record_path(@gift_record) %>', '<%= form_authenticity_token %>')"
+                    class="inline-flex items-center px-3 py-2 border border-red-300 rounded-md text-sm font-medium text-red-100 hover:bg-red-600 transition-colors"
+                    aria-label="このギフト記録を削除">
+              <i class="fas fa-trash mr-1"></i>
+              削除
+            </button>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 
@@ -232,23 +221,11 @@
 
 <!-- 関連アクション -->
 <div class="mt-6 text-center">
-  <div class="inline-flex rounded-md shadow-sm" role="group">
-    <%= link_to new_gift_record_path, 
-        class: "px-4 py-2 text-sm font-medium text-pink-600 bg-white border border-pink-600 rounded-l-lg hover:bg-pink-50 focus:z-10 focus:ring-2 focus:ring-pink-500" do %>
-      <i class="fas fa-plus mr-2"></i>
-      新しい記録を作成
-    <% end %>
-    <%= link_to edit_gift_record_path(@gift_record), 
-        class: "px-4 py-2 text-sm font-medium text-blue-600 bg-white border-t border-b border-blue-600 hover:bg-blue-50 focus:z-10 focus:ring-2 focus:ring-blue-500" do %>
-      <i class="fas fa-edit mr-2"></i>
-      この記録を編集
-    <% end %>
-    <%= link_to gift_records_path, 
-        class: "px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 focus:z-10 focus:ring-2 focus:ring-gray-500" do %>
-      <i class="fas fa-list mr-2"></i>
-      一覧を表示
-    <% end %>
-  </div>
+  <%= link_to new_gift_record_path, 
+      class: "inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-pink-600 border border-transparent rounded-lg shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-colors" do %>
+    <i class="fas fa-plus mr-2"></i>
+    新しい記録を作成
+  <% end %>
 </div>
 
 <!-- 削除確認モーダル -->

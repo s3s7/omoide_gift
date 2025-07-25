@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   get "mypage/edit", to: "users#edit"
   patch "mypage", to: "users#update"
 
+  # お気に入り一覧
+  get "favorites", to: "favorites#index"
+
   # Static pages for footer links and navigation
   get "how_to_use", to: "static_pages#how_to_use"
   get "terms", to: "static_pages#terms"
@@ -18,6 +21,10 @@ Rails.application.routes.draw do
   resources :gift_records do
     collection do
       get :autocomplete
+    end
+    # お気に入り機能
+    member do
+      post :toggle_favorite, to: "favorites#toggle"
     end
   end
   resources :gift_people do

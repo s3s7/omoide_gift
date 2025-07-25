@@ -1,5 +1,146 @@
 /* ギフト記録カードレイアウト - シンプル版 */
 
+/* ==================== お気に入りハートボタン ==================== */
+
+.favorite-button-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.favorite-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.favorite-button:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.05);
+}
+
+.favorite-heart {
+  font-size: 16px;
+  transition: all 0.2s ease;
+  color: #ef4444; /* Twitter red */
+}
+
+.favorite-button:not(.favorited) .favorite-heart {
+  color: #6b7280; /* Gray for unfavorited */
+}
+
+.favorite-button:not(.favorited):hover .favorite-heart {
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.favorite-button.favorited .favorite-heart {
+  color: #ef4444;
+  animation: heartBeat 0.3s ease;
+}
+
+.favorite-count {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.favorite-button.favorited .favorite-count {
+  color: #ef4444;
+}
+
+/* 未ログインユーザー用の静的表示 */
+.favorite-button-static {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.favorite-count-static {
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* 詳細ページ用のスタイル調整 */
+.favorite-show-page .favorite-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  backdrop-filter: blur(8px);
+}
+
+.favorite-show-page .favorite-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.favorite-show-page .favorite-button:not(.favorited) .favorite-heart {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.favorite-show-page .favorite-button:not(.favorited):hover .favorite-heart {
+  color: #ef4444;
+}
+
+.favorite-show-page .favorite-button .favorite-count {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.favorite-show-page .favorite-button.favorited .favorite-count {
+  color: white;
+}
+
+/* ハートビートアニメーション */
+@keyframes heartBeat {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ローディング状態 */
+.favorite-button.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.favorite-button.loading .favorite-heart {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 /* ==================== カード基本スタイル ==================== */
 
 .gift-record-card {

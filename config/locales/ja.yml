@@ -26,6 +26,12 @@ ja:
         likes: "好きなもの"
         dislikes: "嫌いなもの"
         memo: "メモ"
+      
+      user:
+        name: "名前"
+        email: "メールアドレス"
+        password: "パスワード"
+        password_confirmation: "パスワード確認"
 
     errors:
       models:
@@ -51,6 +57,25 @@ ja:
               blank: "を入力してください"
               too_short: "は1文字以上で入力してください"
               invalid: "空白のみは無効です"
+        
+        gift_record:
+          attributes:
+            gift_people_id:
+              required: "を選択してください"
+              blank: "を選択してください"
+            gift_person:
+              required: "を選択してください"
+              blank: "を選択してください"
+        
+        user:
+          attributes:
+            name:
+              blank: "を入力してください"
+            password:
+              blank: "を入力してください"
+              too_short: "は6文字以上で入力してください"
+            password_confirmation:
+              confirmation: "とパスワードの入力が一致しません"
 
   # フラッシュメッセージ
   defaults:
@@ -141,7 +166,7 @@ ja:
     messages:
       blank: "を入力してください"
       present: "は入力しないでください"
-      confirmation: "と%{attribute}の入力が一致しません"
+      confirmation: "とパスワードの入力が一致しません"
       accepted: "を受諾してください"
       empty: "を入力してください"
       equal_to: "は%{count}にしてください"
@@ -158,7 +183,7 @@ ja:
       not_an_integer: "は整数で入力してください"
       odd: "は奇数にしてください"
       other_than: "は%{count}以外の値にしてください"
-      required: "を入力してください"
+      required: "を選択してください"
       taken: "はすでに存在します"
       too_long: "は%{count}文字以内で入力してください"
       too_short: "は%{count}文字以上で入力してください"
