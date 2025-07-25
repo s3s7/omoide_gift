@@ -22,10 +22,9 @@ Rails.application.routes.draw do
     collection do
       get :autocomplete
     end
-    
     # お気に入り機能
     member do
-      post :toggle_favorite, to: 'favorites#toggle'
+      post :toggle_favorite, to: "favorites#toggle"
     end
   end
   resources :gift_people do

@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   # バリデーション
   validates :name, presence: true, length: { maximum: 20 }
-  
+
   # セキュリティを考慮したエラーメッセージの置き換え
   after_validation :customize_validation_errors
 
@@ -107,7 +107,7 @@ class User < ApplicationRecord
       errors.delete(:email)
       errors.add(:base, "登録できませんでした。入力内容をご確認ください")
     end
-    
+
     # パスワード確認エラーの日本語化
     if errors[:password_confirmation].any?
       errors.delete(:password_confirmation)

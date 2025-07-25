@@ -10,7 +10,7 @@ class GiftRecord < ApplicationRecord
   validates :gift_at, presence: { message: "を選択してください" }
   validates :event_id, presence: { message: "を選択してください" }
   validates :gift_people_id, presence: { message: "を選択してください" }
-  
+
   # オプションフィールドのバリデーション
   validates :amount, numericality: { greater_than: 0, allow_nil: true }
   validates :memo, length: { maximum: 1000 }

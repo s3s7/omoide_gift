@@ -17,7 +17,6 @@ class GiftRecordsController < ApplicationController
     # 関連テーブルの完全な事前読み込み
     @gift_records = base_query
       .includes(:gift_person, :event, :user, gift_person: :relationship)
-      .order(created_at: :desc)
 
     # 検索機能（オプション）
     if params[:search].present?
@@ -50,6 +49,32 @@ class GiftRecordsController < ApplicationController
       @gift_records = @gift_records.where("gift_at <= ?", params[:date_to])
     end
 
+    # 統計情報用のカウント（並び替え前に計算）
+    filtered_query = @gift_records
+    @total_records = filtered_query.count
+    @total_amount = filtered_query.sum("gift_records.amount") || 0
+    @current_month_records = base_query.where(
+      "gift_records.gift_at" => Date.current.beginning_of_month..Date.current.end_of_month
+    ).count
+
+    # 並び替え処理
+    sort_by = params[:sort_by].presence
+    sort_order = params[:sort_order].presence || "desc"
+
+    if sort_by == "favorites"
+      # お気に入り順
+      @gift_records = @gift_records
+        .left_joins(:favorites)
+        .group("gift_records.id")
+        .order("COUNT(favorites.id) #{sort_order}, gift_records.created_at #{sort_order}")
+    elsif sort_by == "created_at"
+      # 投稿日順
+      @gift_records = @gift_records.order("gift_records.created_at #{sort_order}")
+    else
+      # デフォルト：投稿日降順
+      @gift_records = @gift_records.order(created_at: :desc)
+    end
+
     # ページネーション（将来の実装のため）
     # @gift_records = @gift_records.page(params[:page]).per(20)
 
@@ -77,13 +102,6 @@ class GiftRecordsController < ApplicationController
       .distinct
       .order("events.name")
       .pluck("events.name", "events.id")
-
-    # 統計情報（ダッシュボード要素）
-    @total_records = @gift_records.count
-    @total_amount = @gift_records.sum("gift_records.amount") || 0
-    @current_month_records = base_query.where(
-      "gift_records.gift_at" => Date.current.beginning_of_month..Date.current.end_of_month
-    ).count
 
     # シェア確認用データの準備
     if params[:share_confirm] == "true" && params[:gift_record_id].present?
@@ -134,7 +152,6 @@ class GiftRecordsController < ApplicationController
         if @gift_record.save
           flash_success(:created, item: GiftRecord.model_name.human)
           redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
-          return
         else
           # ギフト記録の作成に失敗した場合、ギフト相手を削除
           @gift_person.destroy
@@ -144,7 +161,6 @@ class GiftRecordsController < ApplicationController
 
           flash.now[:alert] = "ギフト記録の作成に失敗しました"
           render :new, status: :unprocessable_entity
-          return
         end
       else
         # gift_recordは一時的なオブジェクトとして作成（バリデーションは実行しない）
@@ -155,7 +171,6 @@ class GiftRecordsController < ApplicationController
 
         # ギフト相手のバリデーションエラーをフォームで表示
         render :new, status: :unprocessable_entity
-        return
       end
     else
       # 既存のギフト相手を選択する場合
@@ -163,16 +178,13 @@ class GiftRecordsController < ApplicationController
       if @gift_record.save
         flash_success(:created, item: GiftRecord.model_name.human)
         redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
-        return
       else
         # エラー時のフォーム再表示用データ準備
         @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
         prepare_events_for_form
         render :new, status: :unprocessable_entity
-        return
       end
     end
-
   end
 
   def show

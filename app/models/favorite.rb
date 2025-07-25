@@ -4,7 +4,7 @@ class Favorite < ApplicationRecord
 
   # データベースレベルのユニーク制約と合わせてRailsレベルでもバリデーション
   validates :user_id, uniqueness: { scope: :gift_record_id, message: "このギフト記録は既にお気に入りに追加されています" }
-  
+
   # バリデーション
   validates :user_id, presence: true
   validates :gift_record_id, presence: true
@@ -13,7 +13,7 @@ class Favorite < ApplicationRecord
   scope :recent, -> { order(created_at: :desc) }
   scope :for_user, ->(user) { where(user: user) }
   scope :with_public_records, -> { joins(:gift_record).where(gift_records: { is_public: true }) }
-  
+
   # カスタムバリデーション：公開されているギフト記録、または自分のギフト記録のみお気に入りに追加可能
   validate :gift_record_is_accessible
 
@@ -27,7 +27,7 @@ class Favorite < ApplicationRecord
     return { action: :failed, success: false, error: "ギフト記録が無効です" } unless gift_record.present?
 
     favorite = find_by(user: user, gift_record: gift_record)
-    
+
     if favorite
       if favorite.destroy
         { action: :removed, success: true, favorited: false }
@@ -55,10 +55,10 @@ class Favorite < ApplicationRecord
 
   def gift_record_is_accessible
     return unless user.present? && gift_record.present?
-    
+
     # 自分のギフト記録の場合は常にOK
     return if gift_record.user_id == user.id
-    
+
     # 他人のギフト記録の場合は公開されている必要がある
     unless gift_record.is_public?
       errors.add(:gift_record, "非公開のギフト記録はお気に入りに追加できません")
