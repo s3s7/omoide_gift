@@ -32,13 +32,13 @@ class GiftPeopleController < ApplicationController
 
     # 並び替え処理
     sort_by = params[:sort_by].presence
-    sort_order = params[:sort_order].presence || 'desc'
-    
-    if sort_by == 'gift_records_count'
+    sort_order = params[:sort_order].presence || "desc"
+
+    if sort_by == "gift_records_count"
       # ギフト記録数順
       @gift_people = @gift_people
         .left_joins(:gift_records)
-        .group('gift_people.id')
+        .group("gift_people.id")
         .order("COUNT(gift_records.id) #{sort_order}, gift_people.name #{sort_order}")
     else
       # デフォルト：名前順
