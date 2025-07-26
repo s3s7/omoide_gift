@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :gift_records, dependent: :destroy
   has_many :gift_people, dependent: :destroy
   has_many :favorites, dependent: :destroy
+  has_many :reminds, dependent: :destroy
 
   # バリデーション
   validates :name, presence: true, length: { maximum: 20 }
@@ -65,6 +66,21 @@ class User < ApplicationRecord
 
   def display_email
     email.present? ? email : "メールアドレス登録なし"
+  end
+
+  # LINE連携状態を判定
+  def line_connected?
+    provider == 'line' && uid.present?
+  end
+
+  # LINE連携状態の表示用テキスト
+  def line_connection_status
+    line_connected? ? "連携済み" : "未連携"
+  end
+
+  # LINE連携状態の表示用クラス（CSS用）
+  def line_connection_status_class
+    line_connected? ? "text-green-600" : "text-gray-500"
   end
 
   def public_gift_records_count

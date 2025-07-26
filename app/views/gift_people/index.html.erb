@@ -348,11 +348,7 @@
     }
   });
 
-  // CSRF トークンを取得
-  function getCSRFToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]');
-    return meta ? meta.getAttribute('content') : null;
-  }
+  // CSRF トークンを取得（utils.jsのグローバル関数を使用）
 
   // オートコンプリート実行
   function performAutocomplete(query) {
@@ -371,7 +367,7 @@
       'X-Requested-With': 'XMLHttpRequest'
     };
 
-    const csrfToken = getCSRFToken();
+    const csrfToken = window.getCSRFToken();
     if (csrfToken) {
       headers['X-CSRF-Token'] = csrfToken;
     }

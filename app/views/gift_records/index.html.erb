@@ -421,11 +421,7 @@
     }
   });
 
-  // CSRF トークンを取得
-  function getCSRFToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]');
-    return meta ? meta.getAttribute('content') : null;
-  }
+  // CSRF トークンを取得（utils.jsのグローバル関数を使用）
 
   // オートコンプリート実行
   function performAutocomplete(query) {
@@ -444,7 +440,7 @@
       'X-Requested-With': 'XMLHttpRequest'
     };
 
-    const csrfToken = getCSRFToken();
+    const csrfToken = window.getCSRFToken();
     if (csrfToken) {
       headers['X-CSRF-Token'] = csrfToken;
     }
@@ -743,14 +739,14 @@
 
     // シェアテキストを生成
     const shareText = generateShareText(shareGiftRecord);
-    
+
     // UI更新
     preview.innerHTML = previewHTML;
     // 改行文字を<br>タグに変換してプレビュー表示
     const shareTextForDisplay = escapeHtml(shareText).replace(/\n/g, '<br>');
     textPreview.innerHTML = shareTextForDisplay;
     lengthCounter.textContent = shareText.length;
-    
+
     // 文字数チェック
     if (shareText.length > 280) {
       lengthCounter.classList.add('text-red-600');
@@ -767,16 +763,16 @@
   // シェアテキスト生成
   function generateShareText(record) {
     let text = `✨ ギフト記録を更新しました！\n\n`;
-    text += `🎁 ギフトアイテム: ${record.itemName}\n`;れ
+    text += `🎁 ギフトアイテム: ${record.itemName}\n`;
     text += `👥 関係性: ${record.relationshipName}\n`;
     text += `📅 イベント: ${record.eventName}\n`;
-    
+
     if (record.memo) {
       text += `📝 ${record.memo}\n`;
     }
-    
+
     text += `\n#ギフト記録 #プレゼント #${record.eventName.replace(/\s+/g, '')}`;
-    
+
     return text;
   }
 
@@ -805,20 +801,33 @@
   };
 
   // シェアモーダルを閉じる
-  window.closeShareModal = function() {
+  window.closeShareModal = async function() {
     const modal = document.getElementById('share-confirmation-modal');
     if (modal) {
       modal.classList.add('hidden');
     }
     
-    // URLからパラメータを削除（ブラウザ履歴に残さないため）
-    if (window.history && window.history.replaceState) {
-      const url = new URL(window.location);
-      url.searchParams.delete('share_confirm');
-      url.searchParams.delete('gift_record_id');
-      window.history.replaceState({}, document.title, url.toString());
+    // シェア拒否をサーバーに記録（完了を待つ）
+    if (shareGiftRecord && shareGiftRecord.id) {
+      try {
+        await fetch('/gift_records/dismiss_share', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': window.getCSRFToken(),
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({ gift_record_id: shareGiftRecord.id })
+        });
+      } catch (error) {
+        // エラーが発生してもページ遷移は実行
+      }
     }
+    
+    // 確実にパラメータなしのURLに遷移
+    window.location.href = '/gift_records';
   };
+
 
   // HTMLエスケープ関数
   function escapeHtml(text) {
