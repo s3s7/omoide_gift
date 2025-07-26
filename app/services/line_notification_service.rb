@@ -1,12 +1,16 @@
+require "line-bot-api"
+
 class LineNotificationService
   include Rails.application.routes.url_helpers
 
+  def self.client
+    @client ||= Line::Bot::V2::MessagingApi::ApiClient.new(
+      channel_access_token: ENV["LINE_CHANNEL_ACCESS_TOKEN"]
+    )
+  end
+
   def initialize
-    @client = Line::Bot::Client.new do |config|
-      config.channel_id = Rails.application.credentials.line[:channel_id]
-      config.channel_secret = Rails.application.credentials.line[:channel_secret]
-      config.channel_token = Rails.application.credentials.line[:channel_token]
-    end
+    @client = self.class.client
   end
 
   # 今日が記念日のリマインダーを一括送信
@@ -49,9 +53,14 @@ class LineNotificationService
     Rails.logger.info "Sending LINE message to user ID: #{remind.user_id}, LINE ID: #{line_user_id}"
 
     begin
-      response = @client.push_message(line_user_id, message)
+      push_request = Line::Bot::V2::MessagingApi::PushMessageRequest.new(
+        to: line_user_id,
+        messages: [ message ]
+      )
 
-      if response.is_a?(Net::HTTPSuccess)
+      response = @client.push_message(push_message_request: push_request)
+
+      if response.is_a?(Net::HTTPSuccess) || response.class.name.include?("PushMessageResponse")
         remind.mark_as_sent!
         Rails.logger.info "LINE message sent successfully for remind ID: #{remind.id}"
         true
@@ -96,9 +105,8 @@ class LineNotificationService
 
     message_text += "ギフト記録アプリで過去のプレゼントも確認できます。"
 
-    {
-      type: "text",
+    Line::Bot::V2::MessagingApi::TextMessage.new(
       text: message_text
-    }
+    )
   end
 end

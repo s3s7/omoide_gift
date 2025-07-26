@@ -151,6 +151,7 @@ class Remind < ApplicationRecord
   # 通知予定日時が過去でないことをチェック
   def notification_sent_at_not_in_past
     return unless notification_sent_at.present?
+    return unless notification_sent_at_changed? # 通知時刻が変更された場合のみバリデーション実行
 
     if notification_sent_at < Time.current
       errors.add(:notification_sent_at, "は現在時刻より後の日時を設定してください")
