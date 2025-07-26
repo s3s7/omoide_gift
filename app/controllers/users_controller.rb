@@ -25,11 +25,11 @@ class UsersController < ApplicationController
     @current_year_stats = @user.current_year_stats
     @public_records_count = @user.public_gift_records_count
     @private_records_count = @user.private_gift_records_count
-    
+
     # 記念日リマインダー統計
     @total_reminds = @user.reminds.count
-    @upcoming_reminds = @user.reminds.unsent.where('notification_at >= ?', Date.current).limit(5)
-    @upcoming_reminds_count = @user.reminds.unsent.where('notification_at >= ?', Date.current).count
+    @upcoming_reminds = @user.reminds.unsent.where("notification_at >= ?", Date.current).limit(5)
+    @upcoming_reminds_count = @user.reminds.unsent.where("notification_at >= ?", Date.current).count
     @recent_sent_reminds = @user.reminds.sent.order(notification_sent_at: :desc).limit(3)
     # 月別統計（過去6ヶ月）
     @monthly_stats = (0..5).map do |i|

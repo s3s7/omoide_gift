@@ -70,7 +70,7 @@ class User < ApplicationRecord
 
   # LINE連携状態を判定
   def line_connected?
-    provider == 'line' && uid.present?
+    provider == "line" && uid.present?
   end
 
   # LINE連携状態の表示用テキスト

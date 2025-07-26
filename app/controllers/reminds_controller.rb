@@ -1,7 +1,7 @@
 class RemindsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_remind, only: [:show, :edit, :update, :destroy, :resend]
-  before_action :ensure_owner, only: [:show, :edit, :update, :destroy, :resend]
+  before_action :set_remind, only: [ :show, :edit, :update, :destroy, :resend ]
+  before_action :ensure_owner, only: [ :show, :edit, :update, :destroy, :resend ]
 
   def index
     @reminds = current_user.reminds
@@ -9,7 +9,7 @@ class RemindsController < ApplicationController
                           .order(:notification_at)
 
     # 今後の予定とイベント履歴を分離
-    @upcoming_reminds = @reminds.unsent.where('notification_at >= ?', Date.current)
+    @upcoming_reminds = @reminds.unsent.where("notification_at >= ?", Date.current)
     @past_reminds = @reminds.sent.order(notification_sent_at: :desc).limit(10)
 
     # 統計情報
@@ -26,7 +26,7 @@ class RemindsController < ApplicationController
     @gift_people = current_user.gift_people.includes(:relationship).order(:name)
 
     if @gift_people.empty?
-      redirect_to gift_people_path, alert: '記念日を設定するにはまずギフト相手を登録してください。'
+      redirect_to gift_people_path, alert: "記念日を設定するにはまずギフト相手を登録してください。"
     end
   end
 
@@ -36,7 +36,7 @@ class RemindsController < ApplicationController
     # 通知日時を設定
     days_before = params[:remind][:notification_days_before]
     time_str = params[:remind][:notification_time]
-    
+
     if days_before.present? && time_str.present?
       @remind.set_notification_sent_at(days_before, time_str)
     else
@@ -50,7 +50,7 @@ class RemindsController < ApplicationController
       render :new, status: :unprocessable_entity
     end
   rescue ActiveRecord::RecordNotFound
-    redirect_to reminds_path, alert: '指定されたギフト相手が見つかりません。'
+    redirect_to reminds_path, alert: "指定されたギフト相手が見つかりません。"
   end
 
   def edit
@@ -67,7 +67,7 @@ class RemindsController < ApplicationController
     # 通知日時を再設定
     days_before = params[:remind][:notification_days_before]
     time_str = params[:remind][:notification_time]
-    
+
     if days_before.present? && time_str.present?
       @remind.set_notification_sent_at(days_before, time_str)
     else
@@ -100,7 +100,7 @@ class RemindsController < ApplicationController
     redirect_to reminds_path, notice: "#{@remind.gift_person.name}さんの通知をリセットしました。次回の定期実行時に再送されます。"
   rescue StandardError => e
     Rails.logger.error "Remind resend error: #{e.message}"
-    redirect_to reminds_path, alert: '通知のリセットに失敗しました。'
+    redirect_to reminds_path, alert: "通知のリセットに失敗しました。"
   end
 
   private
@@ -108,12 +108,12 @@ class RemindsController < ApplicationController
   def set_remind
     @remind = current_user.reminds.includes(gift_person: :relationship).find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to reminds_path, alert: '指定された記念日リマインダーが見つかりません。'
+    redirect_to reminds_path, alert: "指定された記念日リマインダーが見つかりません。"
   end
 
   def ensure_owner
     unless @remind&.user == current_user
-      redirect_to reminds_path, alert: 'アクセス権限がありません。'
+      redirect_to reminds_path, alert: "アクセス権限がありません。"
     end
   end
 

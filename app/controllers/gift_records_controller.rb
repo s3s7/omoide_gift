@@ -5,7 +5,6 @@ class GiftRecordsController < ApplicationController
   before_action :ensure_accessible, only: [ :show ]
 
   def index
-    
     # プライバシーを考慮したギフト記録の取得
     if user_signed_in?
       # ログインユーザー：公開記録 + 自分の記録（公開・非公開問わず）
@@ -108,7 +107,7 @@ class GiftRecordsController < ApplicationController
     if user_signed_in? && params[:share_confirm] == "true" && params[:gift_record_id].present?
       gift_record_id = params[:gift_record_id].to_s
       dismissed_records = session[:dismissed_share_records] || []
-      
+
       # 既に拒否されたギフト記録の場合はシェアモーダルを表示しない
       unless dismissed_records.include?(gift_record_id)
         @share_gift_record = current_user.gift_records
@@ -308,7 +307,7 @@ class GiftRecordsController < ApplicationController
     end
 
     gift_record_id = params[:gift_record_id]
-    
+
     if gift_record_id.present?
       # 指定されたギフト記録が現在のユーザーのものかチェック
       gift_record = current_user.gift_records.find_by(id: gift_record_id)
@@ -321,7 +320,7 @@ class GiftRecordsController < ApplicationController
       session[:dismissed_share_records] ||= []
       session[:dismissed_share_records] << gift_record_id.to_s
       session[:dismissed_share_records].uniq!
-      
+
       render json: { success: true }
     else
       render json: { success: false, error: "Invalid gift record ID" }, status: :bad_request

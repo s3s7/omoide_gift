@@ -40,10 +40,10 @@
         <div class="text-sm flex items-center mb-1">
           <% if @user.line_connected? %>
             <i class="fab fa-line mr-2 text-green-500"></i>
-            <span class="text-green-600 font-medium">LINE通知: 連携済み</span>
+            <span class="text-green-600 font-medium">LINE: 連携済み</span>
           <% else %>
             <i class="fas fa-bell-slash mr-2 text-orange-500"></i>
-            <span class="text-gray-600">LINE通知: 未連携</span>
+            <span class="text-gray-600">LINE: 未連携</span>
           <% end %>
         </div>
         <p class="text-sm text-gray-500">登録日: <%= l(@user.created_at, format: :short) %></p>
@@ -61,19 +61,6 @@
           <div>
             <p class="text-sm font-medium text-gray-600">総ギフト数</p>
             <p class="text-lg font-bold text-gray-900"><%= @total_gift_records %>件</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 総金額 -->
-      <div class="bg-green-50 rounded-lg p-4">
-        <div class="flex items-center">
-          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-            <i class="fas fa-yen-sign text-green-600"></i>
-          </div>
-          <div>
-            <p class="text-sm font-medium text-gray-600">総金額</p>
-            <p class="text-lg font-bold text-gray-900">¥<%= number_with_delimiter(@total_gift_amount) %></p>
           </div>
         </div>
       </div>
@@ -166,58 +153,7 @@
 
 <!-- メインコンテンツ -->
 <div class="max-w-2xl mx-auto space-y-8 mb-8">
-  <!-- 最近のギフト記録 -->
-  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-medium text-gray-800">
-        <i class="fas fa-clock mr-2 text-green-500"></i>
-        最近のギフト記録
-      </h3>
-      <%= link_to gift_records_path, class: "text-sm text-pink-600 hover:text-pink-700 font-medium" do %>
-        すべて見る →
-      <% end %>
-    </div>
-
-    <% if @recent_gift_records.any? %>
-      <div class="space-y-3">
-        <% @recent_gift_records.each do |record| %>
-          <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-            <div class="flex-1">
-              <h4 class="font-medium text-gray-800"><%= record.item_name %></h4>
-              <div class="text-sm text-gray-600">
-                <span class="mr-3">
-                  <i class="fas fa-user mr-1"></i>
-                  <%= record.gift_person&.name || "未設定" %>
-                </span>
-                <span>
-                  <i class="fas fa-calendar mr-1"></i>
-                  <%= l(record.gift_at, format: :short) %>
-                </span>
-              </div>
-            </div>
-            <% if record.amount.present? %>
-              <div class="text-right">
-                <span class="text-sm font-medium text-green-600">
-                  ¥<%= number_with_delimiter(record.amount) %>
-                </span>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    <% else %>
-      <div class="text-center py-8">
-        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-gift text-2xl text-gray-400"></i>
-        </div>
-        <p class="text-gray-500">まだギフト記録がありません</p>
-        <%= link_to new_gift_record_path, class: "inline-flex items-center mt-2 text-sm text-pink-600 hover:text-pink-700 font-medium" do %>
-          <i class="fas fa-plus mr-1"></i>
-          最初の記録を作成
-        <% end %>
-      </div>
-    <% end %>
-  </div>
+  
 
   <!-- 人気のギフト相手 -->
   <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
@@ -337,34 +273,7 @@
   </div>
 </div>
 
-<!-- 月別統計 -->
-<div class="max-w-2xl mx-auto mb-8">
-  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-    <h3 class="text-lg font-medium text-gray-800 mb-4">
-      <i class="fas fa-chart-line mr-2 text-blue-500"></i>
-      月別ギフト統計（過去6ヶ月）
-    </h3>
-    
-    <div class="space-y-3">
-      <% @monthly_stats.each do |stat| %>
-        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-          <div class="flex items-center">
-            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-              <i class="fas fa-calendar text-blue-600"></i>
-            </div>
-            <div>
-              <p class="font-medium text-gray-800"><%= stat[:month] %></p>
-              <p class="text-sm text-gray-600"><%= stat[:count] %>件のギフト</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="text-lg font-bold text-green-600">¥<%= number_with_delimiter(stat[:amount]) %></p>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
+
 
 <!-- プライバシー設定とアカウント情報 -->
 <div class="max-w-2xl mx-auto space-y-8">

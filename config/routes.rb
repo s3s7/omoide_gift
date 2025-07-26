@@ -33,7 +33,7 @@ Rails.application.routes.draw do
       get :autocomplete
     end
   end
-  
+
   # 記念日リマインダー機能
   resources :reminds do
     member do
