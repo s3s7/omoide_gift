@@ -1,0 +1,200 @@
+<% content_for(:title, "記念日を設定") %>
+
+<!-- メインコンテナ -->
+<div class="max-w-2xl mx-auto">
+  <!-- ヘッダー部分 -->
+  <div class="mb-6 mt-4 text-center">
+    <h2 class="text-2xl font-bold text-gray-800 mb-3">
+      <i class="fas fa-bell mr-2 text-orange-500"></i>
+      記念日を設定
+    </h2>
+    <p class="text-sm text-gray-600">
+      大切な人の記念日を設定して、LINEで通知を受け取りましょう
+    </p>
+  </div>
+
+  <!-- フォーム -->
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <%= form_with model: @remind, local: true, class: "space-y-6" do |form| %>
+      <!-- エラーメッセージ -->
+      <% if @remind.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-circle text-red-400"></i>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">
+                入力内容に問題があります
+              </h3>
+              <div class="mt-2 text-sm text-red-700">
+                <ul class="list-disc list-inside space-y-1">
+                  <% @remind.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- ギフト相手選択 -->
+      <div>
+        <%= form.label :gift_person_id, "ギフト相手", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.select :gift_person_id,
+            options_from_collection_for_select(@gift_people, :id, :name, @remind.gift_person_id),
+            { prompt: "記念日を設定する相手を選択してください" },
+            { 
+              class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm",
+              required: true
+            } %>
+        <p class="mt-1 text-xs text-gray-500">
+          <i class="fas fa-info-circle mr-1"></i>
+          ギフト相手が表示されない場合は、
+          <%= link_to "ギフト相手管理", gift_people_path, class: "text-orange-600 hover:text-orange-700 underline" %>
+          から先に相手を登録してください
+        </p>
+      </div>
+
+      <!-- 記念日選択 -->
+      <div>
+        <%= form.label :notification_at, "記念日", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.date_field :notification_at,
+            class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm",
+            required: true %>
+        <p class="mt-1 text-xs text-gray-500">
+          <i class="fas fa-calendar mr-1"></i>
+          記念日の日付を設定してください
+        </p>
+      </div>
+
+      <!-- 通知タイミング設定 -->
+      <div class="space-y-4">
+        <h3 class="text-sm font-medium text-gray-700">通知タイミング</h3>
+        
+        <!-- 通知日数選択 -->
+        <div>
+          <%= label_tag :notification_days_before, "通知日", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= select_tag "remind[notification_days_before]",
+              options_for_select(Remind.notification_days_before_options, 0),
+              {
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm",
+                required: true
+              } %>
+          <p class="mt-1 text-xs text-gray-500">
+            <i class="fas fa-calendar mr-1"></i>
+            記念日の何日前に通知するかを選択してください
+          </p>
+        </div>
+
+        <!-- 通知時刻選択 -->
+        <div>
+          <%= label_tag :notification_time, "通知時刻", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= select_tag "remind[notification_time]",
+              options_for_select([["時刻を選択してください", ""]] + Remind.notification_time_options),
+              {
+                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm",
+                required: true
+              } %>
+          <p class="mt-1 text-xs text-gray-500">
+            <i class="fas fa-clock mr-1"></i>
+            その日の何時に通知を受け取るかを選択してください
+          </p>
+        </div>
+      </div>
+
+      <!-- 説明カード -->
+      <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-lightbulb text-orange-400"></i>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-orange-800">
+              記念日通知について
+            </h3>
+            <div class="mt-2 text-sm text-orange-700">
+              <ul class="list-disc list-inside space-y-1">
+                <li>通知日と通知時刻を設定してください（必須）</li>
+                <li>記念日前に通知することで、ギフトの準備時間を確保できます</li>
+                <li>LINE連携しているアカウントのみ通知を受け取れます</li>
+                <li>同じ相手に対して複数の記念日を設定することはできません</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ボタン -->
+      <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+        <%= link_to reminds_path,
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" do %>
+          <i class="fas fa-arrow-left mr-2"></i>
+          戻る
+        <% end %>
+        
+        <%= form.submit "記念日を設定",
+            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 既存の記念日がある場合の一覧 -->
+  <% if current_user.reminds.any? %>
+    <div class="mt-8 bg-white rounded-lg shadow-md border border-gray-200 p-6">
+      <h3 class="text-lg font-medium text-gray-800 mb-4">
+        <i class="fas fa-list mr-2 text-gray-600"></i>
+        設定済みの記念日
+      </h3>
+      
+      <div class="space-y-3">
+        <% current_user.reminds.includes(gift_person: :relationship).order(:notification_at).limit(5).each do |remind| %>
+          <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="flex-1">
+              <h4 class="font-medium text-gray-800"><%= remind.gift_person.name %>さん</h4>
+              <div class="text-sm text-gray-600">
+                <span class="mr-3">
+                  <i class="fas fa-heart mr-1"></i>
+                  <%= remind.gift_person.relationship&.name || "未設定" %>
+                </span>
+                <span>
+                  <i class="fas fa-calendar mr-1"></i>
+                  <%= l(remind.notification_at, format: :short) %>
+                </span>
+              </div>
+            </div>
+            <div class="text-right">
+              <% if remind.is_sent? %>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <i class="fas fa-check mr-1"></i>
+                  送信済み
+                </span>
+              <% else %>
+                <% days_left = remind.days_until_notification %>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= days_left <= 3 ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800' %>">
+                  <i class="fas fa-clock mr-1"></i>
+                  <% if days_left == 0 %>
+                    今日
+                  <% elsif days_left == 1 %>
+                    明日
+                  <% else %>
+                    あと<%= days_left %>日
+                  <% end %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <% if current_user.reminds.count > 5 %>
+        <div class="mt-4 text-center">
+          <%= link_to reminds_path, class: "text-sm text-orange-600 hover:text-orange-700 font-medium" do %>
+            すべて見る（<%= current_user.reminds.count %>件）→
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

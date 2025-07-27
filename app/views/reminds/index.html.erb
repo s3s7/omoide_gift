@@ -1,0 +1,284 @@
+<% content_for(:title, "記念日リマインダー管理") %>
+
+<!-- メインコンテナ - 中央寄せ -->
+<div class="max-w-6xl mx-auto">
+<!-- ヘッダー部分 -->
+<div class="mb-2 mt-2 text-center">
+  <h2 class="text-2xl font-bold text-gray-800 mb-3">
+    <i class="fas fa-bell mr-2 text-orange-500"></i>
+    記念日リマインダー管理
+  </h2>
+  <div class="flex justify-center">
+    <%= link_to new_remind_path,
+        class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" do %>
+      <i class="fas fa-plus mr-2"></i>
+      新しい記念日を設定
+    <% end %>
+  </div>
+</div>
+
+<!-- 統計情報 -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4 max-w-4xl mx-auto">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- 総記念日数 -->
+    <div class="bg-orange-50 rounded-lg p-4">
+      <div class="flex items-center">
+        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-bell text-orange-600"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600">設定済み記念日</p>
+          <p class="text-lg font-bold text-gray-900"><%= @total_reminds %>件</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 今後の記念日 -->
+    <div class="bg-yellow-50 rounded-lg p-4">
+      <div class="flex items-center">
+        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-clock text-yellow-600"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600">今後の記念日</p>
+          <p class="text-lg font-bold text-gray-900"><%= @upcoming_count %>件</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 送信済み通知 -->
+    <div class="bg-green-50 rounded-lg p-4">
+      <div class="flex items-center">
+        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-check text-green-600"></i>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-gray-600">送信済み通知</p>
+          <p class="text-lg font-bold text-gray-900"><%= @sent_count %>件</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 補助情報 -->
+<div class="text-center text-sm text-gray-600 mb-4 max-w-2xl mx-auto">
+  <p>
+    <i class="fas fa-info-circle mr-1 text-gray-400"></i>
+    設定されたタイミングでLINE通知をお送りします（当日朝9時、事前通知は夜7時）
+  </p>
+</div>
+
+<!-- 今後の記念日一覧 -->
+<div class="text-center mb-3 mt-1">
+  <h3 class="text-base font-medium text-gray-800">
+    <i class="fas fa-calendar-alt mr-1 text-orange-500"></i>
+    今後の記念日
+    <span class="text-sm text-gray-500 font-normal ml-1">
+      （<%= pluralize(@upcoming_count, "件") %>）
+    </span>
+  </h3>
+</div>
+
+<% if @upcoming_reminds.any? %>
+  <!-- カードグリッドレイアウト -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 justify-items-center mb-6">
+    <% @upcoming_reminds.each do |remind| %>
+      <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-1 w-full max-w-sm">
+        <!-- アイコンエリア -->
+        <div class="h-32 bg-gradient-to-br from-orange-50 to-yellow-50 flex items-center justify-center relative">
+          <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
+            <i class="fas fa-bell text-2xl text-orange-500"></i>
+          </div>
+          
+          <!-- 操作ボタン（右上） -->
+          <div class="absolute top-2 right-2 flex space-x-1">
+            <%= link_to edit_remind_path(remind), 
+                class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                title: "編集",
+                aria: { label: "#{remind.gift_person.name}さんの記念日を編集" } do %>
+              <i class="fas fa-edit text-blue-600 text-sm"></i>
+            <% end %>
+            <%= link_to remind_path(remind), 
+                data: { 
+                  confirm: "「#{remind.gift_person.name}」さんの記念日を削除しますか？",
+                  turbo_method: :delete
+                },
+                class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
+                title: "削除",
+                aria: { label: "#{remind.gift_person.name}さんの記念日を削除" } do %>
+              <i class="fas fa-trash text-red-600 text-sm"></i>
+            <% end %>
+          </div>
+
+          <!-- 緊急度バッジ（左上） -->
+          <div class="absolute top-2 left-2">
+            <% days_left = remind.days_until_notification %>
+            <% if days_left <= 3 %>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                <% if days_left == 0 %>
+                  今日！
+                <% elsif days_left == 1 %>
+                  明日
+                <% else %>
+                  あと<%= days_left %>日
+                <% end %>
+              </span>
+            <% elsif days_left <= 7 %>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                あと<%= days_left %>日
+              </span>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- 記念日情報 -->
+        <div class="p-3">
+          <!-- 相手名 -->
+          <div class="mb-2">
+            <h4 class="text-lg font-bold leading-tight text-gray-800">
+              <%= remind.gift_person.name %>さん
+            </h4>
+          </div>
+
+          <!-- 関係性 -->
+          <div class="mb-2">
+            <div class="flex items-center text-sm">
+              <i class="fas fa-heart mr-2 text-pink-500"></i>
+              <span class="text-gray-600">
+                <%= remind.gift_person.relationship&.name || "未設定" %>
+              </span>
+            </div>
+          </div>
+
+          <!-- 記念日 -->
+          <div class="mb-3">
+            <div class="flex items-center text-sm">
+              <i class="fas fa-calendar mr-2 text-orange-500"></i>
+              <span class="text-gray-600">
+                <%= l(remind.notification_at, format: :short) %>
+              </span>
+            </div>
+          </div>
+
+          <!-- 通知予定日時 -->
+          <% if remind.notification_sent_at.present? %>
+            <div class="mb-2">
+              <div class="flex items-center text-sm">
+                <i class="fas fa-bell mr-2 text-blue-500"></i>
+                <span class="text-gray-600">
+                  <%= l(remind.notification_sent_at.in_time_zone, format: :short) %> <%= remind.notification_sent_at.in_time_zone.strftime('%H:%M') %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- 日数表示 -->
+          <div class="mt-3 pt-2 border-t border-gray-200">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-gray-500">記念日まで</span>
+                <% days_left = remind.days_until_notification %>
+                <span class="font-medium <%= days_left <= 3 ? 'text-red-600' : 'text-orange-600' %>">
+                  <% if days_left == 0 %>
+                    今日！
+                  <% elsif days_left == 1 %>
+                    明日
+                  <% else %>
+                    あと<%= days_left %>日
+                  <% end %>
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-gray-500">通知まで</span>
+                <% notify_days_left = remind.days_until_notify %>
+                <span class="font-medium <%= notify_days_left <= 1 ? 'text-red-600' : 'text-blue-600' %>">
+                  <% if notify_days_left == 0 && !remind.is_sent? %>
+                    今日！
+                  <% elsif notify_days_left == 1 %>
+                    明日
+                  <% elsif remind.is_sent? %>
+                    送信済み
+                  <% elsif notify_days_left < 0 %>
+                    予定日経過
+                  <% else %>
+                    あと<%= notify_days_left %>日
+                  <% end %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <!-- 空状態 -->
+  <div class="text-center py-8 mb-6">
+    <div class="mx-auto h-24 w-24 text-gray-300">
+      <i class="fas fa-bell text-6xl"></i>
+    </div>
+    <h3 class="mt-3 text-lg font-medium text-gray-900">
+      今後の記念日がありません
+    </h3>
+    <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
+      記念日を設定して、大切な人への贈り物を忘れないようにしましょう。
+    </p>
+    <div class="mt-4">
+      <%= link_to new_remind_path,
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" do %>
+        <i class="fas fa-plus mr-2"></i>
+        最初の記念日を設定
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<!-- 過去の通知履歴 -->
+<% if @past_reminds.any? %>
+  <div class="text-center mb-3 mt-6">
+    <h3 class="text-base font-medium text-gray-800">
+      <i class="fas fa-history mr-1 text-green-500"></i>
+      過去の通知履歴
+      <span class="text-sm text-gray-500 font-normal ml-1">
+        （最新10件）
+      </span>
+    </h3>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6 max-w-4xl mx-auto">
+    <div class="space-y-3">
+      <% @past_reminds.each do |remind| %>
+        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="flex-1">
+            <h4 class="font-medium text-gray-800"><%= remind.gift_person.name %>さん</h4>
+            <div class="text-sm text-gray-600">
+              <span class="mr-3">
+                <i class="fas fa-calendar mr-1"></i>
+                <%= l(remind.notification_at, format: :short) %>
+              </span>
+              <span>
+                <i class="fas fa-check mr-1 text-green-500"></i>
+                <%= l(remind.notification_sent_at.in_time_zone, format: :short) %> 送信済み
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <%= link_to resend_remind_path(remind), 
+                method: :patch,
+                data: { confirm: "#{remind.gift_person.name}さんの通知をリセットしますか？次回実行時に再送されます。" },
+                class: "p-2 text-orange-600 hover:text-orange-700 transition-colors",
+                title: "通知リセット" do %>
+              <i class="fas fa-redo text-sm"></i>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+</div>
+
+<!-- メインコンテナ終了 -->
+</div>

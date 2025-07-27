@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   resources :gift_records do
     collection do
       get :autocomplete
+      post :dismiss_share
     end
     # お気に入り機能
     member do
@@ -30,6 +31,13 @@ Rails.application.routes.draw do
   resources :gift_people do
     collection do
       get :autocomplete
+    end
+  end
+
+  # 記念日リマインダー機能
+  resources :reminds do
+    member do
+      patch :resend  # 通知リセット用
     end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

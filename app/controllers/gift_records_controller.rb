@@ -103,11 +103,17 @@ class GiftRecordsController < ApplicationController
       .order("events.name")
       .pluck("events.name", "events.id")
 
-    # シェア確認用データの準備
-    if params[:share_confirm] == "true" && params[:gift_record_id].present?
-      @share_gift_record = current_user.gift_records
-        .includes(:gift_person, :event, gift_person: :relationship)
-        .find_by(id: params[:gift_record_id])
+    # シェア確認用データの準備（ログインユーザーのみ）
+    if user_signed_in? && params[:share_confirm] == "true" && params[:gift_record_id].present?
+      gift_record_id = params[:gift_record_id].to_s
+      dismissed_records = session[:dismissed_share_records] || []
+
+      # 既に拒否されたギフト記録の場合はシェアモーダルを表示しない
+      unless dismissed_records.include?(gift_record_id)
+        @share_gift_record = current_user.gift_records
+          .includes(:gift_person, :event, gift_person: :relationship)
+          .find_by(id: params[:gift_record_id])
+      end
     end
 
     # エラーハンドリング
@@ -291,6 +297,36 @@ class GiftRecordsController < ApplicationController
       total_count: 0,
       error: "検索中にエラーが発生しました"
     }, status: :internal_server_error
+  end
+
+  # シェア拒否を記録
+  def dismiss_share
+    unless user_signed_in?
+      render json: { success: false, error: "Authentication required" }, status: :unauthorized
+      return
+    end
+
+    gift_record_id = params[:gift_record_id]
+
+    if gift_record_id.present?
+      # 指定されたギフト記録が現在のユーザーのものかチェック
+      gift_record = current_user.gift_records.find_by(id: gift_record_id)
+      unless gift_record
+        render json: { success: false, error: "Gift record not found" }, status: :not_found
+        return
+      end
+
+      # セッションに拒否したギフト記録IDを保存
+      session[:dismissed_share_records] ||= []
+      session[:dismissed_share_records] << gift_record_id.to_s
+      session[:dismissed_share_records].uniq!
+
+      render json: { success: true }
+    else
+      render json: { success: false, error: "Invalid gift record ID" }, status: :bad_request
+    end
+  rescue StandardError => e
+    render json: { success: false, error: "Internal server error" }, status: :internal_server_error
   end
 
   private

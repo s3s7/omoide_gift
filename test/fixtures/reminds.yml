@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  notification_at: 2025-07-25
+  notification_sent_at: 2025-07-25 15:08:08
+  is_sent: false
+  user: one
+  gift_person: one
+
+two:
+  notification_at: 2025-07-25
+  notification_sent_at: 2025-07-25 15:08:08
+  is_sent: false
+  user: two
+  gift_person: two

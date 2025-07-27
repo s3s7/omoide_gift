@@ -46,7 +46,7 @@ async function toggleFavorite(giftRecordId) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': getCSRFToken(),
+        'X-CSRF-Token': window.getCSRFToken(),
         'Accept': 'application/json'
       },
       credentials: 'same-origin'
@@ -172,11 +172,7 @@ function showToast(message, type = 'info') {
   }, 3000);
 }
 
-// CSRFトークンを取得
-function getCSRFToken() {
-  const token = document.querySelector('meta[name="csrf-token"]');
-  return token ? token.getAttribute('content') : '';
-}
+// CSRFトークンを取得（utils.jsのグローバル関数を使用）
 
 // グローバル関数として公開（インライン呼び出し用）
 window.toggleFavorite = toggleFavorite;
