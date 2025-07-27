@@ -4,8 +4,7 @@ class Remind < ApplicationRecord
 
   # バリデーション
   validates :notification_at, presence: true
-  validates :notification_at, uniqueness: { scope: [ :user_id, :gift_person_id ],
-                                          message: "この相手の記念日は既に登録されています" }
+  validate :no_duplicate_unsent_reminders
   validate :notification_sent_at_must_be_present
   validate :notification_sent_at_not_in_past, if: :notification_sent_at?
   validate :notification_sent_at_before_or_on_anniversary, if: :notification_sent_at?
@@ -198,5 +197,24 @@ class Remind < ApplicationRecord
     end
   rescue StandardError
     errors.add(:base, "通知タイミングの設定に問題があります")
+  end
+
+  # 未送信のリマインダーの重複をチェック
+  def no_duplicate_unsent_reminders
+    return unless notification_at.present? && user_id.present? && gift_person_id.present?
+
+    duplicate_query = self.class.where(
+      user_id: user_id,
+      gift_person_id: gift_person_id,
+      notification_at: notification_at,
+      is_sent: false
+    )
+
+    # 更新時は自分自身を除外
+    duplicate_query = duplicate_query.where.not(id: id) if persisted?
+
+    if duplicate_query.exists?
+      errors.add(:notification_at, "この相手の記念日は既に登録されています")
+    end
   end
 end
