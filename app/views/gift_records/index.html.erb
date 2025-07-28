@@ -5,13 +5,13 @@
 <!-- ヘッダー部分 -->
 <div class="mb-2 mt-2 text-center">
   <h2 class="text-2xl font-bold text-gray-800 mb-3">
-    <i class="fas fa-gift mr-2 text-pink-500"></i>
+    <i class="fas fa-gift mr-2 text-primary"></i>
     ギフト記録一覧
   </h2>
   <% if user_signed_in? %>
     <div class="flex justify-center">
       <%= link_to new_gift_record_path,
-          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
         <i class="fas fa-plus mr-2"></i>
         新しい記録を作成
       <% end %>
@@ -32,7 +32,7 @@
               placeholder: "アイテム名、メモで検索",
               id: "gift-records-search-input",
               autocomplete: "off",
-              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" %>
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" %>
           
           <!-- オートコンプリートドロップダウン -->
           <div id="gift-records-autocomplete-dropdown" 
@@ -49,7 +49,7 @@
 
         <!-- 検索ボタン -->
         <div class="flex items-end">
-          <%= f.submit "検索", class: "w-full px-3 py-1.5 bg-pink-600 text-white text-sm font-medium rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" %>
+          <%= f.submit "検索", class: "w-full px-3 py-1.5 btn-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
         </div>
       </div>
 
@@ -67,7 +67,7 @@
               {},
               { 
                 id: "filter-type-select",
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" 
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
               } %>
           <%= f.hidden_field :filter_type, id: "filter-type-hidden" %>
         </div>
@@ -82,7 +82,7 @@
               {},
               { 
                 id: "relationship-select",
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500",
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
                 style: (params[:filter_type] == "relationship" ? "" : "display: none;")
               } %>
           
@@ -92,7 +92,7 @@
               {},
               { 
                 id: "event-select",
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500",
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
                 style: (params[:filter_type] == "event" ? "" : "display: none;")
               } %>
           
@@ -116,7 +116,7 @@
               ], params[:sort_by]),
               { prompt: "選択してください" },
               { 
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" 
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
               } %>
         </div>
 
@@ -130,7 +130,7 @@
               ], params[:sort_order]),
               { prompt: "選択してください" },
               { 
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500" 
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
               } %>
         </div>
       </div>
@@ -140,7 +140,7 @@
           <span class="text-xs text-gray-600">
             <%= pluralize(@total_records, "件") %>の結果
           </span>
-          <%= link_to "クリア", gift_records_path, class: "text-xs text-pink-600 hover:text-pink-700" %>
+          <%= link_to "クリア", gift_records_path, class: "text-xs text-primary hover:text-primary-hover" %>
         </div>
       <% end %>
     <% end %>
@@ -157,7 +157,7 @@
   <!-- ギフト記録一覧 -->
   <div class="text-center mb-3 mt-1">
     <h3 class="text-base font-medium text-gray-800">
-      <i class="fas fa-th-large mr-1 text-pink-500"></i>
+      <i class="fas fa-th-large mr-1 text-primary"></i>
       記録一覧
       <span class="text-sm text-gray-500 font-normal ml-1">
         （<%= pluralize(@total_records, "件") %>）
@@ -176,7 +176,7 @@
               <!-- 将来の画像配置用プレースホルダー -->
               <div class="text-center">
                 <div class="w-16 h-16 sm:w-18 sm:h-18 lg:w-18 lg:h-18 xl:w-20 xl:h-20 mx-auto mb-2 sm:mb-3 bg-white rounded-full flex items-center justify-center shadow-sm">
-                  <i class="fas fa-gift text-2xl sm:text-2xl lg:text-2xl xl:text-3xl text-pink-500"></i>
+                  <i class="fas fa-gift text-2xl sm:text-2xl lg:text-2xl xl:text-3xl text-primary"></i>
                 </div>
                 <p class="text-base sm:text-base lg:text-sm xl:text-base text-gray-500">画像エリア</p>
               </div>
@@ -359,7 +359,7 @@
           <% end %>
           <% if user_signed_in? %>
             <%= link_to new_gift_record_path,
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
               <i class="fas fa-plus mr-2"></i>
               <% if params[:search].present? %>新しい記録を作成<% else %>最初の記録を作成<% end %>
             <% end %>
@@ -478,12 +478,12 @@
       const typeLabel = getTypeLabel(result.type);
       
       return `
-        <div class="autocomplete-item px-3 py-2 hover:bg-pink-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
+        <div class="autocomplete-item px-3 py-2 hover:bg-primary-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
              data-display-text="${escapeHtml(result.display_text)}" 
              data-id="${result.id}">
           <div class="flex items-start space-x-2">
-            <div class="flex-shrink-0 w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center">
-              <i class="${typeIcon} text-pink-600 text-xs"></i>
+            <div class="flex-shrink-0 w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
+              <i class="${typeIcon} text-primary text-xs"></i>
             </div>
             <div class="flex-1 min-w-0">
               <div class="text-xs font-medium text-gray-900">
@@ -567,25 +567,25 @@
   // キーボードナビゲーション
   searchInput.addEventListener('keydown', function(e) {
     const items = dropdown.querySelectorAll('.autocomplete-item');
-    const activeItem = dropdown.querySelector('.autocomplete-item.bg-pink-100');
+    const activeItem = dropdown.querySelector('.autocomplete-item.bg-primary-100');
     
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (activeItem) {
-        activeItem.classList.remove('bg-pink-100');
+        activeItem.classList.remove('bg-primary-100');
         const next = activeItem.nextElementSibling || items[0];
-        next.classList.add('bg-pink-100');
+        next.classList.add('bg-primary-100');
       } else if (items.length > 0) {
-        items[0].classList.add('bg-pink-100');
+        items[0].classList.add('bg-primary-100');
       }
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       if (activeItem) {
-        activeItem.classList.remove('bg-pink-100');
+        activeItem.classList.remove('bg-primary-100');
         const prev = activeItem.previousElementSibling || items[items.length - 1];
-        prev.classList.add('bg-pink-100');
+        prev.classList.add('bg-primary-100');
       } else if (items.length > 0) {
-        items[items.length - 1].classList.add('bg-pink-100');
+        items[items.length - 1].classList.add('bg-primary-100');
       }
     } else if (e.key === 'Enter') {
       if (activeItem) {
@@ -716,8 +716,8 @@
     // プレビュー内容を生成
     const previewHTML = `
       <div class="flex items-start space-x-3">
-        <div class="flex-shrink-0 w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-gift text-pink-600"></i>
+        <div class="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+          <i class="fas fa-gift text-primary"></i>
         </div>
         <div class="flex-1 min-w-0">
           <div class="text-sm font-medium text-gray-900">

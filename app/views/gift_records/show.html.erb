@@ -102,7 +102,7 @@
       <!-- 贈り先情報 -->
       <div>
         <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <i class="fas fa-user text-pink-500 mr-2"></i>
+          <i class="fas fa-user text-primary mr-2"></i>
           贈り先情報
         </h2>
         
@@ -210,7 +210,7 @@
       </div>
       <div>
         <%= link_to gift_records_path, 
-            class: "inline-flex items-center text-pink-600 hover:text-pink-700 font-medium" do %>
+            class: "inline-flex items-center text-primary hover:text-primary-hover font-medium" do %>
           <i class="fas fa-arrow-left mr-1"></i>
           一覧に戻る
         <% end %>
@@ -222,7 +222,7 @@
 <!-- 関連アクション -->
 <div class="mt-6 text-center">
   <%= link_to new_gift_record_path, 
-      class: "inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-pink-600 border border-transparent rounded-lg shadow-sm hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transition-colors" do %>
+      class: "inline-flex items-center px-6 py-3 text-sm font-medium text-white btn-primary border border-transparent rounded-lg shadow-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors" do %>
     <i class="fas fa-plus mr-2"></i>
     新しい記録を作成
   <% end %>
