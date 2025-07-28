@@ -2,13 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-
 @layer components {
   .btn-primary {
-    @apply py-2 px-4 bg-blue-200;
+    @apply inline-block px-4 py-2 bg-primary text-white rounded-lg font-semibold text-center transition-all duration-200 ease-in-out;
+    @apply hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+    @apply active:bg-primary-dark transform active:scale-95;
+  }
+  
+  .btn-primary-outline {
+    @apply inline-block px-4 py-2 border-2 border-primary text-primary rounded-lg font-semibold text-center transition-all duration-200 ease-in-out;
+    @apply hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+  
+  .btn-primary-sm {
+    @apply btn-primary px-3 py-1.5 text-sm;
+  }
+  
+  .btn-primary-lg {
+    @apply btn-primary px-6 py-3 text-lg;
   }
 }
-
-*/
 

@@ -9,7 +9,7 @@
         <i class="fas fa-arrow-left text-lg"></i>
       <% end %>
       <h2 class="text-2xl font-bold text-gray-800">
-        <i class="fas fa-user-edit mr-2 text-pink-500"></i>
+        <i class="fas fa-user-edit mr-2 text-primary"></i>
         ギフト相手の編集
       </h2>
     </div>
@@ -47,7 +47,7 @@
           <% end %>
           <% gift_count = current_user.gift_records.where(gift_people_id: @gift_person.id).count %>
           <div class="flex items-center">
-            <i class="fas fa-gift text-pink-500 mr-2"></i>
+            <i class="fas fa-gift text-primary mr-2"></i>
             <span>ギフト記録: <%= pluralize(gift_count, "件") %></span>
           </div>
         </div>
@@ -75,13 +75,13 @@
     <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between">
       <div class="flex space-x-3">
         <%= link_to gift_person_path(@gift_person), 
-            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
           <i class="fas fa-eye mr-2"></i>
           詳細を見る
         <% end %>
         
         <%= link_to gift_people_path, 
-            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500" do %>
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
           <i class="fas fa-list mr-2"></i>
           一覧に戻る
         <% end %>
@@ -94,7 +94,7 @@
 /* フォーカス時のスタイル調整 */
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #F6B352 !important;
+  border-color: #FC913A !important;
   box-shadow: 0 0 0 3px rgba(246, 179, 82, 0.1);
 }
 </style>
