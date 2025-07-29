@@ -211,9 +211,9 @@
         <i class="fas fa-bell mr-2 text-orange-500"></i>
         今後の記念日
       </h3>
-      <%= link_to reminds_path, class: "text-sm text-primary hover:text-primary-hover font-medium" do %>
-        管理する →
-      <% end %>
+      <span class="text-sm text-gray-400 font-medium">
+        管理する <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 ml-1">準備中</span>
+      </span>
     </div>
 
     <% if @upcoming_reminds.any? %>
@@ -264,10 +264,10 @@
           <i class="fas fa-bell text-2xl text-gray-400"></i>
         </div>
         <p class="text-gray-500">記念日リマインダーが設定されていません</p>
-        <%= link_to new_remind_path, class: "inline-flex items-center mt-2 text-sm text-primary hover:text-primary-hover font-medium" do %>
+        <span class="inline-flex items-center mt-2 text-sm text-gray-400 font-medium">
           <i class="fas fa-plus mr-1"></i>
-          記念日を設定
-        <% end %>
+          記念日を設定 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 ml-1">準備中</span>
+        </span>
       </div>
     <% end %>
   </div>
@@ -356,15 +356,15 @@
         <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
       <% end %>
       
-      <%= link_to reminds_path,
-          class: "flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
-        <i class="fas fa-bell text-orange-600 mr-3"></i>
-        <div>
-          <div class="font-medium text-gray-800">記念日リマインダー管理</div>
-          <div class="text-sm text-gray-600">記念日の通知設定と管理</div>
+      <div class="flex items-center p-3 border border-gray-200 rounded-lg bg-gray-50 cursor-not-allowed opacity-75">
+        <i class="fas fa-bell text-gray-400 mr-3"></i>
+        <div class="flex-1">
+          <div class="font-medium text-gray-500">記念日リマインダー管理</div>
+          <div class="text-sm text-gray-400">記念日の通知設定と管理</div>
         </div>
-        <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
-      <% end %>
+        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-600 mr-2">準備中</span>
+        <i class="fas fa-chevron-right text-gray-300"></i>
+      </div>
     </div>
   </div>
 </div>

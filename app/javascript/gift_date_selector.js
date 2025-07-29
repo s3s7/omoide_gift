@@ -1,6 +1,4 @@
 // ギフト日付選択機能
-console.log('gift_date_selector.js: スクリプト読み込み完了');
-
 // 日付フォーマット関数
 function formatDateForInput(date) {
   return date.toISOString().split('T')[0];
@@ -53,7 +51,6 @@ function setGiftDate(dateType) {
     giftDateInput.classList.remove('is-valid');
   }, 1500);
 
-  console.log(`gift_date_selector.js: 日付を設定しました - ${dateType}: ${formattedDate}`);
 }
 
 // 日付入力の初期化とエンハンスメント

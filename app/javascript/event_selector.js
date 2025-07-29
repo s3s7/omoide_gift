@@ -1,6 +1,4 @@
 // イベント選択機能
-console.log('event_selector.js: スクリプト読み込み完了');
-
 // イベント選択関数
 function setEventSelection(eventId) {
   const eventSelect = document.getElementById('gift_record_event_id');
@@ -24,34 +22,24 @@ function setEventSelection(eventId) {
   setTimeout(() => {
     eventSelect.classList.remove('is-valid');
   }, 1500);
-
-  console.log(`event_selector.js: イベントを選択しました - ID: ${eventId}`);
 }
 
 // イベント選択の初期化とエンハンスメント
 function initializeEventSelector() {
-  console.log('event_selector.js: イベントセレクター初期化開始');
-  
   const eventSelect = document.getElementById('gift_record_event_id');
   
   if (!eventSelect) {
-    console.log('event_selector.js: イベント選択フィールドが見つかりません - スキップ');
     return;
   }
 
   // リアルタイムバリデーション（UX最適化版）
   eventSelect.addEventListener('change', function() {
-    console.log('event_selector.js: イベント選択変更:', this.value);
     
     // バリデーションフィードバック
     this.classList.remove('is-valid', 'is-invalid');
     
     if (this.value && this.value !== '') {
       this.classList.add('is-valid');
-      
-      // 選択されたイベント名をログ出力
-      const selectedOption = this.options[this.selectedIndex];
-      console.log('event_selector.js: 選択されたイベント:', selectedOption.text);
     }
     // 未選択の場合は中立状態を維持（エラー表示はフォーム送信時のみ）
   });
@@ -93,7 +81,6 @@ function initializeEventSelector() {
         event.preventDefault();
         eventSelect.classList.add('is-invalid');
         eventSelect.focus();
-        console.log('event_selector.js: フォーム送信阻止 - イベントが未選択');
         
         // エラーメッセージを表示（カスタムバリデーション）
         eventSelect.setCustomValidity('イベントを選択してください');
@@ -104,7 +91,7 @@ function initializeEventSelector() {
     });
   }
 
-  console.log('event_selector.js: イベントセレクター初期化完了');
+
 }
 
 // キーボードショートカット（アクセシビリティ向上）
@@ -116,7 +103,6 @@ function setupEventSelectorKeyboardShortcuts() {
       const eventSelect = document.getElementById('gift_record_event_id');
       if (eventSelect) {
         eventSelect.focus();
-        console.log('event_selector.js: キーボードショートカットでイベント選択フィールドにフォーカス');
       }
     }
   });
@@ -135,18 +121,6 @@ document.addEventListener('turbo:render', initializeAllEventFeatures);
 
 // 遅延初期化
 setTimeout(initializeAllEventFeatures, 100);
-
-// グローバルデバッグ関数
-window.debugEventSelector = function() {
-  console.log('=== イベントセレクター デバッグ情報 ===');
-  const eventSelect = document.getElementById('gift_record_event_id');
-  console.log('選択フィールド存在:', !!eventSelect);
-  console.log('現在の値:', eventSelect?.value);
-  console.log('選択肢数:', eventSelect?.options.length);
-  if (eventSelect) {
-    console.log('全選択肢:', Array.from(eventSelect.options).map(opt => ({ value: opt.value, text: opt.text })));
-  }
-};
 
 // グローバル関数として公開（HTMLから呼び出し用）
 window.setEventSelection = setEventSelection;
