@@ -771,7 +771,7 @@
       text += `📝 ${record.memo}\n`;
     }
 
-    text += `\n#ギフト記録 #プレゼント #${record.eventName.replace(/\s+/g, '')}`;
+    text += `\n#思い出ギフト #ギフト記録 #プレゼント #${record.eventName.replace(/\s+/g, '')}`;
 
     return text;
   }
@@ -781,7 +781,9 @@
     if (!shareGiftRecord) return;
 
     const shareText = generateShareText(shareGiftRecord);
-    const url = encodeURIComponent(window.location.origin);
+    // 詳細画面のURLを生成
+    const detailUrl = `${window.location.origin}/gift_records/${shareGiftRecord.id}`;
+    const url = encodeURIComponent(detailUrl);
     const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${url}`;
     
     // 新しいウィンドウでXを開く
