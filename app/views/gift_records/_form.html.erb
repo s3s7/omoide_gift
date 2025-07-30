@@ -93,15 +93,16 @@
         selected_value = gift_record&.gift_people_id
       end
       
-      # オプションを作成（HTML5バリデーション対応）
-      default_option = options_for_select([["贈る相手を選択してください", ""]], selected_value.blank? ? "" : nil)
+      # オプションを作成
       gift_people_options = options_from_collection_for_select(@gift_people, :id, :name, selected_value == "new" ? nil : selected_value)
-      new_option = options_for_select([["新たに追加する", "new"]], selected_value)
-      all_options = default_option + gift_people_options + new_option
+      new_option = options_for_select([["新たに追加する", "new"]], selected_value == "new" ? "new" : nil)
+      all_options = gift_people_options + new_option
     %>
     <%= f.select :gift_people_id, 
         all_options.html_safe, 
-        {}, 
+        { 
+          prompt: "贈る相手を選択してください"
+        }, 
         { 
           style: "
             width: 100%;
@@ -325,17 +326,17 @@
                 padding: 4px 8px;
                 margin-right: 6px;
                 margin-bottom: 6px;
-                border: 1px solid #6c757d;
+                border: 1px solid #FC913A;
                 background-color: transparent;
-                color: #6c757d;
+                color: #FC913A;
                 border-radius: 4px;
                 font-size: 12px;
                 cursor: pointer;
                 transition: all 0.2s ease;
               " 
               onclick="setGiftDate('today')"
-              onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white';"
-              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d';">
+              onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
+              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         今日
       </button>
       <button type="button" 
@@ -344,17 +345,17 @@
                 padding: 4px 8px;
                 margin-right: 6px;
                 margin-bottom: 6px;
-                border: 1px solid #6c757d;
+                border: 1px solid #FC913A;
                 background-color: transparent;
-                color: #6c757d;
+                color: #FC913A;
                 border-radius: 4px;
                 font-size: 12px;
                 cursor: pointer;
                 transition: all 0.2s ease;
               " 
               onclick="setGiftDate('yesterday')"
-              onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white';"
-              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d';">
+              onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
+              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         昨日
       </button>
       <button type="button" 
@@ -363,17 +364,17 @@
                 padding: 4px 8px;
                 margin-right: 6px;
                 margin-bottom: 6px;
-                border: 1px solid #6c757d;
+                border: 1px solid #FC913A;
                 background-color: transparent;
-                color: #6c757d;
+                color: #FC913A;
                 border-radius: 4px;
                 font-size: 12px;
                 cursor: pointer;
                 transition: all 0.2s ease;
-              " 
+              "
               onclick="setGiftDate('week_ago')"
-              onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white';"
-              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d';">
+              onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
+              onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         1週間前
       </button>
     </div>
@@ -399,11 +400,11 @@
         ",
         placeholder: "例：花束、チョコレート、アクセサリーなど",
         required: true,
-        maxlength: 255 %>
+        maxlength: 30 %>
     
     <div style="font-size: 12px; color: #888; margin-top: 8px;">
       <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
-      贈ったギフトの名前を入力してください（必須、最大255文字）
+      贈ったギフトの名前を入力してください（必須、最大30文字）
     </div>
     
     <% if gift_record.errors[:item_name].any? %>
@@ -484,11 +485,11 @@
           resize: vertical;
         ",
         placeholder: "ギフトに関するメモ、思い出、相手の反応など...",
-        maxlength: 1000 %>
+        maxlength: 100 %>
     
     <div style="font-size: 12px; color: #888; margin-top: 8px;">
       <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
-      ギフトに関する思い出やメモを自由に記録してください（任意、最大1000文字）
+      ギフトに関する思い出やメモを自由に記録してください（任意、最大100文字）
     </div>
     
     <% if gift_record.errors[:memo].any? %>

@@ -26,6 +26,9 @@ class UsersController < ApplicationController
     @public_records_count = @user.public_gift_records_count
     @private_records_count = @user.private_gift_records_count
 
+    # お気に入り統計
+    @total_favorites = @user.favorites.count
+
     # 記念日リマインダー統計
     @total_reminds = @user.reminds.count
     @upcoming_reminds = @user.reminds.unsent.where("notification_at >= ?", Date.current).limit(5)

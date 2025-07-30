@@ -6,14 +6,14 @@ class GiftRecord < ApplicationRecord
   has_many :favorites, dependent: :destroy
 
   # 必須フィールドのバリデーション（統一されたエラーメッセージ）
-  validates :item_name, presence: { message: "を入力してください" }, length: { maximum: 255 }
+  validates :item_name, presence: { message: "を入力してください" }, length: { maximum: 30 }
   validates :gift_at, presence: { message: "を選択してください" }
   validates :event_id, presence: { message: "を選択してください" }
   validates :gift_people_id, presence: { message: "を選択してください" }
 
   # オプションフィールドのバリデーション
   validates :amount, numericality: { greater_than: 0, allow_nil: true }
-  validates :memo, length: { maximum: 1000 }
+  validates :memo, length: { maximum: 100 }
 
   # カスタムバリデーション
   validate :gift_at_is_valid_date
