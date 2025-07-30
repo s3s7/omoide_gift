@@ -1,43 +1,336 @@
-<h2>Edit <%= resource_name.to_s.humanize %></h2>
+<%# encoding: utf-8 %>
+<% content_for(:title, "アカウント設定") %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<div style="
+  width: 100vw;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  padding: 40px 0;
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+">
+  <div style="
+    width: 90%;
+    max-width: 450px;
+    padding: 40px 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+  ">
+    <h2 style="
+      margin: 0 0 12px 0;
+      padding: 0;
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      line-height: 1.4;
+    ">アカウント設定</h2>
+    
+    <p style="
+      margin: 0 0 40px 0;
+      color: #6c757d;
+      font-size: 14px;
+    ">プロフィール情報とセキュリティ設定を変更できます</p>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
-  <% end %>
+      <!-- アカウント情報セクション -->
+      <div style="
+        margin-bottom: 32px;
+        padding: 20px;
+        background-color: #f8f9ff;
+        border-radius: 8px;
+        border-left: 4px solid #FC913A;
+      ">
+        <h3 style="
+          margin: 0 0 20px 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+          text-align: left;
+        ">
+          <i class="fas fa-user-circle" style="margin-right: 8px; color: #FC913A;"></i>
+          アカウント情報
+        </h3>
 
-  <div class="field">
-    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-    <% if @minimum_password_length %>
-      <br />
-      <em><%= @minimum_password_length %> characters minimum</em>
+        <div style="margin-bottom: 24px; text-align: left;">
+          <%= f.label :email, "メールアドレス", style: "
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+          " %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", 
+              placeholder: "example@email.com", style: "
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            margin-top: 8px;
+          " %>
+          <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+            <small style="display: block; margin-top: 4px; color: #e74c3c; font-size: 12px;">
+              <i class="fas fa-clock"></i>
+              確認待ち: <%= resource.unconfirmed_email %>
+            </small>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- パスワード変更セクション -->
+      <div style="
+        margin-bottom: 32px;
+        padding: 20px;
+        background-color: #fff8f0;
+        border-radius: 8px;
+        border-left: 4px solid #FC913A;
+      ">
+        <h3 style="
+          margin: 0 0 8px 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+          text-align: left;
+        ">
+          <i class="fas fa-lock" style="margin-right: 8px; color: #FC913A;"></i>
+          パスワード変更
+        </h3>
+        <p style="
+          margin: 0 0 20px 0;
+          color: #6c757d;
+          font-size: 12px;
+          text-align: left;
+        ">変更しない場合は空欄のままにしてください</p>
+
+        <div style="margin-bottom: 24px; text-align: left;">
+          <%= f.label :password, "新しいパスワード", style: "
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+          " %>
+          <%= f.password_field :password, autocomplete: "new-password", 
+              placeholder: "新しいパスワードを入力（変更しない場合は空欄）", style: "
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            margin-top: 8px;
+          " %>
+          <% if @minimum_password_length %>
+            <small style="display: block; margin-top: 4px; color: #6c757d; font-size: 12px;">
+              <i class="fas fa-info-circle"></i>
+              <%= @minimum_password_length %>文字以上で入力してください
+            </small>
+          <% end %>
+        </div>
+
+        <div style="margin-bottom: 24px; text-align: left;">
+          <%= f.label :password_confirmation, "新しいパスワード（確認用）", style: "
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+          " %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", 
+              placeholder: "上記と同じパスワードを入力", style: "
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            margin-top: 8px;
+          " %>
+        </div>
+      </div>
+
+      <!-- 認証セクション -->
+      <div style="
+        margin-bottom: 32px;
+        padding: 20px;
+        background-color: #fff5f5;
+        border-radius: 8px;
+        border-left: 4px solid #e74c3c;
+      ">
+        <h3 style="
+          margin: 0 0 8px 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+          text-align: left;
+        ">
+          <i class="fas fa-shield-alt" style="margin-right: 8px; color: #e74c3c;"></i>
+          セキュリティ認証
+        </h3>
+        <p style="
+          margin: 0 0 16px 0;
+          color: #6c757d;
+          font-size: 12px;
+          text-align: left;
+        ">変更を保存するために現在のパスワードが必要です</p>
+
+        <div style="margin-bottom: 0; text-align: left;">
+          <%= f.label :current_password, "現在のパスワード *", style: "
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+          " %>
+          <%= f.password_field :current_password, autocomplete: "current-password", 
+              placeholder: "現在のパスワードを入力してください", style: "
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+            margin-top: 8px;
+          " %>
+          <small style="display: block; margin-top: 4px; color: #e74c3c; font-size: 12px;">
+            <i class="fas fa-exclamation-triangle"></i>
+            セキュリティのため必須項目です
+          </small>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 32px;">
+        <%= f.submit "設定を更新", style: "
+          width: 100%;
+          padding: 16px;
+          background: linear-gradient(135deg, #FC913A 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        " %>
+      </div>
     <% end %>
+
+    <!-- アカウント削除セクション -->
+    <div style="
+      border-top: 1px solid #e9ecef;
+      padding-top: 32px;
+      margin-top: 40px;
+    ">
+      <div style="
+        padding: 20px;
+        background-color: #fff5f5;
+        border-radius: 8px;
+        border: 1px solid #fecaca;
+        margin-bottom: 24px;
+      ">
+        <h3 style="
+          margin: 0 0 12px 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: #dc2626;
+          text-align: left;
+        ">
+          <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+          危険な操作
+        </h3>
+        
+        <p style="
+          margin: 0 0 16px 0;
+          color: #374151;
+          font-size: 14px;
+          text-align: left;
+          line-height: 1.5;
+        ">
+          アカウントを削除すると、すべてのデータが完全に削除され、復元することはできません。
+          <br><strong>この操作は取り消すことができません。</strong>
+        </p>
+        
+        <div style="text-align: left;">
+          <%= button_to "アカウントを削除", registration_path(resource_name), 
+              data: { 
+                confirm: "⚠️ 警告 ⚠️\n\nアカウントを削除すると以下のデータがすべて失われます：\n・ギフト記録\n・ギフト相手情報\n・お気に入り\n・記念日設定\n\n本当にアカウントを削除しますか？\n\nこの操作は取り消すことができません。", 
+                turbo_confirm: "⚠️ 最終確認 ⚠️\n\n本当にアカウントを削除しますか？\n\nすべてのデータが完全に削除されます。" 
+              }, 
+              method: :delete,
+              style: "
+                padding: 12px 24px;
+                background-color: #dc2626;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: background-color 0.2s ease;
+              " %>
+        </div>
+      </div>
+    </div>
+
+    <!-- ナビゲーション -->
+    <div style="border-top: 1px solid #e9ecef; padding-top: 24px;">
+      <div style="text-align: center;">
+        <%= link_to mypage_path, style: "
+          display: inline-flex;
+          align-items: center;
+          padding: 12px 24px;
+          color: #6c757d;
+          text-decoration: none;
+          font-size: 14px;
+          font-weight: 500;
+          border-radius: 6px;
+          transition: color 0.2s ease, background-color 0.2s ease;
+        " do %>
+          <i class="fas fa-arrow-left" style="margin-right: 8px;"></i>
+          マイページに戻る
+        <% end %>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
-    <%= f.password_field :current_password, autocomplete: "current-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Update" %>
-  </div>
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+<style>
+  /* ホバー効果 */
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    border-color: #FC913A !important;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(252, 145, 58, 0.1);
+  }
+  
+  input[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(252, 145, 58, 0.3);
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #b91c1c !important;
+  }
+  
+  a:hover {
+    color: #FC913A !important;
+    background-color: #f8f9fa !important;
+  }
+</style>
