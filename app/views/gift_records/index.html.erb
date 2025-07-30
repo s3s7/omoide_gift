@@ -681,6 +681,7 @@
 (function() {
   // シェアデータを格納する変数
   let shareGiftRecord = null;
+  let lastCreatedGiftRecordId = null;
 
   // シェア確認モーダルの初期化
   function initializeShareModal() {
@@ -696,9 +697,23 @@
         amount: "<%= @share_gift_record.amount&.to_s || '' %>",
         memo: "<%= j(truncate(@share_gift_record.memo.to_s, length: 50)) %>"
       };
+      lastCreatedGiftRecordId = <%= @share_gift_record.id %>;
       
       // モーダルを表示
       showShareModal();
+    <% else %>
+      // URL パラメータから gift_record_id を取得してフォールバック
+      const urlParams = new URLSearchParams(window.location.search);
+      const giftRecordId = urlParams.get('gift_record_id');
+      
+      if (giftRecordId && urlParams.get('share_confirm') === 'true') {
+        lastCreatedGiftRecordId = parseInt(giftRecordId);
+        // 最小限のシェアデータを設定
+        shareGiftRecord = {
+          id: parseInt(giftRecordId)
+        };
+        showShareModal();
+      }
     <% end %>
   }
 
@@ -771,7 +786,7 @@
       text += `📝 ${record.memo}\n`;
     }
 
-    text += `\n#思い出ギフト #ギフト記録 #プレゼント #${record.eventName.replace(/\s+/g, '')}`;
+    text += `\n #思い出ギフト #ギフト記録 #プレゼント #${record.eventName.replace(/\s+/g, '')}`;
 
     return text;
   }
@@ -786,8 +801,10 @@
     let detailUrl;
     if (shareGiftRecord && shareGiftRecord.id) {
       detailUrl = `${window.location.origin}/gift_records/${shareGiftRecord.id}`;
+    } else if (lastCreatedGiftRecordId) {
+      detailUrl = `${window.location.origin}/gift_records/${lastCreatedGiftRecordId}`;
     } else {
-      // フォールバック: 現在のページURLを使用
+      // 最終フォールバック: 現在のページURLを使用
       detailUrl = window.location.href;
     }
     
