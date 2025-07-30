@@ -21,8 +21,9 @@ ja:
       
       gift_person:
         name: "名前"
-        relationship_id: "関係性"
+        relationship: "関係性"
         birthday: "誕生日"
+        age: "年齢"
         likes: "好きなもの"
         dislikes: "嫌いなもの"
         memo: "メモ"
@@ -57,6 +58,9 @@ ja:
               blank: "を入力してください"
               too_short: "は1文字以上で入力してください"
               invalid: "空白のみは無効です"
+            relationship:
+              required: "を選択してください"
+              blank: "を選択してください"
         
         gift_record:
           attributes:
@@ -154,8 +158,10 @@ ja:
       
       gift_person:
         name: "名前"
+        relationship: "関係性"
         relationship_id: "関係性"
         birthday: "誕生日"
+        age: "年齢"
         likes: "好きなもの"
         dislikes: "嫌いなもの"
         memo: "メモ"
