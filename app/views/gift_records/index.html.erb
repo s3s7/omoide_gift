@@ -781,8 +781,16 @@
     if (!shareGiftRecord) return;
 
     const shareText = generateShareText(shareGiftRecord);
-    // 詳細画面のURLを生成
-    const detailUrl = `${window.location.origin}/gift_records/${shareGiftRecord.id}`;
+    
+    // 詳細画面のURLを安全に生成
+    let detailUrl;
+    if (shareGiftRecord && shareGiftRecord.id) {
+      detailUrl = `${window.location.origin}/gift_records/${shareGiftRecord.id}`;
+    } else {
+      // フォールバック: 現在のページURLを使用
+      detailUrl = window.location.href;
+    }
+    
     const url = encodeURIComponent(detailUrl);
     const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${url}`;
     
