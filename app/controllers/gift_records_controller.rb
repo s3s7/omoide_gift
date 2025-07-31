@@ -62,11 +62,35 @@ class GiftRecordsController < ApplicationController
     sort_order = params[:sort_order].presence || "desc"
 
     if sort_by == "favorites"
-      # お気に入り順
-      @gift_records = @gift_records
-        .left_joins(:favorites)
-        .group("gift_records.id")
-        .order("COUNT(favorites.id) #{sort_order}, gift_records.created_at #{sort_order}")
+      # お気に入り順 - 事前にお気に入り数を計算してソート
+      # まず全レコードのIDを取得
+      record_ids = @gift_records.pluck(:id)
+      
+      # レコードが存在しない場合はそのまま返す
+      if record_ids.empty?
+        @gift_records = @gift_records
+      else
+        # お気に入り数をハッシュで取得
+        favorites_counts = Favorite
+          .where(gift_record_id: record_ids)
+          .group(:gift_record_id)
+          .count
+        
+        # レコードをお気に入り数でソート
+        sorted_ids = record_ids.sort_by do |id|
+          count = favorites_counts[id] || 0
+          sort_order == "desc" ? -count : count
+        end
+        
+        # ORDER BY CASE文を使用してソート順を指定
+        order_case = sorted_ids.each_with_index.map do |id, index|
+          "WHEN #{id} THEN #{index}"
+        end.join(" ")
+        
+        @gift_records = @gift_records
+          .where(id: sorted_ids)
+          .order(Arel.sql("CASE gift_records.id #{order_case} END"))
+      end
     elsif sort_by == "created_at"
       # 投稿日順
       @gift_records = @gift_records.order("gift_records.created_at #{sort_order}")
