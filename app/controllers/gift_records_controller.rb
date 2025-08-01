@@ -59,14 +59,44 @@ class GiftRecordsController < ApplicationController
 
     # 並び替え処理
     sort_by = params[:sort_by].presence
-    sort_order = params[:sort_order].presence || "desc"
+    sort_order = params[:sort_order].presence == "asc" ? "asc" : "desc"
 
     if sort_by == "favorites"
-      # お気に入り順
-      @gift_records = @gift_records
-        .left_joins(:favorites)
-        .group("gift_records.id")
-        .order("COUNT(favorites.id) #{sort_order}, gift_records.created_at #{sort_order}")
+      # お気に入り順 - 事前にお気に入り数を計算してソート
+      # まず全レコードのIDを取得
+      record_ids = @gift_records.pluck(:id)
+
+      # レコードが存在しない場合はそのまま返す
+      if record_ids.empty?
+        @gift_records = @gift_records
+      else
+        # お気に入り数をハッシュで取得
+        favorites_counts = Favorite
+          .where(gift_record_id: record_ids)
+          .group(:gift_record_id)
+          .count
+
+        # レコードをお気に入り数でソート
+        sorted_ids = record_ids.sort_by do |id|
+          count = favorites_counts[id] || 0
+          sort_order == "desc" ? -count : count
+        end
+
+        # セキュリティ: IDが全て整数であることを確認
+        validated_ids = sorted_ids.select { |id| id.is_a?(Integer) && id > 0 }
+
+        if validated_ids.any?
+          # より安全な方法：サブクエリを使用してソート
+          # まず条件に合致するレコードを取得
+          @gift_records = @gift_records.where(id: validated_ids)
+
+          # Ruby側でソート順を維持
+          records_hash = @gift_records.index_by(&:id)
+          @gift_records = validated_ids.filter_map { |id| records_hash[id] }
+        else
+          @gift_records = @gift_records.none
+        end
+      end
     elsif sort_by == "created_at"
       # 投稿日順
       @gift_records = @gift_records.order("gift_records.created_at #{sort_order}")

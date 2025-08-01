@@ -172,28 +172,6 @@
             <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
               <i class="fas fa-user text-2xl text-primary"></i>
             </div>
-            
-            <!-- 操作ボタン（右上） -->
-            <div class="absolute top-2 right-2 flex space-x-1" onclick="event.stopPropagation();">
-              <%= link_to edit_gift_person_path(person), 
-                  class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
-                  title: "編集",
-                  onclick: "event.stopPropagation();",
-                  aria: { label: "#{person.name}を編集" } do %>
-                <i class="fas fa-edit text-blue-600 text-sm"></i>
-              <% end %>
-              <%= link_to gift_person_path(person), 
-                  data: { 
-                    confirm: "「#{person.name}」さんを削除しますか？\n※関連するギフト記録がある場合は削除できません。",
-                    turbo_method: :delete
-                  },
-                  class: "p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors",
-                  title: "削除",
-                  onclick: "event.stopPropagation();",
-                  aria: { label: "#{person.name}を削除" } do %>
-                <i class="fas fa-trash text-red-600 text-sm"></i>
-              <% end %>
-            </div>
           </div>
 
           <!-- 相手情報 -->
