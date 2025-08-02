@@ -1,9 +1,7 @@
 // お気に入り機能 - Twitterライクなハートボタン
 
-// ページ読み込み時に初期化
-document.addEventListener('DOMContentLoaded', function() {
-  initializeFavorites();
-});
+// Turbo対応初期化
+window.turboInit(initializeFavorites);
 
 // お気に入り機能の初期化
 function initializeFavorites() {
@@ -44,11 +42,7 @@ async function toggleFavorite(giftRecordId) {
   try {
     const response = await fetch(`/gift_records/${giftRecordId}/toggle_favorite`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': window.getCSRFToken(),
-        'Accept': 'application/json'
-      },
+      headers: window.getAPIHeaders(),
       credentials: 'same-origin'
     });
 
@@ -171,8 +165,6 @@ function showToast(message, type = 'info') {
     }, 300);
   }, 3000);
 }
-
-// CSRFトークンを取得（utils.jsのグローバル関数を使用）
 
 // グローバル関数として公開（インライン呼び出し用）
 window.toggleFavorite = toggleFavorite;

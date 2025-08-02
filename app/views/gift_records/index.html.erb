@@ -359,13 +359,22 @@
 <!-- メインコンテナ終了 -->
 </div>
 
+<!-- JavaScript files are bundled via application.js - no individual includes needed -->
+
+<%# <% if @share_gift_record %>
+
+
+
 <script>
-// ギフト記録一覧のオートコンプリート機能
+
+
+// ギフト相手一覧のオートコンプリート機能
 (function() {
+  let autocompleteInitialized = false;
   let searchTimeout;
   let currentRequest;
   
-  function initializeGiftRecordsAutocomplete() {
+  function initializeAutocomplete() {
     // 要素の存在確認
     const searchInput = document.getElementById('gift-records-search-input');
     const dropdown = document.getElementById('gift-records-autocomplete-dropdown');
@@ -459,7 +468,7 @@
       
       return `
         <div class="autocomplete-item px-3 py-2 hover:bg-primary-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
-             data-display-text="${escapeHtml(result.display_text)}" 
+             data-display-text="${escapeHtml(result.display_text || result.name || '')}" 
              data-id="${result.id}">
           <div class="flex items-start space-x-2">
             <div class="flex-shrink-0 w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
@@ -467,7 +476,7 @@
             </div>
             <div class="flex-1 min-w-0">
               <div class="text-xs font-medium text-gray-900">
-                ${result.search_highlight}
+                ${result.search_highlight || escapeHtml(result.display_text || result.name || '')}
               </div>
               <div class="text-xs text-gray-500 mt-0.5">
                 ${typeLabel}
@@ -497,6 +506,8 @@
     switch(type) {
       case 'item': return 'fas fa-gift';
       case 'memo': return 'fas fa-sticky-note';
+      case 'user': return 'fas fa-user';
+      case 'event': return 'fas fa-calendar';
       default: return 'fas fa-search';
     }
   }
@@ -506,6 +517,8 @@
     switch(type) {
       case 'item': return 'アイテム';
       case 'memo': return 'メモ';
+      case 'user': return 'ユーザー';
+      case 'event': return 'イベント';
       default: return '検索';
     }
   }
@@ -576,10 +589,13 @@
       hideDropdown();
     }
   });
+
+    // フィルターの変更時自動検索（オプション）
+    // 動的フィルターに変更したため、個別のrelationship selectは削除
   }
 
   // クリーンアップ関数
-  function cleanupGiftRecordsAutocomplete() {
+  function cleanupAutocomplete() {
     if (currentRequest) {
       currentRequest.abort();
     }
@@ -592,20 +608,22 @@
     if (searchInput) {
       searchInput.dataset.autocompleteInitialized = 'false';
     }
+    
+    autocompleteInitialized = false;
   }
 
   // Turbo対応のイベントリスナー
-  document.addEventListener('turbo:load', initializeGiftRecordsAutocomplete);
-  document.addEventListener('DOMContentLoaded', initializeGiftRecordsAutocomplete);
+  document.addEventListener('turbo:load', initializeAutocomplete);
+  document.addEventListener('DOMContentLoaded', initializeAutocomplete);
   
   // ページ離脱時のクリーンアップ
-  document.addEventListener('turbo:before-visit', cleanupGiftRecordsAutocomplete);
-  document.addEventListener('beforeunload', cleanupGiftRecordsAutocomplete);
+  document.addEventListener('turbo:before-visit', cleanupAutocomplete);
+  document.addEventListener('beforeunload', cleanupAutocomplete);
 })();
 
-// 動的フィルター機能
+// ギフト記録一覧用動的フィルター機能
 (function() {
-  function initializeDynamicFilter() {
+  function initializeGiftRecordsDynamicFilter() {
     const filterTypeSelect = document.getElementById('filter-type-select');
     const filterTypeHidden = document.getElementById('filter-type-hidden');
     const relationshipSelect = document.getElementById('relationship-select');
@@ -653,208 +671,12 @@
   }
   
   // Turbo対応のイベントリスナー
-  document.addEventListener('turbo:load', initializeDynamicFilter);
-  document.addEventListener('DOMContentLoaded', initializeDynamicFilter);
+  document.addEventListener('turbo:load', initializeGiftRecordsDynamicFilter);
+  document.addEventListener('DOMContentLoaded', initializeGiftRecordsDynamicFilter);
 })();
 
-// ギフト記録シェア機能
-(function() {
-  // シェアデータを格納する変数
-  let shareGiftRecord = null;
-  let lastCreatedGiftRecordId = null;
-
-  // シェア確認モーダルの初期化
-  function initializeShareModal() {
-    <% if @share_gift_record %>
-      // サーバーサイドからデータを受け取り
-      shareGiftRecord = {
-        id: <%= @share_gift_record.id %>,
-        itemName: "<%= j(@share_gift_record.item_name) %>",
-        giftPersonName: "<%= j(@share_gift_record.gift_person&.name || '未設定') %>",
-        eventName: "<%= j(@share_gift_record.event&.name || '未設定') %>",
-        relationshipName: "<%= j(@share_gift_record.gift_person&.relationship&.name || '未設定') %>",
-        giftAt: "<%= @share_gift_record.gift_at&.strftime('%Y年%m月%d日') || '未設定' %>",
-        amount: "<%= @share_gift_record.amount&.to_s || '' %>",
-        memo: "<%= j(truncate(@share_gift_record.memo.to_s, length: 50)) %>"
-      };
-      lastCreatedGiftRecordId = <%= @share_gift_record.id %>;
-      
-      // モーダルを表示
-      showShareModal();
-    <% else %>
-      // URL パラメータから gift_record_id を取得してフォールバック
-      const urlParams = new URLSearchParams(window.location.search);
-      const giftRecordId = urlParams.get('gift_record_id');
-      
-      if (giftRecordId && urlParams.get('share_confirm') === 'true') {
-        lastCreatedGiftRecordId = parseInt(giftRecordId);
-        // 最小限のシェアデータを設定
-        shareGiftRecord = {
-          id: parseInt(giftRecordId)
-        };
-        showShareModal();
-      }
-    <% end %>
-  }
-
-  // シェアモーダル表示
-  function showShareModal() {
-    if (!shareGiftRecord) return;
-
-    const modal = document.getElementById('share-confirmation-modal');
-    const preview = document.getElementById('share-gift-preview');
-    const textPreview = document.getElementById('share-text-preview');
-    const lengthCounter = document.getElementById('share-text-length');
-
-    if (!modal || !preview || !textPreview) return;
-
-    // プレビュー内容を生成
-    const previewHTML = `
-      <div class="flex items-start space-x-3">
-        <div class="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-gift text-primary"></i>
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="text-sm font-medium text-gray-900">
-            ${escapeHtml(shareGiftRecord.itemName)}
-          </div>
-          <div class="text-xs text-gray-500 mt-1">
-            <span class="inline-flex items-center">
-              <i class="fas fa-user mr-1"></i>
-              ${escapeHtml(shareGiftRecord.giftPersonName)}
-            </span>
-            <span class="ml-3 inline-flex items-center">
-              <i class="fas fa-calendar mr-1"></i>
-              ${shareGiftRecord.eventName}
-            </span>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // シェアテキストを生成
-    const shareText = generateShareText(shareGiftRecord);
-
-    // UI更新
-    preview.innerHTML = previewHTML;
-    // 改行文字を<br>タグに変換してプレビュー表示
-    const shareTextForDisplay = escapeHtml(shareText).replace(/\n/g, '<br>');
-    textPreview.innerHTML = shareTextForDisplay;
-    lengthCounter.textContent = shareText.length;
-
-    // 文字数チェック
-    if (shareText.length > 280) {
-      lengthCounter.classList.add('text-red-600');
-      lengthCounter.classList.remove('text-gray-500');
-    } else {
-      lengthCounter.classList.remove('text-red-600');
-      lengthCounter.classList.add('text-gray-500');
-    }
-
-    // モーダル表示
-    modal.classList.remove('hidden');
-  }
-
-  // シェアテキスト生成
-  function generateShareText(record) {
-    let text = `✨ ギフト記録を更新しました！\n\n`;
-    text += `🎁 ギフトアイテム: ${record.itemName}\n`;
-    text += `👥 関係性: ${record.relationshipName}\n`;
-    text += `📅 イベント: ${record.eventName}\n`;
-
-    if (record.memo) {
-      text += `📝 ${record.memo}\n`;
-    }
-
-    text += `\n #思い出ギフト #ギフト記録 #プレゼント #${record.eventName.replace(/\s+/g, '')}`;
-
-    return text;
-  }
-
-  // Xでシェア
-  window.shareToX = function() {
-    if (!shareGiftRecord) return;
-
-    const shareText = generateShareText(shareGiftRecord);
-    
-    // 詳細画面のURLを安全に生成
-    let detailUrl;
-    if (shareGiftRecord && shareGiftRecord.id) {
-      detailUrl = `${window.location.origin}/gift_records/${shareGiftRecord.id}`;
-    } else if (lastCreatedGiftRecordId) {
-      detailUrl = `${window.location.origin}/gift_records/${lastCreatedGiftRecordId}`;
-    } else {
-      // 最終フォールバック: 現在のページURLを使用
-      detailUrl = window.location.href;
-    }
-    
-    const url = encodeURIComponent(detailUrl);
-    const tweetUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${url}`;
-    
-    // 新しいウィンドウでXを開く
-    const width = 550;
-    const height = 420;
-    const left = (window.innerWidth - width) / 2;
-    const top = (window.innerHeight - height) / 2;
-    
-    window.open(
-      tweetUrl,
-      'share-twitter',
-      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
-    );
-    
-    // モーダルを閉じる
-    closeShareModal();
-  };
-
-  // シェアモーダルを閉じる
-  window.closeShareModal = async function() {
-    const modal = document.getElementById('share-confirmation-modal');
-    if (modal) {
-      modal.classList.add('hidden');
-    }
-    
-    // シェア拒否をサーバーに記録（完了を待つ）
-    if (shareGiftRecord && shareGiftRecord.id) {
-      try {
-        await fetch('/gift_records/dismiss_share', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': window.getCSRFToken(),
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ gift_record_id: shareGiftRecord.id })
-        });
-      } catch (error) {
-        // エラーが発生してもページ遷移は実行
-      }
-    }
-    
-    // 確実にパラメータなしのURLに遷移
-    window.location.href = '/gift_records';
-  };
-
-
-  // HTMLエスケープ関数
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // ESCキーでモーダルを閉じる
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeShareModal();
-    }
-  });
-
-  // 初期化
-  document.addEventListener('turbo:load', initializeShareModal);
-  document.addEventListener('DOMContentLoaded', initializeShareModal);
-})();
 </script>
+<%# <% end %> %> %>
 
 <!-- シェア確認モーダル -->
 <%= render 'shared/share_confirmation_modal' %>
