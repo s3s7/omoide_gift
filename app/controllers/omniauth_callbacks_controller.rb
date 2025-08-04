@@ -12,7 +12,7 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
       # 新規ユーザーまたは既存ユーザーの情報を更新
       if @profile.new_record?
         # 新規ユーザーの場合
-        email = @omniauth["info"]["email"].presence  # 空文字列の場合はnilにする
+        email = @omniauth["info"]["email"].presence || fake_email(@omniauth["uid"], @omniauth["provider"])
         @profile.assign_attributes(
           email: email,
           name: @omniauth["info"]["name"],
@@ -33,6 +33,6 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def fake_email(uid, provider)
-    "#{auth.uid}-#{auth.provider}@example.com"
+    "#{uid}-#{provider}@example.com"
   end
 end

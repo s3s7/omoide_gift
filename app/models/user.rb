@@ -83,6 +83,11 @@ class User < ApplicationRecord
     line_connected? ? "text-green-600" : "text-gray-500"
   end
 
+  # fake emailかどうかを判定
+  def fake_email?
+    email.present? && email.end_with?("@example.com")
+  end
+
   def public_gift_records_count
     gift_records.where(is_public: true).count
   end

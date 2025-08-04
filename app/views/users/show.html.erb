@@ -37,6 +37,14 @@
         <div class="flex-1">
           <h3 class="text-xl font-semibold text-gray-800"><%= @user.display_name %></h3>
           <p class="text-gray-600"><%= @user.display_email %></p>
+          <% if @user.fake_email? %>
+            <div class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
+              <span class="text-yellow-800 text-sm font-medium">
+                <i class="fas fa-info-circle mr-1"></i>
+                LINEで新規登録された場合、仮のメールアドレスが登録されています。メールアドレスを使用する場合、マイページから編集してください。
+              </span>
+            </div>
+          <% end %>
           <div class="text-sm flex items-center mb-1">
             <% if @user.line_connected? %>
               <i class="fab fa-line mr-2 text-green-500"></i>
