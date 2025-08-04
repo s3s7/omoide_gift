@@ -4,7 +4,6 @@ function setEventSelection(eventId) {
   const eventSelect = document.getElementById('gift_record_event_id');
   
   if (!eventSelect) {
-    console.warn('event_selector.js: イベント選択フィールドが見つかりません');
     return;
   }
 
@@ -112,15 +111,11 @@ function setupEventSelectorKeyboardShortcuts() {
 function initializeAllEventFeatures() {
   initializeEventSelector();
   setupEventSelectorKeyboardShortcuts();
+  return true;
 }
 
-// 複数のタイミングで初期化
-document.addEventListener('DOMContentLoaded', initializeAllEventFeatures);
-document.addEventListener('turbo:load', initializeAllEventFeatures);
-document.addEventListener('turbo:render', initializeAllEventFeatures);
-
-// 遅延初期化
-setTimeout(initializeAllEventFeatures, 100);
+// Turbo対応初期化
+window.turboInit(initializeAllEventFeatures);
 
 // グローバル関数として公開（HTMLから呼び出し用）
 window.setEventSelection = setEventSelection;

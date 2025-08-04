@@ -84,7 +84,6 @@
       color: #555;
       font-size: 14px;
     " %>
-    <span style="color: #dc3545; margin-left: 4px;">*</span>
     <% 
       # エラー時の選択値を決定
       if @gift_person&.errors&.any? || params[:gift_record]&.[](:gift_people_id) == "new"
@@ -116,6 +115,12 @@
           id: "gift_people_select",
           required: true
         } %>
+
+    <!-- ヘルプテキスト -->
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      ギフトを贈った人を入力してください（必須）
+    </div>
   </div>
   
   <!-- 新しいギフト相手の入力フィールド -->
@@ -277,8 +282,11 @@
             placeholder: "メモを入力" %>
       </div>
     </div>
+    
   </div>
-  
+
+
+
   <!-- ギフト日付入力 -->
   <div style="margin-bottom: 24px; text-align: left;">
     <%= f.label :gift_at, "ギフトを贈った日", style: "

@@ -9,7 +9,6 @@ function setGiftDate(dateType) {
   const giftDateInput = document.getElementById('gift_record_gift_at');
   
   if (!giftDateInput) {
-    console.warn('gift_date_selector.js: ギフト日付入力フィールドが見つかりません');
     return;
   }
 
@@ -31,7 +30,6 @@ function setGiftDate(dateType) {
       targetDate.setDate(targetDate.getDate() - 7);
       break;
     default:
-      console.warn('gift_date_selector.js: 不明な日付タイプ:', dateType);
       return;
   }
 
@@ -55,12 +53,9 @@ function setGiftDate(dateType) {
 
 // 日付入力の初期化とエンハンスメント
 function initializeGiftDateSelector() {
-  console.log('gift_date_selector.js: 日付セレクター初期化開始');
-  
   const giftDateInput = document.getElementById('gift_record_gift_at');
   
   if (!giftDateInput) {
-    console.log('gift_date_selector.js: ギフト日付入力フィールドが見つかりません - スキップ');
     return;
   }
 
@@ -69,7 +64,6 @@ function initializeGiftDateSelector() {
     const defaultDate = giftDateInput.dataset.defaultDate;
     if (defaultDate) {
       giftDateInput.value = defaultDate;
-      console.log('gift_date_selector.js: デフォルト日付を設定:', defaultDate);
     }
   }
 
@@ -99,32 +93,17 @@ function initializeGiftDateSelector() {
       new bootstrap.Tooltip(element);
     });
   }
-
-  console.log('gift_date_selector.js: 日付セレクター初期化完了');
 }
 
 // 初期化関数
 function initializeAllGiftDateFeatures() {
   initializeGiftDateSelector();
+  return true;
 }
 
-// 複数のタイミングで初期化
-document.addEventListener('DOMContentLoaded', initializeAllGiftDateFeatures);
-document.addEventListener('turbo:load', initializeAllGiftDateFeatures);
-document.addEventListener('turbo:render', initializeAllGiftDateFeatures);
+// Turbo対応初期化
+window.turboInit(initializeAllGiftDateFeatures);
 
-// 遅延初期化
-setTimeout(initializeAllGiftDateFeatures, 100);
-
-// グローバルデバッグ関数
-window.debugGiftDateSelector = function() {
-  console.log('=== ギフト日付セレクター デバッグ情報 ===');
-  const giftDateInput = document.getElementById('gift_record_gift_at');
-  console.log('入力フィールド存在:', !!giftDateInput);
-  console.log('現在の値:', giftDateInput?.value);
-  console.log('最小日付:', giftDateInput?.min);
-  console.log('最大日付:', giftDateInput?.max);
-};
 
 // グローバル関数として公開（HTMLから呼び出し用）
 window.setGiftDate = setGiftDate;

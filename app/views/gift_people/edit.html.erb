@@ -17,15 +17,16 @@
       
       <!-- 削除ボタン -->
       <div>
-        <%= link_to gift_person_path(@gift_person), 
-            data: { 
-              confirm: "「#{@gift_person.name}」さんを削除しますか？\n\n※関連するギフト記録がある場合は削除できません。\n※この操作は取り消すことができません。",
-              turbo_method: :delete
-            },
-            class: "inline-flex items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
+        <button type="button"
+                data-delete-modal="true"
+                data-item-name="<%= j(@gift_person.name) %>さん"
+                data-delete-url="<%= gift_person_path(@gift_person) %>"
+                data-csrf-token="<%= form_authenticity_token %>"
+                class="delete-modal-trigger inline-flex items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                title="<%= @gift_person.name %>さんを削除">
           <i class="fas fa-trash mr-2"></i>
           削除
-        <% end %>
+        </button>
       </div>
     </div>
 
@@ -150,3 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
+<!-- 削除確認モーダル -->
+<%= render 'shared/delete_confirmation_modal' %>
