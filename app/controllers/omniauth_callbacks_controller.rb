@@ -8,10 +8,22 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     @omniauth = request.env["omniauth.auth"]
     if @omniauth.present?
       @profile = User.find_or_initialize_by(provider: @omniauth["provider"], uid: @omniauth["uid"])
-      if @profile.email.blank?
+      
+      # 新規ユーザーまたは既存ユーザーの情報を更新
+      if @profile.new_record?
+        # 新規ユーザーの場合
         email = @omniauth["info"]["email"] || ""
-        @profile = current_user || User.create!(provider: @omniauth["provider"], uid: @omniauth["uid"], email: email, name: @omniauth["info"]["name"], password: Devise.friendly_token[0, 20])
+        @profile.assign_attributes(
+          email: email,
+          name: @omniauth["info"]["name"],
+          password: Devise.friendly_token[0, 20]
+        )
+        @profile.save!
+      elsif @profile.email.blank? && @omniauth["info"]["email"].present?
+        # 既存ユーザーでemailが空の場合、emailを更新
+        @profile.update!(email: @omniauth["info"]["email"])
       end
+      
       @profile.set_values(@omniauth)
       sign_in(:user, @profile)
     end
