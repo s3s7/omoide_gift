@@ -12,16 +12,16 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
       # 新規ユーザーまたは既存ユーザーの情報を更新
       if @profile.new_record?
         # 新規ユーザーの場合
-        email = @omniauth["info"]["email"] || ""
+        email = @omniauth["info"]["email"].presence  # 空文字列の場合はnilにする
         @profile.assign_attributes(
           email: email,
           name: @omniauth["info"]["name"],
           password: Devise.friendly_token[0, 20]
         )
         @profile.save!
-      elsif @profile.email.blank? && @omniauth["info"]["email"].present?
+      elsif @profile.email.blank? && @omniauth["info"]["email"].presence
         # 既存ユーザーでemailが空の場合、emailを更新
-        @profile.update!(email: @omniauth["info"]["email"])
+        @profile.update!(email: @omniauth["info"]["email"].presence)
       end
 
       @profile.set_values(@omniauth)
