@@ -5,14 +5,8 @@ class GiftRecordsController < ApplicationController
   before_action :ensure_accessible, only: [ :show ]
 
   def index
-    # プライバシーを考慮したギフト記録の取得
-    if user_signed_in?
-      # ログインユーザー：公開記録 + 自分の記録（公開・非公開問わず）
-      base_query = GiftRecord.where("gift_records.is_public = ? OR gift_records.user_id = ?", true, current_user.id)
-    else
-      # 未ログインユーザー：公開記録のみ
-      base_query = GiftRecord.where(is_public: true)
-    end
+    # みんなのギフト画面：公開記録のみ表示
+    base_query = GiftRecord.where(is_public: true)
 
     # 関連テーブルの完全な事前読み込み
     @gift_records = base_query
@@ -269,12 +263,8 @@ class GiftRecordsController < ApplicationController
     if query.present? && query.length >= 1
       search_term = "%#{query}%"
 
-      # プライバシーを考慮したベースクエリ
-      base_query = if user_signed_in?
-        GiftRecord.where("gift_records.is_public = ? OR gift_records.user_id = ?", true, current_user.id)
-      else
-        GiftRecord.where(is_public: true)
-      end
+      # みんなのギフト画面：公開記録のみ検索対象
+      base_query = GiftRecord.where(is_public: true)
 
       # アイテム名検索結果
       item_results = base_query
