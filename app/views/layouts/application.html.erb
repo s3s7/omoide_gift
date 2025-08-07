@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
+    # <%= favicon_link_tag('gift_image.ico') %>
+
+     <%# <link href="<%= image_path("gift_image.ico")" rel="shortcut icon" type="image/x-icon" /> %>
     <title><%= content_for(:title) || "思い出ギフト" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -55,7 +58,6 @@
         font-family: 'Zen Maru Gothic', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic Medium', 'Yu Gothic', 'Meiryo', sans-serif;
       }
     </style>
-
     <%= yield :head %>
 
     <link rel="manifest" href="/manifest.json">
@@ -65,6 +67,8 @@
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+
+   
   </head>
 
   <body>
