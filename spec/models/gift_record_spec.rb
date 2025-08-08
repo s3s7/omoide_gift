@@ -96,7 +96,7 @@ RSpec.describe GiftRecord, type: :model do
     describe '#display_gift_date' do
       it 'gift_atが設定されている場合、フォーマットされた日付を返す' do
         gift_record.gift_at = Date.new(2024, 12, 25)
-        expect(gift_record.display_gift_date).to include('2024')
+        expect(gift_record.display_gift_date).to eq('12/25')
       end
     end
 
