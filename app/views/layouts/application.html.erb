@@ -74,10 +74,16 @@
   <body>
     <%= render 'shared/header' %>
     <%= render 'shared/navbar' %>
-    <main class="container mx-auto mt-28 px-5 flex">
+    
+    <!-- トップページでのみヒーロー画像を表示 -->
+    <% if request.path == root_path %>
+      <%= render 'shared/hero_image' %>
+    <% end %>
+    
+    <main class="container mx-auto <%= request.path == root_path ? 'mt-8' : 'mt-28' %> px-5 <%= request.path == root_path ? 'block' : 'flex' %>">
       <%= yield %>
     </main>
-      <%= render 'shared/flash_message' %>
+    <%= render 'shared/flash_message' %>
 
     <%= render 'shared/footer' %>
   </body>
