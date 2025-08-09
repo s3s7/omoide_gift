@@ -29,6 +29,72 @@ RSpec.describe 'GiftPeople', type: :request do
       expect(response.body).to include(gift_person.name)
       expect(response.body).not_to include(other_user_gift_person.name)
     end
+
+    context 'ソート機能' do
+      let!(:person_a) { create(:gift_person, user: user, name: 'A太郎', relationship: relationship) }
+      let!(:person_b) { create(:gift_person, user: user, name: 'B花子', relationship: relationship) }
+      let!(:person_c) { create(:gift_person, user: user, name: 'C次郎', relationship: relationship) }
+
+      context 'デフォルト（名前順）' do
+        it '名前順で表示されること' do
+          get gift_people_path
+          expect(response).to have_http_status(:ok)
+
+          # responseのbodyから名前の出現順序をチェック（A < B < C）
+          body = response.body
+          a_taro_index = body.index('A太郎')
+          b_hanako_index = body.index('B花子')
+          c_jiro_index = body.index('C次郎')
+
+          expect(a_taro_index).to be < b_hanako_index
+          expect(b_hanako_index).to be < c_jiro_index
+        end
+      end
+
+      context 'ギフト記録数順ソート' do
+        before do
+          # gift_peopleのIDを正確に指定してgift_recordを作成
+          create_list(:gift_record, 3, user: user, gift_people_id: person_a.id) # A太郎: 3件
+          create_list(:gift_record, 1, user: user, gift_people_id: person_b.id) # B花子: 1件
+          create_list(:gift_record, 2, user: user, gift_people_id: person_c.id) # C次郎: 2件
+        end
+
+        it '降順でソートされること' do
+          get gift_people_path, params: { sort_by: 'gift_records_count', sort_order: 'desc' }
+          expect(response).to have_http_status(:ok)
+
+          # レスポンスから名前の出現順序をチェック（記録数: A太郎3件 > C次郎2件 > B花子1件）
+          body = response.body
+          a_taro_index = body.index('A太郎')
+          c_jiro_index = body.index('C次郎')
+          b_hanako_index = body.index('B花子')
+
+          expect(a_taro_index).to be < c_jiro_index
+          expect(c_jiro_index).to be < b_hanako_index
+        end
+
+        it '昇順でソートされること' do
+          get gift_people_path, params: { sort_by: 'gift_records_count', sort_order: 'asc' }
+          expect(response).to have_http_status(:ok)
+
+          # レスポンスから名前の出現順序をチェック（記録数: B花子1件 < C次郎2件 < A太郎3件）
+          body = response.body
+          b_hanako_index = body.index('B花子')
+          c_jiro_index = body.index('C次郎')
+          a_taro_index = body.index('A太郎')
+
+          expect(b_hanako_index).to be < c_jiro_index
+          expect(c_jiro_index).to be < a_taro_index
+        end
+      end
+
+      context '無効なソートパラメータ' do
+        it '無効なsort_byでもエラーにならないこと' do
+          get gift_people_path, params: { sort_by: 'invalid' }
+          expect(response).to have_http_status(:ok)
+        end
+      end
+    end
   end
 
   describe 'ギフト相手作成' do
