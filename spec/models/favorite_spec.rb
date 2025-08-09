@@ -73,7 +73,7 @@ RSpec.describe Favorite, type: :model do
       context 'お気に入りに未登録の場合' do
         it 'お気に入りが追加されること' do
           result = Favorite.toggle_favorite(user, gift_record)
-          
+
           expect(result[:success]).to be true
           expect(result[:action]).to eq(:added)
           expect(result[:favorited]).to be true
@@ -86,7 +86,7 @@ RSpec.describe Favorite, type: :model do
 
         it 'お気に入りが削除されること' do
           result = Favorite.toggle_favorite(user, gift_record)
-          
+
           expect(result[:success]).to be true
           expect(result[:action]).to eq(:removed)
           expect(result[:favorited]).to be false

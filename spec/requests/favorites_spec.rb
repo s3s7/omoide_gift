@@ -44,7 +44,7 @@ RSpec.describe 'Favorites', type: :request do
       context '公開されたギフト記録' do
         it 'お気に入りに追加できること' do
           expect {
-            post toggle_favorite_gift_record_path(public_gift_record), 
+            post toggle_favorite_gift_record_path(public_gift_record),
                  headers: { 'Accept' => 'application/json' }
           }.to change(user.favorites, :count).by(1)
 
@@ -60,7 +60,7 @@ RSpec.describe 'Favorites', type: :request do
 
           it 'お気に入りから削除できること' do
             expect {
-              post toggle_favorite_gift_record_path(public_gift_record), 
+              post toggle_favorite_gift_record_path(public_gift_record),
                    headers: { 'Accept' => 'application/json' }
             }.to change(user.favorites, :count).by(-1)
 
@@ -75,7 +75,7 @@ RSpec.describe 'Favorites', type: :request do
 
       context '非公開のギフト記録' do
         it 'アクセス権限エラーになること' do
-          post toggle_favorite_gift_record_path(private_gift_record), 
+          post toggle_favorite_gift_record_path(private_gift_record),
                headers: { 'Accept' => 'application/json' }
 
           expect(response).to have_http_status(:forbidden)
@@ -88,7 +88,7 @@ RSpec.describe 'Favorites', type: :request do
       context '自分のギフト記録' do
         it 'お気に入りに追加できること' do
           expect {
-            post toggle_favorite_gift_record_path(user_gift_record), 
+            post toggle_favorite_gift_record_path(user_gift_record),
                  headers: { 'Accept' => 'application/json' }
           }.to change(user.favorites, :count).by(1)
 
@@ -101,7 +101,7 @@ RSpec.describe 'Favorites', type: :request do
 
       context '存在しないギフト記録' do
         it 'not_foundエラーになること' do
-          post toggle_favorite_gift_record_path(99999), 
+          post toggle_favorite_gift_record_path(99999),
                headers: { 'Accept' => 'application/json' }
 
           expect(response).to have_http_status(:not_found)

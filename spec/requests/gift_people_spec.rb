@@ -39,13 +39,13 @@ RSpec.describe 'GiftPeople', type: :request do
         it '名前順で表示されること' do
           get gift_people_path
           expect(response).to have_http_status(:ok)
-          
+
           # responseのbodyから名前の出現順序をチェック（A < B < C）
           body = response.body
           a_taro_index = body.index('A太郎')
           b_hanako_index = body.index('B花子')
           c_jiro_index = body.index('C次郎')
-          
+
           expect(a_taro_index).to be < b_hanako_index
           expect(b_hanako_index).to be < c_jiro_index
         end
@@ -62,13 +62,13 @@ RSpec.describe 'GiftPeople', type: :request do
         it '降順でソートされること' do
           get gift_people_path, params: { sort_by: 'gift_records_count', sort_order: 'desc' }
           expect(response).to have_http_status(:ok)
-          
+
           # レスポンスから名前の出現順序をチェック（記録数: A太郎3件 > C次郎2件 > B花子1件）
           body = response.body
           a_taro_index = body.index('A太郎')
           c_jiro_index = body.index('C次郎')
           b_hanako_index = body.index('B花子')
-          
+
           expect(a_taro_index).to be < c_jiro_index
           expect(c_jiro_index).to be < b_hanako_index
         end
@@ -76,13 +76,13 @@ RSpec.describe 'GiftPeople', type: :request do
         it '昇順でソートされること' do
           get gift_people_path, params: { sort_by: 'gift_records_count', sort_order: 'asc' }
           expect(response).to have_http_status(:ok)
-          
+
           # レスポンスから名前の出現順序をチェック（記録数: B花子1件 < C次郎2件 < A太郎3件）
           body = response.body
           b_hanako_index = body.index('B花子')
           c_jiro_index = body.index('C次郎')
           a_taro_index = body.index('A太郎')
-          
+
           expect(b_hanako_index).to be < c_jiro_index
           expect(c_jiro_index).to be < a_taro_index
         end
