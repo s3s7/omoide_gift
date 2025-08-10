@@ -95,5 +95,4 @@ class GiftRecord < ApplicationRecord
   def display_item_name
     item_name.presence || "未設定"
   end
-
 end

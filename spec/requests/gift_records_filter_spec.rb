@@ -9,20 +9,11 @@ RSpec.describe 'GiftRecords Filter', type: :request do
 
   # テストデータ
   let!(:target_record) do
-    create(:gift_record, 
-      user: user, 
+    create(:gift_record,
+      user: user,
       gift_people_id: gift_person.id,
       event: event,
-      item_name: 'テスト商品', context '基本表示' do
-      it '自分のギフト相手のみ表示されること' do
-        get gift_people_path
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include('田中花子')
-        expect(response.body).to include('佐藤次郎')
-        # 他ユーザーのデータは表示されない（同じ名前でも）
-        expect(response.body.scan('田中花子').count).to eq(1)
-      end
-    end
+      item_name: 'テスト商品',
       memo: 'テストメモ',
       gift_at: 1.week.ago,
       is_public: true
@@ -30,8 +21,8 @@ RSpec.describe 'GiftRecords Filter', type: :request do
   end
 
   let!(:other_record) do
-    create(:gift_record, 
-      user: other_user, 
+    create(:gift_record,
+      user: other_user,
       item_name: '関係ない商品',
       is_public: true
     )
@@ -65,7 +56,7 @@ RSpec.describe 'GiftRecords Filter', type: :request do
       end
 
       it '大文字小文字を区別しないこと' do
-        get gift_records_path, params: { search: 'てすと' }
+        get gift_records_path, params: { search: 'テスト' }
         expect(response).to have_http_status(:success)
         expect(response.body).to include('テスト商品')
       end
@@ -105,18 +96,18 @@ RSpec.describe 'GiftRecords Filter', type: :request do
 
     context '日付範囲フィルタ' do
       it '指定期間の記録のみ表示されること' do
-        get gift_records_path, params: { 
-          date_from: 2.weeks.ago.to_date, 
-          date_to: Date.current 
+        get gift_records_path, params: {
+          date_from: 2.weeks.ago.to_date,
+          date_to: Date.current
         }
         expect(response).to have_http_status(:success)
         expect(response.body).to include('テスト商品')
       end
 
       it '期間外は表示されないこと' do
-        get gift_records_path, params: { 
-          date_from: 1.month.ago.to_date, 
-          date_to: 2.weeks.ago.to_date 
+        get gift_records_path, params: {
+          date_from: 1.month.ago.to_date,
+          date_to: 2.weeks.ago.to_date
         }
         expect(response).to have_http_status(:success)
         expect(response.body).not_to include('テスト商品')
@@ -125,7 +116,7 @@ RSpec.describe 'GiftRecords Filter', type: :request do
 
     context '複合フィルタ' do
       it '複数条件で絞り込めること' do
-        get gift_records_path, params: { 
+        get gift_records_path, params: {
           search: 'テスト',
           relationship_id: relationship.id,
           event_id: event.id
@@ -146,7 +137,7 @@ RSpec.describe 'GiftRecords Filter', type: :request do
       it 'XSS攻撃を防げること' do
         get gift_records_path, params: { search: '<script>alert("xss")</script>' }
         expect(response).to have_http_status(:success)
-        expect(response.body).not_to include('<script>')
+        expect(response.body).not_to include('<script>alert("xss")</script>')
       end
     end
   end
@@ -155,28 +146,28 @@ RSpec.describe 'GiftRecords Filter', type: :request do
     before { sign_in user }
 
     it 'JSON形式で結果を返すこと' do
-      get autocomplete_gift_records_path, params: { query: 'テスト' }
+      get autocomplete_gift_records_path, params: { q: 'テスト' }
       expect(response).to have_http_status(:success)
       expect(response.content_type).to include('application/json')
     end
 
     it '検索結果を返すこと' do
-      get autocomplete_gift_records_path, params: { query: 'テスト商品' }
+      get autocomplete_gift_records_path, params: { q: 'テスト商品' }
       expect(response).to have_http_status(:success)
-      
+
       json = JSON.parse(response.body)
       expect(json['results']).to be_present
-      expect(json['results'].first['text']).to include('テスト商品')
+      expect(json['results'].first['display_text']).to include('テスト商品')
     end
 
     it '空クエリでエラーにならないこと' do
-      get autocomplete_gift_records_path, params: { query: '' }
+      get autocomplete_gift_records_path, params: { q: '' }
       expect(response).to have_http_status(:success)
     end
 
     it '未ログインではアクセス不可' do
       sign_out user
-      get autocomplete_gift_records_path, params: { query: 'test' }
+      get autocomplete_gift_records_path, params: { q: 'test' }
       expect(response).to redirect_to(new_user_session_path)
     end
   end

@@ -26,7 +26,7 @@
         <div class="relative">
           <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
           <%= f.text_field :search, 
-              value: params[:search],
+              value: h(params[:search]),
               placeholder: "名前、好きなもの、メモで検索",
               id: "search-input",
               autocomplete: "off",
@@ -392,7 +392,7 @@
             </div>
             <div class="flex-1 min-w-0">
               <div class="text-xs font-medium text-gray-900">
-                ${result.search_highlight}
+                ${result.search_highlight || escapeHtml(result.display_text)}
               </div>
               <div class="text-xs text-gray-500 mt-0.5">
                 ${typeLabel} • ${escapeHtml(result.relationship)}
