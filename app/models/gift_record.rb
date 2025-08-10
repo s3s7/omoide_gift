@@ -96,16 +96,4 @@ class GiftRecord < ApplicationRecord
     item_name.presence || "未設定"
   end
 
-  # クラスメソッド（統計情報用）
-  def self.total_amount_for_user(user)
-    where(user: user).sum(:amount) || 0
-  end
-
-  def self.monthly_summary_for_user(user, date = Date.current)
-    where(user: user)
-      .where(gift_at: date.beginning_of_month..date.end_of_month)
-      .group(:gift_people_id)
-      .joins(:gift_person)
-      .pluck("gift_people.name", "COUNT(*)", "SUM(amount)")
-  end
 end
