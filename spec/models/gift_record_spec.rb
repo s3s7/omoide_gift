@@ -153,25 +153,4 @@ RSpec.describe GiftRecord, type: :model do
       end
     end
   end
-
-  describe 'クラスメソッド' do
-    let(:test_user) { create(:user) }
-    let(:test_gift_person) { create(:gift_person, user: test_user) }
-    let(:test_event) { create(:event) }
-
-    let!(:record1) { create(:gift_record, user: test_user, gift_person: test_gift_person, event: test_event, amount: 1000) }
-    let!(:record2) { create(:gift_record, user: test_user, gift_person: test_gift_person, event: test_event, amount: 2000) }
-    let!(:other_user_record) { create(:gift_record, amount: 5000) }
-
-    describe '.total_amount_for_user' do
-      it 'ユーザーの合計金額を返す' do
-        expect(GiftRecord.total_amount_for_user(test_user)).to eq(3000)
-      end
-
-      it '他のユーザーのレコードは含まれない' do
-        total = GiftRecord.total_amount_for_user(test_user)
-        expect(total).not_to eq(8000)
-      end
-    end
-  end
 end

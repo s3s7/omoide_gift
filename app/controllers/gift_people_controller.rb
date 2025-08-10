@@ -235,13 +235,16 @@ class GiftPeopleController < ApplicationController
 
   # オートコンプリート用ヘルパーメソッド
   def highlight_match(text, query)
-    return text unless text.present? && query.present?
+    return ERB::Util.html_escape(text) unless text.present? && query.present?
 
-    text.gsub(Regexp.new(Regexp.escape(query), Regexp::IGNORECASE)) do |match|
+    escaped_text = ERB::Util.html_escape(text)
+    escaped_query = ERB::Util.html_escape(query)
+
+    escaped_text.gsub(Regexp.new(Regexp.escape(escaped_query), Regexp::IGNORECASE)) do |match|
       "<mark>#{match}</mark>"
-    end
+    end.html_safe
   rescue StandardError
-    text
+    ERB::Util.html_escape(text)
   end
 
   def truncate_text(text, length = 20)
