@@ -3,7 +3,7 @@
 <% content_for(:twitter_image) do %>
 <%
   begin
-    asset_url('image 20.png')
+    asset_url('gift_flower.png')
   rescue => e
     Rails.logger.error "Asset path resolution failed for gift_flower.png: #{e.message}"
     "#{request.base_url}/assets/gift-card-image.png"
@@ -14,9 +14,9 @@
 <!-- ヒーローセクション -->
 <div class="w-full text-center py-16 bg-gradient-to-r rounded-lg mb-12">
   <h1 class="text-4xl font-bold text-gray-800 mb-4 flex justify-center items-center gap-4 zen-maru-gothic">
-    <%= image_tag "omoide_gift_icon_flower.png", alt: "思い出ギフトロゴ", class: "w-12 h-12" %>
+    <%= image_tag "omoide_gift_icon_flower.png", alt: "思い出ギフトロゴ", class: "w-16 h-16" %>
     <span>思い出ギフト</span>
-    <%= image_tag "omoide_gift_icon_gift.png", alt: "思い出ギフトロゴ", class: "w-13 h-17 -ml-4" %>
+    <%= image_tag "omoide_gift_icon_gift.png", alt: "思い出ギフトロゴ", class: "w-16 h-20 -ml-4" %>
   </h1>
   <p class="text-xl text-gray-600 mb-8">
     誰かの定番が誰かの特別なギフトに

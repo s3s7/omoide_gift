@@ -80,7 +80,7 @@
       <%= render 'shared/hero_image' %>
     <% end %>
     
-    <main class="container mx-auto <%= request.path == root_path ? 'mt-8' : 'mt-28' %> px-5 <%= request.path == root_path ? 'block' : 'flex' %>">
+    <main class="container mx-auto <%= request.path == root_path ? 'mt-12' : 'mt-28' %> px-5 <%= request.path == root_path ? 'block' : 'flex' %>">
       <%= yield %>
     </main>
     <%= render 'shared/flash_message' %>

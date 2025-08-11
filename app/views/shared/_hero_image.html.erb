@@ -1,7 +1,7 @@
 <!-- メインヒーロー画像セクション -->
 <section class="hero-image-section w-full relative">
-  <!-- 画像コンテナ：ヘッダーにくっついて大きく表示 -->
-  <div class="w-full overflow-hidden shadow-2xl hero-container" style="height: 80vh; min-height: 500px; max-height: 800px;">
+  <!-- 画像コンテナ：ヘッダーにくっついて大幅に拡大表示 -->
+  <div class="w-full overflow-hidden shadow-2xl hero-container" style="height: 90vh; min-height: 750px; max-height: 1300px;">
     <%= image_tag "gift_flower.png", 
         alt: "思い出ギフト - 花束のギフトイメージ", 
         class: "w-full h-full object-cover transition-all duration-700 opacity-0 transform scale-105",
@@ -49,36 +49,37 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
-  /* レスポンシブ対応 */
+  /* レスポンシブ対応 - 縦幅を大幅に拡大 */
   @media (max-width: 640px) {
     .hero-image-section .hero-container {
-      height: 60vh !important;
-      min-height: 400px !important;
-      max-height: 500px !important;
+      height: 75vh !important;
+      min-height: 500px !important;
+      max-height: 700px !important;
     }
   }
   
   @media (min-width: 641px) and (max-width: 1024px) {
     .hero-image-section .hero-container {
-      height: 70vh !important;
-      min-height: 450px !important;
-      max-height: 650px !important;
+      height: 85vh !important;
+      min-height: 650px !important;
+      max-height: 900px !important;
     }
   }
   
   @media (min-width: 1025px) {
     .hero-image-section .hero-container {
-      height: 80vh !important;
-      min-height: 500px !important;
-      max-height: 800px !important;
+      height: 90vh !important;
+      min-height: 750px !important;
+      max-height: 1300px !important;
     }
   }
   
   /* 超大型画面での最適化 */
   @media (min-width: 1920px) {
     .hero-image-section .hero-container {
-      height: 75vh !important;
-      max-height: 900px !important;
+      height: 95vh !important;
+      min-height: 800px !important;
+      max-height: 1500px !important;
     }
   }
   
