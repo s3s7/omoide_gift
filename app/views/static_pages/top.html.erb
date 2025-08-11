@@ -3,7 +3,7 @@
 <% content_for(:twitter_image) do %>
 <%
   begin
-    asset_url('gift_flower.png')
+    asset_url('omoide_gift_top.png')
   rescue => e
     Rails.logger.error "Asset path resolution failed for gift_flower.png: #{e.message}"
     "#{request.base_url}/assets/gift-card-image.png"
