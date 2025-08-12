@@ -1,41 +1,50 @@
 <%# encoding: utf-8 %>
-<!-- 削除確認モーダル -->
-<div id="delete-confirmation-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-    <div class="mt-3 text-center">
+<!-- Stimulus削除確認モーダル -->
+<div data-delete-modal-target="modal"
+     data-action="click->delete-modal#backdropClick"
+     class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 items-center justify-center p-4 z-[9999]" 
+     style="">
+  
+  <!-- モーダルコンテンツ -->
+  <div class="bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 max-w-md w-full mx-auto p-6"
+       onclick="event.stopPropagation();">
+    
+    <div class="text-center">
       <!-- アイコン -->
-      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
-        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
+        <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400 text-xl"></i>
       </div>
       
       <!-- タイトル -->
-      <h3 class="text-lg font-medium text-gray-900 mb-2">ギフト記録を削除しますか？</h3>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">本当に削除しますか？</h3>
       
       <!-- 説明文 -->
-      <div class="mt-2 px-7 py-3">
-        <p class="text-sm text-gray-500 mb-2">
-          <span id="delete-item-name" class="font-medium text-gray-700"></span>を削除しようとしています。
+      <div class="mb-6">
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          <span data-delete-modal-target="itemName" class="font-medium text-gray-900 dark:text-gray-100"></span>を削除しようとしています。
         </p>
-        <p class="text-sm text-gray-500">
-          <span class="text-red-600 font-medium">この操作は取り消すことができません。</span><br>
-          削除すると、このギフト記録に関連するすべての情報が永久に失われます。
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          <span class="text-red-600 dark:text-red-400 font-medium">この操作は取り消すことができません。</span><br>
+          削除すると、関連するすべての情報が永久に失われます。
         </p>
       </div>
       
       <!-- ボタン -->
-      <div class="flex items-center justify-center px-4 py-3 space-x-3">
+      <div class="flex items-center justify-center gap-3">
         <!-- キャンセルボタン -->
         <button type="button" 
-                id="cancel-delete-btn"
-                class="px-4 py-2 bg-gray-300 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">
+                data-delete-modal-target="cancelButton"
+                data-action="click->delete-modal#cancel"
+                class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 transition-colors">
           <i class="fas fa-times mr-2"></i>
           キャンセル
         </button>
         
         <!-- 削除実行ボタン -->
         <button type="button" 
-                id="confirm-delete-btn"
-                class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+                data-delete-modal-target="confirmButton"
+                data-action="click->delete-modal#confirm"
+                class="px-4 py-2 bg-red-600 dark:bg-red-700 text-white text-sm font-medium rounded-md hover:bg-red-700 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-colors">
           <i class="fas fa-trash mr-2"></i>
           削除する
         </button>

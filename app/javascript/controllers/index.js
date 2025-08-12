@@ -7,4 +7,13 @@ import { application } from "./application"
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
+import DeleteModalController from "./delete_modal_controller"
+application.register("delete-modal", DeleteModalController)
+
+import HamburgerMenuController from "./hamburger_menu_controller"
+application.register("hamburger-menu", HamburgerMenuController)
+
+import GiftRecordsController from "./gift_records_controller"
+application.register("gift-records", GiftRecordsController)
+
 
