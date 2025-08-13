@@ -18,28 +18,31 @@
 </div>
 
   <!-- 検索・フィルター機能 -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto" data-controller="dynamic-filter">
     <%= form_with url: gift_people_path, method: :get, local: true, class: "space-y-2" do |f| %>
       <!-- 検索欄と検索ボタン -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <!-- 検索キーワード（オートコンプリート付き） -->
-        <div class="relative">
+        <div class="relative" data-controller="gift-records-autocomplete" data-gift-records-autocomplete-endpoint-value="/gift_people/autocomplete">
           <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
           <%= f.text_field :search, 
               value: h(params[:search]),
               placeholder: "名前、好きなもの、メモで検索",
               id: "search-input",
               autocomplete: "off",
+              data: { "gift-records-autocomplete-target": "input" },
               class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" %>
           
           <!-- オートコンプリートドロップダウン -->
           <div id="autocomplete-dropdown" 
+               data-gift-records-autocomplete-target="dropdown"
                class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-md shadow-lg hidden max-h-48 overflow-y-auto">
             <!-- 検索結果がここに動的に追加される -->
           </div>
           
           <!-- ローディング表示 -->
           <div id="search-loading" 
+               data-gift-records-autocomplete-target="loading"
                class="absolute right-2 top-7 hidden">
             <i class="fas fa-spinner fa-spin text-gray-400 text-sm"></i>
           </div>
@@ -65,9 +68,10 @@
               {},
               { 
                 id: "people-filter-type-select",
+                data: { "dynamic-filter-target": "filterTypeSelect", action: "change->dynamic-filter#update" },
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
               } %>
-          <%= f.hidden_field :filter_type, id: "people-filter-type-hidden" %>
+          <%= f.hidden_field :filter_type, id: "people-filter-type-hidden", data: { "dynamic-filter-target": "filterTypeHidden" } %>
         </div>
 
         <!-- 動的フィルター値選択 -->
@@ -80,6 +84,7 @@
               {},
               { 
                 id: "people-relationship-select",
+                data: { "dynamic-filter-target": "relationshipSelect" },
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
                 style: (params[:filter_type] == "relationship" ? "" : "display: none;")
               } %>
@@ -90,12 +95,13 @@
               {},
               { 
                 id: "people-event-select",
+                data: { "dynamic-filter-target": "eventSelect" },
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
                 style: (params[:filter_type] == "event" ? "" : "display: none;")
               } %>
           
           <!-- プレースホルダー表示 -->
-          <div id="people-filter-placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500" 
+          <div id="people-filter-placeholder" data-dynamic-filter-target="placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500" 
                style="<%= params[:filter_type].present? ? 'display: none;' : '' %>">
             左でフィルターを選択してください
           </div>
@@ -283,309 +289,4 @@
 <!-- メインコンテナ終了 -->
 </div>
 
-<script>
-// ギフト相手一覧のオートコンプリート機能
-(function() {
-  let autocompleteInitialized = false;
-  let searchTimeout;
-  let currentRequest;
-  
-  function initializeAutocomplete() {
-    // 要素の存在確認
-    const searchInput = document.getElementById('search-input');
-    const dropdown = document.getElementById('autocomplete-dropdown');
-    const loading = document.getElementById('search-loading');
-    
-    // 必要な要素が存在しない場合は何もしない
-    if (!searchInput || !dropdown || !loading) {
-      return;
-    }
-    
-    // 既に初期化済みの場合はスキップ（data属性で管理）
-    if (searchInput.dataset.autocompleteInitialized === 'true') {
-      return;
-    }
-    
-    const form = searchInput.closest('form');
-    if (!form) return;
-    
-    // 初期化完了をマーク
-    searchInput.dataset.autocompleteInitialized = 'true';
-  
-  // 検索入力処理
-  searchInput.addEventListener('input', function(e) {
-    const query = e.target.value.trim();
-    
-    // リクエストのデバウンス
-    clearTimeout(searchTimeout);
-    
-    if (query.length >= 1) {
-      searchTimeout = setTimeout(() => performAutocomplete(query), 300);
-    } else {
-      hideDropdown();
-    }
-  });
-
-  // CSRF トークンを取得（utils.jsのグローバル関数を使用）
-
-  // オートコンプリート実行
-  function performAutocomplete(query) {
-    // 既存のリクエストをキャンセル
-    if (currentRequest) {
-      currentRequest.abort();
-    }
-
-    showLoading();
-
-    currentRequest = new AbortController();
-    
-    const headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest'
-    };
-
-    const csrfToken = window.getCSRFToken();
-    if (csrfToken) {
-      headers['X-CSRF-Token'] = csrfToken;
-    }
-    
-    fetch(`/gift_people/autocomplete?q=${encodeURIComponent(query)}`, {
-      signal: currentRequest.signal,
-      headers: headers
-    })
-    .then(response => {
-      if (!response.ok) throw new Error('Network response was not ok');
-      return response.json();
-    })
-    .then(data => {
-      hideLoading();
-      displayResults(data.results);
-    })
-    .catch(error => {
-      if (error.name !== 'AbortError') {
-        console.error('Autocomplete error:', error);
-        hideLoading();
-        hideDropdown();
-      }
-    });
-  }
-
-  // 検索結果表示
-  function displayResults(results) {
-    if (results.length === 0) {
-      hideDropdown();
-      return;
-    }
-
-    const html = results.map(result => {
-      const typeIcon = getTypeIcon(result.type);
-      const typeLabel = getTypeLabel(result.type);
-      
-      return `
-        <div class="autocomplete-item px-3 py-2 hover:bg-primary-50 cursor-pointer border-b border-gray-100 last:border-b-0" 
-             data-name="${escapeHtml(result.name)}" 
-             data-id="${result.id}">
-          <div class="flex items-start space-x-2">
-            <div class="flex-shrink-0 w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
-              <i class="${typeIcon} text-primary text-xs"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="text-xs font-medium text-gray-900">
-                ${result.search_highlight || escapeHtml(result.display_text)}
-              </div>
-              <div class="text-xs text-gray-500 mt-0.5">
-                ${typeLabel} • ${escapeHtml(result.relationship)}
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    dropdown.innerHTML = html;
-    showDropdown();
-    
-    // クリックイベントの追加
-    dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
-      item.addEventListener('click', function() {
-        const name = this.dataset.name;
-        searchInput.value = name;
-        hideDropdown();
-        form.submit();
-      });
-    });
-  }
-
-  // タイプ別アイコン
-  function getTypeIcon(type) {
-    switch(type) {
-      case 'name': return 'fas fa-user';
-      case 'likes': return 'fas fa-thumbs-up';
-      case 'memo': return 'fas fa-sticky-note';
-      default: return 'fas fa-search';
-    }
-  }
-
-  // タイプ別ラベル
-  function getTypeLabel(type) {
-    switch(type) {
-      case 'name': return '名前';
-      case 'likes': return '好きなもの';
-      case 'memo': return 'メモ';
-      default: return '検索';
-    }
-  }
-
-  // HTML エスケープ
-  function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // ローディング表示
-  function showLoading() {
-    loading.classList.remove('hidden');
-  }
-
-  function hideLoading() {
-    loading.classList.add('hidden');
-  }
-
-  // ドロップダウン表示
-  function showDropdown() {
-    dropdown.classList.remove('hidden');
-  }
-
-  function hideDropdown() {
-    dropdown.classList.add('hidden');
-  }
-
-    // 外部クリック時にドロップダウンを閉じる
-    function handleOutsideClick(e) {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-        hideDropdown();
-      }
-    }
-    
-    document.addEventListener('click', handleOutsideClick);
-
-  // キーボードナビゲーション
-  searchInput.addEventListener('keydown', function(e) {
-    const items = dropdown.querySelectorAll('.autocomplete-item');
-    const activeItem = dropdown.querySelector('.autocomplete-item.bg-primary-100');
-    
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (activeItem) {
-        activeItem.classList.remove('bg-primary-100');
-        const next = activeItem.nextElementSibling || items[0];
-        next.classList.add('bg-primary-100');
-      } else if (items.length > 0) {
-        items[0].classList.add('bg-primary-100');
-      }
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (activeItem) {
-        activeItem.classList.remove('bg-primary-100');
-        const prev = activeItem.previousElementSibling || items[items.length - 1];
-        prev.classList.add('bg-primary-100');
-      } else if (items.length > 0) {
-        items[items.length - 1].classList.add('bg-primary-100');
-      }
-    } else if (e.key === 'Enter') {
-      if (activeItem) {
-        e.preventDefault();
-        activeItem.click();
-      }
-    } else if (e.key === 'Escape') {
-      hideDropdown();
-    }
-  });
-
-    // フィルターの変更時自動検索（オプション）
-    // 動的フィルターに変更したため、個別のrelationship selectは削除
-  }
-
-  // クリーンアップ関数
-  function cleanupAutocomplete() {
-    if (currentRequest) {
-      currentRequest.abort();
-    }
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-    
-    // data属性をクリア
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-      searchInput.dataset.autocompleteInitialized = 'false';
-    }
-    
-    autocompleteInitialized = false;
-  }
-
-  // Turbo対応のイベントリスナー
-  document.addEventListener('turbo:load', initializeAutocomplete);
-  document.addEventListener('DOMContentLoaded', initializeAutocomplete);
-  
-  // ページ離脱時のクリーンアップ
-  document.addEventListener('turbo:before-visit', cleanupAutocomplete);
-  document.addEventListener('beforeunload', cleanupAutocomplete);
-})();
-
-// ギフト相手一覧用動的フィルター機能
-(function() {
-  function initializePeopleDynamicFilter() {
-    const filterTypeSelect = document.getElementById('people-filter-type-select');
-    const filterTypeHidden = document.getElementById('people-filter-type-hidden');
-    const relationshipSelect = document.getElementById('people-relationship-select');
-    const eventSelect = document.getElementById('people-event-select');
-    const placeholder = document.getElementById('people-filter-placeholder');
-    
-    if (!filterTypeSelect || !filterTypeHidden || !relationshipSelect || !eventSelect || !placeholder) {
-      return;
-    }
-    
-    // 初期状態の設定
-    function updateFilterDisplay() {
-      const selectedType = filterTypeSelect.value;
-      
-      // hidden fieldを更新
-      filterTypeHidden.value = selectedType;
-      
-      // すべて非表示にする
-      relationshipSelect.style.display = 'none';
-      eventSelect.style.display = 'none';
-      placeholder.style.display = 'none';
-      
-      // 選択されたタイプに応じて表示
-      if (selectedType === 'relationship') {
-        relationshipSelect.style.display = 'block';
-        // イベント選択をクリア
-        eventSelect.value = '';
-      } else if (selectedType === 'event') {
-        eventSelect.style.display = 'block';
-        // 関係性選択をクリア
-        relationshipSelect.value = '';
-      } else {
-        placeholder.style.display = 'block';
-        // 両方クリア
-        relationshipSelect.value = '';
-        eventSelect.value = '';
-      }
-    }
-    
-    // フィルタータイプ変更時の処理
-    filterTypeSelect.addEventListener('change', updateFilterDisplay);
-    
-    // 初期表示の設定
-    updateFilterDisplay();
-  }
-  
-  // Turbo対応のイベントリスナー
-  document.addEventListener('turbo:load', initializePeopleDynamicFilter);
-  document.addEventListener('DOMContentLoaded', initializePeopleDynamicFilter);
-})();
-</script>
+<!-- Stimulus dynamic-filter handles behavior -->

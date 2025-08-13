@@ -5,7 +5,7 @@
   <%= render 'shared/error_messages', object: f.object %>
   
   <!-- イベント選択 -->
-  <div style="margin-bottom: 24px; text-align: left;">
+  <div style="margin-bottom: 24px; text-align: left;" data-controller="event-selector">
     <%= f.label :event_id, "イベント", style: "
       display: block;
       margin-bottom: 8px;
@@ -35,11 +35,11 @@
           ",
           id: "gift_record_event_id",
           required: true,
-          data: { gift_records_target: "eventSelect" }
+          data: { gift_records_target: "eventSelect", event_selector_target: "select" }
         } %>
     
     <!-- ヘルプテキスト -->
-    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+    <div style="font-size: 12px; color: #888; margin-top: 8px;" data-event-selector-target="help">
       <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
       このギフトに関連するイベントを選択してください（必須）
     </div>
@@ -81,7 +81,7 @@
       </div>
     <% end %>
   </div>
-  <div style="margin-bottom: 24px; text-align: left;">
+  <div style="margin-bottom: 24px; text-align: left;" data-controller="gift-date-selector">
     <%= f.label :gift_people_id, "贈る相手", style: "
       display: block;
       margin-bottom: 8px;
@@ -327,7 +327,7 @@
         min: 100.years.ago.strftime('%Y-%m-%d'),
         max: 1.year.from_now.strftime('%Y-%m-%d'),
         required: true,
-        data: { gift_records_target: "dateField" } %>
+        data: { gift_records_target: "dateField", gift_date_selector_target: "input" } %>
     
     <!-- ヘルプテキスト -->
     <div style="font-size: 12px; color: #888; margin-top: 8px;">
@@ -360,8 +360,8 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
               " 
-              data-action="click->gift-records#setGiftDate"
-              data-gift-records-date-type-param="today"
+              data-action="click->gift-date-selector#setDate"
+              data-gift-date-selector-date-type-param="today"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         今日
@@ -380,8 +380,8 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
               " 
-              data-action="click->gift-records#setGiftDate"
-              data-gift-records-date-type-param="yesterday"
+              data-action="click->gift-date-selector#setDate"
+              data-gift-date-selector-date-type-param="yesterday"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         昨日
@@ -400,8 +400,8 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
               "
-              data-action="click->gift-records#setGiftDate"
-              data-gift-records-date-type-param="week_ago"
+              data-action="click->gift-date-selector#setDate"
+              data-gift-date-selector-date-type-param="week_ago"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         1週間前

@@ -16,4 +16,20 @@ application.register("hamburger-menu", HamburgerMenuController)
 import GiftRecordsController from "./gift_records_controller"
 application.register("gift-records", GiftRecordsController)
 
+import GiftRecordsAutocompleteController from "./gift_records_autocomplete_controller"
+application.register("gift-records-autocomplete", GiftRecordsAutocompleteController)
 
+import ShareManagerController from "./share_manager_controller"
+application.register("share-manager", ShareManagerController)
+
+import DynamicFilterController from "./dynamic_filter_controller"
+application.register("dynamic-filter", DynamicFilterController)
+
+import FavoritesController from "./favorites_controller"
+application.register("favorites", FavoritesController)
+
+import EventSelectorController from "./event_selector_controller"
+application.register("event-selector", EventSelectorController)
+
+import GiftDateSelectorController from "./gift_date_selector_controller"
+application.register("gift-date-selector", GiftDateSelectorController)
