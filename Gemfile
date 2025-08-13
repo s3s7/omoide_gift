@@ -79,5 +79,5 @@ gem "line-bot-api"
 
 gem "whenever", require: false
 
-gem 'sidekiq'
-gem 'sidekiq-scheduler'
+gem "sidekiq"
+gem "sidekiq-scheduler"
