@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { getAPIHeaders, showToast } from "../utils"
 
 // Connects to data-controller="favorites"
 export default class extends Controller {
@@ -26,21 +27,21 @@ export default class extends Controller {
     try {
       const response = await fetch(`/gift_records/${giftRecordId}/toggle_favorite`, {
         method: 'POST',
-        headers: this.apiHeaders(),
+        headers: getAPIHeaders(),
         credentials: 'same-origin'
       })
       const data = await response.json()
 
       if (data.success) {
         this.updateButton(button, data.favorited, data.favorites_count)
-        this.showToast(data.action === 'added' ? 'お気に入りに追加しました' : 'お気に入りから削除しました', 'success')
+        showToast(data.action === 'added' ? 'お気に入りに追加しました' : 'お気に入りから削除しました', 'success')
       } else {
-        this.showToast(data.error || 'エラーが発生しました', 'error')
+        showToast(data.error || 'エラーが発生しました', 'error')
       }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Favorite toggle error:', error)
-      this.showToast('ネットワークエラーが発生しました', 'error')
+      showToast('ネットワークエラーが発生しました', 'error')
     } finally {
       this.setLoading(button, false)
     }
@@ -84,40 +85,5 @@ export default class extends Controller {
     button.disabled = isLoading
   }
 
-  apiHeaders() {
-    const meta = document.querySelector('meta[name="csrf-token"]')
-    const token = meta ? meta.getAttribute('content') : ''
-    return {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': token
-    }
-  }
-
-  showToast(message, type = 'info') {
-    const existing = document.querySelector('.favorite-toast')
-    if (existing) existing.remove()
-
-    const toast = document.createElement('div')
-    toast.className = 'favorite-toast fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg max-w-xs transform transition-all duration-300 translate-x-full opacity-0'
-
-    if (type === 'success') {
-      toast.classList.add('bg-green-500', 'text-white')
-      toast.innerHTML = `<i class="fas fa-check mr-2"></i>${message}`
-    } else if (type === 'error') {
-      toast.classList.add('bg-red-500', 'text-white')
-      toast.innerHTML = `<i class="fas fa-exclamation-triangle mr-2"></i>${message}`
-    } else {
-      toast.classList.add('bg-blue-500', 'text-white')
-      toast.innerHTML = `<i class="fas fa-info-circle mr-2"></i>${message}`
-    }
-
-    document.body.appendChild(toast)
-    setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0') }, 100)
-    setTimeout(() => {
-      toast.classList.add('translate-x-full', 'opacity-0')
-      setTimeout(() => { toast.remove() }, 300)
-    }, 3000)
-  }
+  // toast: use shared utils.showToast
 }
