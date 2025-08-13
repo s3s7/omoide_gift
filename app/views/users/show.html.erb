@@ -52,6 +52,15 @@
             <% else %>
               <i class="fas fa-bell-slash mr-2 text-orange-500"></i>
               <span class="text-gray-600">LINE: 未連携</span>
+              <div class="ml-3 inline-block">
+                <%= button_to user_line_omniauth_authorize_path,
+                    method: :post,
+                    data: { turbo: false },
+                    class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" do %>
+                  <i class="fab fa-line mr-2"></i>
+                  LINE連携する
+                <% end %>
+              </div>
             <% end %>
           </div>
           <p class="text-sm text-gray-500">登録日: <%= l(@user.created_at, format: :short) %></p>
@@ -232,15 +241,15 @@
           <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
         <% end %>
         
-        <div class="flex items-center p-3 border border-gray-200 rounded-lg bg-gray-50 cursor-not-allowed opacity-75">
-          <i class="fas fa-bell text-gray-400 mr-3"></i>
+        <%= link_to reminds_path,
+            class: "flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors" do %>
+          <i class="fas fa-bell text-orange-600 mr-3"></i>
           <div class="flex-1">
-            <div class="font-medium text-gray-500">記念日リマインダー管理</div>
-            <div class="text-sm text-gray-400">記念日の通知設定と管理</div>
+            <div class="font-medium text-gray-800">記念日リマインダー管理</div>
+            <div class="text-sm text-gray-600">記念日の通知設定と管理</div>
           </div>
-          <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-600 mr-2">準備中</span>
-          <i class="fas fa-chevron-right text-gray-300"></i>
-        </div>
+          <i class="fas fa-chevron-right text-gray-400 ml-auto"></i>
+        <% end %>
       </div>
     </div>
 
@@ -300,9 +309,7 @@
           <i class="fas fa-bell mr-2 text-orange-500"></i>
           今後の記念日
         </h3>
-        <span class="text-sm text-gray-400 font-medium">
-          管理する <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 ml-1">準備中</span>
-        </span>
+        <%= link_to "管理する →", reminds_path, class: "text-sm text-primary hover:text-primary-hover font-medium" %>
       </div>
 
       <% if @upcoming_reminds.any? %>

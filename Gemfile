@@ -78,3 +78,6 @@ gem "dotenv-rails"
 gem "line-bot-api"
 
 gem "whenever", require: false
+
+gem "sidekiq"
+gem "sidekiq-scheduler"

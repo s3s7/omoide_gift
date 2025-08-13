@@ -1,4 +1,7 @@
-<%= form_with model: gift_record do |f| %>
+<%= form_with model: gift_record, data: { 
+  controller: "gift-records",
+  action: "submit->gift-records#validateForm"
+} do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   
   <!-- イベント選択 -->
@@ -31,7 +34,8 @@
             transition: border-color 0.3s ease;
           ",
           id: "gift_record_event_id",
-          required: true
+          required: true,
+          data: { gift_records_target: "eventSelect" }
         } %>
     
     <!-- ヘルプテキスト -->
@@ -67,7 +71,8 @@
                     cursor: pointer;
                     transition: all 0.2s ease;
                   " 
-                  onclick="setEventSelection(<%= event.id %>)"
+                  data-action="click->gift-records#setEventSelection"
+                  data-gift-records-event-id-param="<%= event.id %>"
                   onmouseover="this.style.backgroundColor='#007bff'; this.style.color='white';"
                   onmouseout="this.style.backgroundColor='transparent'; this.style.color='#007bff';">
             <%= truncate(event.display_name, length: 10) %>
@@ -84,25 +89,25 @@
       color: #555;
       font-size: 14px;
     " %>
-    <% 
+    <%
       # エラー時の選択値を決定
       if @gift_person&.errors&.any? || params[:gift_record]&.[](:gift_people_id) == "new"
         selected_value = "new"
       else
         selected_value = gift_record&.gift_people_id
       end
-      
+
       # オプションを作成
       gift_people_options = options_from_collection_for_select(@gift_people, :id, :name, selected_value == "new" ? nil : selected_value)
       new_option = options_for_select([["新たに追加する", "new"]], selected_value == "new" ? "new" : nil)
       all_options = gift_people_options + new_option
     %>
-    <%= f.select :gift_people_id, 
-        all_options.html_safe, 
-        { 
+    <%= f.select :gift_people_id,
+        all_options.html_safe,
+        {
           prompt: "贈る相手を選択してください"
-        }, 
-        { 
+        },
+        {
           style: "
             width: 100%;
             padding: 14px 16px;
@@ -112,8 +117,12 @@
             box-sizing: border-box;
             transition: border-color 0.3s ease;
           ",
-          id: "gift_people_select",
-          required: true
+          id: "gift_record_gift_people_id",
+          required: true,
+          data: { 
+            gift_records_target: "giftPeopleSelect",
+            action: "change->gift-records#giftPersonChanged"
+          }
         } %>
 
     <!-- ヘルプテキスト -->
@@ -125,7 +134,9 @@
   
   <!-- 新しいギフト相手の入力フィールド -->
   <% show_fields = @gift_person&.errors&.any? || params[:gift_record]&.[](:gift_people_id) == "new" %>
-  <div id="new_gift_person_fields" style="margin-bottom: 24px; <%= show_fields ? 'display: block;' : 'display: none;' %>">
+  <div id="new_gift_person_fields" 
+       data-gift-records-target="newGiftPersonFields"
+       style="margin-bottom: 24px; <%= show_fields ? 'display: block;' : 'display: none;' %>">
     <div style="
       border: 2px solid #e1e5e9;
       padding: 20px;
@@ -175,7 +186,8 @@
               font-size: 14px;
               box-sizing: border-box;
             ",
-            placeholder: "相手の名前を入力" %>
+            placeholder: "相手の名前を入力",
+            id: "gift_person_name" %>
       </div>
       
       <div style="margin-bottom: 16px;">
@@ -197,7 +209,8 @@
                 border-radius: 6px;
                 font-size: 14px;
                 box-sizing: border-box;
-              "
+              ",
+              id: "gift_person_relationship_id"
             } %>
       </div>
       
@@ -217,7 +230,8 @@
               border-radius: 6px;
               font-size: 14px;
               box-sizing: border-box;
-            " %>
+            ",
+            id: "gift_person_birthday" %>
       </div>
       
       <div style="margin-bottom: 16px;">
@@ -237,7 +251,8 @@
               font-size: 14px;
               box-sizing: border-box;
             ",
-            placeholder: "好きなものを入力" %>
+            placeholder: "好きなものを入力",
+            id: "gift_person_likes" %>
       </div>
       
       <div style="margin-bottom: 16px;">
@@ -257,7 +272,8 @@
               font-size: 14px;
               box-sizing: border-box;
             ",
-            placeholder: "嫌いなものを入力" %>
+            placeholder: "嫌いなものを入力",
+            id: "gift_person_dislikes" %>
       </div>
       
       <div style="margin-bottom: 0;">
@@ -279,7 +295,8 @@
               min-height: 80px;
               resize: vertical;
             ",
-            placeholder: "メモを入力" %>
+            placeholder: "メモを入力",
+            id: "gift_person_memo" %>
       </div>
     </div>
     
@@ -309,7 +326,8 @@
         value: gift_record.gift_at&.strftime('%Y-%m-%d'),
         min: 100.years.ago.strftime('%Y-%m-%d'),
         max: 1.year.from_now.strftime('%Y-%m-%d'),
-        required: true %>
+        required: true,
+        data: { gift_records_target: "dateField" } %>
     
     <!-- ヘルプテキスト -->
     <div style="font-size: 12px; color: #888; margin-top: 8px;">
@@ -342,7 +360,8 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
               " 
-              onclick="setGiftDate('today')"
+              data-action="click->gift-records#setGiftDate"
+              data-gift-records-date-type-param="today"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         今日
@@ -361,7 +380,8 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
               " 
-              onclick="setGiftDate('yesterday')"
+              data-action="click->gift-records#setGiftDate"
+              data-gift-records-date-type-param="yesterday"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         昨日
@@ -380,7 +400,8 @@
                 cursor: pointer;
                 transition: all 0.2s ease;
               "
-              onclick="setGiftDate('week_ago')"
+              data-action="click->gift-records#setGiftDate"
+              data-gift-records-date-type-param="week_ago"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         1週間前
@@ -517,7 +538,6 @@
       color: #555;
       font-size: 14px;
     " %>
-    
     <div style="
       display: flex;
       align-items: center;
@@ -532,9 +552,10 @@
             {
               checked: gift_record.new_record? ? true : gift_record.is_public,
               style: "display: none;",
-              id: "gift_record_is_public_toggle"
+              id: "gift_record_is_public",
+              data: { gift_records_target: "publicToggle" }
             } %>
-        <label for="gift_record_is_public_toggle" style="
+        <label for="gift_record_is_public" style="
           position: relative;
           display: inline-block;
           width: 60px;
@@ -543,7 +564,9 @@
           border-radius: 34px;
           cursor: pointer;
           transition: background-color 0.3s ease;
-        " id="toggle_label">
+        " id="toggle_label" 
+        data-gift-records-target="toggleLabel"
+        data-action="click->gift-records#togglePublicStatus">
           <span style="
             position: absolute;
             content: '';
@@ -554,7 +577,7 @@
             background-color: white;
             border-radius: 50%;
             transition: transform 0.3s ease;
-          " id="toggle_slider"></span>
+          " id="toggle_slider" data-gift-records-target="toggleSlider"></span>
         </label>
       </div>
       
@@ -566,13 +589,13 @@
           margin-bottom: 4px;
           font-size: 16px;
         " id="toggle_text">
-          <i class="fas fa-globe" style="margin-right: 8px; color: #28a745;" id="toggle_icon"></i>
-          <span id="toggle_status">公開</span>
+          <i class="fas fa-globe" style="margin-right: 8px; color: #28a745;" id="toggle_icon" data-gift-records-target="toggleIcon"></i>
+          <span id="toggle_status" data-gift-records-target="toggleStatus">公開</span>
         </div>
         <div style="
           font-size: 12px;
           color: #666;
-        " id="toggle_description">
+        " id="toggle_description" data-gift-records-target="toggleDescription">
           他のユーザーがこのギフト記録を見ることができます
         </div>
       </div>
@@ -613,196 +636,4 @@
   <div id="gift_person_error_flag" data-has-error="true" style="display: none;"></div>
 <% end %>
 
-<script>
-// ギフト記録フォームのJavaScript処理
-(function() {
-  let formInitialized = false;
-
-  // グローバルなイベントハンドラー参照を保持
-  let toggleClickHandler = null;
-
-  // トグルスイッチの初期化を独立した関数として分離
-  function initializeToggleSwitch() {
-    const toggle = document.getElementById('gift_record_is_public_toggle');
-    const toggleLabel = document.getElementById('toggle_label');
-    const toggleSlider = document.getElementById('toggle_slider');
-    const toggleIcon = document.getElementById('toggle_icon');
-    const toggleStatus = document.getElementById('toggle_status');
-    const toggleDescription = document.getElementById('toggle_description');
-
-    // 必要な要素が存在しない場合は何もしない
-    if (!toggle || !toggleLabel || !toggleSlider || !toggleIcon || !toggleStatus || !toggleDescription) {
-      return false;
-    }
-
-    // 既存のイベントリスナーを削除（重複防止）
-    if (toggleClickHandler) {
-      toggleLabel.removeEventListener('click', toggleClickHandler);
-    }
-
-    // 初期状態を設定
-    function updateToggleUI() {
-      if (toggle.checked) {
-        // 公開状態
-        toggleLabel.style.backgroundColor = '#28a745';
-        toggleSlider.style.transform = 'translateX(26px)';
-        toggleIcon.className = 'fas fa-globe';
-        toggleIcon.style.color = '#28a745';
-        toggleStatus.textContent = '公開';
-        toggleDescription.textContent = '他のユーザーがこのギフト記録を見ることができます';
-      } else {
-        // 非公開状態
-        toggleLabel.style.backgroundColor = '#6c757d';
-        toggleSlider.style.transform = 'translateX(0)';
-        toggleIcon.className = 'fas fa-lock';
-        toggleIcon.style.color = '#6c757d';
-        toggleStatus.textContent = '非公開';
-        toggleDescription.textContent = 'あなただけがこのギフト記録を見ることができます';
-      }
-    }
-
-    // 初期状態を適用
-    updateToggleUI();
-
-    // 新しいイベントハンドラーを作成
-    toggleClickHandler = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      // チェックボックスの状態を手動で切り替え
-      toggle.checked = !toggle.checked;
-      // UIを即座に更新
-      updateToggleUI();
-    };
-
-    // クリック時の処理を追加
-    toggleLabel.addEventListener('click', toggleClickHandler);
-    
-    // チェックボックス自体のchangeイベントも監視（フォールバック）
-    toggle.addEventListener('change', function() {
-      updateToggleUI();
-    });
-
-    return true;
-  }
-
-  function initializeGiftRecordForm() {
-    // 重複初期化を防ぐ
-    if (formInitialized) return;
-    
-    // トグルスイッチの初期化
-    const toggleInitialized = initializeToggleSwitch();
-    if (!toggleInitialized) {
-      return;
-    }
-
-    // 初期化完了をマーク
-    formInitialized = true;
-
-    // ギフト相手選択の処理（既存の機能）
-    const giftPeopleSelect = document.getElementById('gift_people_select');
-    const newGiftPersonFields = document.getElementById('new_gift_person_fields');
-    
-    if (giftPeopleSelect && newGiftPersonFields) {
-      giftPeopleSelect.addEventListener('change', function() {
-        if (this.value === 'new') {
-          newGiftPersonFields.style.display = 'block';
-        } else {
-          newGiftPersonFields.style.display = 'none';
-        }
-        
-        // ギフト相手選択変更後にトグルスイッチを再初期化
-        // DOMの変更完了を待ってから再初期化
-        setTimeout(function() {
-          initializeToggleSwitch();
-        }, 200);
-        
-        // さらに安全のため、少し遅れて再度実行
-        setTimeout(function() {
-          initializeToggleSwitch();
-        }, 500);
-      });
-    }
-    
-    // フォーム送信時のカスタムバリデーション
-    const form = giftPeopleSelect ? giftPeopleSelect.closest('form') : null;
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        // ギフト相手が選択されていない場合
-        if (giftPeopleSelect && (!giftPeopleSelect.value || giftPeopleSelect.value === '')) {
-          e.preventDefault();
-          
-          // HTML5ライクなバリデーションメッセージを表示
-          giftPeopleSelect.setCustomValidity('このフィールドを入力してください');
-          giftPeopleSelect.reportValidity();
-          
-          // フォーカスを当てる
-          giftPeopleSelect.focus();
-          return false;
-        } else {
-          // バリデーションメッセージをクリア
-          giftPeopleSelect.setCustomValidity('');
-        }
-      });
-      
-      // 選択が変更されたらバリデーションメッセージをクリア
-      if (giftPeopleSelect) {
-        giftPeopleSelect.addEventListener('change', function() {
-          this.setCustomValidity('');
-        });
-      }
-    }
-  }
-
-  // クリーンアップ関数
-  function cleanupGiftRecordForm() {
-    formInitialized = false;
-  }
-
-  // イベント選択のクイック設定（グローバル関数を初回のみ定義）
-  if (typeof window.setEventSelection === 'undefined') {
-    window.setEventSelection = function(eventId) {
-      const eventSelect = document.getElementById('gift_record_event_id');
-      if (eventSelect) {
-        eventSelect.value = eventId;
-      }
-    };
-  }
-
-  // 日付のクイック設定（グローバル関数を初回のみ定義）
-  if (typeof window.setGiftDate === 'undefined') {
-    window.setGiftDate = function(dateType) {
-      const dateField = document.getElementById('gift_record_gift_at');
-      if (dateField) {
-        const today = new Date();
-        let targetDate;
-        
-        switch(dateType) {
-          case 'today':
-            targetDate = today;
-            break;
-          case 'yesterday':
-            targetDate = new Date(today);
-            targetDate.setDate(today.getDate() - 1);
-            break;
-          case 'week_ago':
-            targetDate = new Date(today);
-            targetDate.setDate(today.getDate() - 7);
-            break;
-          default:
-            targetDate = today;
-        }
-        
-        dateField.value = targetDate.toISOString().split('T')[0];
-      }
-    };
-  }
-
-  // Turbo対応のイベントリスナー
-  document.addEventListener('turbo:load', initializeGiftRecordForm);
-  document.addEventListener('DOMContentLoaded', initializeGiftRecordForm);
-  
-  // ページ離脱時のクリーンアップ
-  document.addEventListener('turbo:before-visit', cleanupGiftRecordForm);
-})();
-</script>
 
