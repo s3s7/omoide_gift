@@ -69,5 +69,30 @@ RSpec.describe OmniauthCallbacksController, type: :controller do
         expect(flash[:notice]).to eq('ログインしました')
       end
     end
+
+    context 'サインイン済みユーザーがLINE連携する場合' do
+      let!(:user) { create(:user) }
+
+      before do
+        sign_in user
+      end
+
+      it '現在のユーザーにprovider/uidが紐づくこと' do
+        expect(user.provider).to be_nil
+        get :line
+        user.reload
+        expect(user.provider).to eq('line')
+        expect(user.uid).to eq('12345')
+        expect(response).to redirect_to(mypage_path)
+        expect(flash[:notice]).to eq('LINE連携が完了しました')
+      end
+
+      it '他ユーザーに既に紐づくLINEなら連携不可' do
+        create(:user, provider: 'line', uid: '12345', email: 'other@example.com', name: 'other', password: 'password123')
+        get :line
+        expect(response).to redirect_to(mypage_path)
+        expect(flash[:alert]).to eq('このLINEアカウントは既に他のユーザーに連携されています')
+      end
+    end
   end
 end

@@ -1,0 +1,9 @@
+:concurrency: 5
+:queues:
+  - default
+:schedule:
+  remind_notification_worker:
+    cron: "* * * * *"
+    class: "RemindNotificationWorker"
+    queue: default
+    description: "Send due LINE reminders every minute"

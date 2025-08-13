@@ -8,13 +8,13 @@
     </div>
 
     <!-- ハンバーガーメニュー -->
-    <div class="relative">
-      <button id="menu-toggle" class="focus:outline-none p-2">
+    <div class="relative" data-controller="hamburger-menu">
+      <button id="menu-toggle" class="focus:outline-none p-2" data-action="click->hamburger-menu#toggle" data-hamburger-menu-target="toggle">
         <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
         </svg>
       </button>
-      <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border" style="z-index: 9999;">
+      <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border" style="z-index: 9999;" data-hamburger-menu-target="menu">
 
         <% if user_signed_in? %>
           <%= link_to "マイページ", mypage_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>

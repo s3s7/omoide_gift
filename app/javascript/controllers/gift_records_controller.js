@@ -77,9 +77,18 @@ export default class extends Controller {
   }
 
   // トグルスイッチクリック時のアクション
-  togglePublicStatus() {
+  togglePublicStatus(event) {
     if (!this.hasPublicToggleTarget) return
-    
+    // label のデフォルト動作（関連付いた input の自動トグル）を抑止し、
+    // 二重トグルによる状態不一致を防ぐ
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault()
+      // 念のためバブリングも止める（他のクリックハンドラへの影響を防止）
+      if (typeof event.stopPropagation === 'function') {
+        event.stopPropagation()
+      }
+    }
+
     this.publicToggleTarget.checked = !this.publicToggleTarget.checked
     this.updateToggleUI()
   }
