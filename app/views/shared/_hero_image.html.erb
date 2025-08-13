@@ -1,7 +1,7 @@
 <!-- メインヒーロー画像セクション -->
 <section class="hero-image-section w-full relative">
   <!-- 画像コンテナ：ヘッダーにくっついて大幅に拡大表示 -->
-  <div class="w-full overflow-hidden shadow-2xl hero-container" style="height: 90vh; min-height: 750px; max-height: 1300px;">
+  <div class="w-full overflow-hidden shadow-2xl hero-container" style="height: 90dvh;">
     <%= image_tag "Group 3.png", 
         alt: "思い出ギフト - 花束のギフトイメージ", 
         class: "w-full h-full object-cover transition-all duration-700 opacity-0 transform scale-105",
@@ -51,10 +51,18 @@
   
   /* レスポンシブ対応 - 縦幅を大幅に拡大 */
   @media (max-width: 640px) {
+    /* モバイルは動的ビューポートを使用して全画面表示に近づける */
     .hero-image-section .hero-container {
-      height: 75vh !important;
-      min-height: 500px !important;
-      max-height: 700px !important;
+      height: 100dvh !important;
+      min-height: 100dvh !important;
+      max-height: none !important;
+    }
+    /* フルブリードのマージンハックを解除してはみ出しを防止 */
+    .hero-image-section {
+      margin-left: 0;
+      margin-right: 0;
+      width: 100%;
+      max-width: 100%;
     }
   }
   
@@ -68,7 +76,7 @@
   
   @media (min-width: 1025px) {
     .hero-image-section .hero-container {
-      height: 90vh !important;
+      height: 90dvh !important;
       min-height: 750px !important;
       max-height: 1300px !important;
     }
