@@ -1,20 +1,32 @@
 <!-- ギフト記録シェア確認モーダル -->
 <div id="share-confirmation-modal" 
+     data-controller="share-manager"
+     data-share-manager-dismiss-endpoint-value="/gift_records/dismiss_share"
+     data-share-manager-target="modal"
+     <% if defined?(@share_gift_record) && @share_gift_record.present? %>
+       <% item_name = @share_gift_record.item_name.presence %>
+       <% gift_person_name = @share_gift_record.gift_person&.name.presence %>
+       <% relationship_name = @share_gift_record.gift_person&.relationship&.name.presence %>
+       <% event_name = @share_gift_record.event&.name.presence %>
+       <% memo = @share_gift_record.memo.presence %>
+       <% if item_name %>data-share-manager-item-name-value="<%= h(item_name) %>"<% end %>
+       <% if gift_person_name %> data-share-manager-gift-person-name-value="<%= h(gift_person_name) %>"<% end %>
+       <% if relationship_name %> data-share-manager-relationship-name-value="<%= h(relationship_name) %>"<% end %>
+       <% if event_name %> data-share-manager-event-name-value="<%= h(event_name) %>"<% end %>
+       <% if memo %> data-share-manager-memo-value="<%= h(memo) %>"<% end %>
+     <% end %>
      class="fixed inset-0 z-50 overflow-y-auto hidden" 
      aria-labelledby="share-modal-title" 
      role="dialog" 
      aria-modal="true">
   <!-- 背景オーバーレイ -->
-  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+  <div class="flex items-center justify-center min-h-screen p-4">
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" 
          aria-hidden="true"
-         onclick="closeShareModal()"></div>
-
-    <!-- モーダル位置調整用のスペーサー -->
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+         data-action="click->share-manager#close"></div>
 
     <!-- モーダルコンテンツ -->
-    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+    <div class="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all w-full max-w-lg">
       <!-- ヘッダー -->
       <div class="bg-gradient-to-r from-blue-500 to-purple-600 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
         <div class="sm:flex sm:items-start">
@@ -37,7 +49,7 @@
       <!-- メインコンテンツ -->
       <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
         <!-- ギフト記録のプレビュー -->
-        <div id="share-gift-preview" class="mb-4 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+        <div id="share-gift-preview" data-share-manager-target="preview" class="mb-4 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
           <!-- JavaScriptで動的に内容が挿入される -->
         </div>
 
@@ -48,12 +60,12 @@
             シェアする内容
           </label>
           <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p id="share-text-preview" class="text-sm text-gray-800">
+            <p id="share-text-preview" data-share-manager-target="textPreview" class="text-sm text-gray-800">
               <!-- JavaScriptで動的に生成される -->
             </p>
             <div class="mt-2 text-xs text-gray-500">
               <i class="fas fa-info-circle mr-1"></i>
-              文字数: <span id="share-text-length">0</span>/280
+              文字数: <span id="share-text-length" data-share-manager-target="lengthCounter">0</span>/280
             </div>
           </div>
         </div>
@@ -82,13 +94,13 @@
       <!-- フッター（ボタン） -->
       <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
         <button type="button" 
-                onclick="shareToX()" 
+                data-action="click->share-manager#shareToX" 
                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
           <i class="fab fa-x-twitter mr-2"></i>
           Xでシェアする
         </button>
         <button type="button" 
-                onclick="closeShareModal()" 
+                data-action="click->share-manager#close" 
                 class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
           <i class="fas fa-times mr-2"></i>
           今はしない

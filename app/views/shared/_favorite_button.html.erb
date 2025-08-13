@@ -3,20 +3,21 @@
   <% favorited = Favorite.favorited_by_user?(current_user, gift_record) %>
   <% favorites_count = Favorite.favorites_count_for_gift_record(gift_record) %>
   
-  <div class="favorite-button-container" data-gift-record-id="<%= gift_record.id %>">
+  <div class="favorite-button-container" data-controller="favorites" data-favorites-record-id-value="<%= gift_record.id %>" data-gift-record-id="<%= gift_record.id %>">
     <button type="button" 
             class="favorite-button <%= favorited ? 'favorited' : '' %>"
             data-favorited="<%= favorited %>"
-            onclick="event.stopPropagation(); toggleFavorite(<%= gift_record.id %>);"
+            data-action="click->favorites#toggle"
+            data-favorites-target="button"
             title="<%= favorited ? 'お気に入りから削除' : 'お気に入りに追加' %>"
             aria-label="<%= favorited ? 'お気に入りから削除' : 'お気に入りに追加' %>">
       
       <!-- ハートアイコン -->
-      <i class="favorite-heart <%= favorited ? 'fas' : 'far' %> fa-heart"></i>
+      <i class="favorite-heart <%= favorited ? 'fas' : 'far' %> fa-heart" data-favorites-target="heart"></i>
       
       <!-- お気に入り数（1以上の場合のみ表示） -->
       <% if favorites_count > 0 %>
-        <span class="favorite-count"><%= favorites_count %></span>
+        <span class="favorite-count" data-favorites-target="count"><%= favorites_count %></span>
       <% end %>
     </button>
   </div>
