@@ -22,14 +22,17 @@
     </button>
   </div>
 <% else %>
-  <%# 未ログインユーザーには静的なハートアイコンのみ表示 %>
   <% favorites_count = Favorite.favorites_count_for_gift_record(gift_record) %>
-  <% if favorites_count > 0 %>
-    <div class="favorite-button-container static">
-      <div class="favorite-button-static">
-        <i class="far fa-heart text-gray-400"></i>
-        <span class="favorite-count-static"><%= favorites_count %></span>
-      </div>
-    </div>
-  <% end %>
+  <div class="favorite-button-container" data-controller="favorites" data-favorites-login-url-value="<%= new_user_session_path %>">
+    <button type="button"
+            class="favorite-button"
+            data-action="click->favorites#requireLogin"
+            title="ログインが必要です"
+            aria-label="ログインが必要です">
+      <i class="favorite-heart far fa-heart"></i>
+      <% if favorites_count > 0 %>
+        <span class="favorite-count" data-favorites-target="count"><%= favorites_count %></span>
+      <% end %>
+    </button>
+  </div>
 <% end %>

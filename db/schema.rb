@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_07_25_060808) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_13_070000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,6 +34,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_25_060808) do
     t.index ["gift_record_id"], name: "index_favorites_on_gift_record_id"
     t.index ["user_id", "gift_record_id"], name: "index_favorites_on_user_id_and_gift_record_id", unique: true
     t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
+  create_table "gift_item_categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "gift_people", force: :cascade do |t|
@@ -64,8 +70,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_25_060808) do
     t.datetime "updated_at", null: false
     t.bigint "gift_people_id", null: false
     t.bigint "age_id"
+    t.bigint "gift_item_category_id"
     t.index ["age_id"], name: "index_gift_records_on_age_id"
     t.index ["event_id"], name: "index_gift_records_on_event_id"
+    t.index ["gift_item_category_id"], name: "index_gift_records_on_gift_item_category_id"
     t.index ["gift_people_id"], name: "index_gift_records_on_gift_people_id"
     t.index ["user_id"], name: "index_gift_records_on_user_id"
   end
@@ -109,6 +117,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_07_25_060808) do
   add_foreign_key "gift_people", "users"
   add_foreign_key "gift_records", "ages"
   add_foreign_key "gift_records", "events"
+  add_foreign_key "gift_records", "gift_item_categories"
   add_foreign_key "gift_records", "gift_people", column: "gift_people_id"
   add_foreign_key "gift_records", "users"
   add_foreign_key "reminds", "gift_people"
