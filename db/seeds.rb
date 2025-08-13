@@ -75,6 +75,38 @@ end
 
 puts "年齢データの作成完了: #{Age.count}件の年齢グループが存在します"
 
+# ===== アイテムカテゴリーの作成 =====
+puts "アイテムカテゴリーを作成中..."
+
+gift_item_categories = [
+  'ドリンク',
+  'スイーツ',
+  'フード',
+  'お酒',
+  'ビューティー・ヘルスケア',
+  'インテリア・雑貨',
+  '花',
+  'キッチン・家事',
+  'ファッション',
+  'スポーツ',
+  'ベビー・キッズ',
+  'ペット',
+  'エンタメ・趣味',
+  'ギフトカード',
+  'レジャー施設',
+  'トラベル・ホテル',
+  'カタログギフト',
+  '体験ギフト',
+  '写真'
+]
+
+gift_item_categories.each do |name|
+  GiftItemCategory.find_or_create_by(name: name)
+end
+
+puts "アイテムカテゴリーの作成完了: #{GiftItemCategory.count}件のカテゴリが存在します"
+
+
 # ===== データ整合性チェック =====
 puts "\n=== データ整合性チェック ==="
 puts "Events count: #{Event.count}"

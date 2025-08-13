@@ -444,6 +444,38 @@
     <% end %>
   </div>
 
+  <!-- アイテムカテゴリー選択 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :gift_item_category_id, "アイテムカテゴリー", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <%= f.collection_select :gift_item_category_id,
+          GiftItemCategory.order(:name), :id, :name,
+          { include_blank: "選択してください" },
+          {
+            style: "
+              width: 100%;
+              padding: 14px 16px;
+              border: 2px solid #e1e5e9;
+              border-radius: 8px;
+              font-size: 16px;
+              box-sizing: border-box;
+              transition: border-color 0.3s ease;
+            ",
+            id: "gift_record_gift_item_category_id"
+          }
+    %>
+
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      任意：アイテムのカテゴリーを選択してください
+    </div>
+  </div>
+
   <!-- ギフト金額入力 -->
   <div style="margin-bottom: 24px; text-align: left;">
     <%= f.label :amount, "金額", style: "

@@ -1,0 +1,2 @@
+class GiftItemCategory < ApplicationRecord
+end

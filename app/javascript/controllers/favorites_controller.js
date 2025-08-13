@@ -4,10 +4,22 @@ import { getAPIHeaders, showToast } from "../utils"
 // Connects to data-controller="favorites"
 export default class extends Controller {
   static targets = ["button", "heart", "count"]
-  static values = { recordId: Number }
+  static values = { recordId: Number, loginUrl: String }
 
   connect() {
     // No-op: click handled via action on button
+  }
+
+  requireLogin(event) {
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    showToast('お気に入りするにはログインが必要です。', 'error')
+    // ここで自動リダイレクトしたい場合は以下を有効化
+    // if (this.hasLoginUrlValue && this.loginUrlValue) {
+    //   setTimeout(() => { window.location.href = this.loginUrlValue }, 1200)
+    // }
   }
 
   async toggle(event) {
