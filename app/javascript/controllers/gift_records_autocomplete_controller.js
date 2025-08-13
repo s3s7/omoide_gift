@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { getAPIHeaders, escapeHtml, debounce } from "../utils"
 
 // Connects to data-controller="gift-records-autocomplete"
 export default class extends Controller {
@@ -12,6 +13,7 @@ export default class extends Controller {
 
   connect() {
     this.searchTimeoutId = null
+    this.debouncedSearch = debounce((q) => this.performSearch(q), this.debounceValue)
     this.currentAbortController = null
     this.boundOutsideClick = this.handleOutsideClick.bind(this)
     document.addEventListener("click", this.boundOutsideClick)
@@ -36,19 +38,15 @@ export default class extends Controller {
       this.currentAbortController.abort()
       this.currentAbortController = null
     }
-    if (this.searchTimeoutId) {
-      clearTimeout(this.searchTimeoutId)
-      this.searchTimeoutId = null
-    }
+    if (this.debouncedSearch && this.debouncedSearch.cancel) this.debouncedSearch.cancel()
   }
 
   // Arrow functions to preserve 'this'
   handleInput = (event) => {
     const query = (event.target.value || "").trim()
-    if (this.searchTimeoutId) clearTimeout(this.searchTimeoutId)
 
     if (query.length >= this.minLengthValue) {
-      this.searchTimeoutId = setTimeout(() => this.performSearch(query), this.debounceValue)
+      this.debouncedSearch(query)
     } else {
       this.hideDropdown()
     }
@@ -113,7 +111,7 @@ export default class extends Controller {
     try {
       const response = await fetch(url, {
         signal: this.currentAbortController.signal,
-        headers: this.defaultHeaders()
+        headers: getAPIHeaders()
       })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
@@ -130,18 +128,7 @@ export default class extends Controller {
     }
   }
 
-  defaultHeaders() {
-    return {
-      'Accept': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': this.csrfToken()
-    }
-  }
-
-  csrfToken() {
-    const meta = document.querySelector('meta[name="csrf-token"]')
-    return meta ? meta.getAttribute('content') : ''
-  }
+  // headers: use shared getAPIHeaders
 
   displayResults(results) {
     if (!this.hasDropdownTarget) return
@@ -170,7 +157,7 @@ export default class extends Controller {
   }
 
   buildItemHTML(result) {
-    const displayText = this.escapeHtml(result.display_text || result.name || '')
+    const displayText = escapeHtml(result.display_text || result.name || '')
     const highlight = result.search_highlight || displayText
     const typeIcon = this.iconFor(result.type)
     const typeLabel = this.labelFor(result.type)
@@ -239,9 +226,5 @@ export default class extends Controller {
     }
   }
 
-  escapeHtml(text) {
-    const div = document.createElement('div')
-    div.textContent = text
-    return div.innerHTML
-  }
+  // escapeHtml: use shared utils.escapeHtml
 }

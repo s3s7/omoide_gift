@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { getAPIHeaders, escapeHtml } from "../utils"
 
 // Connects to data-controller="share-manager"
 export default class extends Controller {
@@ -73,11 +74,7 @@ export default class extends Controller {
       try {
         await fetch(this.dismissEndpointValue, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "X-CSRF-Token": this.csrfToken()
-          },
+          headers: getAPIHeaders(),
           body: JSON.stringify({ gift_record_id: id })
         })
       } catch (_) {
@@ -122,13 +119,13 @@ export default class extends Controller {
           <i class=\"fas fa-gift text-primary\"></i>
         </div>
         <div class=\"flex-1 min-w-0\">
-          <div class=\"text-sm font-medium text-gray-900\">${this.escapeHtml(record.itemName || "未設定")}</div>
+          <div class=\"text-sm font-medium text-gray-900\">${escapeHtml(record.itemName || "未設定")}</div>
           <div class=\"text-xs text-gray-500 mt-1\">
             <span class=\"inline-flex items-center\">
-              <i class=\"fas fa-user mr-1\"></i>${this.escapeHtml(record.giftPersonName || "未設定")}
+              <i class=\"fas fa-user mr-1\"></i>${escapeHtml(record.giftPersonName || "未設定")}
             </span>
             <span class=\"ml-3 inline-flex items-center\">
-              <i class=\"fas fa-calendar mr-1\"></i>${this.escapeHtml(record.eventName || "未設定")}
+              <i class=\"fas fa-calendar mr-1\"></i>${escapeHtml(record.eventName || "未設定")}
             </span>
           </div>
         </div>
@@ -140,7 +137,7 @@ export default class extends Controller {
   updateTextPreview() {
     if (!this.hasTextPreviewTarget || !this.hasLengthCounterTarget) return
     const text = this.generateShareText(this.shareGiftRecord || {})
-    this.textPreviewTarget.innerHTML = this.escapeHtml(text).replace(/\n/g, "<br>")
+    this.textPreviewTarget.innerHTML = escapeHtml(text).replace(/\n/g, "<br>")
     this.lengthCounterTarget.textContent = text.length
     if (text.length > this.maxLengthValue) {
       this.lengthCounterTarget.classList.add("text-red-600")
