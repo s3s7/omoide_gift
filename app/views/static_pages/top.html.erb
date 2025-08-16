@@ -3,9 +3,9 @@
 <% content_for(:twitter_image) do %>
 <%
   begin
-    asset_url('Group 3.png')
+    asset_url('Group 6.png')
   rescue => e
-    Rails.logger.error "Asset path resolution failed for gift_flower.png: #{e.message}"
+    Rails.logger.error "Asset path resolution failed for image 26.png: #{e.message}"
     "#{request.base_url}/assets/gift-card-image.png"
   end
 %>

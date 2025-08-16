@@ -1,4 +1,4 @@
-<div style="
+<%# <div style="
   width: 100vw;
   min-height: 80vh;
   display: flex;
@@ -11,14 +11,14 @@
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-">
+"> %>
   <div style="
     width: 90%;
     max-width: 400px;
     padding: 40px 30px;
-    background-color: white;
+    /* background-color: white; */
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
     text-align: center;
     margin: 0 auto;
     position: relative;
@@ -31,7 +31,12 @@
       color: #333;
       line-height: 1.4;
     ">アカウントにログイン</h2>
-
+    <%- if devise_mapping.omniauthable? %>
+      <%- resource_class.omniauth_providers.each do |provider| %>
+        <%= button_to image_tag('line_login.png', alt: "#{OmniAuth::Utils.camelize(provider)}でログイン"), omniauth_authorize_path(resource_name, provider), data: { turbo: false } %>
+        <br />
+      <% end %>
+    <% end %>
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
       <div style="margin-bottom: 24px; text-align: left;">
         <%= f.label :メールアドレス, style: "
@@ -69,7 +74,12 @@
           box-sizing: border-box;
           transition: border-color 0.3s ease;
         " %>
+        <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+          <%= link_to "パスワードを忘れた方はこちら", new_password_path(resource_name) , class: "text-sm"  %><br />
+        <% end %>
       </div>
+
+     
 
       <% if devise_mapping.rememberable? %>
         <div style="margin-bottom: 32px; text-align: left;">
@@ -102,7 +112,15 @@
       </div>
     <% end %>
 
-    <div style="border-top: 1px solid #e9ecef; padding-top: 24px;">
+    <div style="border-top: 1px solid #FED7AA; padding-top: 24px;">
+      <h2 style="
+      margin: 0 0 40px 0;
+      padding: 0;
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      line-height: 1.4;
+    ">アカウントをお持ちでない方</h2>
       <%= render "devise/shared/links" %>
     </div>
   </div>
