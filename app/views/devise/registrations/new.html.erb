@@ -8,14 +8,8 @@
     margin: 0 auto;
     position: relative;
   ">
-    <h2 style="
-      margin: 0 0 40px 0;
-      padding: 0;
-      font-size: 28px;
-      font-weight: 600;
-      color: #333;
-      line-height: 1.4;
-    ">新規登録</h2>
+
+  <h2 class="text-2xl font-semibold text-gray-800 mb-10  ">新規登録</h2>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
       <%= render "devise/shared/error_messages", resource: resource %>
@@ -40,7 +34,7 @@
           margin-top: 8px;
         " %>
         <small style="display: block; margin-top: 4px; color: #6c757d; font-size: 12px;">
-          20文字以内で入力してください。他のユーザーに表示される名前です。
+          10文字以内で入力してください。他のユーザーに表示される名前です。
         </small>
       </div>
 
