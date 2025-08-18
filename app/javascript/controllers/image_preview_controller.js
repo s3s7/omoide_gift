@@ -7,7 +7,13 @@ export default class extends Controller {
     "uploadPrompt", 
     "previewContainer", 
     "previewGrid", 
-    "imageCount"
+    "imageCount",
+    "deleteImageContainer",
+    "existingImagesContainer",
+    "existingImageCount",
+    "existingImagesGrid",
+    "existingImageItem",
+    "restoreAllButton"
   ]
 
   static values = {
@@ -19,9 +25,19 @@ export default class extends Controller {
   connect() {
     this.selectedFiles = []
     this.objectUrls = [] // メモリリーク防止のためURLを管理
+    this.deleteImageIds = [] // 削除対象の既存画像IDを管理
     
     // キーボードアクセシビリティ
     this.dropZoneTarget.addEventListener('keydown', this.handleKeyDown.bind(this))
+    
+    // フォーム送信前に隠しフィールドを確実に設定
+    const form = this.element.closest('form')
+    if (form) {
+      form.addEventListener('submit', (event) => {
+        console.log('フォーム送信直前 - 削除対象IDs:', this.deleteImageIds)
+        this.updateDeleteImageIds()  // 送信前に最新の削除IDを反映
+      })
+    }
   }
 
   disconnect() {
@@ -250,5 +266,160 @@ export default class extends Controller {
   cleanupObjectUrls() {
     this.objectUrls.forEach(url => URL.revokeObjectURL(url))
     this.objectUrls = []
+  }
+
+  // === 既存画像削除機能 ===
+
+  // 既存画像を削除（見た目上）
+  deleteExistingImage(event) {
+    const imageId = event.currentTarget.dataset.imageId
+    const imageItem = event.currentTarget.closest('[data-image-preview-target="existingImageItem"]')
+    
+    if (imageId && imageItem) {
+      // 削除対象IDに追加
+      if (!this.deleteImageIds.includes(imageId)) {
+        this.deleteImageIds.push(imageId)
+        this.updateDeleteImageIds()
+      }
+      
+      // 見た目上削除（非表示にする）
+      imageItem.style.opacity = '0.3'
+      imageItem.style.filter = 'grayscale(100%)'
+      imageItem.classList.add('deleted-image')
+      
+      // 削除ボタンを復元ボタンに変更
+      const deleteButton = imageItem.querySelector('button')
+      if (deleteButton) {
+        deleteButton.innerHTML = '<i class="fas fa-undo"></i>'
+        deleteButton.className = 'w-6 h-6 bg-green-500 hover:bg-green-600 text-white text-xs rounded-full flex items-center justify-center shadow-lg transition-colors duration-200'
+        deleteButton.setAttribute('data-action', 'click->image-preview#restoreExistingImage')
+        deleteButton.setAttribute('aria-label', '画像を復元')
+      }
+      
+      this.updateExistingImageCount()
+      this.toggleRestoreAllButton()
+    }
+  }
+
+  // 既存画像を復元（個別）
+  restoreExistingImage(event) {
+    const imageId = event.currentTarget.dataset.imageId
+    const imageItem = event.currentTarget.closest('[data-image-preview-target="existingImageItem"]')
+    
+    if (imageId && imageItem) {
+      // 削除対象IDから除去
+      const index = this.deleteImageIds.indexOf(imageId)
+      if (index > -1) {
+        this.deleteImageIds.splice(index, 1)
+        this.updateDeleteImageIds()
+      }
+      
+      // 見た目を復元
+      imageItem.style.opacity = '1'
+      imageItem.style.filter = 'none'
+      imageItem.classList.remove('deleted-image')
+      
+      // 復元ボタンを削除ボタンに戻す
+      const restoreButton = imageItem.querySelector('button')
+      if (restoreButton) {
+        restoreButton.innerHTML = '<i class="fas fa-times"></i>'
+        restoreButton.className = 'w-6 h-6 bg-red-500 hover:bg-red-600 text-white text-xs rounded-full flex items-center justify-center shadow-lg transition-colors duration-200'
+        restoreButton.setAttribute('data-action', 'click->image-preview#deleteExistingImage')
+        restoreButton.setAttribute('aria-label', '画像を削除')
+      }
+      
+      this.updateExistingImageCount()
+      this.toggleRestoreAllButton()
+    }
+  }
+
+  // すべての既存画像を復元
+  restoreAllExistingImages() {
+    const deletedItems = this.existingImagesGridTarget.querySelectorAll('.deleted-image')
+    
+    deletedItems.forEach(item => {
+      const imageId = item.dataset.imageId
+      if (imageId) {
+        // 削除対象IDから除去
+        const index = this.deleteImageIds.indexOf(imageId)
+        if (index > -1) {
+          this.deleteImageIds.splice(index, 1)
+        }
+        
+        // 見た目を復元
+        item.style.opacity = '1'
+        item.style.filter = 'none'
+        item.classList.remove('deleted-image')
+        
+        // 復元ボタンを削除ボタンに戻す
+        const restoreButton = item.querySelector('button')
+        if (restoreButton) {
+          restoreButton.innerHTML = '<i class="fas fa-times"></i>'
+          restoreButton.className = 'w-6 h-6 bg-red-500 hover:bg-red-600 text-white text-xs rounded-full flex items-center justify-center shadow-lg transition-colors duration-200'
+          restoreButton.setAttribute('data-action', 'click->image-preview#deleteExistingImage')
+          restoreButton.setAttribute('aria-label', '画像を削除')
+        }
+      }
+    })
+    
+    this.updateDeleteImageIds()
+    this.updateExistingImageCount()
+    this.toggleRestoreAllButton()
+  }
+
+  // 削除対象IDを隠しフィールドに反映
+  updateDeleteImageIds() {
+    // デバッグ情報をコンソールに出力
+    console.log('削除対象IDs:', this.deleteImageIds)
+    
+    // deleteImageContainerTargetが存在するかチェック
+    if (!this.hasDeleteImageContainerTarget) {
+      console.error('deleteImageContainer target not found')
+      return
+    }
+    
+    // 既存の隠しフィールドをクリア
+    this.deleteImageContainerTarget.innerHTML = ''
+    
+    // 削除対象IDがある場合のみ隠しフィールドを作成
+    this.deleteImageIds.forEach(imageId => {
+      console.log('Creating hidden field for imageId:', imageId)
+      
+      const hiddenField = document.createElement('input')
+      hiddenField.type = 'hidden'
+      hiddenField.name = 'gift_record[delete_image_ids][]'
+      hiddenField.value = imageId
+      
+      // デバッグ用の属性を追加
+      hiddenField.setAttribute('data-debug', 'delete-image-id')
+      
+      this.deleteImageContainerTarget.appendChild(hiddenField)
+    })
+    
+    // 作成された隠しフィールドの確認
+    const createdFields = this.deleteImageContainerTarget.querySelectorAll('input[type="hidden"]')
+    console.log('作成された隠しフィールド数:', createdFields.length)
+  }
+
+  // 既存画像数表示を更新
+  updateExistingImageCount() {
+    if (this.hasExistingImageCountTarget) {
+      const totalImages = this.existingImageItemTargets.length
+      const deletedImages = this.deleteImageIds.length
+      const remainingImages = totalImages - deletedImages
+      
+      this.existingImageCountTarget.textContent = remainingImages
+    }
+  }
+
+  // 「すべて復元」ボタンの表示/非表示を切り替え
+  toggleRestoreAllButton() {
+    if (this.hasRestoreAllButtonTarget) {
+      if (this.deleteImageIds.length > 0) {
+        this.restoreAllButtonTarget.classList.remove('hidden')
+      } else {
+        this.restoreAllButtonTarget.classList.add('hidden')
+      }
+    }
   }
 }
