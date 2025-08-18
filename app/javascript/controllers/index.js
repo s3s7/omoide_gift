@@ -33,3 +33,9 @@ application.register("event-selector", EventSelectorController)
 
 import GiftDateSelectorController from "./gift_date_selector_controller"
 application.register("gift-date-selector", GiftDateSelectorController)
+
+import ImagePreviewController from "./image_preview_controller"
+application.register("image-preview", ImagePreviewController)
+
+import ImageGalleryController from "./image_gallery_controller"
+application.register("image-gallery", ImageGalleryController)
