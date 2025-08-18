@@ -5,6 +5,9 @@ class GiftRecord < ApplicationRecord
   belongs_to :gift_person, foreign_key: "gift_people_id"
   has_many :favorites, dependent: :destroy
   belongs_to :gift_item_category, optional: true
+  
+  # Active Storage - 複数画像対応
+  has_many_attached :images
 
   # 必須フィールドのバリデーション（統一されたエラーメッセージ）
   validates :item_name, presence: { message: "を入力してください" }, length: { maximum: 30 }
@@ -19,6 +22,7 @@ class GiftRecord < ApplicationRecord
   # カスタムバリデーション
   validate :gift_at_is_valid_date
   validate :gift_at_is_reasonable_date
+  validate :images_validation
 
   private
 
@@ -71,6 +75,32 @@ class GiftRecord < ApplicationRecord
     errors.add(:event_id, "イベントの確認中にエラーが発生しました")
   end
 
+  # 画像アップロードのバリデーション
+  def images_validation
+    return unless images.attached?
+
+    # 枚数制限チェック（5枚まで）
+    if images.count > 5
+      errors.add(:images, "は5枚まで添付できます")
+      return
+    end
+
+    images.each_with_index do |image, index|
+      # ファイル形式チェック
+      unless image.content_type.in?(%w[image/jpeg image/jpg image/png image/webp])
+        errors.add(:images, "#{index + 1}枚目: JPEG、PNG、WEBP形式のファイルのみアップロードできます")
+      end
+
+      # ファイルサイズチェック（10MBまで）
+      if image.blob.byte_size > 10.megabytes
+        errors.add(:images, "#{index + 1}枚目: ファイルサイズは10MB以下にしてください")
+      end
+    end
+  rescue StandardError => e
+    Rails.logger.error "Images validation error: #{e.message}"
+    errors.add(:images, "画像の検証中にエラーが発生しました")
+  end
+
   public
 
   # スコープ（クエリの再利用性と可読性向上）
@@ -95,5 +125,18 @@ class GiftRecord < ApplicationRecord
 
   def display_item_name
     item_name.presence || "未設定"
+  end
+
+  # 画像関連のヘルパーメソッド
+  def main_image
+    images.attached? ? images.first : nil
+  end
+
+  def has_images?
+    images.attached? && images.any?
+  end
+
+  def images_count
+    images.attached? ? images.count : 0
   end
 end

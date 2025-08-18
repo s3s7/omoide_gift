@@ -201,10 +201,108 @@
         </div>
       <% end %>
 
-      <!-- ギフト画像（将来実装用） -->
-      <%# if @gift_record.gift_image.present? %>
-        <!-- 画像表示エリア -->
-      <%# end %>
+      <!-- ギフト画像 -->
+      <% if @gift_record.has_images? %>
+        <div class="mt-8" data-controller="image-gallery">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <i class="fas fa-images text-green-500 mr-2"></i>
+            ギフト画像
+            <span class="ml-2 text-sm font-normal text-gray-500">
+              (<%= @gift_record.images_count %>枚)
+            </span>
+          </h2>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% @gift_record.images.each_with_index do |image, index| %>
+              <div class="relative group cursor-pointer rounded-lg overflow-hidden bg-gray-100 border border-gray-200 hover:shadow-lg transition-shadow duration-200"
+                   data-action="click->image-gallery#openModal"
+                   data-index="<%= index %>"
+                   role="button"
+                   tabindex="0"
+                   aria-label="画像を拡大表示 - <%= index + 1 %>枚目">
+                
+                <!-- 画像 -->
+                <div class="aspect-square">
+                  <%= image_tag image.variant(resize_to_fill: [300, 300]), 
+                      class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-200",
+                      alt: "ギフト画像 #{index + 1}",
+                      loading: "lazy" %>
+                </div>
+                
+                <!-- オーバーレイ -->
+                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
+                  <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div class="bg-white bg-opacity-90 rounded-full p-2">
+                      <i class="fas fa-search-plus text-gray-700"></i>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 画像番号 -->
+                <div class="absolute top-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                  <%= index + 1 %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          
+          <!-- 画像モーダル -->
+          <div data-image-gallery-target="modal" 
+               class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4"
+               data-action="click->image-gallery#closeModal keydown->image-gallery#handleKeydown">
+            
+            <div class="relative max-w-4xl max-h-full">
+              <!-- 閉じるボタン -->
+              <button type="button" 
+                      class="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-70 transition-all"
+                      data-action="click->image-gallery#closeModal"
+                      aria-label="画像を閉じる">
+                <i class="fas fa-times text-lg"></i>
+              </button>
+              
+              <!-- ナビゲーションボタン -->
+              <% if @gift_record.images_count > 1 %>
+                <!-- 前の画像 -->
+                <button type="button" 
+                        class="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 text-white rounded-full p-3 hover:bg-opacity-70 transition-all"
+                        data-action="click->image-gallery#previousImage"
+                        data-image-gallery-target="prevButton"
+                        aria-label="前の画像">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <!-- 次の画像 -->
+                <button type="button" 
+                        class="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 text-white rounded-full p-3 hover:bg-opacity-70 transition-all"
+                        data-action="click->image-gallery#nextImage"
+                        data-image-gallery-target="nextButton"
+                        aria-label="次の画像">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              <% end %>
+              
+              <!-- 画像表示エリア -->
+              <div class="flex items-center justify-center max-h-full">
+                <img data-image-gallery-target="modalImage" 
+                     class="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                     alt="拡大表示中の画像">
+              </div>
+              
+              <!-- 画像情報 -->
+              <div class="absolute bottom-4 left-4 right-4 bg-black bg-opacity-50 text-white p-3 rounded-lg">
+                <div class="flex justify-between items-center text-sm">
+                  <span data-image-gallery-target="imageInfo">
+                    画像 1 / <%= @gift_record.images_count %>
+                  </span>
+                  <span class="text-xs text-gray-300">
+                    ESCキーまたはクリックで閉じる
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
 
     <!-- フッター -->
