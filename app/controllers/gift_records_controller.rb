@@ -229,15 +229,76 @@ class GiftRecordsController < ApplicationController
   end
 
   def update
-    if @gift_record.update(gift_record_params)
+    # デバッグ: 受信したパラメータをログ出力
+    Rails.logger.debug "=== GiftRecord Update Debug ==="
+    Rails.logger.debug "All params: #{params.inspect}"
+    Rails.logger.debug "Gift record params: #{params[:gift_record].inspect}"
+    Rails.logger.debug "Delete image IDs: #{params.dig(:gift_record, :delete_image_ids).inspect}"
+    Rails.logger.debug "Current images count: #{@gift_record.images.count}"
+    Rails.logger.debug "================================"
+
+    # 削除対象画像の処理（バリデーション前に実行）
+    delete_image_ids = params.dig(:gift_record, :delete_image_ids)
+    if delete_image_ids.present?
+      Rails.logger.debug "処理する削除対象画像ID: #{delete_image_ids.inspect}"
+
+      delete_image_ids.each do |image_id|
+        next if image_id.blank?
+
+        Rails.logger.debug "削除対象画像ID: #{image_id}"
+
+        # セキュリティ：この記録に属する画像かチェック
+        image = @gift_record.images.find_by(id: image_id)
+        if image
+          Rails.logger.debug "画像を削除: #{image.id}"
+          image.purge_later  # 非同期で削除（パフォーマンス向上）
+        else
+          Rails.logger.debug "削除対象画像が見つからない: #{image_id}"
+        end
+      end
+    else
+      Rails.logger.debug "削除対象画像なし"
+    end
+
+    # 新しい画像を取得（既存画像は保持するため、別途処理）
+    new_images = params.dig(:gift_record, :images)
+    Rails.logger.debug "New images: #{new_images.inspect}"
+
+    # 画像以外のフィールドを更新（imagesとdelete_image_idsを除外）
+    update_params = gift_record_params.except(:images, :delete_image_ids)
+    Rails.logger.debug "Update params (without images): #{update_params.inspect}"
+
+    if @gift_record.update(update_params)
+      # 新しい画像がある場合のみ追加（既存画像は保持）
+      if new_images.present?
+        # 空の要素を除外して有効な画像のみを取得
+        valid_new_images = new_images.select { |img| img.present? && img.respond_to?(:tempfile) }
+        Rails.logger.debug "Valid new images count: #{valid_new_images.count}"
+
+        if valid_new_images.any?
+          # attachを使用して既存画像に追加
+          @gift_record.images.attach(valid_new_images)
+          Rails.logger.debug "新しい画像を追加しました"
+        end
+      end
+
+      Rails.logger.debug "更新後の画像数: #{@gift_record.images.count}"
       flash_success(:updated, item: GiftRecord.model_name.human)
       redirect_to @gift_record
     else
+      Rails.logger.debug "更新失敗: #{@gift_record.errors.full_messages}"
       @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
       prepare_events_for_form
       flash.now[:alert] = t("defaults.flash_message.not_updated", item: GiftRecord.model_name.human)
       render :edit, status: :unprocessable_entity
     end
+  rescue StandardError => e
+    Rails.logger.error "GiftRecord update error: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
+    prepare_events_for_form
+    flash.now[:alert] = "更新中にエラーが発生しました。再度お試しください。"
+    render :edit, status: :unprocessable_entity
   end
 
   def destroy
@@ -349,13 +410,14 @@ class GiftRecordsController < ApplicationController
     render json: { success: false, error: "Internal server error" }, status: :internal_server_error
   end
 
+
   private
 
   def gift_record_params
     params.require(:gift_record).permit(
       :title, :description, :body,
       :gift_people_id, :memo, :item_name, :amount, :gift_at, :event_id, :is_public,
-      :gift_item_category_id, images: []
+      :gift_item_category_id, images: [], delete_image_ids: []
     )
   end
 
