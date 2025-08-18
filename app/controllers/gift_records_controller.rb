@@ -241,12 +241,12 @@ class GiftRecordsController < ApplicationController
     delete_image_ids = params.dig(:gift_record, :delete_image_ids)
     if delete_image_ids.present?
       Rails.logger.debug "処理する削除対象画像ID: #{delete_image_ids.inspect}"
-      
+
       delete_image_ids.each do |image_id|
         next if image_id.blank?
-        
+
         Rails.logger.debug "削除対象画像ID: #{image_id}"
-        
+
         # セキュリティ：この記録に属する画像かチェック
         image = @gift_record.images.find_by(id: image_id)
         if image
@@ -263,25 +263,25 @@ class GiftRecordsController < ApplicationController
     # 新しい画像を取得（既存画像は保持するため、別途処理）
     new_images = params.dig(:gift_record, :images)
     Rails.logger.debug "New images: #{new_images.inspect}"
-    
+
     # 画像以外のフィールドを更新（imagesとdelete_image_idsを除外）
     update_params = gift_record_params.except(:images, :delete_image_ids)
     Rails.logger.debug "Update params (without images): #{update_params.inspect}"
-    
+
     if @gift_record.update(update_params)
       # 新しい画像がある場合のみ追加（既存画像は保持）
       if new_images.present?
         # 空の要素を除外して有効な画像のみを取得
         valid_new_images = new_images.select { |img| img.present? && img.respond_to?(:tempfile) }
         Rails.logger.debug "Valid new images count: #{valid_new_images.count}"
-        
+
         if valid_new_images.any?
           # attachを使用して既存画像に追加
           @gift_record.images.attach(valid_new_images)
           Rails.logger.debug "新しい画像を追加しました"
         end
       end
-      
+
       Rails.logger.debug "更新後の画像数: #{@gift_record.images.count}"
       flash_success(:updated, item: GiftRecord.model_name.human)
       redirect_to @gift_record
