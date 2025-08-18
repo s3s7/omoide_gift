@@ -11,7 +11,7 @@ class User < ApplicationRecord
   has_many :reminds, dependent: :destroy
 
   # バリデーション
-  validates :name, presence: true, length: { maximum: 20 }
+  validates :name, presence: true, length: { maximum: 10 }
 
   # セキュリティを考慮したエラーメッセージの置き換え
   after_validation :customize_validation_errors
