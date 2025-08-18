@@ -81,3 +81,5 @@ gem "whenever", require: false
 
 gem "sidekiq"
 gem "sidekiq-scheduler"
+
+gem "aws-sdk-s3", require: false
