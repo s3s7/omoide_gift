@@ -354,9 +354,8 @@ class GiftRecordsController < ApplicationController
   def gift_record_params
     params.require(:gift_record).permit(
       :title, :description, :body,
-      :gift_record_image, :gift_record_image_cache,
       :gift_people_id, :memo, :item_name, :amount, :gift_at, :event_id, :is_public,
-      :gift_item_category_id
+      :gift_item_category_id, images: []
     )
   end
 
