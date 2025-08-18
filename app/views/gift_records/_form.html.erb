@@ -305,7 +305,7 @@
 
 
   <!-- ギフト日付入力 -->
-  <div style="margin-bottom: 24px; text-align: left;">
+  <div style="margin-bottom: 24px; text-align: left;" data-controller="gift-date-selector">
     <%= f.label :gift_at, "ギフトを贈った日", style: "
       display: block;
       margin-bottom: 8px;
@@ -361,7 +361,7 @@
                 transition: all 0.2s ease;
               " 
               data-action="click->gift-date-selector#setDate"
-              data-gift-date-selector-date-type-param="today"
+              data-gift-date-selector-type-param="today"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         今日
@@ -381,7 +381,7 @@
                 transition: all 0.2s ease;
               " 
               data-action="click->gift-date-selector#setDate"
-              data-gift-date-selector-date-type-param="yesterday"
+              data-gift-date-selector-type-param="yesterday"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         昨日
@@ -401,7 +401,7 @@
                 transition: all 0.2s ease;
               "
               data-action="click->gift-date-selector#setDate"
-              data-gift-date-selector-date-type-param="week_ago"
+              data-gift-date-selector-type-param="week_ago"
               onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
               onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
         1週間前
