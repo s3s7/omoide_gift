@@ -5,7 +5,7 @@ class GiftRecord < ApplicationRecord
   belongs_to :gift_person, foreign_key: "gift_people_id"
   has_many :favorites, dependent: :destroy
   belongs_to :gift_item_category, optional: true
-  
+
   # Active Storage - 複数画像対応
   has_many_attached :images
 
