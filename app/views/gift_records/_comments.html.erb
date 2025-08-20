@@ -69,13 +69,15 @@
               <div class="flex space-x-2">
                 <button type="button" 
                         class="text-gray-400 hover:text-blue-600 text-sm"
-                        onclick="editComment(<%= comment.id %>)"
+                        data-action="click->comments#editComment"
+                        data-comment-id="<%= comment.id %>"
                         title="編集">
                   <i class="fas fa-edit"></i>
                 </button>
                 <button type="button" 
                         class="text-gray-400 hover:text-red-600 text-sm"
-                        onclick="deleteComment(<%= comment.id %>)"
+                        data-action="click->comments#deleteComment"
+                        data-comment-id="<%= comment.id %>"
                         title="削除">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -105,7 +107,9 @@
   <div class="bg-white rounded-lg max-w-md w-full p-6">
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-lg font-medium text-gray-900">コメントを編集</h3>
-      <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+      <button type="button" 
+              data-action="click->comments#closeEditModal"
+              class="text-gray-400 hover:text-gray-600">
         <i class="fas fa-times"></i>
       </button>
     </div>
@@ -123,7 +127,8 @@
       </div>
       
       <div class="flex justify-end space-x-3">
-        <button type="button" onclick="closeEditModal()" 
+        <button type="button" 
+                data-action="click->comments#closeEditModal"
                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
           キャンセル
         </button>

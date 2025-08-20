@@ -49,7 +49,10 @@ class CommentsController < ApplicationController
   private
 
   def set_gift_record
-    @gift_record = current_user.gift_records.find(params[:gift_record_id])
+    # 公開されているギフト記録または自分のギフト記録を取得
+    @gift_record = GiftRecord.where("gift_records.is_public = ? OR gift_records.user_id = ?", true, current_user.id)
+      .includes(:user, :gift_person, :event)
+      .find(params[:gift_record_id])
   rescue ActiveRecord::RecordNotFound
     redirect_to gift_records_path, alert: "ギフト記録が見つかりません。"
   end
