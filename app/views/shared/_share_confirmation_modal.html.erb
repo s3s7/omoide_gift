@@ -54,15 +54,9 @@
 
       <!-- メインコンテンツ -->
       <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <!-- 記録した内容 -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            <i class="fas fa-clipboard-list mr-1"></i>
-            記録した内容
-          </label>
-          <div id="share-gift-preview" data-share-manager-target="preview" class="p-4 bg-gray-50 rounded-lg border border-gray-300">
-            <!-- JavaScriptで動的に内容が挿入される -->
-          </div>
+        <!-- ギフト記録のプレビュー -->
+        <div id="share-gift-preview" data-share-manager-target="preview" class="mb-4 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <!-- JavaScriptで動的に内容が挿入される -->
         </div>
 
         <!-- シェア文のプレビュー -->
@@ -114,6 +108,7 @@
         <button type="button" 
                 data-action="click->share-manager#close" 
                 class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+          <i class="fas fa-times mr-2"></i>
           今はしない
         </button>
       </div>
