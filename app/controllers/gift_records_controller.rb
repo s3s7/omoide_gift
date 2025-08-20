@@ -8,9 +8,9 @@ class GiftRecordsController < ApplicationController
     # みんなのギフト画面：公開記録のみ表示
     base_query = GiftRecord.where(is_public: true)
 
-    # 関連テーブルの完全な事前読み込み
+    # 関連テーブルの完全な事前読み込み（画像含む）
     @gift_records = base_query
-      .includes(:gift_person, :event, :user, gift_person: :relationship)
+      .includes(:gift_person, :event, :user, gift_person: :relationship, images_attachments: :blob)
 
     # 検索機能（オプション）
     if params[:search].present?
