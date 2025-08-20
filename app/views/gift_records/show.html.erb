@@ -327,6 +327,13 @@
     </div>
   </div>
 
+  <!-- コメント機能 -->
+  <div class="bg-white shadow-lg rounded-lg overflow-hidden mt-6">
+    <div class="px-6 py-6" data-controller="comments">
+      <%= render 'comments' %>
+    </div>
+  </div>
+
   <!-- 関連アクション -->
   <div class="mt-6 text-center">
     <%= link_to new_gift_record_path, 

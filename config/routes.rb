@@ -27,6 +27,8 @@ Rails.application.routes.draw do
     member do
       post :toggle_favorite, to: "favorites#toggle"
     end
+    # コメント機能
+    resources :comments, except: [ :index, :show ]
   end
   resources :gift_people do
     collection do

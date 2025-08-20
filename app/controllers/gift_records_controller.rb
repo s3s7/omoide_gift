@@ -218,8 +218,8 @@ class GiftRecordsController < ApplicationController
   end
 
   def show
-    # セキュリティ: set_gift_recordとensure_ownerで処理済み
-    # コメント機能は将来実装予定
+    # セキュリティ: set_gift_recordとensure_accessibleで処理済み
+    # コメントも事前読み込み済み（set_gift_recordで処理）
   end
 
   def edit
@@ -431,11 +431,11 @@ class GiftRecordsController < ApplicationController
       # show アクション：公開記録または自分の記録
       if user_signed_in?
         @gift_record = GiftRecord.where("gift_records.is_public = ? OR gift_records.user_id = ?", true, current_user.id)
-          .includes(:gift_person, :event, :user, gift_person: :relationship)
+          .includes(:gift_person, :event, :user, gift_person: :relationship, comments: :user)
           .find(params[:id])
       else
         @gift_record = GiftRecord.where("gift_records.is_public = ?", true)
-          .includes(:gift_person, :event, :user, gift_person: :relationship)
+          .includes(:gift_person, :event, :user, gift_person: :relationship, comments: :user)
           .find(params[:id])
       end
     else

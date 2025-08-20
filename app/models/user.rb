@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :gift_people, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :reminds, dependent: :destroy
+  has_many :comments, dependent: :destroy
 
   # バリデーション
   validates :name, presence: true, length: { maximum: 10 }
