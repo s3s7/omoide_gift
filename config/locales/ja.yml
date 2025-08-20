@@ -8,6 +8,7 @@ ja:
       user: "ユーザー"
       relationship: "関係性"
       event: "イベント"
+      comment: "コメント"
     
     attributes:
       gift_record:
@@ -33,6 +34,11 @@ ja:
         email: "メールアドレス"
         password: "パスワード"
         password_confirmation: "パスワード確認"
+      
+      comment:
+        body: "コメント"
+        user_id: "投稿者"
+        gift_record_id: "ギフト記録"
 
     errors:
       models:
@@ -80,6 +86,12 @@ ja:
               too_short: "は6文字以上で入力してください"
             password_confirmation:
               confirmation: "とパスワードの入力が一致しません"
+        
+        comment:
+          attributes:
+            body:
+              blank: "を入力してください"
+              too_long: "は100文字以内で入力してください"
 
   # フラッシュメッセージ
   defaults:
@@ -137,6 +149,7 @@ ja:
       default: "%Y年%m月%d日 %H:%M"
       short: "%m/%d %H:%M"
       long: "%Y年%m月%d日(%a) %H時%M分"
+      time_only: "%H:%M"
 
   # 共通UI要素
   helpers:
