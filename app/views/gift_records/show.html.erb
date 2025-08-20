@@ -9,11 +9,11 @@
   <% content_for(:og_type, 'article') %>
 
   <%# OGP Image Setup %>
-  <%# if @gift_record.gift_image.present? %>
-    <%# content_for(:twitter_image, url_for(@gift_record.gift_image)) %>
-  <%# else %>
-    <% content_for(:twitter_image, asset_url('gift-card-image.png')) %>
-  <%# end %>
+  <% if @gift_record.has_images? %>
+    <% content_for(:twitter_image, "#{request.base_url}#{url_for(@gift_record.main_image)}") %>
+  <% else %>
+    <% content_for(:twitter_image, "#{request.base_url}#{asset_path('gift-card-image.png')}") %>
+  <% end %>
 
   <!-- メインコンテンツ -->
   <div class="bg-white shadow-lg rounded-lg overflow-hidden mt-6">

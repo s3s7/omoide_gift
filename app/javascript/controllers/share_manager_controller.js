@@ -11,7 +11,9 @@ export default class extends Controller {
     giftPersonName: String,
     relationshipName: String,
     eventName: String,
-    memo: String
+    memo: String,
+    hasImage: Boolean,
+    imageUrl: String
   }
 
   connect() {
@@ -31,7 +33,9 @@ export default class extends Controller {
           giftPersonName: this.giftPersonNameValue,
           relationshipName: this.relationshipNameValue,
           eventName: this.eventNameValue,
-          memo: this.memoValue
+          memo: this.memoValue,
+          hasImage: this.hasImageValue,
+          imageUrl: this.imageUrlValue
         }
       } else {
         this.shareGiftRecord = { id: this.lastCreatedGiftRecordId }
@@ -113,6 +117,7 @@ export default class extends Controller {
   updatePreview() {
     if (!this.hasPreviewTarget) return
     const record = this.shareGiftRecord || {}
+    
     const html = `
       <div class=\"flex items-start space-x-3\">
         <div class=\"flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center\">
@@ -153,6 +158,7 @@ export default class extends Controller {
     text += `🎁 ギフトアイテム: ${record.itemName || "未設定"}\n`
     text += `👥 関係性: ${record.relationshipName || "未設定"}\n`
     text += `📅 イベント: ${record.eventName || "未設定"}\n`
+    if (record.hasImage) text += "📸 画像付きの投稿です\n"
     if (record.memo) text += `📝 ${record.memo}\n`
     const eventTag = (record.eventName || "").replace(/\s+/g, "")
     text += "\n #思い出ギフト #ギフト記録 #プレゼント"
