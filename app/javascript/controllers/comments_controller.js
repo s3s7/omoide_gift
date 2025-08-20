@@ -11,6 +11,115 @@ export default class extends Controller {
     }
   }
 
+  editComment(event) {
+    const commentId = event.currentTarget.dataset.commentId
+    const commentElement = document.getElementById(`comment-${commentId}`)
+    const bodyElement = commentElement.querySelector('.comment-body')
+    const currentBody = bodyElement.textContent.trim()
+    
+    const modal = document.getElementById('edit-comment-modal')
+    const form = document.getElementById('edit-comment-form')
+    const bodyInput = document.getElementById('edit-comment-body')
+    
+    // フォームの設定
+    form.action = `/gift_records/${window.location.pathname.split('/')[2]}/comments/${commentId}`
+    bodyInput.value = currentBody
+    
+    // モーダル表示
+    modal.classList.remove('hidden')
+    modal.classList.add('flex')
+    bodyInput.focus()
+    
+    // フォーム送信処理
+    form.onsubmit = (e) => {
+      e.preventDefault()
+      this.updateComment(commentId, bodyInput.value, bodyElement)
+    }
+  }
+
+  deleteComment(event) {
+    const commentId = event.currentTarget.dataset.commentId
+    
+    if (!confirm('このコメントを削除しますか？')) {
+      return
+    }
+    
+    const commentElement = document.getElementById(`comment-${commentId}`)
+    const giftRecordId = window.location.pathname.split('/')[2]
+    
+    fetch(`/gift_records/${giftRecordId}/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        commentElement.remove()
+        this.updateCommentsCount(-1)
+        this.showNotification('コメントを削除しました', 'success')
+        
+        // コメントが0になったら空メッセージを表示
+        const commentsList = document.getElementById('comments-list')
+        if (commentsList.children.length === 0) {
+          commentsList.innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+              <i class="fas fa-comment-dots text-3xl mb-3"></i>
+              <p class="text-sm">まだコメントがありません</p>
+              <p class="text-xs mt-1">最初のコメントを投稿してみませんか？</p>
+            </div>
+          `
+        }
+      } else {
+        this.showNotification('削除に失敗しました', 'error')
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error)
+      this.showNotification('通信エラーが発生しました', 'error')
+    })
+  }
+
+  closeEditModal() {
+    const modal = document.getElementById('edit-comment-modal')
+    modal.classList.add('hidden')
+    modal.classList.remove('flex')
+  }
+
+  updateComment(commentId, newBody, bodyElement) {
+    const giftRecordId = window.location.pathname.split('/')[2]
+    const formData = new FormData()
+    formData.append('comment[body]', newBody)
+    formData.append('_method', 'PATCH')
+    formData.append('authenticity_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'))
+    
+    fetch(`/gift_records/${giftRecordId}/comments/${commentId}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        bodyElement.textContent = data.comment.body
+        this.closeEditModal()
+        this.showNotification('コメントを更新しました', 'success')
+      } else {
+        this.showNotification('更新に失敗しました: ' + data.errors.join(', '), 'error')
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error)
+      this.showNotification('通信エラーが発生しました', 'error')
+    })
+  }
+
   handleSubmit(event) {
     event.preventDefault()
     
@@ -82,13 +191,15 @@ export default class extends Controller {
             <div class="flex space-x-2">
               <button type="button" 
                       class="text-gray-400 hover:text-blue-600 text-sm"
-                      onclick="editComment(${comment.id})"
+                      data-action="click->comments#editComment"
+                      data-comment-id="${comment.id}"
                       title="編集">
                 <i class="fas fa-edit"></i>
               </button>
               <button type="button" 
                       class="text-gray-400 hover:text-red-600 text-sm"
-                      onclick="deleteComment(${comment.id})"
+                      data-action="click->comments#deleteComment"
+                      data-comment-id="${comment.id}"
                       title="削除">
                 <i class="fas fa-trash"></i>
               </button>
@@ -137,135 +248,5 @@ export default class extends Controller {
     const div = document.createElement('div')
     div.textContent = text
     return div.innerHTML
-  }
-}
-
-// グローバル関数（テンプレートから呼び出すため）
-window.editComment = function(commentId) {
-  const commentElement = document.getElementById(`comment-${commentId}`)
-  const bodyElement = commentElement.querySelector('.comment-body')
-  const currentBody = bodyElement.textContent.trim()
-  
-  const modal = document.getElementById('edit-comment-modal')
-  const form = document.getElementById('edit-comment-form')
-  const bodyInput = document.getElementById('edit-comment-body')
-  
-  // フォームの設定
-  form.action = `/gift_records/${window.location.pathname.split('/')[2]}/comments/${commentId}`
-  bodyInput.value = currentBody
-  
-  // モーダル表示
-  modal.classList.remove('hidden')
-  modal.classList.add('flex')
-  bodyInput.focus()
-  
-  // フォーム送信処理
-  form.onsubmit = function(e) {
-    e.preventDefault()
-    
-    const formData = new FormData(form)
-    formData.append('_method', 'PATCH')
-    
-    fetch(form.action, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        // コメント更新
-        bodyElement.textContent = data.comment.body
-        window.closeEditModal()
-        window.showNotification('コメントを更新しました', 'success')
-      } else {
-        window.showNotification('更新に失敗しました: ' + data.errors.join(', '), 'error')
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error)
-      window.showNotification('通信エラーが発生しました', 'error')
-    })
-  }
-}
-
-window.deleteComment = function(commentId) {
-  if (!confirm('このコメントを削除しますか？')) {
-    return
-  }
-  
-  const commentElement = document.getElementById(`comment-${commentId}`)
-  const giftRecordId = window.location.pathname.split('/')[2]
-  
-  fetch(`/gift_records/${giftRecordId}/comments/${commentId}`, {
-    method: 'DELETE',
-    headers: {
-      'Accept': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      commentElement.remove()
-      window.updateCommentsCount(-1)
-      window.showNotification('コメントを削除しました', 'success')
-      
-      // コメントが0になったら空メッセージを表示
-      const commentsList = document.getElementById('comments-list')
-      if (commentsList.children.length === 0) {
-        commentsList.innerHTML = `
-          <div class="text-center py-8 text-gray-500">
-            <i class="fas fa-comment-dots text-3xl mb-3"></i>
-            <p class="text-sm">まだコメントがありません</p>
-            <p class="text-xs mt-1">最初のコメントを投稿してみませんか？</p>
-          </div>
-        `
-      }
-    } else {
-      window.showNotification('削除に失敗しました', 'error')
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error)
-    window.showNotification('通信エラーが発生しました', 'error')
-  })
-}
-
-window.closeEditModal = function() {
-  const modal = document.getElementById('edit-comment-modal')
-  modal.classList.add('hidden')
-  modal.classList.remove('flex')
-}
-
-window.showNotification = function(message, type) {
-  const existingNotification = document.querySelector('.notification')
-  if (existingNotification) {
-    existingNotification.remove()
-  }
-  
-  const notification = document.createElement('div')
-  notification.className = `notification fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg ${
-    type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-  }`
-  notification.textContent = message
-  
-  document.body.appendChild(notification)
-  
-  setTimeout(() => {
-    notification.remove()
-  }, 3000)
-}
-
-window.updateCommentsCount = function(change) {
-  const countElement = document.querySelector('#comments-section h2 span')
-  if (countElement) {
-    const currentCount = parseInt(countElement.textContent.match(/\d+/)[0])
-    const newCount = currentCount + change
-    countElement.textContent = `(${newCount}件)`
   }
 }
