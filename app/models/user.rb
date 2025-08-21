@@ -124,8 +124,13 @@ class User < ApplicationRecord
 
   # プロフィール画像関連メソッド
   def avatar_url
-    return unless avatar.attached?
-    avatar
+    return unless avatar.attached? && persisted?
+    begin
+      avatar
+    rescue ActiveRecord::RecordNotFound, NoMethodError => e
+      Rails.logger.warn "Avatar URL generation failed: #{e.message}"
+      nil
+    end
   end
 
   def has_avatar?
@@ -133,17 +138,24 @@ class User < ApplicationRecord
   end
 
   def display_avatar(size = :medium)
-    return unless avatar.attached?
+    return unless avatar.attached? && persisted?
 
-    case size
-    when :small
-      avatar.variant(resize_to_fill: [40, 40])
-    when :medium  
-      avatar.variant(resize_to_fill: [80, 80])
-    when :large
-      avatar.variant(resize_to_fill: [160, 160])
-    else
-      avatar
+    # Active Storageのvariantは保存済みレコードのみで動作するため、
+    # レコードが新しい場合や適切にアタッチされていない場合はnilを返す
+    begin
+      case size
+      when :small
+        avatar.variant(resize_to_fill: [40, 40])
+      when :medium  
+        avatar.variant(resize_to_fill: [80, 80])
+      when :large
+        avatar.variant(resize_to_fill: [160, 160])
+      else
+        avatar
+      end
+    rescue ActiveRecord::RecordNotFound, NoMethodError => e
+      Rails.logger.warn "Avatar variant generation failed: #{e.message}"
+      nil
     end
   end
 

@@ -106,7 +106,7 @@
           <div class="flex items-start space-x-6">
             <div class="flex-shrink-0">
               <div class="relative">
-                <% if @user.has_avatar? %>
+                <% if @user.has_avatar? && @user.display_avatar(:large) %>
                   <%= image_tag @user.display_avatar(:large), 
                       id: "current-avatar",
                       class: "w-24 h-24 rounded-full object-cover border-4 border-gray-200 shadow-lg" %>
