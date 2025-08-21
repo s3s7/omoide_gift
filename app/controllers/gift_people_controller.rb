@@ -184,7 +184,16 @@ class GiftPeopleController < ApplicationController
   end
 
   def update
-    if @gift_person.update(gift_person_params)
+    # アバター削除の処理
+    if params[:gift_person][:remove_avatar] == "1"
+      @gift_person.avatar.purge if @gift_person.avatar.attached?
+    end
+    
+    # remove_avatarパラメータを除いてアップデート
+    update_params = gift_person_params
+    update_params.delete(:remove_avatar)
+    
+    if @gift_person.update(update_params)
       flash_success(:updated, item: "ギフト相手「#{@gift_person.name}」")
       redirect_to @gift_person
     else
@@ -212,7 +221,7 @@ class GiftPeopleController < ApplicationController
   private
 
   def gift_person_params
-    params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :memo)
+    params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :memo, :avatar, :remove_avatar)
   end
 
   def set_gift_person

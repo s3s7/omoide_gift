@@ -173,11 +173,20 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 justify-items-center">
       <% @gift_people.each do |person| %>
         <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-1 cursor-pointer" onclick="window.location.href='<%= gift_person_path(person) %>'">
-          <!-- アイコンエリア -->
-          <div class="h-32 bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center relative">
-            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
-              <i class="fas fa-user text-2xl text-primary"></i>
-            </div>
+          <!-- プロフィール画像エリア -->
+          <div class="h-32 relative overflow-hidden">
+            <% if person.has_avatar? && person.display_avatar(:large) %>
+              <%= image_tag person.display_avatar(:large), 
+                  class: "w-full h-full object-cover",
+                  alt: "#{person.name}のプロフィール画像",
+                  loading: "lazy" %>
+            <% else %>
+              <div class="w-full h-full bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
+                  <i class="fas fa-user text-2xl text-primary"></i>
+                </div>
+              </div>
+            <% end %>
           </div>
 
           <!-- 相手情報 -->
