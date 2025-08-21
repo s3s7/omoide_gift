@@ -43,7 +43,12 @@
         </p>
       </div>
 
-      <%= render 'form', gift_person: @gift_person %>
+      <!-- 新規作成モード用のフォーム -->
+      <div data-controller="gift-person-form" 
+           data-gift-person-form-new-mode-value="true"
+           data-gift-person-form-auto-save-enabled-value="true">
+        <%= render 'form', gift_person: @gift_person, new_mode: true %>
+      </div>
 
       <!-- 戻るボタン -->
       <div class="mt-6 pt-6 border-t border-gray-200">
@@ -94,108 +99,3 @@
   </div>
 </div>
 
-<style>
-/* フォームのカスタムスタイル */
-.form-container {
-  background: linear-gradient(135deg, #f8f9ff 0%, #fff5f5 100%);
-}
-
-/* フォーカス時のスタイル調整 */
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #FC913A !important;
-  box-shadow: 0 0 0 3px rgba(246, 179, 82, 0.1);
-}
-
-/* モバイルレスポンシブ対応 */
-@media (max-width: 768px) {
-  .max-w-2xl {
-    max-width: 100%;
-    margin: 0 1rem;
-  }
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // フォームバリデーション
-  const form = document.querySelector('form');
-  const nameField = document.getElementById('gift_person_name');
-  const relationshipField = document.getElementById('gift_person_relationship_id');
-  
-  if (form && nameField && relationshipField) {
-    form.addEventListener('submit', function(e) {
-      let hasErrors = false;
-      
-      // 名前の必須チェック
-      if (!nameField.value.trim()) {
-        alert('名前を入力してください。');
-        nameField.focus();
-        hasErrors = true;
-        e.preventDefault();
-        return;
-      }
-      
-      // 関係性の必須チェック
-      if (!relationshipField.value) {
-        alert('関係性を選択してください。');
-        relationshipField.focus();
-        hasErrors = true;
-        e.preventDefault();
-        return;
-      }
-      
-      if (!hasErrors) {
-        // 送信ボタンを無効化して重複送信を防ぐ
-        const submitButton = form.querySelector('input[type="submit"]');
-        if (submitButton) {
-          submitButton.disabled = true;
-          submitButton.value = '登録中...';
-        }
-      }
-    });
-  }
-  
-  // 名前フィールドの入力制限（空白のみを防ぐ）
-  if (nameField) {
-    nameField.addEventListener('blur', function() {
-      if (this.value.trim() === '') {
-        this.style.borderColor = '#ef4444';
-      } else {
-        this.style.borderColor = '#e1e5e9';
-      }
-    });
-  }
-  
-  // 自動保存機能（オプション - ローカルストレージ利用）
-  const autoSaveFields = ['gift_person_name', 'gift_person_likes', 'gift_person_dislikes', 'gift_person_memo'];
-  
-  autoSaveFields.forEach(fieldId => {
-    const field = document.getElementById(fieldId);
-    if (field) {
-      // 入力時にローカルストレージに保存
-      field.addEventListener('input', function() {
-        localStorage.setItem(`draft_${fieldId}`, this.value);
-      });
-      
-      // ページ読み込み時にドラフトを復元
-      const draftValue = localStorage.getItem(`draft_${fieldId}`);
-      if (draftValue && !field.value) {
-        field.value = draftValue;
-      }
-    }
-  });
-  
-  // フォーム送信成功時にドラフトをクリア
-  if (form) {
-    form.addEventListener('submit', function() {
-      // 成功時のクリア処理は別途実装
-      setTimeout(() => {
-        autoSaveFields.forEach(fieldId => {
-          localStorage.removeItem(`draft_${fieldId}`);
-        });
-      }, 1000);
-    });
-  }
-});
-</script>

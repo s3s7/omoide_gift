@@ -1,4 +1,7 @@
-<%= form_with model: gift_person do |f| %>
+<%= form_with model: gift_person, data: { 
+      controller: (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? nil : "gift-person-form",
+      "gift-person-form-target": (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? "form" : nil
+    } do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   
   <!-- 名前入力 -->
@@ -11,6 +14,10 @@
       font-size: 14px;
     " %>
     <%= f.text_field :name, 
+        data: { 
+          "gift-person-form-target": "input",
+          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
+        }.compact,
         style: "
           width: 100%;
           padding: 14px 16px;
@@ -58,16 +65,16 @@
         <div style="position: relative;">
           <% if gift_person.has_avatar? && gift_person.display_avatar(:large) %>
             <%= image_tag gift_person.display_avatar(:large), 
-                id: "current-gift-person-avatar",
+                data: { "gift-person-form-target": "currentAvatar" },
                 style: "width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #e1e5e9; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" %>
           <% else %>
-            <div id="current-gift-person-avatar" style="width: 80px; height: 80px; border-radius: 50%; background-color: #f8f9fa; border: 3px solid #e1e5e9; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div data-gift-person-form-target="currentAvatar" style="width: 80px; height: 80px; border-radius: 50%; background-color: #f8f9fa; border: 3px solid #e1e5e9; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
               <i class="fas fa-user" style="font-size: 24px; color: #adb5bd;"></i>
             </div>
           <% end %>
           
-          <!-- プレビュー画像（JavaScript で制御） -->
-          <img id="gift-person-avatar-preview" src="" alt="プレビュー" 
+          <!-- プレビュー画像（Stimulus で制御） -->
+          <img data-gift-person-form-target="avatarPreview" src="" alt="プレビュー" 
                style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #FC913A; position: absolute; top: 0; left: 0; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
         </div>
       </div>
@@ -83,7 +90,10 @@
             color: #666;
           " %>
           <%= f.file_field :avatar, 
-              id: "gift-person-avatar-input",
+              data: { 
+                "gift-person-form-target": "avatarInput",
+                "action": "change->gift-person-form#avatarSelected"
+              },
               accept: "image/jpeg,image/jpg,image/png,image/webp",
               style: "
                 width: 100%;
@@ -98,7 +108,9 @@
         
         <!-- プレビューリセットボタン -->
         <div style="margin-bottom: 12px;">
-          <button type="button" id="reset-gift-person-avatar-btn" 
+          <button type="button" 
+                  data-gift-person-form-target="resetButton"
+                  data-action="click->gift-person-form#resetAvatarPreview"
                   style="
                     display: none;
                     padding: 6px 12px;
@@ -118,7 +130,13 @@
         <!-- 削除オプション -->
         <% if gift_person.has_avatar? %>
           <div style="margin-bottom: 8px;">
-            <%= f.check_box :remove_avatar, { id: "remove-gift-person-avatar-checkbox", style: "margin-right: 6px;" }, "1", "" %>
+            <%= f.check_box :remove_avatar, { 
+                data: { 
+                  "gift-person-form-target": "removeCheckbox",
+                  "action": "change->gift-person-form#removeAvatarToggled"
+                }, 
+                style: "margin-right: 6px;" 
+              }, "1", "" %>
             <%= f.label :remove_avatar, "現在のプロフィール画像を削除する", 
                 style: "font-size: 12px; color: #dc3545; font-weight: 500; cursor: pointer;" %>
           </div>
@@ -161,6 +179,7 @@
           prompt: "関係性を選択してください"
         }, 
         { 
+          data: { "gift-person-form-target": "input" },
           style: "
             width: 100%;
             padding: 14px 16px;
@@ -198,6 +217,7 @@
       font-size: 14px;
     " %>
     <%= f.date_field :birthday, 
+        data: { "gift-person-form-target": "input" },
         style: "
           width: 100%;
           padding: 14px 16px;
@@ -234,6 +254,10 @@
       font-size: 14px;
     " %>
     <%= f.text_area :likes, 
+        data: { 
+          "gift-person-form-target": "input",
+          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
+        }.compact,
         style: "
           width: 100%;
           padding: 14px 16px;
@@ -273,6 +297,10 @@
       font-size: 14px;
     " %>
     <%= f.text_area :dislikes, 
+        data: { 
+          "gift-person-form-target": "input",
+          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
+        }.compact,
         style: "
           width: 100%;
           padding: 14px 16px;
@@ -312,6 +340,12 @@
       font-size: 14px;
     " %>
     <%= f.text_area :memo, 
+        data: { 
+          "gift-person-form-target": "input memoField",
+          "action": local_assigns[:new_mode] ? 
+            "input->gift-person-form#memoInput input->gift-person-form#inputChanged" : 
+            "input->gift-person-form#memoInput"
+        },
         style: "
           width: 100%;
           padding: 14px 16px;
@@ -343,149 +377,22 @@
 
   <!-- 送信ボタン -->
   <div style="margin-bottom: 32px;">
-    <%= f.submit nil, style: "
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #FC913A 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    " %>
+    <%= f.submit nil, 
+        data: { 
+          "gift-person-form-target": (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? "submitButton" : nil 
+        },
+        style: "
+          width: 100%;
+          padding: 16px;
+          background: linear-gradient(135deg, #FC913A 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        " %>
   </div>
 <% end %>
 
-<script>
-// ギフト相手フォームのJavaScript処理
-document.addEventListener('DOMContentLoaded', function() {
-  // フォームのフォーカス時のボーダー色変更
-  const inputs = document.querySelectorAll('input[type="text"], input[type="date"], select, textarea');
-  
-  inputs.forEach(function(input) {
-    input.addEventListener('focus', function() {
-      this.style.borderColor = '#FC913A';
-    });
-    
-    input.addEventListener('blur', function() {
-      this.style.borderColor = '#e1e5e9';
-    });
-  });
-
-  // ギフト相手のプロフィール画像関連の要素
-  const giftPersonAvatarInput = document.getElementById('gift-person-avatar-input');
-  const giftPersonAvatarPreview = document.getElementById('gift-person-avatar-preview');
-  const currentGiftPersonAvatar = document.getElementById('current-gift-person-avatar');
-  const resetGiftPersonAvatarBtn = document.getElementById('reset-gift-person-avatar-btn');
-  const removeGiftPersonAvatarCheckbox = document.getElementById('remove-gift-person-avatar-checkbox');
-  
-  // ギフト相手のプロフィール画像のプレビュー機能
-  if (giftPersonAvatarInput) {
-    giftPersonAvatarInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      
-      if (file) {
-        // ファイルサイズチェック（5MB）
-        if (file.size > 5 * 1024 * 1024) {
-          alert('ファイルサイズは5MB以下にしてください。');
-          this.value = '';
-          return;
-        }
-        
-        // ファイル形式チェック
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-          alert('JPEG、PNG、WEBP形式のファイルのみアップロードできます。');
-          this.value = '';
-          return;
-        }
-        
-        // プレビュー表示
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          giftPersonAvatarPreview.src = e.target.result;
-          giftPersonAvatarPreview.style.display = 'block';
-          currentGiftPersonAvatar.style.opacity = '0.3';
-          resetGiftPersonAvatarBtn.style.display = 'inline-block';
-          
-          // 削除チェックボックスがある場合は無効化
-          if (removeGiftPersonAvatarCheckbox) {
-            removeGiftPersonAvatarCheckbox.checked = false;
-            removeGiftPersonAvatarCheckbox.disabled = true;
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-  
-  // ギフト相手のプロフィール画像プレビューリセット機能
-  if (resetGiftPersonAvatarBtn) {
-    resetGiftPersonAvatarBtn.addEventListener('click', function() {
-      if (giftPersonAvatarInput) giftPersonAvatarInput.value = '';
-      if (giftPersonAvatarPreview) {
-        giftPersonAvatarPreview.src = '';
-        giftPersonAvatarPreview.style.display = 'none';
-      }
-      if (currentGiftPersonAvatar) currentGiftPersonAvatar.style.opacity = '1';
-      this.style.display = 'none';
-      
-      // 削除チェックボックスがある場合は有効化
-      if (removeGiftPersonAvatarCheckbox) {
-        removeGiftPersonAvatarCheckbox.disabled = false;
-      }
-    });
-  }
-  
-  // ギフト相手のプロフィール画像削除チェックボックスの処理
-  if (removeGiftPersonAvatarCheckbox) {
-    removeGiftPersonAvatarCheckbox.addEventListener('change', function() {
-      if (this.checked) {
-        // プレビューをリセット
-        if (giftPersonAvatarInput) giftPersonAvatarInput.value = '';
-        if (giftPersonAvatarPreview) {
-          giftPersonAvatarPreview.src = '';
-          giftPersonAvatarPreview.style.display = 'none';
-        }
-        if (resetGiftPersonAvatarBtn) resetGiftPersonAvatarBtn.style.display = 'none';
-        if (currentGiftPersonAvatar) currentGiftPersonAvatar.style.opacity = '0.3';
-      } else {
-        if (currentGiftPersonAvatar) currentGiftPersonAvatar.style.opacity = '1';
-      }
-    });
-  }
-
-  // 文字数カウンター（メモフィールド用）
-  const memoField = document.getElementById('gift_person_memo');
-  if (memoField) {
-    const maxLength = parseInt(memoField.getAttribute('maxlength'));
-    
-    // 文字数表示要素を作成
-    const counterDiv = document.createElement('div');
-    counterDiv.style.cssText = 'font-size: 11px; color: #999; text-align: right; margin-top: 4px;';
-    memoField.parentNode.appendChild(counterDiv);
-    
-    // 文字数更新関数
-    function updateCounter() {
-      const currentLength = memoField.value.length;
-      counterDiv.textContent = `${currentLength}/${maxLength}文字`;
-      
-      if (currentLength > maxLength * 0.9) {
-        counterDiv.style.color = '#dc3545';
-      } else if (currentLength > maxLength * 0.8) {
-        counterDiv.style.color = '#ffc107';
-      } else {
-        counterDiv.style.color = '#999';
-      }
-    }
-    
-    // 初期表示
-    updateCounter();
-    
-    // 入力時の処理
-    memoField.addEventListener('input', updateCounter);
-  }
-});
-</script>

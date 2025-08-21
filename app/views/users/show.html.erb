@@ -1,6 +1,6 @@
 <% content_for(:title, "マイページ") %>
 <!-- メインコンテナ - 中央寄せ -->
-<div class="max-w-6xl mx-auto">
+<div class="max-w-6xl mx-auto" data-controller="user-profile">
   <!-- ヘッダー部分 -->
   <div class="mb-6 mt-4">
     <div class="flex items-center justify-between mb-4">
@@ -28,7 +28,9 @@
     </div>
 
     <!-- ユーザー情報カード -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6"
+         data-user-profile-target="card"
+         data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
       <!-- ユーザー基本情報 -->
       <div class="flex items-center mb-6">
         <div class="w-16 h-16 mr-4 relative">
@@ -191,7 +193,9 @@
   <!-- メインコンテンツ -->
   <div class="max-w-2xl mx-auto space-y-8 mb-8">
     <!-- アカウント管理 -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6"
+         data-user-profile-target="card"
+         data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
       <h3 class="text-lg font-medium text-gray-800 mb-4">
         <i class="fas fa-cog mr-2 text-gray-600"></i>
         アカウント管理
@@ -261,7 +265,9 @@
     </div>
 
     <!-- 人気のギフト相手 -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6"
+         data-user-profile-target="card"
+         data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-medium text-gray-800">
           <i class="fas fa-star mr-2 text-yellow-500"></i>
@@ -275,7 +281,9 @@
       <% if @popular_gift_people.any? %>
         <div class="space-y-3">
           <% @popular_gift_people.each_with_index do |person, index| %>
-            <div class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                 data-user-profile-target="monthlyRow"
+                 data-action="mouseenter->user-profile#monthlyRowMouseEnter mouseleave->user-profile#monthlyRowMouseLeave">
               <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
                 <span class="text-sm font-bold text-yellow-600"><%= index + 1 %></span>
               </div>
@@ -310,7 +318,9 @@
     </div>
 
     <!-- 今後の記念日 -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6"
+         data-user-profile-target="card"
+         data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-medium text-gray-800">
           <i class="fas fa-bell mr-2 text-orange-500"></i>
@@ -322,7 +332,9 @@
       <% if @upcoming_reminds.any? %>
         <div class="space-y-3">
           <% @upcoming_reminds.each do |remind| %>
-            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                 data-user-profile-target="monthlyRow"
+                 data-action="mouseenter->user-profile#monthlyRowMouseEnter mouseleave->user-profile#monthlyRowMouseLeave">
               <div class="flex-1">
                 <h4 class="font-medium text-gray-800"><%= remind.gift_person.name %>さん</h4>
                 <div class="text-sm text-gray-600">
@@ -382,7 +394,9 @@
 <!-- プライバシー設定とアカウント情報 -->
 <div class="max-w-2xl mx-auto space-y-8">
   <!-- 公開設定統計 -->
-  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6"
+       data-user-profile-target="card"
+       data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
     <h3 class="text-lg font-medium text-gray-800 mb-4">
       <i class="fas fa-shield-alt mr-2 text-green-500"></i>
       公開設定
@@ -415,40 +429,3 @@
   
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // カードのホバー効果（縦並びレイアウト対応）
-  const cards = document.querySelectorAll('.bg-white.rounded-lg.shadow-md');
-  
-  cards.forEach(card => {
-    card.addEventListener('mouseenter', function() {
-      this.style.transform = 'translateY(-2px)';
-      this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
-      this.style.transition = 'all 0.2s ease';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-      this.style.transform = 'translateY(0)';
-      this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-      this.style.transition = 'all 0.2s ease';
-    });
-  });
-
-  // 月別統計の行のホバー効果
-  const monthlyRows = document.querySelectorAll('.space-y-3 .flex.items-center');
-  
-  monthlyRows.forEach(row => {
-    row.addEventListener('mouseenter', function() {
-      this.style.backgroundColor = '#f9fafb';
-      this.style.transform = 'translateX(4px)';
-      this.style.transition = 'all 0.2s ease';
-    });
-    
-    row.addEventListener('mouseleave', function() {
-      this.style.backgroundColor = '';
-      this.style.transform = 'translateX(0)';
-      this.style.transition = 'all 0.2s ease';
-    });
-  });
-});
-</script>
