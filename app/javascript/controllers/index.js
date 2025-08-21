@@ -42,3 +42,6 @@ application.register("image-gallery", ImageGalleryController)
 
 import CommentsController from "./comments_controller"
 application.register("comments", CommentsController)
+
+import GiftPersonFormController from "./gift_person_form_controller"
+application.register("gift-person-form", GiftPersonFormController)
