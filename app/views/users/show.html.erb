@@ -31,8 +31,15 @@
     <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
       <!-- ユーザー基本情報 -->
       <div class="flex items-center mb-6">
-        <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mr-4">
-          <i class="fas fa-user text-2xl text-primary"></i>
+        <div class="w-16 h-16 mr-4 relative">
+          <% if @user.has_avatar? %>
+            <%= image_tag @user.display_avatar(:medium), 
+                class: "w-16 h-16 rounded-full object-cover border-4 border-primary-light shadow-md" %>
+          <% else %>
+            <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center border-4 border-primary-light shadow-md">
+              <i class="fas fa-user text-2xl text-primary"></i>
+            </div>
+          <% end %>
         </div>
         <div class="flex-1">
           <h3 class="text-xl font-semibold text-gray-800"><%= @user.display_name %></h3>

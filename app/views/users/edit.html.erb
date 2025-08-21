@@ -94,6 +94,70 @@
         </div>
       </div>
 
+      <!-- プロフィール画像セクション -->
+      <div class="border-b border-gray-200 pb-6">
+        <h3 class="text-lg font-medium text-gray-800 mb-4">
+          <i class="fas fa-image mr-2 text-purple-500"></i>
+          プロフィール画像
+        </h3>
+        
+        <div class="space-y-4">
+          <!-- 現在の画像表示 -->
+          <div class="flex items-start space-x-6">
+            <div class="flex-shrink-0">
+              <div class="relative">
+                <% if @user.has_avatar? %>
+                  <%= image_tag @user.display_avatar(:large), 
+                      id: "current-avatar",
+                      class: "w-24 h-24 rounded-full object-cover border-4 border-gray-200 shadow-lg" %>
+                <% else %>
+                  <div id="current-avatar" class="w-24 h-24 rounded-full bg-gray-200 border-4 border-gray-300 flex items-center justify-center shadow-lg">
+                    <i class="fas fa-user text-gray-400 text-3xl"></i>
+                  </div>
+                <% end %>
+                
+                <!-- プレビュー画像（JavaScript で制御） -->
+                <img id="avatar-preview" src="" alt="プレビュー" 
+                     class="w-24 h-24 rounded-full object-cover border-4 border-blue-300 shadow-lg absolute top-0 left-0 hidden">
+              </div>
+            </div>
+            
+            <div class="flex-1 space-y-3">
+              <!-- ファイル選択 -->
+              <div>
+                <%= f.label :avatar, "新しい画像を選択", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= f.file_field :avatar, 
+                    id: "avatar-input",
+                    accept: "image/jpeg,image/jpg,image/png,image/webp",
+                    class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" %>
+                <p class="text-xs text-gray-500 mt-1">
+                  <i class="fas fa-info-circle mr-1"></i>
+                  JPEG、PNG、WEBP形式のファイルをアップロードできます（最大5MB）
+                </p>
+              </div>
+              
+              <!-- プレビューリセットボタン -->
+              <div>
+                <button type="button" id="reset-avatar-btn" 
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hidden">
+                  <i class="fas fa-undo mr-2"></i>
+                  選択をリセット
+                </button>
+              </div>
+              
+              <!-- 削除オプション -->
+              <% if @user.has_avatar? %>
+                <div>
+                  <%= f.check_box :remove_avatar, { id: "remove-avatar-checkbox" }, "1", "" %>
+                  <%= f.label :remove_avatar, "現在のプロフィール画像を削除する", 
+                      class: "ml-2 text-sm text-red-600 font-medium cursor-pointer" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- アカウント情報セクション -->
       <div class="border-b border-gray-200 pb-6">
         <h3 class="text-lg font-medium text-gray-800 mb-4">
@@ -217,19 +281,121 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  // プロフィール画像関連の要素
+  const avatarInput = document.getElementById('avatar-input');
+  const avatarPreview = document.getElementById('avatar-preview');
+  const currentAvatar = document.getElementById('current-avatar');
+  const resetAvatarBtn = document.getElementById('reset-avatar-btn');
+  const removeAvatarCheckbox = document.getElementById('remove-avatar-checkbox');
+  
+  // プロフィール画像のプレビュー機能
+  if (avatarInput) {
+    avatarInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      
+      if (file) {
+        // ファイルサイズチェック（5MB）
+        if (file.size > 5 * 1024 * 1024) {
+          alert('ファイルサイズは5MB以下にしてください。');
+          this.value = '';
+          return;
+        }
+        
+        // ファイル形式チェック
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          alert('JPEG、PNG、WEBP形式のファイルのみアップロードできます。');
+          this.value = '';
+          return;
+        }
+        
+        // プレビュー表示
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          avatarPreview.src = e.target.result;
+          avatarPreview.classList.remove('hidden');
+          currentAvatar.style.opacity = '0.3';
+          resetAvatarBtn.classList.remove('hidden');
+          
+          // 削除チェックボックスがある場合は無効化
+          if (removeAvatarCheckbox) {
+            removeAvatarCheckbox.checked = false;
+            removeAvatarCheckbox.disabled = true;
+          }
+        };
+        reader.readAsDataURL(file);
+        hasUnsavedChanges = true;
+      }
+    });
+  }
+  
+  // プレビューリセット機能
+  if (resetAvatarBtn) {
+    resetAvatarBtn.addEventListener('click', function() {
+      if (avatarInput) avatarInput.value = '';
+      if (avatarPreview) {
+        avatarPreview.src = '';
+        avatarPreview.classList.add('hidden');
+      }
+      if (currentAvatar) currentAvatar.style.opacity = '1';
+      this.classList.add('hidden');
+      
+      // 削除チェックボックスがある場合は有効化
+      if (removeAvatarCheckbox) {
+        removeAvatarCheckbox.disabled = false;
+      }
+    });
+  }
+  
+  // 削除チェックボックスの処理
+  if (removeAvatarCheckbox) {
+    removeAvatarCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        // プレビューをリセット
+        if (avatarInput) avatarInput.value = '';
+        if (avatarPreview) {
+          avatarPreview.src = '';
+          avatarPreview.classList.add('hidden');
+        }
+        if (resetAvatarBtn) resetAvatarBtn.classList.add('hidden');
+        if (currentAvatar) currentAvatar.style.opacity = '0.3';
+        hasUnsavedChanges = true;
+      } else {
+        if (currentAvatar) currentAvatar.style.opacity = '1';
+      }
+    });
+  }
+  
   // リセット関数
   window.resetForm = function() {
     if (confirm('入力内容をリセットしますか？未保存の変更は失われます。')) {
+      // テキストフィールドのリセット
       const inputs = form.querySelectorAll('input[type="text"], input[type="email"]');
       inputs.forEach(input => {
         input.value = initialValues[input.name] || '';
       });
+      
+      // プロフィール画像のリセット
+      if (avatarInput) avatarInput.value = '';
+      if (avatarPreview) {
+        avatarPreview.src = '';
+        avatarPreview.classList.add('hidden');
+      }
+      if (currentAvatar) currentAvatar.style.opacity = '1';
+      if (resetAvatarBtn) resetAvatarBtn.classList.add('hidden');
+      if (removeAvatarCheckbox) {
+        removeAvatarCheckbox.checked = false;
+        removeAvatarCheckbox.disabled = false;
+      }
+      
+      hasUnsavedChanges = false;
     }
   };
   
   // 変更検知
   let hasUnsavedChanges = false;
   
+  // テキストフィールドの変更検知
   const inputs = form?.querySelectorAll('input[type="text"], input[type="email"]');
   inputs?.forEach(input => {
     input.addEventListener('input', function() {
