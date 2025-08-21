@@ -1,7 +1,7 @@
 # 管理者用ギフト記録管理コントローラー
 # ギフト記録の閲覧、編集、削除、公開設定管理を提供
 class Admin::GiftRecordsController < Admin::BaseController
-  before_action :set_gift_record, only: [:show, :edit, :update, :destroy, :toggle_public]
+  before_action :set_gift_record, only: [ :show, :edit, :update, :destroy, :toggle_public ]
 
   def index
     @gift_records = filter_and_sort_gift_records
@@ -34,7 +34,7 @@ class Admin::GiftRecordsController < Admin::BaseController
 
   def destroy
     record_info = "ID: #{@gift_record.id}, アイテム: #{@gift_record.display_item_name}, 所有者: #{@gift_record.user.name}"
-    
+
     if @gift_record.destroy
       admin_flash_success("ギフト記録を削除しました。")
       log_admin_action("ギフト記録削除", "GiftRecord", @gift_record.id, record_info)
@@ -47,16 +47,16 @@ class Admin::GiftRecordsController < Admin::BaseController
 
   # 公開/非公開の切り替え
   def toggle_public
-    old_status = @gift_record.is_public? ? '公開' : '非公開'
-    new_status = @gift_record.is_public? ? '非公開' : '公開'
-    
+    old_status = @gift_record.is_public? ? "公開" : "非公開"
+    new_status = @gift_record.is_public? ? "非公開" : "公開"
+
     if @gift_record.update(is_public: !@gift_record.is_public?)
       admin_flash_success("「#{@gift_record.display_item_name}」を#{new_status}に変更しました。")
       log_admin_action("ギフト記録公開設定変更", "GiftRecord", @gift_record.id, "#{old_status} → #{new_status}")
     else
       admin_flash_error("公開設定の変更に失敗しました。")
     end
-    
+
     redirect_to admin_gift_record_path(@gift_record)
   end
 
@@ -77,15 +77,15 @@ class Admin::GiftRecordsController < Admin::BaseController
     if params[:search].present?
       search_term = "%#{params[:search]}%"
       records = records.joins(:user, :gift_person)
-                      .where("gift_records.item_name ILIKE ? OR users.name ILIKE ? OR gift_people.name ILIKE ?", 
+                      .where("gift_records.item_name ILIKE ? OR users.name ILIKE ? OR gift_people.name ILIKE ?",
                              search_term, search_term, search_term)
     end
 
     # 公開設定フィルタ
     case params[:is_public]
-    when 'true'
+    when "true"
       records = records.where(is_public: true)
-    when 'false'
+    when "false"
       records = records.where(is_public: false)
     end
 
@@ -96,21 +96,21 @@ class Admin::GiftRecordsController < Admin::BaseController
 
     # 日付範囲フィルタ
     if params[:date_from].present?
-      records = records.where('gift_at >= ?', Date.parse(params[:date_from]))
+      records = records.where("gift_at >= ?", Date.parse(params[:date_from]))
     end
     if params[:date_to].present?
-      records = records.where('gift_at <= ?', Date.parse(params[:date_to]))
+      records = records.where("gift_at <= ?", Date.parse(params[:date_to]))
     end
 
     # ソート
     case params[:sort]
-    when 'item_name'
+    when "item_name"
       records = records.order(item_name: sort_direction)
-    when 'gift_at'
+    when "gift_at"
       records = records.order(gift_at: sort_direction)
-    when 'user_name'
+    when "user_name"
       records = records.joins(:user).order("users.name #{sort_direction}")
-    when 'is_public'
+    when "is_public"
       records = records.order(is_public: sort_direction)
     else
       records = records.order(created_at: sort_direction)
@@ -122,7 +122,7 @@ class Admin::GiftRecordsController < Admin::BaseController
 
   # ソート方向の決定
   def sort_direction
-    params[:direction] == 'asc' ? :asc : :desc
+    params[:direction] == "asc" ? :asc : :desc
   end
 
   # ギフト記録統計情報の構築

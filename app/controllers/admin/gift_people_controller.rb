@@ -1,6 +1,6 @@
 # 管理者用ギフト相手管理コントローラー
 class Admin::GiftPeopleController < Admin::BaseController
-  before_action :set_gift_person, only: [:show, :edit, :update, :destroy]
+  before_action :set_gift_person, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @gift_people = filter_and_sort_gift_people

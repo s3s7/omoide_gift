@@ -1,6 +1,5 @@
 # 管理者用システム統計コントローラー
 class Admin::StatisticsController < Admin::BaseController
-
   def index
     @statistics = build_detailed_statistics
     log_admin_action("システム統計表示")

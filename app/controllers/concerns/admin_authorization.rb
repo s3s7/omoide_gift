@@ -15,7 +15,7 @@ module AdminAuthorization
   def authenticate_admin!
     # まずユーザーがログインしているかチェック
     authenticate_user!
-    
+
     # 管理者権限チェック
     unless current_user&.admin?
       handle_admin_access_denied
@@ -31,10 +31,10 @@ module AdminAuthorization
   # 管理者アクセス拒否時の処理
   def handle_admin_access_denied
     Rails.logger.warn "管理者権限なしでのアクセス試行: User ID: #{current_user&.id}, IP: #{request.remote_ip}, Path: #{request.fullpath}"
-    
+
     # フラッシュメッセージを設定
     flash[:alert] = "このページにアクセスする権限がありません。"
-    
+
     # 一般ユーザー用ページにリダイレクト
     redirect_to root_path
   end
@@ -44,7 +44,7 @@ module AdminAuthorization
     log_message = "管理者アクション: #{action_name}"
     log_message += " - 対象: #{target_model}##{target_id}" if target_model && target_id
     log_message += " - 実行者: User##{current_user.id}"
-    
+
     Rails.logger.info log_message
   end
 end

@@ -1,6 +1,6 @@
 # 管理者用関係性管理コントローラー
 class Admin::RelationshipsController < Admin::BaseController
-  before_action :set_relationship, only: [:edit, :update, :destroy]
+  before_action :set_relationship, only: [ :edit, :update, :destroy ]
 
   def index
     @relationships = Relationship.order(:name).page(params[:page]).per(per_page)

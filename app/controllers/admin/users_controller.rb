@@ -1,7 +1,7 @@
 # 管理者用ユーザー管理コントローラー
 # ユーザーの一覧表示、詳細確認、権限管理を提供
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [:show, :edit, :update, :toggle_role, :toggle_status]
+  before_action :set_user, only: [ :show, :edit, :update, :toggle_role, :toggle_status ]
 
   def index
     @users = filter_and_sort_users
@@ -42,15 +42,15 @@ class Admin::UsersController < Admin::BaseController
     end
 
     old_role = @user.role
-    new_role = @user.admin? ? 'general' : 'admin'
-    
+    new_role = @user.admin? ? "general" : "admin"
+
     if @user.update(role: new_role)
       admin_flash_success("#{@user.name}さんの権限を「#{User.human_attribute_name("role.#{new_role}")}」に変更しました。")
       log_admin_action("ユーザー権限変更", "User", @user.id, "#{old_role} → #{new_role}")
     else
       admin_flash_error("権限の変更に失敗しました。")
     end
-    
+
     redirect_to admin_user_path(@user)
   end
 
@@ -87,21 +87,21 @@ class Admin::UsersController < Admin::BaseController
 
     # 登録方法フィルタ（LINE登録 vs 通常登録）
     case params[:provider]
-    when 'line'
+    when "line"
       users = users.where.not(provider: nil)
-    when 'email'
+    when "email"
       users = users.where(provider: nil)
     end
 
     # ソート
     case params[:sort]
-    when 'name'
+    when "name"
       users = users.order(name: sort_direction)
-    when 'email'
+    when "email"
       users = users.order(email: sort_direction)
-    when 'role'
+    when "role"
       users = users.order(role: sort_direction)
-    when 'gift_records_count'
+    when "gift_records_count"
       users = users.left_joins(:gift_records)
                   .group(:id)
                   .order("COUNT(gift_records.id) #{sort_direction}")
@@ -115,7 +115,7 @@ class Admin::UsersController < Admin::BaseController
 
   # ソート方向の決定
   def sort_direction
-    params[:direction] == 'asc' ? :asc : :desc
+    params[:direction] == "asc" ? :asc : :desc
   end
 
   # ユーザー統計情報の構築

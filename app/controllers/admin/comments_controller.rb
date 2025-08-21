@@ -1,7 +1,7 @@
 # 管理者用コメント管理コントローラー
 # コメントの閲覧、編集、削除を提供
 class Admin::CommentsController < Admin::BaseController
-  before_action :set_comment, only: [:show, :edit, :update, :destroy]
+  before_action :set_comment, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @comments = filter_and_sort_comments
@@ -32,7 +32,7 @@ class Admin::CommentsController < Admin::BaseController
 
   def destroy
     comment_info = "ID: #{@comment.id}, 投稿者: #{@comment.user.name}, 内容: #{@comment.excerpt(50)}"
-    
+
     if @comment.destroy
       admin_flash_success("コメントを削除しました。")
       log_admin_action("コメント削除", "Comment", @comment.id, comment_info)
@@ -60,7 +60,7 @@ class Admin::CommentsController < Admin::BaseController
     if params[:search].present?
       search_term = "%#{params[:search]}%"
       comments = comments.joins(:user)
-                        .where("comments.body ILIKE ? OR users.name ILIKE ?", 
+                        .where("comments.body ILIKE ? OR users.name ILIKE ?",
                                search_term, search_term)
     end
 
@@ -71,17 +71,17 @@ class Admin::CommentsController < Admin::BaseController
 
     # 日付範囲フィルタ
     if params[:date_from].present?
-      comments = comments.where('comments.created_at >= ?', Date.parse(params[:date_from]))
+      comments = comments.where("comments.created_at >= ?", Date.parse(params[:date_from]))
     end
     if params[:date_to].present?
-      comments = comments.where('comments.created_at <= ?', Date.parse(params[:date_to]))
+      comments = comments.where("comments.created_at <= ?", Date.parse(params[:date_to]))
     end
 
     # ソート
     case params[:sort]
-    when 'body'
+    when "body"
       comments = comments.order(body: sort_direction)
-    when 'user_name'
+    when "user_name"
       comments = comments.joins(:user).order("users.name #{sort_direction}")
     else
       comments = comments.order(created_at: sort_direction)
@@ -93,7 +93,7 @@ class Admin::CommentsController < Admin::BaseController
 
   # ソート方向の決定
   def sort_direction
-    params[:direction] == 'asc' ? :asc : :desc
+    params[:direction] == "asc" ? :asc : :desc
   end
 
   # ストロングパラメータ

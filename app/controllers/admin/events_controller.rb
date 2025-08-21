@@ -1,6 +1,6 @@
 # 管理者用イベント管理コントローラー
 class Admin::EventsController < Admin::BaseController
-  before_action :set_event, only: [:edit, :update, :destroy]
+  before_action :set_event, only: [ :edit, :update, :destroy ]
 
   def index
     @events = Event.order(:name).page(params[:page]).per(per_page)

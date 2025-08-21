@@ -17,33 +17,33 @@ Rails.application.routes.draw do
     # 管理者ダッシュボード
     root "dashboard#index"
     get "dashboard", to: "dashboard#index"
-    
+
     # ユーザー管理
-    resources :users, only: [:index, :show, :edit, :update] do
+    resources :users, only: [ :index, :show, :edit, :update ] do
       member do
         patch :toggle_role  # 管理者権限の切り替え
         patch :toggle_status  # アカウント有効/無効の切り替え（将来的な拡張用）
       end
     end
-    
+
     # ギフト記録管理
-    resources :gift_records, only: [:index, :show, :edit, :update, :destroy] do
+    resources :gift_records, only: [ :index, :show, :edit, :update, :destroy ] do
       member do
         patch :toggle_public  # 公開/非公開の切り替え
       end
     end
-    
+
     # ギフト相手管理
-    resources :gift_people, only: [:index, :show, :edit, :update, :destroy]
-    
+    resources :gift_people, only: [ :index, :show, :edit, :update, :destroy ]
+
     # コメント管理
-    resources :comments, only: [:index, :show, :edit, :update, :destroy]
-    
+    resources :comments, only: [ :index, :show, :edit, :update, :destroy ]
+
     # 基本データ管理
-    resources :events, except: [:show]
-    resources :relationships, except: [:show]
-    resources :gift_item_categories, except: [:show]
-    
+    resources :events, except: [ :show ]
+    resources :relationships, except: [ :show ]
+    resources :gift_item_categories, except: [ :show ]
+
     # システム統計
     get "statistics", to: "statistics#index"
   end

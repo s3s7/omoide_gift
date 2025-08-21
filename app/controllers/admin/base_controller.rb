@@ -5,7 +5,7 @@ class Admin::BaseController < ApplicationController
   include AdminAuthorization
 
   # 管理者専用レイアウトを使用
-  layout 'admin'
+  layout "admin"
 
   # 管理者アクションのログ記録
   before_action :log_admin_access

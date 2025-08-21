@@ -1,6 +1,6 @@
 # 管理者用ギフトアイテムカテゴリ管理コントローラー
 class Admin::GiftItemCategoriesController < Admin::BaseController
-  before_action :set_gift_item_category, only: [:edit, :update, :destroy]
+  before_action :set_gift_item_category, only: [ :edit, :update, :destroy ]
 
   def index
     @gift_item_categories = GiftItemCategory.order(:name).page(params[:page]).per(per_page)
