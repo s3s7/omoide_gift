@@ -1,5 +1,7 @@
 <!-- フラッシュメッセージ表示 -->
-<div id="flash-messages" class="fixed top-20 right-4 z-50 space-y-3">
+<div id="flash-messages" class="fixed top-20 right-4 z-50 space-y-3"
+     data-controller="flash-messages"
+     data-action="turbo:before-visit@document->flash-messages#beforeVisit">
   <% flash.each do |message_type, message| %>
     <% 
       # メッセージタイプに応じたスタイリングを設定
@@ -33,7 +35,7 @@
     
     <div class="flash-message <%= bg_color %> <%= border_color %> <%= text_color %> border rounded-lg shadow-lg max-w-md w-full p-4 transform transition-all duration-300 ease-in-out opacity-0 translate-x-full"
          data-message-type="<%= message_type %>"
-         style="animation: slideInRight 0.5s ease-out forwards;">
+         data-flash-messages-target="message">
       <div class="flex items-start">
         <!-- アイコン -->
         <div class="flex-shrink-0">
@@ -51,7 +53,7 @@
         <div class="ml-4 flex-shrink-0 flex">
           <button type="button" 
                   class="inline-flex <%= text_color %> hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-<%= bg_color.split('-')[1] %>-50 focus:ring-<%= icon_color.split('-')[1] %>-500 rounded-md p-1.5 transition-opacity duration-150"
-                  onclick="dismissFlashMessage(this)">
+                  data-action="click->flash-messages#dismiss">
             <span class="sr-only">閉じる</span>
             <i class="fas fa-times text-sm"></i>
           </button>
@@ -109,56 +111,3 @@
   }
 </style>
 
-<!-- JavaScript -->
-<script>
-  // フラッシュメッセージの自動消去とインタラクション
-  function initFlashMessages() {
-    // 自動消去（3秒後に短縮して、ハンバーガーメニューとの競合を減らす）
-    const flashMessages = document.querySelectorAll('.flash-message');
-    flashMessages.forEach(function(message, index) {
-      // 段階的に表示（複数メッセージがある場合）
-      setTimeout(function() {
-        if (message) {
-          message.style.opacity = '1';
-          message.style.transform = 'translateX(0)';
-        }
-      }, index * 200);
-      
-      // 自動消去（3秒後）
-      setTimeout(function() {
-        if (message && message.parentNode) {
-          dismissFlashMessage(message);
-        }
-      }, 3000 + (index * 200));
-    });
-  }
-  
-  // フラッシュメッセージを閉じる関数（改良版）
-  function dismissFlashMessage(messageElement) {
-    // button要素が渡された場合は親要素を取得
-    if (messageElement && messageElement.tagName === 'BUTTON') {
-      messageElement = messageElement.closest('.flash-message');
-    }
-    
-    if (messageElement && messageElement.classList.contains('flash-message')) {
-      messageElement.classList.add('fade-out');
-      setTimeout(function() {
-        if (messageElement && messageElement.parentNode) {
-          messageElement.remove();
-        }
-      }, 300);
-    }
-  }
-  
-  // DOMContentLoaded と Turbo 両方に対応
-  document.addEventListener('DOMContentLoaded', initFlashMessages);
-  document.addEventListener('turbo:load', initFlashMessages);
-  
-  // ページ遷移時にメッセージをクリア
-  document.addEventListener('turbo:before-visit', function() {
-    const flashContainer = document.getElementById('flash-messages');
-    if (flashContainer) {
-      flashContainer.innerHTML = '';
-    }
-  });
-</script>

@@ -45,3 +45,12 @@ application.register("comments", CommentsController)
 
 import GiftPersonFormController from "./gift_person_form_controller"
 application.register("gift-person-form", GiftPersonFormController)
+
+import UserFormController from "./user_form_controller"
+application.register("user-form", UserFormController)
+
+import UserProfileController from "./user_profile_controller"
+application.register("user-profile", UserProfileController)
+
+import FlashMessagesController from "./flash_messages_controller"
+application.register("flash-messages", FlashMessagesController)
