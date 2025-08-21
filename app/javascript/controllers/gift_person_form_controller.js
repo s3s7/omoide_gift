@@ -219,6 +219,14 @@ export default class extends Controller {
     this.updateMemoCounter()
   }
 
+  // 汎用入力ハンドラー（自動保存用）
+  inputChanged(event) {
+    // 自動保存機能
+    if (this.autoSaveEnabledValue) {
+      this.autoSaveField(event.target)
+    }
+  }
+
   updateMemoCounter() {
     if (!this.hasMemoFieldTarget || !this.hasMemoCounterTarget) return
     

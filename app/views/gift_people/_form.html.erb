@@ -1,6 +1,6 @@
 <%= form_with model: gift_person, data: { 
-      controller: local_assigns[:edit_mode] ? nil : "gift-person-form",
-      "gift-person-form-target": local_assigns[:edit_mode] ? "form" : nil
+      controller: (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? nil : "gift-person-form",
+      "gift-person-form-target": (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? "form" : nil
     } do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   
@@ -14,7 +14,10 @@
       font-size: 14px;
     " %>
     <%= f.text_field :name, 
-        data: { "gift-person-form-target": "input" },
+        data: { 
+          "gift-person-form-target": "input",
+          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
+        }.compact,
         style: "
           width: 100%;
           padding: 14px 16px;
@@ -251,7 +254,10 @@
       font-size: 14px;
     " %>
     <%= f.text_area :likes, 
-        data: { "gift-person-form-target": "input" },
+        data: { 
+          "gift-person-form-target": "input",
+          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
+        }.compact,
         style: "
           width: 100%;
           padding: 14px 16px;
@@ -291,7 +297,10 @@
       font-size: 14px;
     " %>
     <%= f.text_area :dislikes, 
-        data: { "gift-person-form-target": "input" },
+        data: { 
+          "gift-person-form-target": "input",
+          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
+        }.compact,
         style: "
           width: 100%;
           padding: 14px 16px;
@@ -333,7 +342,9 @@
     <%= f.text_area :memo, 
         data: { 
           "gift-person-form-target": "input memoField",
-          "action": "input->gift-person-form#memoInput"
+          "action": local_assigns[:new_mode] ? 
+            "input->gift-person-form#memoInput input->gift-person-form#inputChanged" : 
+            "input->gift-person-form#memoInput"
         },
         style: "
           width: 100%;
@@ -368,7 +379,7 @@
   <div style="margin-bottom: 32px;">
     <%= f.submit nil, 
         data: { 
-          "gift-person-form-target": local_assigns[:edit_mode] ? "submitButton" : nil 
+          "gift-person-form-target": (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? "submitButton" : nil 
         },
         style: "
           width: 100%;
