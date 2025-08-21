@@ -71,7 +71,11 @@
         </p>
       </div>
 
-      <%= render 'form', gift_person: @gift_person %>
+      <!-- 編集モード用のフォーム -->
+      <div data-controller="gift-person-form" 
+           data-gift-person-form-edit-mode-value="true">
+        <%= render 'form', gift_person: @gift_person, edit_mode: true %>
+      </div>
 
       <!-- 操作ボタン -->
       <div class="mt-6 pt-6 border-t border-gray-200 flex justify-between">
@@ -92,65 +96,5 @@
     </div>
   </div>
 </div>
-<style>
-/* フォーカス時のスタイル調整 */
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #FC913A !important;
-  box-shadow: 0 0 0 3px rgba(246, 179, 82, 0.1);
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.querySelector('form');
-  const formFields = form.querySelectorAll('input, select, textarea');
-  const originalValues = {};
-  
-  // 初期値を保存
-  formFields.forEach(field => {
-    originalValues[field.name] = field.value;
-  });
-  
-  // フォーム送信時の確認
-  form.addEventListener('submit', function(e) {
-    const hasChanges = Array.from(formFields).some(field => 
-      field.value !== originalValues[field.name]
-    );
-    
-    if (!hasChanges) {
-      e.preventDefault();
-      alert('変更がありません。');
-      return;
-    }
-    
-    // 必須フィールドチェック
-    const nameField = document.getElementById('gift_person_name');
-    const relationshipField = document.getElementById('gift_person_relationship_id');
-    
-    if (!nameField.value.trim()) {
-      e.preventDefault();
-      alert('名前を入力してください。');
-      nameField.focus();
-      return;
-    }
-    
-    if (!relationshipField.value) {
-      e.preventDefault();
-      alert('関係性を選択してください。');
-      relationshipField.focus();
-      return;
-    }
-    
-    // 送信ボタンを無効化
-    const submitButton = this.querySelector('input[type="submit"]');
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.value = '更新中...';
-    }
-  });
-});
-</script>
-
 <!-- 削除確認モーダル -->
 <%= render 'shared/delete_confirmation_modal' %>

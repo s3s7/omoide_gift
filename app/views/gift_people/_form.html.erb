@@ -1,4 +1,7 @@
-<%= form_with model: gift_person, data: { controller: "gift-person-form" } do |f| %>
+<%= form_with model: gift_person, data: { 
+      controller: local_assigns[:edit_mode] ? nil : "gift-person-form",
+      "gift-person-form-target": local_assigns[:edit_mode] ? "form" : nil
+    } do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
   
   <!-- 名前入力 -->
@@ -363,18 +366,22 @@
 
   <!-- 送信ボタン -->
   <div style="margin-bottom: 32px;">
-    <%= f.submit nil, style: "
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #FC913A 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    " %>
+    <%= f.submit nil, 
+        data: { 
+          "gift-person-form-target": local_assigns[:edit_mode] ? "submitButton" : nil 
+        },
+        style: "
+          width: 100%;
+          padding: 16px;
+          background: linear-gradient(135deg, #FC913A 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        " %>
   </div>
 <% end %>
 

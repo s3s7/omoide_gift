@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="gift-person-form"
+// ギフト相手フォームを管理するStimulusコントローラー
+// data-controller="gift-person-form" に接続
 export default class extends Controller {
   static targets = [
     "input",
@@ -10,26 +11,42 @@ export default class extends Controller {
     "resetButton", 
     "removeCheckbox",
     "memoField",
-    "memoCounter"
+    "memoCounter",
+    "form",
+    "submitButton"
   ]
   
   static values = {
-    maxFileSize: { type: Number, default: 5242880 }, // 5MB in bytes
-    allowedTypes: { type: Array, default: ["image/jpeg", "image/jpg", "image/png", "image/webp"] },
-    focusColor: { type: String, default: "#FC913A" },
-    blurColor: { type: String, default: "#e1e5e9" }
+    maxFileSize: { type: Number, default: 5242880 }, // ファイルサイズ上限（5MB）
+    allowedTypes: { type: Array, default: ["image/jpeg", "image/jpg", "image/png", "image/webp"] }, // 許可する画像形式
+    focusColor: { type: String, default: "#FC913A" }, // フォーカス時の枠線色
+    blurColor: { type: String, default: "#e1e5e9" }, // 通常時の枠線色
+    errorColor: { type: String, default: "#ef4444" }, // エラー時の枠線色
+    editMode: { type: Boolean, default: false }, // 編集モードかどうか
+    newMode: { type: Boolean, default: false }, // 新規作成モードかどうか
+    autoSaveEnabled: { type: Boolean, default: false } // 自動保存機能の有効化
   }
 
   connect() {
     this.setupInputFocusHandling()
     this.setupMemoCounter()
+    
+    // 編集モード専用の設定
+    if (this.editModeValue) {
+      this.setupEditMode()
+    }
+    
+    // 新規作成モード専用の設定
+    if (this.newModeValue) {
+      this.setupNewMode()
+    }
   }
 
   disconnect() {
-    // Cleanup if needed
+    // 必要に応じてクリーンアップ処理を実行
   }
 
-  // Input focus/blur handling for all form inputs
+  // 全フォーム入力要素のフォーカス・ブラー処理を設定
   setupInputFocusHandling() {
     this.inputTargets.forEach(input => {
       input.addEventListener('focus', this.handleInputFocus.bind(this))
@@ -42,10 +59,20 @@ export default class extends Controller {
   }
 
   handleInputBlur(event) {
-    event.target.style.borderColor = this.blurColorValue
+    // 新規作成モードでの名前フィールドのバリデーション
+    if (this.newModeValue && event.target.name === 'gift_person[name]') {
+      this.validateNameFieldOnBlur(event.target)
+    } else {
+      event.target.style.borderColor = this.blurColorValue
+    }
+    
+    // 自動保存機能
+    if (this.autoSaveEnabledValue) {
+      this.autoSaveField(event.target)
+    }
   }
 
-  // Avatar file selection and preview
+  // プロフィール画像ファイル選択とプレビュー処理
   avatarSelected(event) {
     const file = event.target.files[0]
     
@@ -54,14 +81,14 @@ export default class extends Controller {
       return
     }
 
-    // Validate file size
+    // ファイルサイズの検証
     if (file.size > this.maxFileSizeValue) {
       this.showError('ファイルサイズは5MB以下にしてください。')
       this.clearAvatarInput()
       return
     }
 
-    // Validate file type
+    // ファイル形式の検証
     if (!this.allowedTypesValue.includes(file.type)) {
       this.showError('JPEG、PNG、WEBP形式のファイルのみアップロードできます。')
       this.clearAvatarInput()
@@ -75,23 +102,23 @@ export default class extends Controller {
     const reader = new FileReader()
     
     reader.onload = (e) => {
-      // Show preview image
+      // プレビュー画像を表示
       if (this.hasAvatarPreviewTarget) {
         this.avatarPreviewTarget.src = e.target.result
         this.avatarPreviewTarget.style.display = 'block'
       }
       
-      // Dim current avatar
+      // 現在の画像を薄く表示
       if (this.hasCurrentAvatarTarget) {
         this.currentAvatarTarget.style.opacity = '0.3'
       }
       
-      // Show reset button
+      // リセットボタンを表示
       if (this.hasResetButtonTarget) {
         this.resetButtonTarget.style.display = 'inline-block'
       }
       
-      // Disable remove checkbox if present
+      // 削除チェックボックスがある場合は無効化
       if (this.hasRemoveCheckboxTarget) {
         this.removeCheckboxTarget.checked = false
         this.removeCheckboxTarget.disabled = true
@@ -107,26 +134,26 @@ export default class extends Controller {
   }
 
   resetAvatarPreview() {
-    // Clear file input
+    // ファイル入力をクリア
     this.clearAvatarInput()
     
-    // Hide preview
+    // プレビューを非表示
     if (this.hasAvatarPreviewTarget) {
       this.avatarPreviewTarget.src = ''
       this.avatarPreviewTarget.style.display = 'none'
     }
     
-    // Restore current avatar opacity
+    // 現在の画像の透明度を元に戻す
     if (this.hasCurrentAvatarTarget) {
       this.currentAvatarTarget.style.opacity = '1'
     }
     
-    // Hide reset button
+    // リセットボタンを非表示
     if (this.hasResetButtonTarget) {
       this.resetButtonTarget.style.display = 'none'
     }
     
-    // Re-enable remove checkbox if present
+    // 削除チェックボックスがある場合は再度有効化
     if (this.hasRemoveCheckboxTarget) {
       this.removeCheckboxTarget.disabled = false
     }
@@ -138,12 +165,12 @@ export default class extends Controller {
     }
   }
 
-  // Remove avatar checkbox handling
+  // プロフィール画像削除チェックボックスの処理
   removeAvatarToggled(event) {
     const isChecked = event.target.checked
     
     if (isChecked) {
-      // Clear any file selection and preview
+      // ファイル選択とプレビューをクリア
       this.clearAvatarInput()
       
       if (this.hasAvatarPreviewTarget) {
@@ -155,23 +182,23 @@ export default class extends Controller {
         this.resetButtonTarget.style.display = 'none'
       }
       
-      // Dim current avatar to show it will be removed
+      // 削除予定であることを示すために現在の画像を薄く表示
       if (this.hasCurrentAvatarTarget) {
         this.currentAvatarTarget.style.opacity = '0.3'
       }
     } else {
-      // Restore current avatar opacity
+      // 現在の画像の透明度を元に戻す
       if (this.hasCurrentAvatarTarget) {
         this.currentAvatarTarget.style.opacity = '1'
       }
     }
   }
 
-  // Memo field character counter
+  // メモフィールドの文字数カウンター設定
   setupMemoCounter() {
     if (!this.hasMemoFieldTarget) return
     
-    // Create counter element if it doesn't exist
+    // カウンター要素が存在しない場合は作成
     if (!this.hasMemoCounterTarget) {
       this.createMemoCounter()
     }
@@ -184,7 +211,7 @@ export default class extends Controller {
     counterDiv.style.cssText = 'font-size: 11px; color: #999; text-align: right; margin-top: 4px;'
     counterDiv.setAttribute('data-gift-person-form-target', 'memoCounter')
     
-    // Insert after the memo field
+    // メモフィールドの後に挿入
     this.memoFieldTarget.parentNode.appendChild(counterDiv)
   }
 
@@ -200,26 +227,265 @@ export default class extends Controller {
     
     this.memoCounterTarget.textContent = `${currentLength}/${maxLength}文字`
     
-    // Update color based on usage
+    // 使用量に応じて色を変更
     let color = '#999'
     if (currentLength > maxLength * 0.9) {
-      color = '#dc3545' // Red when near/over limit
+      color = '#dc3545' // 制限に近い/超えた場合は赤色
     } else if (currentLength > maxLength * 0.8) {
-      color = '#ffc107' // Yellow when getting close
+      color = '#ffc107' // 制限に近づいている場合は黄色
     }
     
     this.memoCounterTarget.style.color = color
   }
 
-  // Utility methods
+  // 編集モード専用の初期設定
+  setupEditMode() {
+    this.originalValues = {}
+    
+    // 全フォームフィールドの初期値を保存
+    this.inputTargets.forEach(field => {
+      // チェックボックスの場合は特別な処理
+      if (field.type === 'checkbox') {
+        this.originalValues[field.name] = field.checked ? '1' : ''
+      } else {
+        this.originalValues[field.name] = field.value
+      }
+    })
+    
+    // フォーム送信イベントリスナーを追加
+    if (this.hasFormTarget) {
+      this.formTarget.addEventListener('submit', this.handleFormSubmit.bind(this))
+    }
+  }
+
+  // フォーム送信時の処理
+  handleFormSubmit(event) {
+    if (!this.editModeValue) return
+    
+    // 変更があるかチェック
+    if (!this.hasFormChanges()) {
+      event.preventDefault()
+      this.showError('変更がありません。')
+      return
+    }
+    
+    // 必須フィールドのバリデーション
+    if (!this.validateRequiredFields()) {
+      event.preventDefault()
+      return
+    }
+    
+    // 送信ボタンを無効化してローディング状態に
+    this.setSubmitButtonLoading()
+  }
+
+  // フォームに変更があるかチェック
+  hasFormChanges() {
+    return this.inputTargets.some(field => {
+      let currentValue
+      
+      // フィールドタイプに応じて現在の値を取得
+      if (field.type === 'checkbox') {
+        currentValue = field.checked ? '1' : ''
+      } else {
+        currentValue = field.value
+      }
+      
+      const originalValue = this.originalValues[field.name] || ''
+      
+      return currentValue !== originalValue
+    })
+  }
+
+  // 必須フィールドのバリデーション
+  validateRequiredFields() {
+    // 名前フィールドの検証
+    const nameField = this.inputTargets.find(field => 
+      field.name === 'gift_person[name]' || field.id === 'gift_person_name'
+    )
+    
+    if (nameField && !nameField.value.trim()) {
+      this.showError('名前を入力してください。')
+      nameField.focus()
+      return false
+    }
+    
+    // 関係性フィールドの検証
+    const relationshipField = this.inputTargets.find(field => 
+      field.name === 'gift_person[relationship_id]' || field.id === 'gift_person_relationship_id'
+    )
+    
+    if (relationshipField && !relationshipField.value) {
+      this.showError('関係性を選択してください。')
+      relationshipField.focus()
+      return false
+    }
+    
+    return true
+  }
+
+  // 送信ボタンをローディング状態に設定
+  setSubmitButtonLoading() {
+    if (this.hasSubmitButtonTarget) {
+      this.submitButtonTarget.disabled = true
+      this.originalSubmitText = this.submitButtonTarget.value
+      this.submitButtonTarget.value = '更新中...'
+    }
+  }
+
+  // 送信ボタンを元の状態に戻す（エラー時等に使用）
+  resetSubmitButton() {
+    if (this.hasSubmitButtonTarget && this.originalSubmitText) {
+      this.submitButtonTarget.disabled = false
+      this.submitButtonTarget.value = this.originalSubmitText
+    }
+  }
+
+  // ユーティリティメソッド
   showError(message) {
-    // Use browser alert for now, could be enhanced with better UI
+    // 現在はブラウザのalertを使用、将来的にはより良いUIに変更可能
     alert(message)
   }
 
-  // Handle form submission validation if needed
+  // 新規作成モード専用の初期設定
+  setupNewMode() {
+    // ドラフト復元機能
+    if (this.autoSaveEnabledValue) {
+      this.restoreDrafts()
+    }
+    
+    // フォーム送信イベントリスナーを追加
+    if (this.hasFormTarget) {
+      this.formTarget.addEventListener('submit', this.handleNewModeFormSubmit.bind(this))
+    }
+  }
+
+  // 新規作成モードでのフォーム送信処理
+  handleNewModeFormSubmit(event) {
+    if (!this.newModeValue) return
+    
+    // 必須フィールドのバリデーション
+    if (!this.validateNewModeRequiredFields()) {
+      event.preventDefault()
+      return
+    }
+    
+    // 送信ボタンをローディング状態に設定
+    this.setNewModeSubmitButtonLoading()
+    
+    // 成功時のドラフトクリア（遅延実行）
+    if (this.autoSaveEnabledValue) {
+      setTimeout(() => {
+        this.clearAllDrafts()
+      }, 1000)
+    }
+  }
+
+  // 新規作成モードでの必須フィールドバリデーション
+  validateNewModeRequiredFields() {
+    let hasErrors = false
+    
+    // 名前フィールドの検証
+    const nameField = this.inputTargets.find(field => 
+      field.name === 'gift_person[name]' || field.id === 'gift_person_name'
+    )
+    
+    if (nameField && !nameField.value.trim()) {
+      this.showError('名前を入力してください。')
+      nameField.focus()
+      hasErrors = true
+    }
+    
+    // 関係性フィールドの検証
+    const relationshipField = this.inputTargets.find(field => 
+      field.name === 'gift_person[relationship_id]' || field.id === 'gift_person_relationship_id'
+    )
+    
+    if (relationshipField && !relationshipField.value) {
+      this.showError('関係性を選択してください。')
+      relationshipField.focus()
+      hasErrors = true
+    }
+    
+    return !hasErrors
+  }
+
+  // 名前フィールドのblurバリデーション
+  validateNameFieldOnBlur(field) {
+    if (field.value.trim() === '') {
+      field.style.borderColor = this.errorColorValue
+    } else {
+      field.style.borderColor = this.blurColorValue
+    }
+  }
+
+  // 新規作成モード用の送信ボタンローディング状態
+  setNewModeSubmitButtonLoading() {
+    if (this.hasSubmitButtonTarget) {
+      this.submitButtonTarget.disabled = true
+      this.originalSubmitText = this.submitButtonTarget.value
+      this.submitButtonTarget.value = '登録中...'
+    }
+  }
+
+  // 自動保存機能：フィールドの値をローカルストレージに保存
+  autoSaveField(field) {
+    if (!field.name || !this.isAutoSaveTargetField(field)) return
+    
+    const storageKey = `draft_${field.id || field.name}`
+    localStorage.setItem(storageKey, field.value)
+  }
+
+  // 自動保存対象フィールドかどうかの判定
+  isAutoSaveTargetField(field) {
+    const autoSaveFields = [
+      'gift_person_name',
+      'gift_person_likes', 
+      'gift_person_dislikes',
+      'gift_person_memo'
+    ]
+    
+    return autoSaveFields.some(fieldId => 
+      field.id === fieldId || field.name.includes(fieldId.replace('gift_person_', ''))
+    )
+  }
+
+  // ドラフト復元機能
+  restoreDrafts() {
+    this.inputTargets.forEach(field => {
+      if (!this.isAutoSaveTargetField(field) || field.value) return
+      
+      const storageKey = `draft_${field.id || field.name}`
+      const draftValue = localStorage.getItem(storageKey)
+      
+      if (draftValue) {
+        field.value = draftValue
+        
+        // メモフィールドの場合は文字数カウンターを更新
+        if (field === this.memoFieldTarget && this.hasMemoFieldTarget) {
+          this.updateMemoCounter()
+        }
+      }
+    })
+  }
+
+  // 全ドラフトデータをクリア
+  clearAllDrafts() {
+    const autoSaveFields = [
+      'gift_person_name',
+      'gift_person_likes',
+      'gift_person_dislikes', 
+      'gift_person_memo'
+    ]
+    
+    autoSaveFields.forEach(fieldId => {
+      localStorage.removeItem(`draft_${fieldId}`)
+    })
+  }
+
+  // フォーム送信バリデーション（必要に応じて追加のバリデーションを実装）
   validateForm(event) {
-    // Additional validation can be added here if needed
+    // 追加のバリデーションロジックをここに記述
     return true
   }
 }
