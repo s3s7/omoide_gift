@@ -1,0 +1,303 @@
+<!-- ギフト相手管理一覧 -->
+<div class="space-y-6">
+  <!-- ページヘッダー -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        <i class="fas fa-users mr-3 text-green-600"></i>
+        ギフト相手管理
+      </h1>
+      <p class="text-gray-600 mt-1">ユーザーが登録したギフト相手の管理と閲覧</p>
+    </div>
+    
+    <!-- 統計サマリー -->
+    <div class="flex space-x-4 text-sm">
+      <div class="text-center">
+        <div class="font-bold text-lg text-green-600"><%= @gift_people.total_count if @gift_people.respond_to?(:total_count) %></div>
+        <div class="text-gray-500">総ギフト相手数</div>
+      </div>
+      <div class="text-center">
+        <div class="font-bold text-lg text-blue-600"><%= @gift_people.joins(:gift_records).distinct.count if @gift_people.respond_to?(:joins) %></div>
+        <div class="text-gray-500">ギフト記録有り</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 検索・フィルター -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <%= form_with url: admin_gift_people_path, method: :get, local: true, class: "space-y-4" do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- 検索キーワード -->
+        <div>
+          <%= f.label :search, "検索", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :search, 
+              value: params[:search],
+              placeholder: "名前で検索",
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" %>
+        </div>
+
+        <!-- 関係フィルタ -->
+        <div>
+          <%= f.label :relationship_id, "関係", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :relationship_id, 
+              options_from_collection_for_select(Relationship.all, :id, :name, params[:relationship_id]),
+              { prompt: "すべての関係" },
+              { class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" } %>
+        </div>
+
+        <!-- 並び順 -->
+        <div>
+          <%= f.label :sort, "並び順", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :sort, 
+              options_for_select([
+                ["作成日（新→古）", "created_at_desc"],
+                ["作成日（古→新）", "created_at_asc"],
+                ["名前（昇順）", "name_asc"],
+                ["名前（降順）", "name_desc"]
+              ], params[:sort]),
+              {},
+              { class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500" } %>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <%= f.submit "検索", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+        <%= link_to "リセット", admin_gift_people_path, 
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" %>
+        
+        <!-- 表示件数設定 -->
+        <div class="flex items-center space-x-2 ml-auto">
+          <label class="text-sm text-gray-700">表示件数:</label>
+          <%= f.select :per_page, 
+              options_for_select([
+                ["25件", 25],
+                ["50件", 50],
+                ["100件", 100]
+              ], params[:per_page] || 25),
+              {},
+              { 
+                class: "px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-green-500 focus:border-green-500",
+                onchange: "this.form.submit();"
+              } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- ギフト相手一覧テーブル -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              ギフト相手
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              関係
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              年齢
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              登録者
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              ギフト記録数
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              作成日
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              アクション
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @gift_people.each do |gift_person| %>
+            <tr class="hover:bg-gray-50">
+              <!-- ギフト相手 -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 w-10 h-10">
+                    <% if gift_person.has_avatar? %>
+                      <%= image_tag gift_person.display_avatar(:medium), 
+                          class: "w-10 h-10 rounded-full object-cover" %>
+                    <% else %>
+                      <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-user text-green-600"></i>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">
+                      <%= link_to gift_person.name, admin_gift_person_path(gift_person), 
+                          class: "hover:text-green-600" %>
+                    </div>
+                    <% if gift_person.birthday %>
+                      <div class="text-sm text-gray-500">
+                        誕生日: <%= l(gift_person.birthday, format: :short) %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </td>
+
+              <!-- 関係 -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  <%= gift_person.relationship.name %>
+                </span>
+              </td>
+
+              <!-- 年齢 -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <%= gift_person.display_age_at || "未設定" %>
+              </td>
+
+              <!-- 登録者 -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 w-8 h-8">
+                    <% if gift_person.user.has_avatar? %>
+                      <%= image_tag gift_person.user.display_avatar(:small), 
+                          class: "w-8 h-8 rounded-full object-cover" %>
+                    <% else %>
+                      <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-user text-gray-400 text-sm"></i>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="ml-3">
+                    <div class="text-sm font-medium text-gray-900">
+                      <%= link_to gift_person.user.name, admin_user_path(gift_person.user), 
+                          class: "hover:text-blue-600" %>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- ギフト記録数 -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <div class="flex items-center">
+                  <span class="font-medium"><%= gift_person.gift_records.count %></span>
+                  <span class="text-gray-500 ml-1">件</span>
+                  <% if gift_person.gift_records.count > 0 %>
+                    <span class="ml-2 text-xs text-green-600">
+                      <i class="fas fa-gift"></i>
+                    </span>
+                  <% end %>
+                </div>
+              </td>
+
+              <!-- 作成日 -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= l(gift_person.created_at, format: :short) %>
+              </td>
+
+              <!-- アクション -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <%= link_to "詳細", admin_gift_person_path(gift_person), 
+                    class: "text-green-600 hover:text-green-900" %>
+                
+                <%= link_to "編集", edit_admin_gift_person_path(gift_person), 
+                    class: "text-blue-600 hover:text-blue-900" %>
+
+                <!-- ギフト記録がない場合のみ削除ボタンを表示 -->
+                <% if gift_person.gift_records.count == 0 %>
+                  <%= button_to "削除", admin_gift_person_path(gift_person),
+                      method: :delete,
+                      data: { 
+                        confirm: "「#{gift_person.name}」を削除しますか？この操作は取り消せません。"
+                      },
+                      class: "text-red-600 hover:text-red-900 border-0 bg-transparent p-0 underline cursor-pointer",
+                      form: { style: "display: inline;" } %>
+                <% else %>
+                  <span class="text-gray-400" title="ギフト記録が存在するため削除できません">削除不可</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ページネーション -->
+    <% if @gift_people.respond_to?(:current_page) && @gift_people.total_pages > 1 %>
+      <div class="px-6 py-4 border-t border-gray-200">
+        <nav class="flex items-center justify-between">
+          <!-- 前のページボタン -->
+          <div class="flex-1 flex justify-start">
+            <% if @gift_people.prev_page %>
+              <%= link_to admin_gift_people_path(request.query_parameters.merge(page: @gift_people.prev_page)),
+                  class: "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors" do %>
+                <i class="fas fa-chevron-left mr-2"></i>
+                前へ
+              <% end %>
+            <% else %>
+              <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                <i class="fas fa-chevron-left mr-2"></i>
+                前へ
+              </span>
+            <% end %>
+          </div>
+
+          <!-- ページ番号 -->
+          <div class="hidden md:flex">
+            <% start_page = [@gift_people.current_page - 2, 1].max %>
+            <% end_page = [start_page + 4, @gift_people.total_pages].min %>
+            <% start_page = [end_page - 4, 1].max if end_page - start_page < 4 %>
+
+            <!-- ページ番号範囲 -->
+            <% (start_page..end_page).each do |page_num| %>
+              <% if page_num == @gift_people.current_page %>
+                <span aria-current="page" class="relative inline-flex items-center px-3 py-2 border border-green-500 bg-green-50 text-sm font-medium text-green-600">
+                  <%= page_num %>
+                </span>
+              <% else %>
+                <%= link_to admin_gift_people_path(request.query_parameters.merge(page: page_num)),
+                    class: "relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" do %>
+                  <%= page_num %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+
+          <!-- 次のページボタン -->
+          <div class="flex-1 flex justify-end">
+            <% if @gift_people.next_page %>
+              <%= link_to admin_gift_people_path(request.query_parameters.merge(page: @gift_people.next_page)),
+                  class: "ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors" do %>
+                次へ
+                <i class="fas fa-chevron-right ml-2"></i>
+              <% end %>
+            <% else %>
+              <span class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                次へ
+                <i class="fas fa-chevron-right ml-2"></i>
+              </span>
+            <% end %>
+          </div>
+        </nav>
+
+        <!-- ページ情報 -->
+        <div class="mt-3 text-center text-sm text-gray-700">
+          <%= @gift_people.current_page %>/<%= @gift_people.total_pages %>ページ 
+          （全<%= @gift_people.total_count %>件中 
+          <%= (@gift_people.current_page - 1) * @gift_people.limit_value + 1 %>-<%= [@gift_people.current_page * @gift_people.limit_value, @gift_people.total_count].min %>件を表示）
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 空の状態表示 -->
+  <% if @gift_people.empty? %>
+    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+      <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-users text-2xl text-gray-400"></i>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">ギフト相手が見つかりません</h3>
+      <p class="text-gray-500">検索条件を変更してお試しください。</p>
+    </div>
+  <% end %>
+</div>
