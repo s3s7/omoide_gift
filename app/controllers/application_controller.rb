@@ -8,6 +8,9 @@ class ApplicationController < ActionController::Base
   # Deviseのストロングパラメータ設定
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  # ビューからアクセス可能なヘルパーメソッドを定義
+  helper_method :admin_user?, :current_user_admin?
+
   # Deviseのコールバックメソッドをオーバーライド
 
   # ログイン後のリダイレクト先を設定
@@ -48,6 +51,26 @@ class ApplicationController < ActionController::Base
   # 情報メッセージの設定
   def flash_info(key, options = {})
     set_flash_message(:info, key, options)
+  end
+
+  # 管理者権限チェック（ビューからも利用可能にするため）
+  def admin_user?
+    user_signed_in? && current_user.admin?
+  end
+
+  # current_user_admin?のエイリアス（分かりやすくするため）
+  def current_user_admin?
+    admin_user?
+  end
+
+  # 管理者権限を要求する（コントローラーで使用）
+  def require_admin!
+    unless admin_user?
+      flash[:alert] = "このページにアクセスする権限がありません。"
+      redirect_to root_path
+      return false
+    end
+    true
   end
 
   # Deviseのストロングパラメータ設定

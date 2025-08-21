@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>管理者画面 - Omoide Gift</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    
+    <!-- 管理者画面専用のスタイル -->
+    <style>
+      body {
+        background-color: #f8fafc;
+      }
+      .admin-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+      }
+      .admin-sidebar {
+        background-color: #334155;
+        min-height: calc(100vh - 4rem);
+      }
+      .admin-main {
+        min-height: calc(100vh - 4rem);
+      }
+      .admin-nav-link {
+        @apply block px-4 py-3 text-slate-300 hover:bg-slate-600 hover:text-white transition-colors;
+      }
+      .admin-nav-link.active {
+        @apply bg-slate-600 text-white border-r-4 border-blue-400;
+      }
+    </style>
+  </head>
+
+  <body class="font-sans antialiased">
+    <!-- 管理者専用ヘッダー -->
+    <header class="admin-header shadow-lg">
+      <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- ロゴ・タイトル -->
+          <div class="flex items-center">
+            <%= link_to admin_root_path, class: "flex items-center space-x-3" do %>
+              <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <i class="fas fa-shield-alt text-blue-600"></i>
+              </div>
+              <h1 class="text-xl font-bold">管理者画面</h1>
+            <% end %>
+          </div>
+
+          <!-- 管理者情報・メニュー -->
+          <div class="flex items-center space-x-4">
+            <!-- 一般画面への切り替え -->
+            <%= link_to root_path, 
+                class: "inline-flex items-center px-3 py-2 border border-white/20 rounded-md text-sm hover:bg-white/10 transition-colors" do %>
+              <i class="fas fa-external-link-alt mr-2"></i>
+              一般画面へ
+            <% end %>
+            
+            <!-- 管理者情報 -->
+            <div class="flex items-center space-x-3">
+              <div class="text-sm">
+                <div class="font-medium"><%= current_user.name %></div>
+                <div class="text-blue-200">管理者</div>
+              </div>
+              
+              <!-- プロフィール画像 -->
+              <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                <% if current_user.has_avatar? %>
+                  <%= image_tag current_user.display_avatar(:small), 
+                      class: "w-8 h-8 rounded-full object-cover" %>
+                <% else %>
+                  <i class="fas fa-user-shield text-sm"></i>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- ログアウト -->
+            <%= button_to destroy_user_session_path, 
+                method: :delete,
+                class: "inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 rounded-md text-sm transition-colors",
+                data: { confirm: "ログアウトしますか？" } do %>
+              <i class="fas fa-sign-out-alt mr-2"></i>
+              ログアウト
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- メインコンテンツエリア -->
+    <div class="flex">
+      <!-- サイドバーナビゲーション -->
+      <nav class="admin-sidebar w-64 flex-shrink-0">
+        <div class="p-4">
+          <ul class="space-y-1">
+            <!-- ダッシュボード -->
+            <li>
+              <%= link_to admin_root_path, 
+                  class: "admin-nav-link #{'active' if current_page?(admin_root_path) || current_page?(admin_dashboard_path)}" do %>
+                <i class="fas fa-chart-line mr-3"></i>
+                ダッシュボード
+              <% end %>
+            </li>
+
+            <!-- ユーザー管理 -->
+            <li>
+              <%= link_to admin_users_path, 
+                  class: "admin-nav-link #{'active' if controller_name == 'users' && controller.class.module_parent == Admin}" do %>
+                <i class="fas fa-users mr-3"></i>
+                ユーザー管理
+              <% end %>
+            </li>
+
+            <!-- ギフト記録管理 -->
+            <li>
+              <%= link_to admin_gift_records_path, 
+                  class: "admin-nav-link #{'active' if controller_name == 'gift_records' && controller.class.module_parent == Admin}" do %>
+                <i class="fas fa-gift mr-3"></i>
+                ギフト記録管理
+              <% end %>
+            </li>
+
+            <!-- ギフト相手管理 -->
+            <li>
+              <%= link_to admin_gift_people_path, 
+                  class: "admin-nav-link #{'active' if controller_name == 'gift_people' && controller.class.module_parent == Admin}" do %>
+                <i class="fas fa-address-book mr-3"></i>
+                ギフト相手管理
+              <% end %>
+            </li>
+
+            <!-- コメント管理 -->
+            <li>
+              <%= link_to admin_comments_path, 
+                  class: "admin-nav-link #{'active' if controller_name == 'comments' && controller.class.module_parent == Admin}" do %>
+                <i class="fas fa-comments mr-3"></i>
+                コメント管理
+              <% end %>
+            </li>
+
+            <li><hr class="my-3 border-slate-600"></li>
+
+            <!-- 基本データ管理 -->
+            <li class="text-slate-400 text-xs uppercase tracking-wider px-4 py-2">基本データ</li>
+            
+            <li>
+              <%= link_to admin_events_path, 
+                  class: "admin-nav-link #{'active' if controller_name == 'events' && controller.class.module_parent == Admin}" do %>
+                <i class="fas fa-calendar mr-3"></i>
+                イベント管理
+              <% end %>
+            </li>
+
+            <li>
+              <%= link_to admin_relationships_path, 
+                  class: "admin-nav-link #{'active' if controller_name == 'relationships' && controller.class.module_parent == Admin}" do %>
+                <i class="fas fa-heart mr-3"></i>
+                関係性管理
+              <% end %>
+            </li>
+
+            <li>
+              <%= link_to admin_gift_item_categories_path, 
+                  class: "admin-nav-link #{'active' if controller_name == 'gift_item_categories' && controller.class.module_parent == Admin}" do %>
+                <i class="fas fa-tags mr-3"></i>
+                カテゴリ管理
+              <% end %>
+            </li>
+
+            <li><hr class="my-3 border-slate-600"></li>
+
+            <!-- システム統計 -->
+            <li>
+              <%= link_to admin_statistics_path, 
+                  class: "admin-nav-link #{'active' if controller_name == 'statistics' && controller.class.module_parent == Admin}" do %>
+                <i class="fas fa-chart-bar mr-3"></i>
+                システム統計
+              <% end %>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- メインコンテンツ -->
+      <main class="admin-main flex-1 p-6">
+        <!-- フラッシュメッセージ -->
+        <%= render 'shared/flash_message' %>
+        
+        <!-- ページコンテンツ -->
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
