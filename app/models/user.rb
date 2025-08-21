@@ -10,9 +10,11 @@ class User < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :reminds, dependent: :destroy
   has_many :comments, dependent: :destroy
+  has_one_attached :avatar
 
   # バリデーション
   validates :name, presence: true, length: { maximum: 10 }
+  validate :avatar_validation
 
   # セキュリティを考慮したエラーメッセージの置き換え
   after_validation :customize_validation_errors
@@ -120,6 +122,43 @@ class User < ApplicationRecord
     self.save!
   end
 
+  # プロフィール画像関連メソッド
+  def avatar_url
+    return unless avatar.attached? && persisted?
+    begin
+      avatar
+    rescue ActiveRecord::RecordNotFound, NoMethodError => e
+      Rails.logger.warn "Avatar URL generation failed: #{e.message}"
+      nil
+    end
+  end
+
+  def has_avatar?
+    avatar.attached?
+  end
+
+  def display_avatar(size = :medium)
+    return unless avatar.attached? && persisted?
+
+    # Active Storageのvariantは保存済みレコードのみで動作するため、
+    # レコードが新しい場合や適切にアタッチされていない場合はnilを返す
+    begin
+      case size
+      when :small
+        avatar.variant(resize_to_fill: [ 40, 40 ])
+      when :medium
+        avatar.variant(resize_to_fill: [ 80, 80 ])
+      when :large
+        avatar.variant(resize_to_fill: [ 160, 160 ])
+      else
+        avatar
+      end
+    rescue ActiveRecord::RecordNotFound, NoMethodError => e
+      Rails.logger.warn "Avatar variant generation failed: #{e.message}"
+      nil
+    end
+  end
+
   private
 
   # バリデーションエラーメッセージのカスタマイズ
@@ -135,5 +174,23 @@ class User < ApplicationRecord
       errors.delete(:password_confirmation)
       errors.add(:password_confirmation, "とパスワードの入力が一致しません")
     end
+  end
+
+  # プロフィール画像のバリデーション
+  def avatar_validation
+    return unless avatar.attached?
+
+    # ファイル形式チェック
+    unless avatar.content_type.in?(%w[image/jpeg image/jpg image/png image/webp])
+      errors.add(:avatar, "はJPEG、PNG、WEBP形式のファイルのみアップロードできます")
+    end
+
+    # ファイルサイズチェック（5MBまで）
+    if avatar.blob.byte_size > 5.megabytes
+      errors.add(:avatar, "のファイルサイズは5MB以下にしてください")
+    end
+  rescue StandardError => e
+    Rails.logger.error "Avatar validation error: #{e.message}"
+    errors.add(:avatar, "の検証中にエラーが発生しました")
   end
 end
