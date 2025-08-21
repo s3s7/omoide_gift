@@ -65,11 +65,11 @@ class UsersController < ApplicationController
     if params[:user][:remove_avatar] == "1"
       @user.avatar.purge if @user.avatar.attached?
     end
-    
+
     # remove_avatarパラメータを除いてアップデート
     update_params = user_update_params
     update_params.delete(:remove_avatar)
-    
+
     if @user.update(update_params)
       flash_success(:updated, item: "プロフィール")
       redirect_to mypage_path

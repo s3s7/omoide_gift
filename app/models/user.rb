@@ -145,11 +145,11 @@ class User < ApplicationRecord
     begin
       case size
       when :small
-        avatar.variant(resize_to_fill: [40, 40])
-      when :medium  
-        avatar.variant(resize_to_fill: [80, 80])
+        avatar.variant(resize_to_fill: [ 40, 40 ])
+      when :medium
+        avatar.variant(resize_to_fill: [ 80, 80 ])
       when :large
-        avatar.variant(resize_to_fill: [160, 160])
+        avatar.variant(resize_to_fill: [ 160, 160 ])
       else
         avatar
       end
