@@ -30,6 +30,13 @@ class GiftPeopleController < ApplicationController
     # 統計情報用のカウント（並び替え前に計算）
     @total_people = @gift_people.count
 
+    # ページサイズの決定（デバイス検出）
+    per_page = if request.user_agent =~ /Mobile|Android|iPhone|iPad/
+      12  # モバイル
+    else
+      15  # PC
+    end
+
     # 並び替え処理
     sort_by = params[:sort_by].presence
     sort_order = params[:sort_order].presence || "desc"
@@ -40,10 +47,15 @@ class GiftPeopleController < ApplicationController
         .left_joins(:gift_records)
         .group("gift_people.id")
         .order("COUNT(gift_records.id) #{sort_order}, gift_people.name #{sort_order}")
+        .page(params[:page]).per(per_page)
     else
       # デフォルト：名前順
       @gift_people = @gift_people.order(:name)
+        .page(params[:page]).per(per_page)
     end
+
+    # ページネーション用の安全なパラメータを準備
+    @pagination_params = gift_people_pagination_params
 
     # フィルタリング用のオプション準備
     @relationship_options = current_user.gift_people
@@ -260,5 +272,16 @@ class GiftPeopleController < ApplicationController
     return "" unless text.present?
 
     text.length > length ? "#{text[0..length-1]}..." : text
+  end
+
+  # ページネーション用の安全なパラメータ
+  def gift_people_pagination_params
+    params.permit(
+      :search,
+      :relationship_id,
+      :event_id,
+      :sort_by,
+      :sort_order
+    ).to_h
   end
 end
