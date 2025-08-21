@@ -98,7 +98,7 @@ class GiftRecordsController < ApplicationController
             # IDの順序を維持してレコードを取得
             records_hash = @gift_records.where(id: current_page_ids).index_by(&:id)
             sorted_records = current_page_ids.filter_map { |id| records_hash[id] }
-            
+
             # Kaminari形式でラップして、ページネーション情報を保持
             @gift_records = Kaminari.paginate_array(
               sorted_records,
