@@ -325,6 +325,91 @@
         </div>
       <% end %>
     </div>
+    
+    <!-- ページネーション -->
+    <% if @gift_records.respond_to?(:current_page) %>
+      <div class="mt-8 mb-6 flex justify-center">
+        <div class="join">
+          <!-- 前のページボタン -->
+          <% if @gift_records.prev_page %>
+            <%= link_to @gift_records.prev_page ? gift_records_path(@pagination_params.merge(page: @gift_records.prev_page)) : "#",
+                class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+              <i class="fas fa-chevron-left"></i>
+              前へ
+            <% end %>
+          <% else %>
+            <button class="join-item px-4 py-2 rounded-md bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 font-medium border-0" disabled>
+              <i class="fas fa-chevron-left"></i>
+              前へ
+            </button>
+          <% end %>
+
+          <!-- ページ番号 -->
+          <% start_page = [@gift_records.current_page - 2, 1].max %>
+          <% end_page = [start_page + 4, @gift_records.total_pages].min %>
+          <% start_page = [end_page - 4, 1].max if end_page - start_page < 4 %>
+
+          <% if start_page > 1 %>
+            <%= link_to gift_records_path(@pagination_params.merge(page: 1)),
+                class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+              1
+            <% end %>
+            <% if start_page > 2 %>
+              <button class="join-item px-4 py-2 rounded-md bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 font-medium border-0" disabled>…</button>
+            <% end %>
+          <% end %>
+
+          <% (start_page..end_page).each do |page_num| %>
+            <% if page_num == @gift_records.current_page %>
+              <button class="join-item px-4 py-2 rounded-md bg-primary-dark text-white font-bold border-0">
+                <%= page_num %>
+              </button>
+            <% else %>
+              <%= link_to gift_records_path(@pagination_params.merge(page: page_num)),
+                  class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+                <%= page_num %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <% if end_page < @gift_records.total_pages %>
+            <% if end_page < @gift_records.total_pages - 1 %>
+              <button class="join-item px-4 py-2 rounded-md bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 font-medium border-0" disabled>…</button>
+            <% end %>
+            <%= link_to gift_records_path(@pagination_params.merge(page: @gift_records.total_pages)),
+                class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+              <%= @gift_records.total_pages %>
+            <% end %>
+          <% end %>
+
+          <!-- 次のページボタン -->
+          <% if @gift_records.next_page %>
+            <%= link_to gift_records_path(@pagination_params.merge(page: @gift_records.next_page)),
+                class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+              次へ
+              <i class="fas fa-chevron-right"></i>
+            <% end %>
+          <% else %>
+            <button class="join-item px-4 py-2 rounded-md bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 font-medium border-0" disabled>
+              次へ
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- ページネーション情報 -->
+      <div class="text-center text-sm text-gray-600 mb-4">
+        <span class="font-medium"><%= @gift_records.offset_value + 1 %></span>
+        ～
+        <span class="font-medium"><%= [@gift_records.offset_value + @gift_records.limit_value, @gift_records.total_count].min %></span>
+        件目（全<span class="font-medium"><%= @gift_records.total_count %></span>件）
+        <span class="ml-2 text-xs">
+          <%= @gift_records.current_page %>/<%= @gift_records.total_pages %>ページ
+        </span>
+      </div>
+    <% end %>
+    
     <% else %>
       <!-- 空状態 -->
       <div class="text-center py-8">
