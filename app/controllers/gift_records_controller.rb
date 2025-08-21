@@ -51,27 +51,34 @@ class GiftRecordsController < ApplicationController
       "gift_records.gift_at" => Date.current.beginning_of_month..Date.current.end_of_month
     ).count
 
+    # ページサイズの決定（デバイス検出）
+    per_page = if request.user_agent =~ /Mobile|Android|iPhone|iPad/
+      12  # モバイル
+    else
+      15  # PC
+    end
+
     # 並び替え処理
     sort_by = params[:sort_by].presence
     sort_order = params[:sort_order].presence == "asc" ? "asc" : "desc"
 
     if sort_by == "favorites"
-      # お気に入り順 - 事前にお気に入り数を計算してソート
-      # まず全レコードのIDを取得
-      record_ids = @gift_records.pluck(:id)
+      # お気に入り順 - ページネーションを考慮したソート処理
+      # まず全レコードのIDを取得（ページネーション前）
+      all_record_ids = @gift_records.pluck(:id)
 
-      # レコードが存在しない場合はそのまま返す
-      if record_ids.empty?
-        @gift_records = @gift_records
+      # レコードが存在しない場合は空のページネーション結果を返す
+      if all_record_ids.empty?
+        @gift_records = @gift_records.page(params[:page]).per(per_page)
       else
         # お気に入り数をハッシュで取得
         favorites_counts = Favorite
-          .where(gift_record_id: record_ids)
+          .where(gift_record_id: all_record_ids)
           .group(:gift_record_id)
           .count
 
         # レコードをお気に入り数でソート
-        sorted_ids = record_ids.sort_by do |id|
+        sorted_ids = all_record_ids.sort_by do |id|
           count = favorites_counts[id] || 0
           sort_order == "desc" ? -count : count
         end
@@ -80,27 +87,41 @@ class GiftRecordsController < ApplicationController
         validated_ids = sorted_ids.select { |id| id.is_a?(Integer) && id > 0 }
 
         if validated_ids.any?
-          # より安全な方法：サブクエリを使用してソート
-          # まず条件に合致するレコードを取得
-          @gift_records = @gift_records.where(id: validated_ids)
+          # ページネーション用にKaminariArrayを使用
+          paginated_ids = Kaminari.paginate_array(validated_ids)
+            .page(params[:page])
+            .per(per_page)
 
-          # Ruby側でソート順を維持
-          records_hash = @gift_records.index_by(&:id)
-          @gift_records = validated_ids.filter_map { |id| records_hash[id] }
+          # 現在のページの記録のみを取得
+          current_page_ids = paginated_ids.to_a
+          if current_page_ids.any?
+            # IDの順序を維持してレコードを取得
+            records_hash = @gift_records.where(id: current_page_ids).index_by(&:id)
+            sorted_records = current_page_ids.filter_map { |id| records_hash[id] }
+            
+            # Kaminari形式でラップして、ページネーション情報を保持
+            @gift_records = Kaminari.paginate_array(
+              sorted_records,
+              total_count: validated_ids.length,
+              limit: per_page,
+              offset: paginated_ids.offset_value
+            ).page(params[:page]).per(per_page)
+          else
+            @gift_records = @gift_records.page(params[:page]).per(per_page)
+          end
         else
-          @gift_records = @gift_records.none
+          @gift_records = @gift_records.none.page(params[:page]).per(per_page)
         end
       end
     elsif sort_by == "created_at"
       # 投稿日順
       @gift_records = @gift_records.order("gift_records.created_at #{sort_order}")
+        .page(params[:page]).per(per_page)
     else
       # デフォルト：投稿日降順
       @gift_records = @gift_records.order(created_at: :desc)
+        .page(params[:page]).per(per_page)
     end
-
-    # ページネーション（将来の実装のため）
-    # @gift_records = @gift_records.page(params[:page]).per(20)
 
     # フィルタリング用のオプション準備（実際に使われているギフト相手のみ）
     @gift_people_options = base_query
@@ -139,6 +160,9 @@ class GiftRecordsController < ApplicationController
           .find_by(id: params[:gift_record_id])
       end
     end
+
+    # ページネーション用の安全なパラメータを準備
+    @pagination_params = pagination_params
 
     # エラーハンドリング
     rescue ActiveRecord::RecordNotFound
@@ -460,6 +484,22 @@ class GiftRecordsController < ApplicationController
     return if @gift_record.is_public? || (user_signed_in? && @gift_record.user == current_user)
 
     redirect_to gift_records_path, alert: "この記録は非公開です。"
+  end
+
+  # ページネーション用の安全なパラメータ
+  def pagination_params
+    params.permit(
+      :search,
+      :gift_person_id,
+      :relationship_id,
+      :event_id,
+      :date_from,
+      :date_to,
+      :sort_by,
+      :sort_order,
+      :filter_type,
+      :filter_value
+    ).to_h
   end
 
   # イベント選択肢の準備
