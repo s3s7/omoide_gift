@@ -53,28 +53,6 @@ end
 
 puts "関係性データの作成完了: #{Relationship.count}件の関係性が存在します"
 
-# ===== 年齢データの作成 =====
-puts "年齢データを作成中..."
-
-age_groups = [
-  "10代未満",
-  "10代",
-  "20代",
-  "30代",
-  "40代",
-  "50代",
-  "60代",
-  "70代",
-  "80代",
-  "90代以上"
-]
-
-age_groups.each do |age_group|
-  Age.find_or_create_by(year: age_group)
-end
-
-puts "年齢データの作成完了: #{Age.count}件の年齢グループが存在します"
-
 # ===== アイテムカテゴリーの作成 =====
 puts "アイテムカテゴリーを作成中..."
 
@@ -106,6 +84,19 @@ end
 
 puts "アイテムカテゴリーの作成完了: #{GiftItemCategory.count}件のカテゴリが存在します"
 
+if Rails.env.production?
+admin_email = ENV['ADMIN_EMAIL']
+admin_password = ENV['ADMIN_PASSWORD']
+admin_name = ENV['ADMIN_NAME']
+
+User.find_or_create_by(email: admin_email) do |user|
+user.name = admin_name
+user.password = admin_password
+user.role = 'admin'
+end
+
+puts "Admin user seeded for production"
+end
 
 # ===== データ整合性チェック =====
 puts "\n=== データ整合性チェック ==="

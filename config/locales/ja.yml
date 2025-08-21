@@ -34,6 +34,9 @@ ja:
         email: "メールアドレス"
         password: "パスワード"
         password_confirmation: "パスワード確認"
+        role:
+          general: "一般ユーザー"
+          admin: "管理者"
       
       comment:
         body: "コメント"

@@ -180,7 +180,7 @@
             <% @recent_activities[:recent_gift_records].each do |record| %>
               <div class="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0">
                 <p class="text-sm font-medium text-gray-900 truncate">
-                  <%= link_to record.title, admin_gift_record_path(record), 
+                  <%= link_to record.display_item_name, admin_gift_record_path(record), 
                       class: "hover:text-purple-600" %>
                 </p>
                 <p class="text-xs text-gray-500">
@@ -220,12 +220,12 @@
             <% @recent_activities[:recent_comments].each do |comment| %>
               <div class="border-b border-gray-100 pb-3 last:border-b-0 last:pb-0">
                 <p class="text-sm text-gray-900 line-clamp-2">
-                  <%= link_to comment.content.truncate(50), admin_comment_path(comment), 
+                  <%= link_to comment.excerpt(50), admin_comment_path(comment), 
                       class: "hover:text-green-600" %>
                 </p>
                 <p class="text-xs text-gray-500 mt-1">
                   <%= comment.user.name %> → 
-                  <%= link_to comment.gift_record.title.truncate(20), 
+                  <%= link_to comment.gift_record.display_item_name.truncate(20), 
                       admin_gift_record_path(comment.gift_record),
                       class: "hover:text-green-600" %>
                 </p>
