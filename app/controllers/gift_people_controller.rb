@@ -188,11 +188,11 @@ class GiftPeopleController < ApplicationController
     if params[:gift_person][:remove_avatar] == "1"
       @gift_person.avatar.purge if @gift_person.avatar.attached?
     end
-    
+
     # remove_avatarパラメータを除いてアップデート
     update_params = gift_person_params
     update_params.delete(:remove_avatar)
-    
+
     if @gift_person.update(update_params)
       flash_success(:updated, item: "ギフト相手「#{@gift_person.name}」")
       redirect_to @gift_person
