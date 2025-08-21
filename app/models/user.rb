@@ -12,6 +12,12 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_one_attached :avatar
 
+  # 権限設定
+  enum role: {
+    general: 0,    # 一般ユーザー
+    admin: 1       # 管理者
+  }
+
   # バリデーション
   validates :name, presence: true, length: { maximum: 10 }
   validate :avatar_validation

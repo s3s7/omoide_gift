@@ -1,0 +1,329 @@
+<!-- ユーザー管理一覧 -->
+<div class="space-y-6">
+  <!-- ページヘッダー -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        <i class="fas fa-users mr-3 text-blue-600"></i>
+        ユーザー管理
+      </h1>
+      <p class="text-gray-600 mt-1">登録されているユーザーの管理と権限設定</p>
+    </div>
+    
+    <!-- 統計サマリー -->
+    <div class="flex space-x-4 text-sm">
+      <div class="text-center">
+        <div class="font-bold text-lg text-blue-600"><%= @total_count %></div>
+        <div class="text-gray-500">総ユーザー</div>
+      </div>
+      <div class="text-center">
+        <div class="font-bold text-lg text-red-600"><%= @admin_count %></div>
+        <div class="text-gray-500">管理者</div>
+      </div>
+      <div class="text-center">
+        <div class="font-bold text-lg text-green-600"><%= @general_count %></div>
+        <div class="text-gray-500">一般ユーザー</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 検索・フィルター -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <%= form_with url: admin_users_path, method: :get, local: true, class: "space-y-4" do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- 検索キーワード -->
+        <div>
+          <%= f.label :search, "検索", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.text_field :search, 
+              value: params[:search],
+              placeholder: "名前またはメールアドレス",
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
+        </div>
+
+        <!-- 権限フィルタ -->
+        <div>
+          <%= f.label :role, "権限", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :role, 
+              options_for_select([
+                ["すべて", ""],
+                ["一般ユーザー", "general"],
+                ["管理者", "admin"]
+              ], params[:role]),
+              {},
+              { class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
+        </div>
+
+        <!-- 登録方法フィルタ -->
+        <div>
+          <%= f.label :provider, "登録方法", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :provider, 
+              options_for_select([
+                ["すべて", ""],
+                ["メール登録", "email"],
+                ["LINE登録", "line"]
+              ], params[:provider]),
+              {},
+              { class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
+        </div>
+
+        <!-- 並び順 -->
+        <div>
+          <%= f.label :sort, "並び順", class: "block text-sm font-medium text-gray-700 mb-1" %>
+          <%= f.select :sort, 
+              options_for_select([
+                ["登録日（新→古）", "created_at"],
+                ["登録日（古→新）", "created_at"],
+                ["名前（昇順）", "name"],
+                ["メール（昇順）", "email"],
+                ["権限", "role"],
+                ["ギフト記録数", "gift_records_count"]
+              ], params[:sort]),
+              {},
+              { class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" } %>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <%= f.submit "検索", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        <%= link_to "リセット", admin_users_path, 
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        
+        <!-- 表示件数設定 -->
+        <div class="flex items-center space-x-2 ml-auto">
+          <label class="text-sm text-gray-700">表示件数:</label>
+          <%= f.select :per_page, 
+              options_for_select([
+                ["25件", 25],
+                ["50件", 50],
+                ["100件", 100]
+              ], params[:per_page] || 25),
+              {},
+              { 
+                class: "px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500",
+                onchange: "this.form.submit();"
+              } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- ユーザー一覧テーブル -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              ユーザー情報
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              権限
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              登録方法
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              活動状況
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              登録日
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              アクション
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @users.each do |user| %>
+            <tr class="hover:bg-gray-50">
+              <!-- ユーザー情報 -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0 w-10 h-10">
+                    <% if user.has_avatar? %>
+                      <%= image_tag user.display_avatar(:medium), 
+                          class: "w-10 h-10 rounded-full object-cover" %>
+                    <% else %>
+                      <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-user text-gray-400"></i>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">
+                      <%= link_to user.name, admin_user_path(user), 
+                          class: "hover:text-blue-600" %>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      <%= user.email %>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- 権限 -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                           <%= user.admin? ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800' %>">
+                  <i class="<%= user.admin? ? 'fas fa-shield-alt' : 'fas fa-user' %> mr-1"></i>
+                  <%= User.human_attribute_name("role.#{user.role}") %>
+                </span>
+              </td>
+
+              <!-- 登録方法 -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <% if user.provider.present? %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <i class="fab fa-line mr-1"></i>
+                    LINE
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <i class="fas fa-envelope mr-1"></i>
+                    メール
+                  </span>
+                <% end %>
+              </td>
+
+              <!-- 活動状況 -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <div class="space-y-1">
+                  <div>ギフト記録: <%= user.gift_records.count %>件</div>
+                  <div>コメント: <%= user.comments.count %>件</div>
+                </div>
+              </td>
+
+              <!-- 登録日 -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= l(user.created_at, format: :short) %>
+              </td>
+
+              <!-- アクション -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <%= link_to "詳細", admin_user_path(user), 
+                    class: "text-blue-600 hover:text-blue-900" %>
+                
+                <% unless user == current_user %>
+                  <%= button_to "権限変更", toggle_role_admin_user_path(user),
+                      method: :patch,
+                      data: { 
+                        confirm: "#{user.name}さんの権限を「#{user.admin? ? '一般ユーザー' : '管理者'}」に変更しますか？"
+                      },
+                      class: "text-orange-600 hover:text-orange-900 border-0 bg-transparent p-0 underline cursor-pointer",
+                      form: { style: "display: inline;" } %>
+                <% else %>
+                  <span class="text-gray-400">（自分）</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ページネーション -->
+    <% if @users.respond_to?(:current_page) && @users.total_pages > 1 %>
+      <div class="px-6 py-4 border-t border-gray-200">
+        <nav class="flex items-center justify-between">
+          <!-- 前のページボタン -->
+          <div class="flex-1 flex justify-start">
+            <% if @users.prev_page %>
+              <%= link_to admin_users_path(search_params.merge(page: @users.prev_page)),
+                  class: "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors" do %>
+                <i class="fas fa-chevron-left mr-2"></i>
+                前へ
+              <% end %>
+            <% else %>
+              <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                <i class="fas fa-chevron-left mr-2"></i>
+                前へ
+              </span>
+            <% end %>
+          </div>
+
+          <!-- ページ番号 -->
+          <div class="hidden md:flex">
+            <% start_page = [@users.current_page - 2, 1].max %>
+            <% end_page = [start_page + 4, @users.total_pages].min %>
+            <% start_page = [end_page - 4, 1].max if end_page - start_page < 4 %>
+
+            <!-- 最初のページ -->
+            <% if start_page > 1 %>
+              <%= link_to admin_users_path(search_params.merge(page: 1)),
+                  class: "relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" do %>
+                1
+              <% end %>
+              <% if start_page > 2 %>
+                <span class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                  ...
+                </span>
+              <% end %>
+            <% end %>
+
+            <!-- ページ番号範囲 -->
+            <% (start_page..end_page).each do |page_num| %>
+              <% if page_num == @users.current_page %>
+                <span aria-current="page" class="relative inline-flex items-center px-3 py-2 border border-blue-500 bg-blue-50 text-sm font-medium text-blue-600">
+                  <%= page_num %>
+                </span>
+              <% else %>
+                <%= link_to admin_users_path(search_params.merge(page: page_num)),
+                    class: "relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" do %>
+                  <%= page_num %>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <!-- 最後のページ -->
+            <% if end_page < @users.total_pages %>
+              <% if end_page < @users.total_pages - 1 %>
+                <span class="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                  ...
+                </span>
+              <% end %>
+              <%= link_to admin_users_path(search_params.merge(page: @users.total_pages)),
+                  class: "relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" do %>
+                <%= @users.total_pages %>
+              <% end %>
+            <% end %>
+          </div>
+
+          <!-- 次のページボタン -->
+          <div class="flex-1 flex justify-end">
+            <% if @users.next_page %>
+              <%= link_to admin_users_path(search_params.merge(page: @users.next_page)),
+                  class: "ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors" do %>
+                次へ
+                <i class="fas fa-chevron-right ml-2"></i>
+              <% end %>
+            <% else %>
+              <span class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                次へ
+                <i class="fas fa-chevron-right ml-2"></i>
+              </span>
+            <% end %>
+          </div>
+        </nav>
+
+        <!-- ページ情報 -->
+        <div class="mt-3 text-center text-sm text-gray-700">
+          <%= @users.current_page %>/<%= @users.total_pages %>ページ 
+          （全<%= @users.total_count %>件中 
+          <%= (@users.current_page - 1) * @users.limit_value + 1 %>-<%= [@users.current_page * @users.limit_value, @users.total_count].min %>件を表示）
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 空の状態表示 -->
+  <% if @users.empty? %>
+    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+      <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-users text-2xl text-gray-400"></i>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">ユーザーが見つかりません</h3>
+      <p class="text-gray-500">検索条件を変更してお試しください。</p>
+    </div>
+  <% end %>
+</div>
+
