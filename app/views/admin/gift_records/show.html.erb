@@ -1,0 +1,413 @@
+<!-- ギフト記録詳細管理画面 -->
+<div class="space-y-6">
+  <!-- ページヘッダー -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        <i class="fas fa-gift mr-3 text-green-600"></i>
+        ギフト記録詳細
+      </h1>
+      <p class="text-gray-600 mt-1"><%= @gift_record.display_item_name %>の詳細情報と管理</p>
+    </div>
+    
+    <!-- ナビゲーションボタン -->
+    <div class="flex space-x-3">
+      <%= link_to admin_gift_records_path,
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" do %>
+        <i class="fas fa-arrow-left mr-2"></i>
+        一覧に戻る
+      <% end %>
+      
+      <!-- 元記録へのリンク（公開記録の場合） -->
+      <% if @gift_record.is_public? %>
+        <%= link_to gift_record_path(@gift_record),
+            target: "_blank",
+            class: "inline-flex items-center px-4 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+          <i class="fas fa-external-link-alt mr-2"></i>
+          公開ページを見る
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- ステータスと管理アクション -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <!-- 公開ステータス -->
+        <% if @gift_record.is_public? %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            <i class="fas fa-globe mr-2"></i>
+            公開中
+          </span>
+        <% else %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+            <i class="fas fa-lock mr-2"></i>
+            非公開
+          </span>
+        <% end %>
+
+        <!-- 統計情報 -->
+        <div class="flex items-center space-x-4 text-sm text-gray-500">
+          <div class="flex items-center">
+            <i class="fas fa-heart mr-1 text-red-500"></i>
+            <span><%= @record_statistics[:favorites_count] %></span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-comment mr-1 text-blue-500"></i>
+            <span><%= @record_statistics[:comments_count] %></span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-image mr-1 text-purple-500"></i>
+            <span><%= @record_statistics[:images_count] %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 管理アクション -->
+      <div class="flex items-center space-x-3">
+        <!-- 編集ボタン -->
+        <%= link_to edit_admin_gift_record_path(@gift_record),
+            class: "inline-flex items-center px-3 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+          <i class="fas fa-edit mr-2"></i>
+          編集
+        <% end %>
+
+        <!-- 公開/非公開切り替えボタン -->
+        <%= button_to toggle_public_admin_gift_record_path(@gift_record),
+            method: :patch,
+            data: { 
+              confirm: @gift_record.is_public? ? 
+                "「#{@gift_record.display_item_name}」を非公開にしますか？" : 
+                "「#{@gift_record.display_item_name}」を公開しますか？"
+            },
+            class: @gift_record.is_public? ? 
+              "inline-flex items-center px-3 py-2 border border-orange-300 rounded-md shadow-sm text-sm font-medium text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" :
+              "inline-flex items-center px-3 py-2 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" do %>
+          <% if @gift_record.is_public? %>
+            <i class="fas fa-eye-slash mr-2"></i>
+            非公開にする
+          <% else %>
+            <i class="fas fa-eye mr-2"></i>
+            公開する
+          <% end %>
+        <% end %>
+
+        <!-- 削除ボタン -->
+        <%= button_to admin_gift_record_path(@gift_record),
+            method: :delete,
+            data: { 
+              confirm: "「#{@gift_record.display_item_name}」を完全に削除しますか？この操作は取り消せません。"
+            },
+            class: "inline-flex items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
+          <i class="fas fa-trash mr-2"></i>
+          削除
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- メイン情報カード -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- ギフト記録基本情報 -->
+    <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">基本情報</h3>
+      </div>
+      
+      <div class="px-6 py-6">
+        <div class="space-y-4">
+          <!-- アイテム名 -->
+          <div>
+            <h4 class="text-2xl font-bold text-gray-900 mb-2">
+              <%= @gift_record.display_item_name %>
+            </h4>
+          </div>
+
+          <!-- メモ -->
+          <% if @gift_record.memo.present? %>
+            <div>
+              <h5 class="text-sm font-medium text-gray-700 mb-2">メモ</h5>
+              <div class="bg-gray-50 rounded-lg p-4">
+                <p class="text-gray-900 whitespace-pre-wrap"><%= @gift_record.memo %></p>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- 詳細情報グリッド -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+            <div class="space-y-3">
+              <div class="flex justify-between py-2 border-b border-gray-100">
+                <span class="text-sm font-medium text-gray-500">ギフト日</span>
+                <span class="text-sm text-gray-900">
+                  <%= @gift_record.gift_at ? l(@gift_record.gift_at, format: :long) : "未設定" %>
+                </span>
+              </div>
+              
+              <div class="flex justify-between py-2 border-b border-gray-100">
+                <span class="text-sm font-medium text-gray-500">ギフト相手</span>
+                <span class="text-sm text-gray-900">
+                  <%= @gift_record.gift_person&.name || "未設定" %>
+                </span>
+              </div>
+              
+              <div class="flex justify-between py-2 border-b border-gray-100">
+                <span class="text-sm font-medium text-gray-500">イベント</span>
+                <span class="text-sm text-gray-900">
+                  <%= @gift_record.event&.name || "未設定" %>
+                </span>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex justify-between py-2 border-b border-gray-100">
+                <span class="text-sm font-medium text-gray-500">カテゴリ</span>
+                <span class="text-sm text-gray-900">
+                  <%= @gift_record.gift_item_category&.name || "未設定" %>
+                </span>
+              </div>
+              
+              <div class="flex justify-between py-2 border-b border-gray-100">
+                <span class="text-sm font-medium text-gray-500">記録ID</span>
+                <span class="text-sm text-gray-900 font-mono">
+                  #<%= @gift_record.id %>
+                </span>
+              </div>
+              
+              <div class="flex justify-between py-2 border-b border-gray-100">
+                <span class="text-sm font-medium text-gray-500">作成日時</span>
+                <span class="text-sm text-gray-900">
+                  <%= l(@gift_record.created_at, format: :short) %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 所有者情報 -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">所有者情報</h3>
+      </div>
+      
+      <div class="px-6 py-6">
+        <div class="flex items-center space-x-4">
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+              <i class="fas fa-user text-xl text-blue-600"></i>
+            </div>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-lg font-semibold text-gray-900">
+              <%= link_to @gift_record.user.name, admin_user_path(@gift_record.user), 
+                  class: "text-blue-600 hover:text-blue-800" %>
+            </h4>
+            <p class="text-gray-500 text-sm"><%= @gift_record.user.email %></p>
+            <% if @gift_record.user.admin? %>
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 mt-1">
+                <i class="fas fa-crown mr-1"></i>
+                管理者
+              </span>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- ユーザー統計 -->
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <div class="grid grid-cols-2 gap-4 text-center">
+            <div>
+              <div class="text-lg font-bold text-blue-600">
+                <%= @gift_record.user.gift_records.count %>
+              </div>
+              <div class="text-xs text-gray-500">総記録数</div>
+            </div>
+            <div>
+              <div class="text-lg font-bold text-green-600">
+                <%= @gift_record.user.gift_records.where(is_public: true).count %>
+              </div>
+              <div class="text-xs text-gray-500">公開記録数</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ユーザー詳細へのリンク -->
+        <div class="mt-4">
+          <%= link_to admin_user_path(@gift_record.user),
+              class: "w-full inline-flex items-center justify-center px-3 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+            <i class="fas fa-user mr-2"></i>
+            ユーザー詳細を見る
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 画像ギャラリー -->
+  <% if @gift_record.images.attached? %>
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">
+          <i class="fas fa-images mr-2 text-purple-600"></i>
+          画像ギャラリー（<%= @record_statistics[:images_count] %>枚）
+        </h3>
+      </div>
+      
+      <div class="px-6 py-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <% @gift_record.images.each_with_index do |image, index| %>
+            <div class="group relative bg-gray-200 rounded-lg overflow-hidden aspect-square">
+              <%= image_tag image.variant(resize_to_fill: [300, 300, { gravity: "center" }]), 
+                  class: "w-full h-full object-cover group-hover:opacity-75 transition-opacity cursor-pointer",
+                  data: { 
+                    "action": "click->image-gallery#show",
+                    "image-gallery-index-param": index 
+                  } %>
+              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 transition-all duration-200 flex items-center justify-center">
+                <i class="fas fa-search-plus text-white opacity-0 group-hover:opacity-100 transition-opacity text-xl"></i>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- エンゲージメント統計 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-heart text-2xl text-red-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              お気に入り
+            </dt>
+            <dd class="text-2xl font-bold text-gray-900">
+              <%= @record_statistics[:favorites_count] %>件
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-comment text-2xl text-blue-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              コメント
+            </dt>
+            <dd class="text-2xl font-bold text-gray-900">
+              <%= @record_statistics[:comments_count] %>件
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-image text-2xl text-purple-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              画像
+            </dt>
+            <dd class="text-2xl font-bold text-gray-900">
+              <%= @record_statistics[:images_count] %>枚
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最近のコメント -->
+  <div class="bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">
+        <i class="fas fa-comments mr-2 text-blue-600"></i>
+        最近のコメント
+      </h3>
+    </div>
+    
+    <div class="px-6 py-4">
+      <% if @record_statistics[:recent_comments].any? %>
+        <div class="space-y-4">
+          <% @record_statistics[:recent_comments].each do |comment| %>
+            <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <i class="fas fa-user text-blue-600"></i>
+                </div>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-sm font-medium text-gray-900">
+                    <%= link_to comment.user.name, admin_user_path(comment.user), 
+                        class: "text-blue-600 hover:text-blue-800" %>
+                  </h4>
+                  <span class="text-sm text-gray-500">
+                    <%= l(comment.created_at, format: :short) %>
+                  </span>
+                </div>
+                <p class="mt-1 text-sm text-gray-700">
+                  <%= comment.content %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-comments text-2xl text-gray-400"></i>
+          </div>
+          <h4 class="text-lg font-medium text-gray-900 mb-2">コメントがありません</h4>
+          <p class="text-gray-500">このギフト記録にはまだコメントが投稿されていません。</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- システム情報 -->
+  <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+    <h4 class="text-sm font-medium text-gray-900 mb-3">システム情報</h4>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+      <div>
+        <span class="text-gray-500">作成日時:</span>
+        <div class="text-gray-900 font-medium">
+          <%= l(@gift_record.created_at, format: :long) %>
+        </div>
+      </div>
+      <div>
+        <span class="text-gray-500">最終更新:</span>
+        <div class="text-gray-900 font-medium">
+          <%= l(@gift_record.updated_at, format: :long) %>
+        </div>
+      </div>
+      <div>
+        <span class="text-gray-500">公開設定:</span>
+        <div class="text-gray-900 font-medium">
+          <%= @gift_record.is_public? ? "公開" : "非公開" %>
+        </div>
+      </div>
+      <div>
+        <span class="text-gray-500">データベースID:</span>
+        <div class="text-gray-900 font-medium font-mono">
+          #<%= @gift_record.id %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
