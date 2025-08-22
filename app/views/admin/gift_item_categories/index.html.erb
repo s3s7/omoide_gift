@@ -1,0 +1,289 @@
+<!-- ギフトアイテムカテゴリ管理一覧 -->
+<div class="space-y-6">
+  <!-- ページヘッダー -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        <i class="fas fa-tags mr-3 text-purple-600"></i>
+        ギフトカテゴリ管理
+      </h1>
+      <p class="text-gray-600 mt-1">ギフトアイテムのカテゴリ分類の管理</p>
+    </div>
+    
+    <!-- 新規作成ボタン -->
+    <div class="flex space-x-3">
+      <%= link_to new_admin_gift_item_category_path,
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>
+        <i class="fas fa-plus mr-2"></i>
+        新しいカテゴリを追加
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 統計サマリー -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-tags text-2xl text-purple-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              総カテゴリ数
+            </dt>
+            <dd class="text-lg font-medium text-gray-900">
+              <%= @gift_item_categories.respond_to?(:total_count) ? @gift_item_categories.total_count : GiftItemCategory.count %>件
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-gift text-2xl text-blue-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              使用中のカテゴリ
+            </dt>
+            <dd class="text-lg font-medium text-gray-900">
+              <%= GiftItemCategory.joins(:gift_records).distinct.count %>件
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-star text-2xl text-orange-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              人気のカテゴリ
+            </dt>
+            <dd class="text-lg font-medium text-gray-900">
+              <% popular_category = GiftItemCategory.joins(:gift_records).group(:id).order('COUNT(gift_records.id) DESC').first %>
+              <%= popular_category&.name || "未使用" %>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- カテゴリ一覧テーブル -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="px-4 py-5 sm:p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-gray-900">
+          カテゴリ一覧
+        </h3>
+        <div class="text-sm text-gray-500">
+          合計 <%= @gift_item_categories.respond_to?(:total_count) ? @gift_item_categories.total_count : GiftItemCategory.count %> 件
+        </div>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              カテゴリ名
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              使用ギフト記録数
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              作成日
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              アクション
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @gift_item_categories.each do |category| %>
+            <tr class="hover:bg-gray-50">
+              <!-- カテゴリ名 -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                      <i class="fas fa-tag text-purple-600"></i>
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">
+                      <%= category.display_name %>
+                    </div>
+                    <% if category.name.length > 15 %>
+                      <div class="text-sm text-gray-500">
+                        ID: <%= category.id %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </td>
+
+              <!-- 使用ギフト記録数 -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <span class="text-sm font-medium text-gray-900">
+                    <%= category.gift_records.count %>
+                  </span>
+                  <span class="text-sm text-gray-500 ml-1">件</span>
+                  <% if category.gift_records.count > 0 %>
+                    <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      使用中
+                    </span>
+                  <% else %>
+                    <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      未使用
+                    </span>
+                  <% end %>
+                </div>
+              </td>
+
+              <!-- 作成日 -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <%= l(category.created_at, format: :short) %>
+              </td>
+
+              <!-- アクション -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <%= link_to "編集", edit_admin_gift_item_category_path(category), 
+                    class: "text-blue-600 hover:text-blue-900" %>
+
+                <% if category.gift_records.count == 0 %>
+                  <%= button_to "削除", admin_gift_item_category_path(category),
+                      method: :delete,
+                      data: { 
+                        confirm: "「#{category.name}」を削除しますか？この操作は取り消せません。"
+                      },
+                      class: "text-red-600 hover:text-red-900 border-0 bg-transparent p-0 underline cursor-pointer",
+                      form: { style: "display: inline;" } %>
+                <% else %>
+                  <span class="text-gray-400" title="使用中のため削除できません">削除不可</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ページネーション -->
+    <% if @gift_item_categories.respond_to?(:current_page) && @gift_item_categories.total_pages > 1 %>
+      <div class="px-6 py-4 border-t border-gray-200">
+        <nav class="flex items-center justify-between">
+          <!-- 前のページボタン -->
+          <div class="flex-1 flex justify-start">
+            <% if @gift_item_categories.prev_page %>
+              <%= link_to admin_gift_item_categories_path(page: @gift_item_categories.prev_page),
+                  class: "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors" do %>
+                <i class="fas fa-chevron-left mr-2"></i>
+                前へ
+              <% end %>
+            <% else %>
+              <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                <i class="fas fa-chevron-left mr-2"></i>
+                前へ
+              </span>
+            <% end %>
+          </div>
+
+          <!-- ページ番号 -->
+          <div class="hidden md:flex">
+            <% start_page = [@gift_item_categories.current_page - 2, 1].max %>
+            <% end_page = [start_page + 4, @gift_item_categories.total_pages].min %>
+            <% start_page = [end_page - 4, 1].max if end_page - start_page < 4 %>
+
+            <!-- ページ番号範囲 -->
+            <% (start_page..end_page).each do |page_num| %>
+              <% if page_num == @gift_item_categories.current_page %>
+                <span aria-current="page" class="relative inline-flex items-center px-3 py-2 border border-purple-500 bg-purple-50 text-sm font-medium text-purple-600">
+                  <%= page_num %>
+                </span>
+              <% else %>
+                <%= link_to admin_gift_item_categories_path(page: page_num),
+                    class: "relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50" do %>
+                  <%= page_num %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+
+          <!-- 次のページボタン -->
+          <div class="flex-1 flex justify-end">
+            <% if @gift_item_categories.next_page %>
+              <%= link_to admin_gift_item_categories_path(page: @gift_item_categories.next_page),
+                  class: "ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors" do %>
+                次へ
+                <i class="fas fa-chevron-right ml-2"></i>
+              <% end %>
+            <% else %>
+              <span class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-400 bg-gray-100 cursor-not-allowed">
+                次へ
+                <i class="fas fa-chevron-right ml-2"></i>
+              </span>
+            <% end %>
+          </div>
+        </nav>
+
+        <!-- ページ情報 -->
+        <div class="mt-3 text-center text-sm text-gray-700">
+          <%= @gift_item_categories.current_page %>/<%= @gift_item_categories.total_pages %>ページ 
+          （全<%= @gift_item_categories.total_count %>件中 
+          <%= (@gift_item_categories.current_page - 1) * @gift_item_categories.limit_value + 1 %>-<%= [@gift_item_categories.current_page * @gift_item_categories.limit_value, @gift_item_categories.total_count].min %>件を表示）
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 空の状態表示 -->
+  <% if @gift_item_categories.empty? %>
+    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+      <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <i class="fas fa-tags text-2xl text-gray-400"></i>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">カテゴリがありません</h3>
+      <p class="text-gray-500 mb-4">
+        最初のカテゴリを作成してギフトアイテムを分類しましょう。
+      </p>
+      <%= link_to new_admin_gift_item_category_path,
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>
+        <i class="fas fa-plus mr-2"></i>
+        最初のカテゴリを作成
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- ヒント -->
+  <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <i class="fas fa-info-circle text-purple-400"></i>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-purple-800">
+          カテゴリ管理について
+        </h3>
+        <div class="mt-2 text-sm text-purple-700">
+          <ul class="list-disc pl-5 space-y-1">
+            <li>カテゴリはギフトアイテムの種類を分類するために使用されます</li>
+            <li>既にギフト記録で使用されているカテゴリは削除できません</li>
+            <li>よく使われるカテゴリ例：食べ物、アクセサリー、本・書籍、家電、花・植物、衣類など</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
