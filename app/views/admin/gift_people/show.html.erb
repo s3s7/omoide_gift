@@ -73,8 +73,11 @@
                   <div class="flex items-center text-gray-900">
                     <i class="fas fa-birthday-cake mr-2 text-pink-500"></i>
                     <%= l(@gift_person.birthday, format: :birthday) %>
-                    <% if @gift_person.age.present? %>
-                      <span class="ml-2 text-sm text-gray-500">（<%= @gift_person.age.display_name %>）</span>
+                    <% if @gift_person.birthday.present? %>
+                      <%# <span class="ml-2 text-sm text-gray-500">（<%= @gift_person.birthday.display_name %>
+                       <span class="ml-2 text-sm text-gray-500">（<%= @gift_person.display_age_at %>)
+
+                      </span> 
                     <% end %>
                   </div>
                 </div>
@@ -215,7 +218,7 @@
           <%= button_to admin_gift_person_path(@gift_person),
               method: :delete,
               data: { 
-                confirm: "「#{@gift_person.display_name}」を削除しますか？関連するギフト記録から参照も削除されます。この操作は取り消せません。"
+                confirm: "「#{@gift_person.name}」を削除しますか？関連するギフト記録から参照も削除されます。この操作は取り消せません。"
               },
               class: "w-full inline-flex items-center justify-center px-4 py-3 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
             <i class="fas fa-trash mr-2"></i>
