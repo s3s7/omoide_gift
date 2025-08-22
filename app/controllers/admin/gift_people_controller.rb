@@ -8,6 +8,7 @@ class Admin::GiftPeopleController < Admin::BaseController
   end
 
   def show
+    @person_statistics = build_person_statistics(@gift_person)
     log_admin_action("ギフト相手詳細表示", "GiftPerson", @gift_person.id)
   end
 
@@ -53,6 +54,20 @@ class Admin::GiftPeopleController < Admin::BaseController
     end
 
     people.order(created_at: :desc).page(params[:page]).per(per_page)
+  end
+
+  # ギフト相手の統計情報構築
+  def build_person_statistics(person)
+    {
+      gift_records_count: person.gift_records.count,
+      public_gift_records_count: person.gift_records.where(is_public: true).count,
+      recent_gift_records: person.gift_records.includes(:user, :gift_item_category, :event)
+                                 .order(gift_at: :desc, created_at: :desc)
+                                 .limit(5),
+      latest_gift_at: person.gift_records.maximum(:gift_at) || person.gift_records.maximum(:created_at),
+      total_favorites_count: person.gift_records.joins(:favorites).count,
+      total_comments_count: person.gift_records.joins(:comments).count
+    }
   end
 
   def gift_person_params

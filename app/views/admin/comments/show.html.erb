@@ -1,0 +1,405 @@
+<!-- コメント詳細管理画面 -->
+<div class="space-y-6">
+  <!-- ページヘッダー -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        <i class="fas fa-comment mr-3 text-blue-600"></i>
+        コメント詳細
+      </h1>
+      <p class="text-gray-600 mt-1">投稿されたコメントの詳細情報と管理</p>
+    </div>
+    
+    <!-- ナビゲーションボタン -->
+    <div class="flex space-x-3">
+      <%= link_to admin_comments_path,
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+        <i class="fas fa-arrow-left mr-2"></i>
+        一覧に戻る
+      <% end %>
+    </div>
+  </div>
+
+  <!-- メイン情報カード -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- コメント詳細情報 -->
+    <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">コメント内容</h3>
+      </div>
+      
+      <div class="px-6 py-6">
+        <div class="space-y-6">
+          <!-- コメント本文 -->
+          <div>
+            <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
+              <div class="flex items-start space-x-3">
+                <div class="flex-shrink-0">
+                  <i class="fas fa-quote-left text-blue-500 text-xl mt-1"></i>
+                </div>
+                <div class="flex-1">
+                  <p class="text-gray-900 text-lg leading-relaxed whitespace-pre-wrap"><%= @comment.body %></p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 文字数情報 -->
+            <div class="mt-2 text-sm text-gray-500">
+              <i class="fas fa-text-width mr-1"></i>
+              <span class="font-medium"><%= @comment.body.length %></span>文字
+              <span class="ml-2 text-xs">（最大100文字）</span>
+            </div>
+          </div>
+
+          <!-- システム情報 -->
+          <div class="pt-4 border-t border-gray-200">
+            <h5 class="text-sm font-medium text-gray-700 mb-3">投稿情報</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-3">
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                  <span class="text-sm font-medium text-gray-500">コメントID</span>
+                  <span class="text-sm text-gray-900 font-mono">#<%= @comment.id %></span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                  <span class="text-sm font-medium text-gray-500">投稿日時</span>
+                  <span class="text-sm text-gray-900">
+                    <%= l(@comment.created_at, format: :long) %>
+                  </span>
+                </div>
+              </div>
+              <div class="space-y-3">
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                  <span class="text-sm font-medium text-gray-500">経過時間</span>
+                  <span class="text-sm text-gray-900">
+                    <%= time_ago_in_words(@comment.created_at) %>前
+                  </span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                  <span class="text-sm font-medium text-gray-500">更新日時</span>
+                  <span class="text-sm text-gray-900">
+                    <%= l(@comment.updated_at, format: :short) %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 投稿者情報と管理アクション -->
+    <div class="space-y-6">
+      <!-- 投稿者情報 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">投稿者情報</h3>
+        </div>
+        
+        <div class="px-6 py-6">
+          <div class="flex items-center space-x-4">
+            <div class="flex-shrink-0">
+              <% if @comment.user.has_avatar? %>
+                <%= image_tag @comment.user.display_avatar(:medium), 
+                    class: "w-16 h-16 rounded-full object-cover border-2 border-blue-200" %>
+              <% else %>
+                <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center border-2 border-blue-200">
+                  <i class="fas fa-user text-2xl text-blue-600"></i>
+                </div>
+              <% end %>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-lg font-semibold text-gray-900">
+                <%= link_to @comment.user.name, admin_user_path(@comment.user), 
+                    class: "text-blue-600 hover:text-blue-800" %>
+              </h4>
+              <p class="text-gray-500 text-sm"><%= @comment.user.email %></p>
+              <% if @comment.user.admin? %>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 mt-1">
+                  <i class="fas fa-crown mr-1"></i>
+                  管理者
+                </span>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- ユーザー統計 -->
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <div class="text-lg font-bold text-blue-600">
+                  <%= @comment.user.comments.count %>
+                </div>
+                <div class="text-xs text-gray-500">総コメント数</div>
+              </div>
+              <div>
+                <div class="text-lg font-bold text-purple-600">
+                  <%= @comment.user.gift_records.count %>
+                </div>
+                <div class="text-xs text-gray-500">ギフト記録数</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ユーザー詳細へのリンク -->
+          <div class="mt-4">
+            <%= link_to admin_user_path(@comment.user),
+                class: "w-full inline-flex items-center justify-center px-3 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+              <i class="fas fa-user mr-2"></i>
+              ユーザー詳細を見る
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 管理アクション -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h3 class="text-lg font-medium text-gray-900">管理アクション</h3>
+        </div>
+        
+        <div class="px-6 py-6 space-y-3">
+          <!-- 編集ボタン -->
+          <%= link_to edit_admin_comment_path(@comment),
+              class: "w-full inline-flex items-center justify-center px-4 py-3 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+            <i class="fas fa-edit mr-2"></i>
+            コメントを編集
+          <% end %>
+
+          <!-- 削除ボタン -->
+          <%= button_to admin_comment_path(@comment),
+              method: :delete,
+              data: { 
+                confirm: "「#{@comment.excerpt(30)}」を削除しますか？この操作は取り消せません。"
+              },
+              class: "w-full inline-flex items-center justify-center px-4 py-3 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
+            <i class="fas fa-trash mr-2"></i>
+            コメントを削除
+          <% end %>
+
+          <!-- 警告メッセージ -->
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+            <div class="text-sm text-yellow-800">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <strong>注意:</strong> 削除したコメントは復元できません。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 対象ギフト記録情報 -->
+  <div class="bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">
+        <i class="fas fa-gift mr-2 text-purple-600"></i>
+        対象ギフト記録
+      </h3>
+    </div>
+    
+    <div class="px-6 py-6">
+      <div class="flex items-start space-x-6">
+        <!-- ギフト記録画像 -->
+        <div class="flex-shrink-0">
+          <% if @comment.gift_record.images.attached? && @comment.gift_record.images.first %>
+            <%= image_tag @comment.gift_record.images.first.variant(resize_to_fill: [120, 120, { gravity: "center" }]), 
+                class: "w-28 h-28 rounded-lg object-cover border-2 border-purple-200" %>
+          <% else %>
+            <div class="w-28 h-28 rounded-lg bg-purple-100 flex items-center justify-center border-2 border-purple-200">
+              <i class="fas fa-gift text-4xl text-purple-600"></i>
+            </div>
+          <% end %>
+        </div>
+        
+        <!-- ギフト記録詳細 -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-xl font-bold text-gray-900">
+              <%= link_to @comment.gift_record.display_item_name, admin_gift_record_path(@comment.gift_record), 
+                  class: "text-purple-600 hover:text-purple-800" %>
+            </h4>
+            <% if @comment.gift_record.is_public? %>
+              <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                <i class="fas fa-globe mr-1"></i>
+                公開
+              </span>
+            <% else %>
+              <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                <i class="fas fa-lock mr-1"></i>
+                非公開
+              </span>
+            <% end %>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <span class="text-gray-500">記録者:</span>
+              <div class="font-medium text-gray-900">
+                <%= link_to @comment.gift_record.user.name, admin_user_path(@comment.gift_record.user), 
+                    class: "text-blue-600 hover:text-blue-800" %>
+              </div>
+            </div>
+            <div>
+              <span class="text-gray-500">ギフト相手:</span>
+              <div class="font-medium text-gray-900">
+                <% if @comment.gift_record.gift_person %>
+                  <%= link_to @comment.gift_record.gift_person.name, admin_gift_person_path(@comment.gift_record.gift_person), 
+                      class: "text-purple-600 hover:text-purple-800" %>
+                <% else %>
+                  <span class="text-gray-400">未設定</span>
+                <% end %>
+              </div>
+            </div>
+            <div>
+              <span class="text-gray-500">ギフト日:</span>
+              <div class="font-medium text-gray-900">
+                <%= @comment.gift_record.gift_at ? l(@comment.gift_record.gift_at, format: :short) : "未設定" %>
+              </div>
+            </div>
+          </div>
+          
+          <!-- ギフト記録のメモ -->
+          <% if @comment.gift_record.memo.present? %>
+            <div class="mt-4 pt-4 border-t border-gray-200">
+              <div class="text-sm text-gray-500 mb-1">記録のメモ:</div>
+              <div class="text-sm text-gray-900 bg-gray-50 rounded p-3">
+                <%= truncate(@comment.gift_record.memo, length: 200) %>
+              </div>
+            </div>
+          <% end %>
+          
+          <!-- ギフト記録統計 -->
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="flex space-x-6 text-sm">
+              <div class="flex items-center">
+                <i class="fas fa-heart mr-1 text-red-500"></i>
+                <span class="text-gray-900 font-medium"><%= @comment.gift_record.favorites.count %></span>
+                <span class="text-gray-500 ml-1">お気に入り</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-comment mr-1 text-blue-500"></i>
+                <span class="text-gray-900 font-medium"><%= @comment.gift_record.comments.count %></span>
+                <span class="text-gray-500 ml-1">コメント</span>
+              </div>
+              <div class="flex items-center">
+                <i class="fas fa-image mr-1 text-purple-500"></i>
+                <span class="text-gray-900 font-medium"><%= @comment.gift_record.images_count %></span>
+                <span class="text-gray-500 ml-1">画像</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- ギフト記録詳細へのリンク -->
+          <div class="mt-4">
+            <%= link_to admin_gift_record_path(@comment.gift_record),
+                class: "inline-flex items-center px-4 py-2 border border-purple-300 rounded-md shadow-sm text-sm font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>
+              <i class="fas fa-gift mr-2"></i>
+              ギフト記録の詳細を見る
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 関連コメント情報 -->
+  <div class="bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">
+        <i class="fas fa-comments mr-2 text-blue-600"></i>
+        このギフト記録の他のコメント
+      </h3>
+    </div>
+    
+    <div class="px-6 py-4">
+      <% other_comments = @comment.gift_record.comments.where.not(id: @comment.id).recent.limit(5) %>
+      <% if other_comments.any? %>
+        <div class="space-y-4">
+          <% other_comments.each do |comment| %>
+            <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div class="flex-shrink-0">
+                <% if comment.user.has_avatar? %>
+                  <%= image_tag comment.user.display_avatar(:small), 
+                      class: "w-10 h-10 rounded-full object-cover" %>
+                <% else %>
+                  <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                    <i class="fas fa-user text-blue-600"></i>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-sm font-medium text-gray-900">
+                    <%= link_to comment.user.name, admin_user_path(comment.user), 
+                        class: "text-blue-600 hover:text-blue-800" %>
+                  </h4>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-sm text-gray-500">
+                      <%= comment.display_created_at %>
+                    </span>
+                    <%= link_to "詳細", admin_comment_path(comment), 
+                        class: "text-xs text-blue-600 hover:text-blue-800" %>
+                  </div>
+                </div>
+                <p class="mt-1 text-sm text-gray-700">
+                  <%= comment.body %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <!-- 全てのコメントを見るリンク -->
+        <% if @comment.gift_record.comments.count > 5 %>
+          <div class="mt-4 text-center">
+            <%= link_to admin_comments_path(gift_record_id: @comment.gift_record.id),
+                class: "inline-flex items-center px-4 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+              <i class="fas fa-list mr-2"></i>
+              すべてのコメントを見る（<%= @comment.gift_record.comments.count %>件）
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-comments text-2xl text-gray-400"></i>
+          </div>
+          <h4 class="text-lg font-medium text-gray-900 mb-2">他のコメントはありません</h4>
+          <p class="text-gray-500">このギフト記録には、このコメントのみが投稿されています。</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- システム情報 -->
+  <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+    <h4 class="text-sm font-medium text-gray-900 mb-3">システム情報</h4>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+      <div>
+        <span class="text-gray-500">コメントID:</span>
+        <div class="text-gray-900 font-medium font-mono">
+          #<%= @comment.id %>
+        </div>
+      </div>
+      <div>
+        <span class="text-gray-500">投稿日時:</span>
+        <div class="text-gray-900 font-medium">
+          <%= l(@comment.created_at, format: :long) %>
+        </div>
+      </div>
+      <div>
+        <span class="text-gray-500">最終更新:</span>
+        <div class="text-gray-900 font-medium">
+          <%= l(@comment.updated_at, format: :long) %>
+        </div>
+      </div>
+      <div>
+        <span class="text-gray-500">文字数:</span>
+        <div class="text-gray-900 font-medium">
+          <%= @comment.body.length %>/100文字
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
