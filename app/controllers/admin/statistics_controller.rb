@@ -13,14 +13,14 @@ class Admin::StatisticsController < Admin::BaseController
     Rails.logger.info "総ユーザー数: #{User.count}"
     Rails.logger.info "総ギフト記録数: #{GiftRecord.count}"
     Rails.logger.info "総コメント数: #{Comment.count}"
-    
+
     stats = {
       users: build_user_statistics,
       gift_records: build_gift_record_statistics,
       comments: build_comment_statistics,
       activity: build_activity_statistics
     }
-    
+
     Rails.logger.info "=== 統計データ構築完了 ==="
     stats
   end
@@ -119,20 +119,20 @@ class Admin::StatisticsController < Admin::BaseController
     current_year = Date.current.year
     year_start = Time.zone.local(current_year, 1, 1).beginning_of_day
     year_end = Time.zone.local(current_year, 12, 31).end_of_day
-    
+
     Rails.logger.info "コメント統計: #{current_year}年の範囲 #{year_start} - #{year_end}"
-    
+
     monthly_data = Comment.where(created_at: year_start..year_end)
                          .group("EXTRACT(month FROM created_at)")
                          .count
-    
+
     Rails.logger.info "月別コメントデータ: #{monthly_data}"
-    
+
     # EXTRACTの結果は文字列または数値の可能性があるため、両方チェック
     monthly_comments = (1..12).map do |month|
       monthly_data[month.to_f] || monthly_data[month.to_s] || monthly_data[month] || 0
     end
-    
+
     Rails.logger.info "月別コメント配列: #{monthly_comments}"
 
     {
@@ -166,7 +166,7 @@ class Admin::StatisticsController < Admin::BaseController
   # EXTRACT関数がうまく動作しない場合の代替方法
   def calculate_monthly_data_alternative(model, year_start, year_end)
     Rails.logger.info "代替方式で月別データを計算: #{model.name}"
-    
+
     (1..12).map do |month|
       month_start = Time.zone.local(Date.current.year, month, 1).beginning_of_month
       month_end = month_start.end_of_month
