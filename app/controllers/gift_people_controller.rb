@@ -233,7 +233,7 @@ class GiftPeopleController < ApplicationController
   private
 
   def gift_person_params
-    params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :memo, :avatar, :remove_avatar)
+    params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :address, :memo, :avatar, :remove_avatar)
   end
 
   def set_gift_person

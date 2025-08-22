@@ -7,6 +7,7 @@ class GiftPerson < ApplicationRecord
 
   validates :name, presence: true, length: { minimum: 1 }
   validates :name, format: { with: /\A\S+.*\S*\z/, message: "空白のみは無効です" }
+  validates :address, length: { maximum: 100 }, allow_blank: true
   validate :avatar_validation
 
   # 指定された日付時点での年齢を計算

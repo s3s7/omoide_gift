@@ -446,7 +446,7 @@ class GiftRecordsController < ApplicationController
   end
 
   def gift_person_params
-    params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :memo)
+    params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :address, :memo)
   end
 
   # セキュリティ: ギフト記録を取得
