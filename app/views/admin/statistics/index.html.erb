@@ -1,0 +1,318 @@
+<!-- システム統計ダッシュボード -->
+<div class="space-y-6">
+  <!-- ページヘッダー -->
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900">
+      <i class="fas fa-chart-line mr-3 text-indigo-600"></i>
+      システム統計
+    </h1>
+    <p class="text-gray-600 mt-1">アプリケーションの使用状況と統計データ</p>
+  </div>
+
+  <!-- 概要統計カード -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- ユーザー統計 -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-users text-2xl text-blue-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              総ユーザー数
+            </dt>
+            <dd class="text-2xl font-bold text-gray-900">
+              <%= @statistics[:users][:total] %>
+            </dd>
+            <dd class="text-sm text-gray-500">
+              管理者: <%= @statistics[:users][:admins] %>人 / 
+              一般: <%= @statistics[:users][:general] %>人
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- ギフト記録統計 -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-gift text-2xl text-green-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              総ギフト記録数
+            </dt>
+            <dd class="text-2xl font-bold text-gray-900">
+              <%= @statistics[:gift_records][:total] %>
+            </dd>
+            <dd class="text-sm text-gray-500">
+              公開: <%= @statistics[:gift_records][:public] %>件 / 
+              非公開: <%= @statistics[:gift_records][:private] %>件
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- コメント統計 -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-comments text-2xl text-purple-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              総コメント数
+            </dt>
+            <dd class="text-2xl font-bold text-gray-900">
+              <%= @statistics[:comments][:total] %>
+            </dd>
+            <dd class="text-sm text-gray-500">
+              活発なコミュニケーション
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- その他統計 -->
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <i class="fas fa-heart text-2xl text-orange-600"></i>
+        </div>
+        <div class="ml-5 w-0 flex-1">
+          <dl>
+            <dt class="text-sm font-medium text-gray-500 truncate">
+              お気に入り数
+            </dt>
+            <dd class="text-2xl font-bold text-gray-900">
+              <%= @statistics[:activity][:favorites] %>
+            </dd>
+            <dd class="text-sm text-gray-500">
+              リマインダー: <%= @statistics[:activity][:reminds] %>件
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 詳細統計グリッド -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- ユーザー登録動向 -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <i class="fas fa-user-plus mr-2 text-blue-600"></i>
+        月別ユーザー登録数（<%= Date.current.year %>年）
+      </h3>
+      <div class="space-y-3">
+        <% @statistics[:users][:monthly_registrations].each_with_index do |count, index| %>
+          <div class="flex items-center">
+            <div class="w-12 text-sm text-gray-500"><%= index + 1 %>月</div>
+            <div class="flex-1 mx-3">
+              <div class="bg-gray-200 rounded-full h-4">
+                <% max_count = @statistics[:users][:monthly_registrations].max %>
+                <% width = max_count > 0 ? (count.to_f / max_count * 100).round(1) : 0 %>
+                <div class="bg-blue-500 h-4 rounded-full transition-all duration-300" 
+                     style="width: <%= width %>%"></div>
+              </div>
+            </div>
+            <div class="w-12 text-sm font-medium text-gray-900 text-right"><%= count %>人</div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- ギフト記録投稿動向 -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <i class="fas fa-gift mr-2 text-green-600"></i>
+        月別ギフト記録投稿数（<%= Date.current.year %>年）
+      </h3>
+      <div class="space-y-3">
+        <% @statistics[:gift_records][:monthly_posts].each_with_index do |count, index| %>
+          <div class="flex items-center">
+            <div class="w-12 text-sm text-gray-500"><%= index + 1 %>月</div>
+            <div class="flex-1 mx-3">
+              <div class="bg-gray-200 rounded-full h-4">
+                <% max_count = @statistics[:gift_records][:monthly_posts].max %>
+                <% width = max_count > 0 ? (count.to_f / max_count * 100).round(1) : 0 %>
+                <div class="bg-green-500 h-4 rounded-full transition-all duration-300" 
+                     style="width: <%= width %>%"></div>
+              </div>
+            </div>
+            <div class="w-12 text-sm font-medium text-gray-900 text-right"><%= count %>件</div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分析詳細 -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- ユーザー構成分析 -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <i class="fas fa-chart-pie mr-2 text-blue-600"></i>
+        ユーザー構成
+      </h3>
+      <div class="space-y-4">
+        <!-- 権限別 -->
+        <div>
+          <div class="text-sm font-medium text-gray-700 mb-2">権限別</div>
+          <div class="flex items-center space-x-2">
+            <div class="flex-1">
+              <div class="bg-gray-200 rounded-full h-3">
+                <% admin_ratio = @statistics[:users][:total] > 0 ? (@statistics[:users][:admins].to_f / @statistics[:users][:total] * 100).round(1) : 0 %>
+                <div class="bg-red-500 h-3 rounded-full" style="width: <%= admin_ratio %>%"></div>
+              </div>
+            </div>
+            <div class="text-xs text-gray-500">管理者 <%= admin_ratio %>%</div>
+          </div>
+        </div>
+
+        <!-- 登録方法別 -->
+        <div>
+          <div class="text-sm font-medium text-gray-700 mb-2">登録方法別</div>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">LINE連携</span>
+              <span class="font-medium"><%= @statistics[:users][:line_users] %>人</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">メール登録</span>
+              <span class="font-medium"><%= @statistics[:users][:email_users] %>人</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ギフト記録分析 -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <i class="fas fa-chart-bar mr-2 text-green-600"></i>
+        ギフト記録分析
+      </h3>
+      <div class="space-y-4">
+        <!-- 公開設定比率 -->
+        <div>
+          <div class="text-sm font-medium text-gray-700 mb-2">公開設定</div>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">公開記録</span>
+              <span class="font-medium text-green-600"><%= @statistics[:gift_records][:public] %>件</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">非公開記録</span>
+              <span class="font-medium text-gray-600"><%= @statistics[:gift_records][:private] %>件</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 画像付き記録 -->
+        <div>
+          <div class="text-sm font-medium text-gray-700 mb-2">画像付き記録</div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600">画像付き</span>
+            <span class="font-medium text-purple-600"><%= @statistics[:gift_records][:with_images] %>件</span>
+          </div>
+          <% if @statistics[:gift_records][:total] > 0 %>
+            <% image_ratio = (@statistics[:gift_records][:with_images].to_f / @statistics[:gift_records][:total] * 100).round(1) %>
+            <div class="text-xs text-gray-500 mt-1">全体の <%= image_ratio %>%</div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- アクティビティ分析 -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h3 class="text-lg font-medium text-gray-900 mb-4">
+        <i class="fas fa-activity mr-2 text-purple-600"></i>
+        アクティビティ
+      </h3>
+      <div class="space-y-4">
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-600">
+            <i class="fas fa-heart mr-1 text-red-500"></i>
+            お気に入り
+          </span>
+          <span class="font-medium"><%= @statistics[:activity][:favorites] %>件</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-600">
+            <i class="fas fa-bell mr-1 text-yellow-500"></i>
+            リマインダー
+          </span>
+          <span class="font-medium"><%= @statistics[:activity][:reminds] %>件</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-600">
+            <i class="fas fa-users mr-1 text-blue-500"></i>
+            ギフト相手
+          </span>
+          <span class="font-medium"><%= @statistics[:activity][:gift_people] %>人</span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-gray-600">
+            <i class="fas fa-comments mr-1 text-green-500"></i>
+            コメント
+          </span>
+          <span class="font-medium"><%= @statistics[:comments][:total] %>件</span>
+        </div>
+      </div>
+
+      <!-- エンゲージメント率 -->
+      <% if @statistics[:users][:total] > 0 %>
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <div class="text-sm font-medium text-gray-700 mb-2">エンゲージメント</div>
+          <% avg_gifts_per_user = (@statistics[:gift_records][:total].to_f / @statistics[:users][:total]).round(1) %>
+          <% avg_favorites_per_user = (@statistics[:activity][:favorites].to_f / @statistics[:users][:total]).round(1) %>
+          <div class="text-xs text-gray-500">
+            <div>ユーザー平均ギフト記録: <%= avg_gifts_per_user %>件</div>
+            <div>ユーザー平均お気に入り: <%= avg_favorites_per_user %>件</div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- コメント動向 -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">
+      <i class="fas fa-comments mr-2 text-purple-600"></i>
+      月別コメント数（<%= Date.current.year %>年）
+    </h3>
+    <div class="grid grid-cols-12 gap-2">
+      <% @statistics[:comments][:monthly_comments].each_with_index do |count, index| %>
+        <div class="text-center">
+          <div class="text-xs text-gray-500 mb-1"><%= index + 1 %>月</div>
+          <% max_count = @statistics[:comments][:monthly_comments].max %>
+          <% height = max_count > 0 ? [[(count.to_f / max_count * 100).round, 5].max, 100].min : 5 %>
+          <div class="bg-gray-200 rounded-t" style="height: 60px; display: flex; align-items: end;">
+            <div class="bg-purple-500 rounded-t w-full transition-all duration-300" 
+                 style="height: <%= height %>%"></div>
+          </div>
+          <div class="text-xs font-medium text-gray-900 mt-1"><%= count %></div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 最終更新情報 -->
+  <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+    <div class="flex items-center text-sm text-gray-600">
+      <i class="fas fa-clock mr-2"></i>
+      最終更新: <%= l(Time.current, format: :long) %>
+      <span class="ml-4">
+        <i class="fas fa-sync-alt mr-1"></i>
+        データは自動的に更新されます
+      </span>
+    </div>
+  </div>
+</div>
