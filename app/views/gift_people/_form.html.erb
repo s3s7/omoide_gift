@@ -330,6 +330,49 @@
     <% end %>
   </div>
 
+  <!-- 住所入力 -->
+  <div style="margin-bottom: 24px; text-align: left;">
+    <%= f.label :address, "住所", style: "
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <%= f.text_area :address, 
+        data: { 
+          "gift-person-form-target": "input",
+          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
+        }.compact,
+        style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+          min-height: 80px;
+          resize: vertical;
+        ",
+        placeholder: "例：東京都新宿区西新宿x-x-x、〒xxx-xxxxx",
+        maxlength: 100 %>
+    
+    <!-- ヘルプテキスト -->
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      相手の住所を記録しておくと、配送先として便利です（任意、最大100文字）
+    </div>
+    
+    <!-- エラーメッセージ -->
+    <% if gift_person.errors[:address].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_person.errors[:address].first %>
+      </div>
+    <% end %>
+  </div>
+
   <!-- メモ入力 -->
   <div style="margin-bottom: 32px; text-align: left;">
     <%= f.label :memo, "メモ", style: "

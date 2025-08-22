@@ -56,6 +56,6 @@ class Admin::GiftPeopleController < Admin::BaseController
   end
 
   def gift_person_params
-    params.require(:gift_person).permit(:name, :relationship_id)
+    params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :address, :memo, :avatar)
   end
 end
