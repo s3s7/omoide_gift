@@ -116,6 +116,17 @@
         </div>
       </div>
 
+      <div class="mb-6">
+        <label class="block mb-2 font-semibold text-gray-700 text-sm">住所</label>
+        <div class="w-full p-4 border-2 border-gray-300 rounded-lg text-base bg-gray-50 text-gray-900 min-h-20">
+          <% if @gift_person.address.present? %>
+            <%= simple_format(@gift_person.address, class: "m-0 whitespace-pre-line") %>
+          <% else %>
+            <span class="text-gray-500">未記録</span>
+          <% end %>
+        </div>
+      </div>
+
       <% if @gift_person.memo.present? %>
         <div class="mb-6">
           <label class="block mb-2 font-semibold text-gray-700 text-sm">メモ</label>
