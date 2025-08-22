@@ -1,0 +1,421 @@
+<!-- ギフト相手編集画面 -->
+<div class="space-y-6">
+  <!-- ページヘッダー -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        <i class="fas fa-edit mr-3 text-purple-600"></i>
+        ギフト相手の編集
+      </h1>
+      <p class="text-gray-600 mt-1">「<%= @gift_person.name %>」さんの情報を編集します</p>
+    </div>
+    
+    <!-- ナビゲーションボタン -->
+    <div class="flex space-x-3">
+      <%= link_to admin_gift_person_path(@gift_person),
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>
+        <i class="fas fa-arrow-left mr-2"></i>
+        詳細に戻る
+      <% end %>
+      
+      <%= link_to admin_gift_people_path,
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" do %>
+        <i class="fas fa-list mr-2"></i>
+        一覧に戻る
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 現在の情報表示 -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">現在の登録情報</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <div class="space-y-3">
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">所有者</span>
+            <span class="text-sm text-gray-900">
+              <%= link_to @gift_person.user.name, admin_user_path(@gift_person.user), 
+                  class: "text-blue-600 hover:text-blue-800" %>
+            </span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">関係</span>
+            <span class="text-sm text-gray-900">
+              <%= @gift_person.relationship&.name || "未設定" %>
+            </span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">誕生日</span>
+            <span class="text-sm text-gray-900">
+              <%= @gift_person.birthday ? l(@gift_person.birthday, format: :birthday) : "未設定" %>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="space-y-3">
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">ギフト記録数</span>
+            <span class="text-sm text-gray-900">
+              <%= @gift_person.gift_records.count %>件
+            </span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">作成日</span>
+            <span class="text-sm text-gray-900">
+              <%= l(@gift_person.created_at, format: :short) %>
+            </span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">最終更新</span>
+            <span class="text-sm text-gray-900">
+              <%= l(@gift_person.updated_at, format: :short) %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 編集フォーム -->
+  <div class="bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">基本情報の編集</h3>
+      <p class="text-sm text-gray-500 mt-1">ギフト相手の詳細情報を編集できます</p>
+    </div>
+
+    <div class="px-6 py-6">
+      <%= form_with model: [ :admin, @gift_person ], local: true, class: "space-y-6" do |f| %>
+        
+        <!-- エラーメッセージ -->
+        <% if @gift_person.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-red-400"></i>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  入力エラーがあります（<%= pluralize(@gift_person.errors.count, "件") %>）
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <% @gift_person.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- 名前フィールド -->
+        <div>
+          <%= f.label :name, "名前", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :name, 
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 #{@gift_person.errors[:name].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+              placeholder: "ギフト相手の名前を入力",
+              required: true,
+              maxlength: 255 %>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            ギフトを贈る相手の名前です
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @gift_person.errors[:name].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @gift_person.errors[:name].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- 関係フィールド -->
+        <div>
+          <%= f.label :relationship_id, "関係", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.collection_select :relationship_id, 
+              Relationship.all, :id, :name, 
+              { prompt: "関係を選択してください" },
+              { class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 #{@gift_person.errors[:relationship_id].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}" } %>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            この人との関係を選択してください（任意）
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @gift_person.errors[:relationship_id].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @gift_person.errors[:relationship_id].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- 誕生日フィールド -->
+        <div>
+          <%= f.label :birthday, "誕生日", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.date_field :birthday,
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 #{@gift_person.errors[:birthday].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}" %>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            誕生日を設定すると、誕生日ギフトの管理に役立ちます（任意）
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @gift_person.errors[:birthday].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @gift_person.errors[:birthday].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- 住所フィールド -->
+        <div>
+          <%= f.label :address, "住所", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :address, 
+              rows: 3,
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 #{@gift_person.errors[:address].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+              placeholder: "住所を入力（任意）",
+              maxlength: 500 %>
+          
+          <!-- 文字数カウンタ -->
+          <div class="mt-1 text-xs text-gray-400 text-right">
+            <span id="address-count">0</span>/500文字
+          </div>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            ギフトの配送先として使用できます（任意）
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @gift_person.errors[:address].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @gift_person.errors[:address].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- 好きなものフィールド -->
+        <div>
+          <%= f.label :likes, "好きなもの", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :likes, 
+              rows: 4,
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 #{@gift_person.errors[:likes].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+              placeholder: "好きなもの、趣味、興味のあることなど...",
+              maxlength: 1000 %>
+          
+          <!-- 文字数カウンタ -->
+          <div class="mt-1 text-xs text-gray-400 text-right">
+            <span id="likes-count">0</span>/1000文字
+          </div>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            ギフト選びの参考になる情報を記録できます（任意）
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @gift_person.errors[:likes].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @gift_person.errors[:likes].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- 嫌いなものフィールド -->
+        <div>
+          <%= f.label :dislikes, "嫌いなもの・注意点", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :dislikes, 
+              rows: 4,
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 #{@gift_person.errors[:dislikes].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+              placeholder: "嫌いなもの、アレルギー、避けるべきものなど...",
+              maxlength: 1000 %>
+          
+          <!-- 文字数カウンタ -->
+          <div class="mt-1 text-xs text-gray-400 text-right">
+            <span id="dislikes-count">0</span>/1000文字
+          </div>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            ギフト選びで避けるべき情報を記録できます（任意）
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @gift_person.errors[:dislikes].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @gift_person.errors[:dislikes].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- メモフィールド -->
+        <div>
+          <%= f.label :memo, "メモ", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_area :memo, 
+              rows: 4,
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 #{@gift_person.errors[:memo].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+              placeholder: "その他のメモや覚えておきたいこと...",
+              maxlength: 1000 %>
+          
+          <!-- 文字数カウンタ -->
+          <div class="mt-1 text-xs text-gray-400 text-right">
+            <span id="memo-count">0</span>/1000文字
+          </div>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            その他の情報や覚えておきたいことを記録できます（任意）
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @gift_person.errors[:memo].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @gift_person.errors[:memo].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- アバター画像フィールド -->
+        <div>
+          <%= f.label :avatar, "プロフィール画像", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.file_field :avatar,
+              accept: "image/*",
+              class: "block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 #{@gift_person.errors[:avatar].any? ? 'border-red-300' : ''}" %>
+          
+          <!-- 現在の画像表示 -->
+          <% if @gift_person.has_avatar? %>
+            <div class="mt-3 flex items-center space-x-4">
+              <div class="flex-shrink-0">
+                <%= image_tag @gift_person.display_avatar(:medium), 
+                    class: "w-16 h-16 rounded-full object-cover border-2 border-purple-200" %>
+              </div>
+              <div>
+                <p class="text-sm text-gray-700 font-medium">現在の画像</p>
+                <p class="text-xs text-gray-500">新しい画像を選択すると置き換えられます</p>
+              </div>
+            </div>
+          <% end %>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            プロフィール画像として表示されます（任意、JPG/PNG、最大5MB）
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @gift_person.errors[:avatar].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @gift_person.errors[:avatar].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- アクションボタン -->
+        <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
+          <%= link_to "キャンセル", admin_gift_person_path(@gift_person),
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500" %>
+          
+          <%= f.submit "変更を保存",
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed",
+              data: { disable_with: "保存中..." } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 注意事項 -->
+  <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-yellow-800">
+          編集時の注意事項
+        </h3>
+        <div class="mt-2 text-sm text-yellow-700">
+          <ul class="list-disc pl-5 space-y-1">
+            <li>ギフト相手の情報を変更すると、関連するギフト記録にも影響します</li>
+            <li>既に登録されているギフト記録の相手情報も更新されます</li>
+            <li>名前の変更は慎重に行ってください</li>
+            <li>画像ファイルは適切なサイズ（5MB以下）を選択してください</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 文字数カウンタのJavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // アドレス用カウンタ
+  const addressTextarea = document.querySelector('#gift_person_address');
+  const addressCount = document.querySelector('#address-count');
+  
+  if (addressTextarea && addressCount) {
+    function updateAddressCounter() {
+      addressCount.textContent = addressTextarea.value.length;
+    }
+    addressTextarea.addEventListener('input', updateAddressCounter);
+    updateAddressCounter();
+  }
+
+  // 好きなもの用カウンタ
+  const likesTextarea = document.querySelector('#gift_person_likes');
+  const likesCount = document.querySelector('#likes-count');
+  
+  if (likesTextarea && likesCount) {
+    function updateLikesCounter() {
+      likesCount.textContent = likesTextarea.value.length;
+    }
+    likesTextarea.addEventListener('input', updateLikesCounter);
+    updateLikesCounter();
+  }
+
+  // 嫌いなもの用カウンタ
+  const dislikesTextarea = document.querySelector('#gift_person_dislikes');
+  const dislikesCount = document.querySelector('#dislikes-count');
+  
+  if (dislikesTextarea && dislikesCount) {
+    function updateDislikesCounter() {
+      dislikesCount.textContent = dislikesTextarea.value.length;
+    }
+    dislikesTextarea.addEventListener('input', updateDislikesCounter);
+    updateDislikesCounter();
+  }
+
+  // メモ用カウンタ
+  const memoTextarea = document.querySelector('#gift_person_memo');
+  const memoCount = document.querySelector('#memo-count');
+  
+  if (memoTextarea && memoCount) {
+    function updateMemoCounter() {
+      memoCount.textContent = memoTextarea.value.length;
+    }
+    memoTextarea.addEventListener('input', updateMemoCounter);
+    updateMemoCounter();
+  }
+});
+</script>
