@@ -1,0 +1,298 @@
+<!-- イベント編集画面 -->
+<div class="space-y-6">
+  <!-- ページヘッダー -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        <i class="fas fa-edit mr-3 text-orange-600"></i>
+        イベントの編集
+      </h1>
+      <p class="text-gray-600 mt-1">「<%= @event.name %>」の情報を編集します</p>
+    </div>
+    
+    <!-- ナビゲーションボタン -->
+    <div class="flex space-x-3">
+      <%= link_to admin_events_path,
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" do %>
+        <i class="fas fa-arrow-left mr-2"></i>
+        一覧に戻る
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 現在のイベント情報表示 -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">現在のイベント情報</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <div class="space-y-3">
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">イベント名</span>
+            <span class="text-sm text-gray-900 font-medium">
+              <%= @event.name %>
+            </span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">使用回数</span>
+            <span class="text-sm text-gray-900">
+              <span class="font-medium"><%= @event.gift_records_count %></span>件のギフト記録
+            </span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">状態</span>
+            <span class="text-sm">
+              <% if @event.gift_records_count > 0 %>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  <i class="fas fa-check-circle mr-1"></i>
+                  使用中
+                </span>
+              <% else %>
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  <i class="fas fa-circle mr-1"></i>
+                  未使用
+                </span>
+              <% end %>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="space-y-3">
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">イベントID</span>
+            <span class="text-sm text-gray-900 font-mono">
+              #<%= @event.id %>
+            </span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">作成日</span>
+            <span class="text-sm text-gray-900">
+              <%= l(@event.created_at, format: :short) %>
+            </span>
+          </div>
+          <div class="flex justify-between py-2 border-b border-gray-100">
+            <span class="text-sm font-medium text-gray-500">最終更新</span>
+            <span class="text-sm text-gray-900">
+              <%= l(@event.updated_at, format: :short) %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 編集フォーム -->
+  <div class="bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-medium text-gray-900">イベント情報の編集</h3>
+      <p class="text-sm text-gray-500 mt-1">イベント名を変更できます</p>
+    </div>
+
+    <div class="px-6 py-6">
+      <%= form_with model: [ :admin, @event ], local: true, class: "space-y-6" do |f| %>
+        
+        <!-- エラーメッセージ -->
+        <% if @event.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-triangle text-red-400"></i>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">
+                  入力エラーがあります（<%= pluralize(@event.errors.count, "件") %>）
+                </h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <% @event.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- イベント名フィールド -->
+        <div>
+          <%= f.label :name, "イベント名", class: "block text-sm font-medium text-gray-700 mb-2" %>
+          <%= f.text_field :name, 
+              class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 #{@event.errors[:name].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
+              placeholder: "イベント名を入力（例：誕生日、記念日、クリスマスなど）",
+              required: true,
+              maxlength: 100 %>
+          
+          <!-- 文字数カウンタ -->
+          <div class="mt-1 flex justify-between items-center">
+            <div class="text-xs text-gray-400">
+              <span id="name-count">0</span>/100文字
+            </div>
+            <div class="text-xs text-gray-500">
+              <i class="fas fa-info-circle mr-1"></i>
+              他と重複しない名前にしてください
+            </div>
+          </div>
+          
+          <!-- ヘルプテキスト -->
+          <div class="mt-2 text-sm text-gray-500">
+            <i class="fas fa-info-circle mr-1"></i>
+            ギフト記録の分類に使用されるイベント名です。わかりやすい名前をつけてください。
+          </div>
+          
+          <!-- フィールド固有のエラーメッセージ -->
+          <% if @event.errors[:name].any? %>
+            <div class="mt-2 text-sm text-red-600">
+              <i class="fas fa-exclamation-triangle mr-1"></i>
+              <%= @event.errors[:name].first %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- イベント使用状況の表示 -->
+        <% if @event.gift_records_count > 0 %>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+              </div>
+              <div class="ml-3">
+                <h4 class="text-sm font-medium text-blue-800">使用状況</h4>
+                <div class="mt-2 text-sm text-blue-700">
+                  <p>このイベントは現在 <strong><%= @event.gift_records_count %>件</strong> のギフト記録で使用されています。</p>
+                  <p class="mt-1">名前を変更すると、既存のギフト記録でも新しい名前が表示されます。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- よく使われるイベント名の例 -->
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <h4 class="text-sm font-medium text-gray-900 mb-3">イベント名の例</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <% ["誕生日", "記念日", "クリスマス", "母の日", "父の日", "バレンタインデー", "ホワイトデー", "お中元", "お歳暮", "結婚記念日", "卒業祝い", "入学祝い"].each do |example| %>
+              <button type="button" 
+                      onclick="document.getElementById('event_name').value = '<%= example %>'; updateNameCounter();"
+                      class="text-left px-3 py-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                <%= example %>
+              </button>
+            <% end %>
+          </div>
+          <div class="mt-2 text-xs text-gray-500">
+            <i class="fas fa-hand-pointer mr-1"></i>
+            クリックするとフィールドに入力されます
+          </div>
+        </div>
+
+        <!-- アクションボタン -->
+        <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
+          <%= link_to "キャンセル", admin_events_path,
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" %>
+          
+          <%= f.submit "変更を保存",
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed",
+              data: { disable_with: "保存中..." } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- 削除について -->
+  <% if @event.gift_records_count == 0 %>
+    <div class="bg-white rounded-lg shadow-md">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">危険な操作</h3>
+      </div>
+      
+      <div class="px-6 py-6">
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-triangle text-red-500 text-xl"></i>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-lg font-medium text-gray-900 mb-2">このイベントを削除</h4>
+            <p class="text-sm text-gray-600 mb-4">
+              このイベントは使用されていないため削除できます。削除すると完全に除去され、復元できません。
+            </p>
+            <%= button_to "イベントを削除", admin_event_path(@event),
+                method: :delete,
+                data: { 
+                  confirm: "「#{@event.name}」を完全に削除しますか？この操作は取り消せません。"
+                },
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <i class="fas fa-lock text-yellow-400"></i>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-yellow-800">削除について</h3>
+          <div class="mt-2 text-sm text-yellow-700">
+            <p>このイベントは <%= @event.gift_records_count %>件のギフト記録で使用されているため削除できません。</p>
+            <p class="mt-1">削除するには、まず関連するギフト記録のイベントを変更してください。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 注意事項 -->
+  <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <i class="fas fa-info-circle text-orange-400"></i>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-orange-800">
+          編集時の注意事項
+        </h3>
+        <div class="mt-2 text-sm text-orange-700">
+          <ul class="list-disc pl-5 space-y-1">
+            <li>イベント名は他のイベントと重複しないように入力してください</li>
+            <li>名前を変更すると、既存のギフト記録でも新しい名前が表示されます</li>
+            <li>削除できるのは、ギフト記録で使用されていないイベントのみです</li>
+            <li>わかりやすく、一般的な名前を使用することをおすすめします</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 文字数カウンタのJavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const nameInput = document.querySelector('#event_name');
+  const nameCount = document.querySelector('#name-count');
+  
+  function updateNameCounter() {
+    if (nameInput && nameCount) {
+      const length = nameInput.value.length;
+      nameCount.textContent = length;
+      
+      // 文字数に応じて色を変更
+      if (length > 90) {
+        nameCount.className = 'text-red-600 font-bold';
+      } else if (length > 80) {
+        nameCount.className = 'text-yellow-600 font-medium';
+      } else {
+        nameCount.className = 'text-gray-600';
+      }
+    }
+  }
+  
+  // Make updateNameCounter globally available for button clicks
+  window.updateNameCounter = updateNameCounter;
+  
+  if (nameInput && nameCount) {
+    nameInput.addEventListener('input', updateNameCounter);
+    updateNameCounter(); // 初期値設定
+  }
+});
+</script>
