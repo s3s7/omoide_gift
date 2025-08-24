@@ -173,7 +173,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding-bottom: 0;
 }
 
-/* ダークモード対応（将来実装用） */
+ダークモード対応（将来実装用） */
 @media (prefers-color-scheme: dark) {
   .form-control {
     background-color: #2d3748;
@@ -182,7 +182,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   
   /* ダークモードでのselectフィールド統一スタイル */
-  select.form-control {
+  /* select.form-control {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;

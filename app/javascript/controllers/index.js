@@ -54,3 +54,6 @@ application.register("user-profile", UserProfileController)
 
 import FlashMessagesController from "./flash_messages_controller"
 application.register("flash-messages", FlashMessagesController)
+
+import CharacterCounterController from "./character_counter_controller"
+application.register("character-counter", CharacterCounterController)
