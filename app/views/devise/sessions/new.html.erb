@@ -54,6 +54,8 @@
           font-size: 16px;
           box-sizing: border-box;
           transition: border-color 0.3s ease;
+          background-color: white;
+          color: black;
         " %>
       </div>
 
@@ -73,9 +75,11 @@
           font-size: 16px;
           box-sizing: border-box;
           transition: border-color 0.3s ease;
+          background-color: white;
+          color: black;
         " %>
         <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-          <%= link_to "パスワードを忘れた方はこちら", new_password_path(resource_name) , class: "text-sm"  %><br />
+          <%= link_to "パスワードを忘れた方はこちら", new_password_path(resource_name) , class: "text-sm", style: "color: black;"  %><br />
         <% end %>
       </div>
 
@@ -90,7 +94,7 @@
             color: #666;
             cursor: pointer;
           ">
-            <%= f.check_box :remember_me, style: "margin-right: 8px;" %>
+            <%= f.check_box :remember_me, class: "checkbox checkbox-primary", style: "margin-right: 8px;" %>
             ログインしたままにする
           </label>
         </div>
