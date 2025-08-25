@@ -176,7 +176,7 @@
     <!-- カードグリッドレイアウト -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 justify-items-center">
       <% @gift_people.each do |person| %>
-        <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-1 cursor-pointer" onclick="window.location.href='<%= gift_person_path(person) %>'">
+        <div class="card bg-white shadow-md compact hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 gift-person-card-fixed cursor-pointer" onclick="window.location.href='<%= gift_person_path(person) %>'" style="width: 200px !important; min-width: 200px !important; max-width: 200px !important;">
           <!-- プロフィール画像エリア -->
           <div class="h-32 relative overflow-hidden">
             <% if person.has_avatar? && person.display_avatar(:large) %>
