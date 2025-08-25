@@ -31,7 +31,8 @@
               id: "search-input",
               autocomplete: "off",
               data: { "gift-records-autocomplete-target": "input" },
-              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" %>
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+              style: "background-color: white; color: black;" %>
           
           <!-- オートコンプリートドロップダウン -->
           <div id="autocomplete-dropdown" 
@@ -69,7 +70,8 @@
               { 
                 id: "people-filter-type-select",
                 data: { "dynamic-filter-target": "filterTypeSelect", action: "change->dynamic-filter#update" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+                style: "background-color: white; color: black;"
               } %>
           <%= f.hidden_field :filter_type, id: "people-filter-type-hidden", data: { "dynamic-filter-target": "filterTypeHidden" } %>
         </div>
@@ -86,7 +88,7 @@
                 id: "people-relationship-select",
                 data: { "dynamic-filter-target": "relationshipSelect" },
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-                style: (params[:filter_type] == "relationship" ? "" : "display: none;")
+                style: (params[:filter_type] == "relationship" ? "background-color: white; color: black;" : "display: none; background-color: white; color: black;")
               } %>
           
           <!-- イベント選択プルダウン -->
@@ -97,12 +99,12 @@
                 id: "people-event-select",
                 data: { "dynamic-filter-target": "eventSelect" },
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-                style: (params[:filter_type] == "event" ? "" : "display: none;")
+                style: (params[:filter_type] == "event" ? "background-color: white; color: black;" : "display: none; background-color: white; color: black;")
               } %>
           
           <!-- プレースホルダー表示 -->
-          <div id="people-filter-placeholder" data-dynamic-filter-target="placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500" 
-               style="<%= params[:filter_type].present? ? 'display: none;' : '' %>">
+          <div id="people-filter-placeholder" data-dynamic-filter-target="placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm text-gray-500" 
+               style="<%= params[:filter_type].present? ? 'display: none; background-color: white;' : 'background-color: white;' %>">
             左でフィルターを選択してください
           </div>
         </div>
@@ -119,7 +121,8 @@
               ], params[:sort_by]),
               { prompt: "選択してください" },
               { 
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+                style: "background-color: white; color: black;"
               } %>
         </div>
 
@@ -133,7 +136,8 @@
               ], params[:sort_order]),
               { prompt: "選択してください" },
               { 
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary" 
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+                style: "background-color: white; color: black;"
               } %>
         </div>
       </div>
