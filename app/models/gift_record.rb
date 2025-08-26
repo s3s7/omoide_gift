@@ -26,8 +26,8 @@ class GiftRecord < ApplicationRecord
   validate :images_validation
 
   # バリデーション
-  validates :commentable, inclusion: { in: [true, false] }
-  
+  validates :commentable, inclusion: { in: [ true, false ] }
+
 
   private
 
@@ -151,5 +151,4 @@ class GiftRecord < ApplicationRecord
   def comments_allowed?
     commentable?
   end
-
 end
