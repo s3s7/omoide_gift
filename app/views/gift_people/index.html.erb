@@ -20,41 +20,6 @@
   <!-- 検索・フィルター機能 -->
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto" data-controller="dynamic-filter">
     <%= form_with url: gift_people_path, method: :get, local: true, class: "space-y-2" do |f| %>
-      <!-- 検索欄と検索ボタン -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <!-- 検索キーワード（オートコンプリート付き） -->
-        <div class="relative" data-controller="gift-records-autocomplete" data-gift-records-autocomplete-endpoint-value="/gift_people/autocomplete">
-          <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
-          <%= f.text_field :search, 
-              value: h(params[:search]),
-              placeholder: "名前、好きなもの、メモで検索",
-              id: "search-input",
-              autocomplete: "off",
-              data: { "gift-records-autocomplete-target": "input" },
-              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-              style: "background-color: white; color: black;" %>
-          
-          <!-- オートコンプリートドロップダウン -->
-          <div id="autocomplete-dropdown" 
-               data-gift-records-autocomplete-target="dropdown"
-               class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-md shadow-lg hidden max-h-48 overflow-y-auto">
-            <!-- 検索結果がここに動的に追加される -->
-          </div>
-          
-          <!-- ローディング表示 -->
-          <div id="search-loading" 
-               data-gift-records-autocomplete-target="loading"
-               class="absolute right-2 top-7 hidden">
-            <i class="fas fa-spinner fa-spin text-gray-400 text-sm"></i>
-          </div>
-        </div>
-
-        <!-- 検索ボタン -->
-        <div class="flex items-end">
-          <%= f.submit "検索", class: "w-full px-3 py-1.5 btn-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
-        </div>
-      </div>
-
       <!-- フィルターと値 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <!-- フィルタータイプ選択 -->
@@ -139,6 +104,41 @@
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
                 style: "background-color: white; color: black;"
               } %>
+        </div>
+      </div>
+
+      <!-- 検索欄と検索ボタン -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <!-- 検索キーワード（オートコンプリート付き） -->
+        <div class="relative" data-controller="gift-records-autocomplete" data-gift-records-autocomplete-endpoint-value="/gift_people/autocomplete">
+          <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+          <%= f.text_field :search, 
+              value: h(params[:search]),
+              placeholder: "名前、好きなもの、メモで検索",
+              id: "search-input",
+              autocomplete: "off",
+              data: { "gift-records-autocomplete-target": "input" },
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+              style: "background-color: white; color: black;" %>
+          
+          <!-- オートコンプリートドロップダウン -->
+          <div id="autocomplete-dropdown" 
+               data-gift-records-autocomplete-target="dropdown"
+               class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-md shadow-lg hidden max-h-48 overflow-y-auto">
+            <!-- 検索結果がここに動的に追加される -->
+          </div>
+          
+          <!-- ローディング表示 -->
+          <div id="search-loading" 
+               data-gift-records-autocomplete-target="loading"
+               class="absolute right-2 top-7 hidden">
+            <i class="fas fa-spinner fa-spin text-gray-400 text-sm"></i>
+          </div>
+        </div>
+
+        <!-- 検索ボタン -->
+        <div class="flex items-end">
+          <%= f.submit "検索", class: "w-full px-3 py-1.5 btn-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
         </div>
       </div>
 

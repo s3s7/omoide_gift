@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_22_000120) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_26_095748) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -110,6 +110,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_22_000120) do
     t.bigint "gift_people_id", null: false
     t.bigint "age_id"
     t.bigint "gift_item_category_id"
+    t.boolean "commentable", default: true, null: false
     t.index ["age_id"], name: "index_gift_records_on_age_id"
     t.index ["event_id"], name: "index_gift_records_on_event_id"
     t.index ["gift_item_category_id"], name: "index_gift_records_on_gift_item_category_id"

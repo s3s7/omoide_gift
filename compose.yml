@@ -45,7 +45,7 @@ services:
       context: .
     command: bundle exec sidekiq -C config/sidekiq.yml
     volumes:
-      - .:/myap
+      - .:/myapp
     environment:
       TZ: Asia/Tokyo
       REDIS_URL: redis://redis:6379/1

@@ -25,6 +25,10 @@ class GiftRecord < ApplicationRecord
   validate :gift_at_is_reasonable_date
   validate :images_validation
 
+  # バリデーション
+  validates :commentable, inclusion: { in: [ true, false ] }
+
+
   private
 
   def gift_at_is_valid_date
@@ -111,6 +115,8 @@ class GiftRecord < ApplicationRecord
   scope :with_amount, -> { where.not(amount: nil) }
   scope :current_month, -> { where(gift_at: Date.current.beginning_of_month..Date.current.end_of_month) }
   scope :current_year, -> { where(gift_at: Date.current.beginning_of_year..Date.current.end_of_year) }
+  scope :commentable, -> { where(commentable: true) }
+  scope :comment_disabled, -> { where(commentable: false) }
 
   # インスタンスメソッド
   def display_amount
@@ -139,5 +145,10 @@ class GiftRecord < ApplicationRecord
 
   def images_count
     images.attached? ? images.count : 0
+  end
+
+  # メソッド（commentable?は自動的に使用可能）
+  def comments_allowed?
+    commentable?
   end
 end

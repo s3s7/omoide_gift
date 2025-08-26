@@ -10,6 +10,12 @@ export default class extends Controller {
     "toggleIcon",
     "toggleStatus",
     "toggleDescription",
+    "commentableToggle",
+    "commentableToggleLabel",
+    "commentableToggleSlider",
+    "commentableToggleIcon",
+    "commentableToggleStatus",
+    "commentableToggleDescription",
     "eventSelect",
     "dateField"
   ]
@@ -23,6 +29,7 @@ export default class extends Controller {
   connect() {
     this.initializeGiftPersonFields()
     this.initializeToggleSwitch()
+    this.initializeCommentableToggleSwitch()
     this.initializeFormValidation()
   }
 
@@ -37,6 +44,13 @@ export default class extends Controller {
   initializeToggleSwitch() {
     if (this.hasPublicToggleTarget) {
       this.updateToggleUI()
+    }
+  }
+
+  // コメント設定トグルスイッチの初期化
+  initializeCommentableToggleSwitch() {
+    if (this.hasCommentableToggleTarget) {
+      this.updateCommentableToggleUI()
     }
   }
 
@@ -93,6 +107,23 @@ export default class extends Controller {
     this.updateToggleUI()
   }
 
+  // コメント設定トグルスイッチクリック時のアクション
+  toggleCommentableStatus(event) {
+    if (!this.hasCommentableToggleTarget) return
+    // label のデフォルト動作（関連付いた input の自動トグル）を抑止し、
+    // 二重トグルによる状態不一致を防ぐ
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault()
+      // 念のためバブリングも止める（他のクリックハンドラへの影響を防止）
+      if (typeof event.stopPropagation === 'function') {
+        event.stopPropagation()
+      }
+    }
+
+    this.commentableToggleTarget.checked = !this.commentableToggleTarget.checked
+    this.updateCommentableToggleUI()
+  }
+
   // トグルスイッチのUI更新
   updateToggleUI() {
     if (!this.hasPublicToggleTarget) return
@@ -129,6 +160,46 @@ export default class extends Controller {
         this.toggleDescriptionTarget.textContent = '他のユーザーがこのギフト記録を見ることができます'
       } else {
         this.toggleDescriptionTarget.textContent = 'あなただけがこのギフト記録を見ることができます'
+      }
+    }
+  }
+
+  // コメント設定トグルスイッチのUI更新
+  updateCommentableToggleUI() {
+    if (!this.hasCommentableToggleTarget) return
+
+    const isCommentable = this.commentableToggleTarget.checked
+
+    // ラベルとスライダーの更新
+    if (this.hasCommentableToggleLabelTarget && this.hasCommentableToggleSliderTarget) {
+      if (isCommentable) {
+        this.commentableToggleLabelTarget.style.backgroundColor = '#007bff'
+        this.commentableToggleSliderTarget.style.transform = 'translateX(26px)'
+      } else {
+        this.commentableToggleLabelTarget.style.backgroundColor = '#6c757d'
+        this.commentableToggleSliderTarget.style.transform = 'translateX(0)'
+      }
+    }
+
+    // アイコンとテキストの更新
+    if (this.hasCommentableToggleIconTarget && this.hasCommentableToggleStatusTarget) {
+      if (isCommentable) {
+        this.commentableToggleIconTarget.className = 'fas fa-comments'
+        this.commentableToggleIconTarget.style.color = '#007bff'
+        this.commentableToggleStatusTarget.textContent = 'コメント可能'
+      } else {
+        this.commentableToggleIconTarget.className = 'fas fa-comment-slash'
+        this.commentableToggleIconTarget.style.color = '#6c757d'
+        this.commentableToggleStatusTarget.textContent = 'コメント無効'
+      }
+    }
+
+    // 説明テキストの更新
+    if (this.hasCommentableToggleDescriptionTarget) {
+      if (isCommentable) {
+        this.commentableToggleDescriptionTarget.textContent = '他のユーザーがこのギフト記録にコメントできます'
+      } else {
+        this.commentableToggleDescriptionTarget.textContent = '他のユーザーはこのギフト記録にコメントできません'
       }
     }
   }
