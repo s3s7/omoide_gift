@@ -1,6 +1,7 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_gift_record
+  before_action :check_commentable, only: [ :create ]
   before_action :set_comment, only: [ :edit, :update, :destroy ]
   before_action :check_comment_owner, only: [ :edit, :update, :destroy ]
 
@@ -66,6 +67,15 @@ class CommentsController < ApplicationController
   def check_comment_owner
     unless @comment.can_edit_or_delete?(current_user)
       redirect_to @gift_record, alert: "他のユーザーのコメントは編集・削除できません。"
+    end
+  end
+
+  def check_commentable
+    unless @gift_record.commentable?
+      respond_to do |format|
+        format.html { redirect_to @gift_record, alert: "このギフト記録はコメントが無効になっています。" }
+        format.json { render json: { success: false, error: "コメントが無効になっています。" }, status: :forbidden }
+      end
     end
   end
 

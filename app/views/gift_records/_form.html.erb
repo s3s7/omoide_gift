@@ -208,6 +208,7 @@
               font-size: 14px;
               box-sizing: border-box;
               background-color: white;
+              color: black;
             ",
             placeholder: "相手の名前を入力",
             class: "gift-form-input",
@@ -234,6 +235,7 @@
                 font-size: 14px;
                 box-sizing: border-box;
                 background-color: white;
+                color: black;
               ",
               id: "gift_person_relationship_id"
             } %>
@@ -256,6 +258,7 @@
               font-size: 14px;
               box-sizing: border-box;
               background-color: white;
+              color: black;
             ",
             id: "gift_person_birthday" %>
       </div>
@@ -277,6 +280,7 @@
               font-size: 14px;
               box-sizing: border-box;
               background-color: white;
+              color: black;
             ",
             placeholder: "好きなものを入力",
             class: "gift-form-input",
@@ -300,6 +304,7 @@
               font-size: 14px;
               box-sizing: border-box;
               background-color: white;
+              color: black;
             ",
             placeholder: "嫌いなものを入力",
             class: "gift-form-input",
@@ -325,6 +330,7 @@
               min-height: 80px;
               resize: vertical;
               background-color: white;
+              color: black;
             ",
             placeholder: "例：東京都新宿区西新宿x-x-x、〒xxx-xxxxx",
             class: "gift-form-input",
@@ -351,6 +357,7 @@
               min-height: 80px;
               resize: vertical;
               background-color: white;
+              color: black;
             ",
             placeholder: "メモを入力",
             class: "gift-form-input",
@@ -748,6 +755,91 @@
         <% gift_record.errors[:images].each do |error| %>
           <div><%= error %></div>
         <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- コメント設定 -->
+  <div style="margin-bottom: 32px; text-align: left;">
+    <%= f.label :commentable, "コメント設定", style: "
+      display: block;
+      margin-bottom: 16px;
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    " %>
+    <div style="
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+    ">
+      <!-- カスタムトグルスイッチ -->
+      <div style="position: relative; margin-right: 16px;">
+        <%= f.check_box :commentable, 
+            {
+              checked: gift_record.new_record? ? true : gift_record.commentable,
+              style: "display: none;",
+              id: "gift_record_commentable",
+              data: { gift_records_target: "commentableToggle" }
+            } %>
+        <label for="gift_record_commentable" style="
+          position: relative;
+          display: inline-block;
+          width: 60px;
+          height: 34px;
+          background-color: #007bff;
+          border-radius: 34px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        " id="commentable_toggle_label" 
+        data-gift-records-target="commentableToggleLabel"
+        data-action="click->gift-records#toggleCommentableStatus">
+          <span style="
+            position: absolute;
+            content: '';
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+          " id="commentable_toggle_slider" data-gift-records-target="commentableToggleSlider"></span>
+        </label>
+      </div>
+      
+      <!-- ラベルテキスト -->
+      <div>
+        <div style="
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 4px;
+          font-size: 16px;
+        " id="commentable_toggle_text">
+          <i class="fas fa-comments" style="margin-right: 8px; color: #007bff;" id="commentable_toggle_icon" data-gift-records-target="commentableToggleIcon"></i>
+          <span id="commentable_toggle_status" data-gift-records-target="commentableToggleStatus">コメント可能</span>
+        </div>
+        <div style="
+          font-size: 12px;
+          color: #666;
+        " id="commentable_toggle_description" data-gift-records-target="commentableToggleDescription">
+          他のユーザーがこのギフト記録にコメントできます
+        </div>
+      </div>
+    </div>
+    
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
+      <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
+      オンにすると他のユーザーがあなたのギフト記録にコメントできます
+    </div>
+    
+    <% if gift_record.errors[:commentable].any? %>
+      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
+        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
+        <%= gift_record.errors[:commentable].first %>
       </div>
     <% end %>
   </div>
