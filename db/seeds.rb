@@ -47,8 +47,9 @@ relationship_names = [
   'その他'
 ]
 
-relationship_names.each do |relationship_name|
-  Relationship.find_or_create_by(name: relationship_name)
+relationship_names.each_with_index do |relationship_name, index|
+  relationship = Relationship.find_or_create_by(name: relationship_name)
+  relationship.update!(position: index + 1)
 end
 
 puts "関係性データの作成完了: #{Relationship.count}件の関係性が存在します"
@@ -115,12 +116,6 @@ if Relationship.count == 0
   puts "⚠️  WARNING: 関係性データが0件です！"
 else
   puts "✓ 関係性データが正常に存在します"
-end
-
-if Age.count == 0
-  puts "⚠️  WARNING: 年齢データが0件です！"
-else
-  puts "✓ 年齢データが正常に存在します"
 end
 
 puts "\nシードデータの作成が完了しました！"
