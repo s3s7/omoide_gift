@@ -49,3 +49,31 @@
 #autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* iOS Safari ボタン透明化問題の修正 */
+button[style*="background"],
+input[type="submit"][style*="background"],
+a[style*="background"] {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  opacity: 1 !important;
+}
+
+/* ログイン・新規登録ボタンの特別な修正 */
+button[style*="#FC913A"],
+input[type="submit"][style*="#FC913A"],
+a[style*="#FC913A"] {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  background-color: #FC913A !important;
+  opacity: 1 !important;
+}
+
+/* linear-gradientボタンの修正 */
+button[style*="linear-gradient"],
+input[type="submit"][style*="linear-gradient"],
+a[style*="linear-gradient"] {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  opacity: 1 !important;
+}
