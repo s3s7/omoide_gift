@@ -61,25 +61,7 @@
 
     <!-- フォーム -->
     <div class="px-6 py-6">
-      <!-- 進捗インジケーター -->
-      <div class="mb-6">
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              <i class="fas fa-info-circle text-blue-500 text-lg"></i>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-blue-800">
-                編集モード
-              </h3>
-              <p class="mt-1 text-sm text-blue-600">
-                フィールドを変更して「更新する」ボタンをクリックしてください。
-                必要な項目には<span class="text-red-500">*</span>が表示されています。
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    
 
       <!-- エラーメッセージ（全体） -->
       <% if @gift_record.errors.any? %>
@@ -144,19 +126,6 @@
       </div>
     </div>
   </div>
-</div>
-<!-- 使用方法のヒント -->
-<div class="mt-6 bg-gray-50 rounded-lg p-4">
-  <h3 class="text-sm font-medium text-gray-900 mb-2">
-    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-    編集のヒント
-  </h3>
-  <ul class="text-sm text-gray-600 space-y-1">
-    <li>• 日付フィールドではクイック選択ボタンを使用できます</li>
-    <li>• 金額は1円以上で入力してください（任意項目）</li>
-    <li>• メモ欄にはギフトの思い出や相手の反応を記録できます</li>
-    <li>• 必須項目を入力してから更新ボタンをクリックしてください</li>
-  </ul>
 </div>
 
 <!-- 削除確認モーダル -->

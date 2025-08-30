@@ -1,6 +1,6 @@
 <style>
   .gift-form-input::placeholder {
-    color: black !important;
+    color: #888 !important;
   }
   .gift-form-input::-webkit-input-placeholder {
     color: #888 !important;
@@ -83,9 +83,9 @@
                     padding: 4px 8px;
                     margin-right: 6px;
                     margin-bottom: 6px;
-                    border: 1px solid #007bff;
+                    border: 1px solid #FC913A;
                     background-color: transparent;
-                    color: #007bff;
+                    color: #FC913A;
                     border-radius: 4px;
                     font-size: 12px;
                     cursor: pointer;
@@ -93,8 +93,8 @@
                   " 
                   data-action="click->gift-records#setEventSelection"
                   data-gift-records-event-id-param="<%= event.id %>"
-                  onmouseover="this.style.backgroundColor='#007bff'; this.style.color='white';"
-                  onmouseout="this.style.backgroundColor='transparent'; this.style.color='#007bff';">
+                  onmouseover="this.style.backgroundColor='#FC913A'; this.style.color='white';"
+                  onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FC913A';">
             <%= truncate(event.display_name, length: 10) %>
           </button>
         <% end %>
@@ -494,6 +494,7 @@
           box-sizing: border-box;
           transition: border-color 0.3s ease;
           background-color: white;
+          color: black;
         ",
         placeholder: "例：花束、チョコレート、アクセサリーなど",
         class: "gift-form-input",
@@ -577,6 +578,7 @@
             box-sizing: border-box;
             transition: border-color 0.3s ease;
             background-color: white;
+            color: black;
           ",
           placeholder: "3000",
           class: "gift-form-input",
@@ -618,6 +620,7 @@
           min-height: 100px;
           resize: vertical;
           background-color: white;
+          color: black;
         ",
         placeholder: "ギフトに関するメモ、思い出、相手の反応など...",
         class: "gift-form-input",
