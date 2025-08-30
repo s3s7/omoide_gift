@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root "static_pages#top"
 
+  # get "images/ogp.png", to: "images#ogp", as: "images_ogp"
+
   devise_for :users, controllers: {
     omniauth_callbacks: "omniauth_callbacks"
   }
@@ -41,7 +43,12 @@ Rails.application.routes.draw do
 
     # 基本データ管理
     resources :events, except: [ :show ]
-    resources :relationships, except: [ :show ]
+    resources :relationships, except: [ :show ] do
+      member do
+        patch :move_up
+        patch :move_down
+      end
+    end
     resources :gift_item_categories, except: [ :show ]
 
     # システム統計

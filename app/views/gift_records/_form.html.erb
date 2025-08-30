@@ -224,7 +224,7 @@
           font-size: 14px;
         " %>
         <%= select_tag "gift_person[relationship_id]", 
-            options_from_collection_for_select(Relationship.all, :id, :name, @gift_person&.relationship_id || params.dig(:gift_person, :relationship_id)), 
+            options_from_collection_for_select(Relationship.ordered, :id, :name, @gift_person&.relationship_id || params.dig(:gift_person, :relationship_id)), 
             { 
               prompt: "関係性を選択",
               style: "

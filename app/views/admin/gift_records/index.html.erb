@@ -230,23 +230,6 @@
                 
                 <%= link_to "編集", edit_admin_gift_record_path(record), 
                     class: "text-blue-600 hover:text-blue-900" %>
-                
-                <%= button_to record.is_public? ? "非公開化" : "公開化", 
-                    toggle_public_admin_gift_record_path(record),
-                    method: :patch,
-                    data: { 
-                      confirm: "「#{record.display_item_name}」を#{record.is_public? ? '非公開' : '公開'}にしますか？"
-                    },
-                    class: "text-orange-600 hover:text-orange-900 border-0 bg-transparent p-0 underline cursor-pointer",
-                    form: { style: "display: inline;" } %>
-
-                <%= button_to "削除", admin_gift_record_path(record),
-                    method: :delete,
-                    data: { 
-                      confirm: "「#{record.display_item_name}」を削除しますか？この操作は取り消せません。"
-                    },
-                    class: "text-red-600 hover:text-red-900 border-0 bg-transparent p-0 underline cursor-pointer",
-                    form: { style: "display: inline;" } %>
               </td>
             </tr>
           <% end %>
