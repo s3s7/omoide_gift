@@ -189,7 +189,7 @@
     " %>
     <%= f.select :relationship_id, 
         options_from_collection_for_select(
-          (@relationships || []), 
+          Relationship.ordered, 
           :id, 
           :name, 
           gift_person&.relationship_id

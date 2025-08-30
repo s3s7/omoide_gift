@@ -1,9 +1,9 @@
 # 管理者用関係性管理コントローラー
 class Admin::RelationshipsController < Admin::BaseController
-  before_action :set_relationship, only: [ :edit, :update, :destroy ]
+  before_action :set_relationship, only: [ :edit, :update, :destroy, :move_up, :move_down ]
 
   def index
-    @relationships = Relationship.order(:name).page(params[:page]).per(per_page)
+    @relationships = Relationship.ordered.page(params[:page]).per(per_page)
     log_admin_action("関係性一覧表示")
   end
 
@@ -46,6 +46,26 @@ class Admin::RelationshipsController < Admin::BaseController
       log_admin_action("関係性削除", "Relationship", @relationship.id, @relationship.name)
     else
       admin_flash_error("関係性の削除に失敗しました。")
+    end
+    redirect_to admin_relationships_path
+  end
+
+  def move_up
+    if @relationship.move_up!
+      admin_flash_success("「#{@relationship.name}」の順序を上に移動しました。")
+      log_admin_action("関係性順序変更（上）", "Relationship", @relationship.id)
+    else
+      admin_flash_error("順序の変更に失敗しました。")
+    end
+    redirect_to admin_relationships_path
+  end
+
+  def move_down
+    if @relationship.move_down!
+      admin_flash_success("「#{@relationship.name}」の順序を下に移動しました。")
+      log_admin_action("関係性順序変更（下）", "Relationship", @relationship.id)
+    else
+      admin_flash_error("順序の変更に失敗しました。")
     end
     redirect_to admin_relationships_path
   end

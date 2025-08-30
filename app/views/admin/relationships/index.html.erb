@@ -159,20 +159,37 @@
 
               <!-- アクション -->
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <!-- 順序変更ボタン -->
+                <% unless relationship.position == 1 %>
+                  <%= button_to move_up_admin_relationship_path(relationship),
+                      method: :patch,
+                      class: "text-green-600 hover:text-green-900 border-0 bg-transparent p-0 cursor-pointer",
+                      form: { style: "display: inline;" },
+                      title: "上に移動" do %>
+                    <i class="fas fa-chevron-up"></i>
+                  <% end %>
+                <% else %>
+                  <span class="text-gray-300" title="最上位のため上に移動できません">
+                    <i class="fas fa-chevron-up"></i>
+                  </span>
+                <% end %>
+
+                <% unless relationship.position == Relationship.maximum(:position) %>
+                  <%= button_to move_down_admin_relationship_path(relationship),
+                      method: :patch,
+                      class: "text-green-600 hover:text-green-900 border-0 bg-transparent p-0 cursor-pointer",
+                      form: { style: "display: inline;" },
+                      title: "下に移動" do %>
+                    <i class="fas fa-chevron-down"></i>
+                  <% end %>
+                <% else %>
+                  <span class="text-gray-300" title="最下位のため下に移動できません">
+                    <i class="fas fa-chevron-down"></i>
+                  </span>
+                <% end %>
+
                 <%= link_to "編集", edit_admin_relationship_path(relationship), 
                     class: "text-blue-600 hover:text-blue-900" %>
-
-                <% if relationship.gift_people.count == 0 %>
-                  <%= button_to "削除", admin_relationship_path(relationship),
-                      method: :delete,
-                      data: { 
-                        confirm: "「#{relationship.name}」を削除しますか？この操作は取り消せません。"
-                      },
-                      class: "text-red-600 hover:text-red-900 border-0 bg-transparent p-0 underline cursor-pointer",
-                      form: { style: "display: inline;" } %>
-                <% else %>
-                  <span class="text-gray-400" title="使用中のため削除できません">削除不可</span>
-                <% end %>
               </td>
             </tr>
           <% end %>

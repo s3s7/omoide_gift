@@ -202,19 +202,6 @@
                 
                 <%= link_to "編集", edit_admin_gift_person_path(gift_person), 
                     class: "text-blue-600 hover:text-blue-900" %>
-
-                <!-- ギフト記録がない場合のみ削除ボタンを表示 -->
-                <% if gift_person.gift_records.count == 0 %>
-                  <%= button_to "削除", admin_gift_person_path(gift_person),
-                      method: :delete,
-                      data: { 
-                        confirm: "「#{gift_person.name}」を削除しますか？この操作は取り消せません。"
-                      },
-                      class: "text-red-600 hover:text-red-900 border-0 bg-transparent p-0 underline cursor-pointer",
-                      form: { style: "display: inline;" } %>
-                <% else %>
-                  <span class="text-gray-400" title="ギフト記録が存在するため削除できません">削除不可</span>
-                <% end %>
               </td>
             </tr>
           <% end %>
