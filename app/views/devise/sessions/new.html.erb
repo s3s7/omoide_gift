@@ -1,17 +1,4 @@
-<%# <div style="
-  width: 100vw;
-  min-height: 80vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f8f9fa;
-  padding: 40px 0;
-  box-sizing: border-box;
-  margin: 0;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-"> %>
+
   <div style="
     width: 90%;
     max-width: 400px;
@@ -105,13 +92,17 @@
           width: 100%;
           padding: 16px;
           background: linear-gradient(135deg,  #FC913A 100%);
+          background-color: #FC913A;
           color: white;
-          border: none;
+          border: 2px solid #FC913A;
           border-radius: 8px;
           cursor: pointer;
           font-size: 16px;
           font-weight: 600;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
+          -webkit-appearance: none;
+          -webkit-tap-highlight-color: transparent;
+          box-sizing: border-box;
         " %>
       </div>
     <% end %>

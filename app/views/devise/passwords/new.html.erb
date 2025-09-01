@@ -1,16 +1,88 @@
-<h2>Forgot your password?</h2>
+  <div style="
+    width: 90%;
+    max-width: 400px;
+    padding: 40px 30px;
+    /* background-color: white; */
+    border-radius: 12px;
+    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
+    text-align: center;
+    margin: 0 auto;
+    position: relative;
+  ">
+    <h2 style="
+      margin: 0 0 40px 0;
+      padding: 0;
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+      line-height: 1.4;
+    ">パスワードをリセット</h2>
+    
+    <p style="
+      margin: 0 0 32px 0;
+      padding: 0;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    ">
+      メールアドレスを入力してください。<br>
+      パスワードリセットの手順をお送りします。
+    </p>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      
+      <div style="margin-bottom: 32px; text-align: left;">
+        <%= f.label :メールアドレス, style: "
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 600;
+          color: #555;
+          font-size: 14px;
+        " %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", style: "
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+          background-color: white;
+          color: black;
+        " %>
+      </div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      <div style="margin-bottom: 32px;">
+        <%= f.submit "パスワードリセット手順を送信", style: "
+          width: 100%;
+          padding: 16px;
+          background: linear-gradient(135deg,  #FC913A 100%);
+          background-color: #FC913A;
+          color: white;
+          border: 2px solid #FC913A;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 600;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          -webkit-appearance: none;
+          -webkit-tap-highlight-color: transparent;
+          box-sizing: border-box;
+        " %>
+      </div>
+    <% end %>
+
+    <div style="border-top: 1px solid #FED7AA; padding-top: 24px;">
+      <h2 style="
+        margin: 0 0 32px 0;
+        padding: 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: #333;
+        line-height: 1.4;
+      ">他のオプション</h2>
+      <%= render "devise/shared/links" %>
+    </div>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Send me reset password instructions" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

@@ -14,10 +14,10 @@
 <!-- ヒーローセクション -->
 <div class="w-full text-center py-16 bg-gradient-to-r rounded-lg mb-12">
 
-  <p class="text-lg text-gray-700 mb-8">
-    思い出ギフトは、自分が贈ったギフトを記録し、思い出を振り返るとともにギフト選びのサポートをするサービスです。
+  <p class="text-xl text-black mb-8">
+    思い出ギフトは自分が贈ったギフトを記録し
+    <br>思い出を振り返るとともにギフト選びのサポートをするサービスです。
   </p>
-  
   <% if user_signed_in? %>
     <%= link_to new_gift_record_path, 
         class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white transition-colors duration-300 shadow-lg hover:shadow-xl",
@@ -44,9 +44,7 @@
   <div class="w-full block">
     <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
       <div class="flex flex-col items-center text-center">
-        <div class="w-16 h-16 mb-4 bg-pink-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-gift text-2xl text-pink-600"></i>
-        </div>
+
         <p class="text-gray-600 leading-relaxed mb-6">
           思い出を記録しよう！<br><br>
           いつ、誰に、何を贈ったのかを<br>
@@ -76,9 +74,7 @@
 
     <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
       <div class="flex flex-col items-center text-center">
-        <div class="w-16 h-16 mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-users text-2xl text-blue-600"></i>
-        </div>
+
         <p class="text-gray-600 leading-relaxed mb-6">
           ギフト相手の詳細を登録しよう！<br><br>
           ギフト相手を登録することで、ギフト相手ごとに記録を見ることが出来ます。<br>
@@ -108,9 +104,6 @@
 
     <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
       <div class="flex flex-col items-center text-center">
-        <div class="w-16 h-16 mb-4 bg-purple-100 rounded-full flex items-center justify-center">
-          <i class="fas fa-chart-line text-2xl text-purple-600"></i>
-        </div>
         <p class="text-gray-600 leading-relaxed mb-6">
           みんなのギフトを見に行こう！<br><br>
           記録した思い出を公開出来ます。<br>
