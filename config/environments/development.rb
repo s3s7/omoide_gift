@@ -81,4 +81,16 @@ Rails.application.configure do
 
   # Active Storage variant processor
   config.active_storage.variant_processor = :mini_magick
+
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",
+    port: 587,
+    domain: "localhost",
+    user_name: ENV["MAILER_SENDER"],
+    password: ENV["MAILER_PASSWORD"],
+    authentication: "plain",
+    enable_starttls_auto: true
+  }
 end

@@ -312,4 +312,5 @@ Devise.setup do |config|
   # config.sign_in_after_change_password = true
 
   config.omniauth :line, ENV["LINE_KEY"], ENV["LINE_SECRET"]
+  config.mailer_sender = ENV["MAILER_SENDER"]
 end

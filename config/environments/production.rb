@@ -102,4 +102,16 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
   config.active_storage.analyze = false
   config.active_job.queue_adapter = :inline
+
+  config.action_mailer.default_url_options = { host: "https://omoide-gift.onrender.com/" }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address:              "smtp.gmail.com",
+    port:                 587,
+    domain:               "omoide-gift.onrender.com",
+    user_name:            ENV["MAILER_SENDER"],
+    password:             ENV["MAILER_PASSWORD"],
+    authentication:       "plain",
+    enable_starttls_auto: true
+  }
 end
