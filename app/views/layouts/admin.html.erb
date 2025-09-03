@@ -63,7 +63,7 @@
     </style>
   </head>
 
-  <body class="font-sans antialiased bg-slate-50">
+  <body class="font-sans antialiased bg-slate-50" data-controller="delete-modal">
     <!-- 管理者専用ヘッダー -->
     <header class="admin-header shadow-lg">
       <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -221,5 +221,8 @@
         <%= yield %>
       </main>
     </div>
+
+    <!-- 管理者用削除確認モーダル -->
+    <%= render 'admin/shared/delete_confirmation_modal' %>
   </body>
 </html>

@@ -40,9 +40,10 @@ module AdminAuthorization
   end
 
   # 管理者ログとして記録
-  def log_admin_action(action_name, target_model = nil, target_id = nil)
+  def log_admin_action(action_name, target_model = nil, target_id = nil, additional_info = nil)
     log_message = "管理者アクション: #{action_name}"
     log_message += " - 対象: #{target_model}##{target_id}" if target_model && target_id
+    log_message += " - 詳細: #{additional_info}" if additional_info
     log_message += " - 実行者: User##{current_user.id}"
 
     Rails.logger.info log_message
