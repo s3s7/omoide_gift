@@ -215,12 +215,14 @@
             <p class="text-sm text-gray-600 mb-4">
               このイベントは使用されていないため削除できます。削除すると完全に除去され、復元できません。
             </p>
-            <%= button_to "イベントを削除", admin_event_path(@event),
-                method: :delete,
-                data: { 
-                  confirm: "「#{@event.name}」を完全に削除しますか？この操作は取り消せません。"
-                },
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+            <button type="button"
+                    data-action="click->delete-modal#show"
+                    data-delete-url="<%= admin_event_path(@event) %>"
+                    data-item-name="<%= @event.name %>"
+                    data-csrf-token="<%= form_authenticity_token %>"
+                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+              イベントを削除
+            </button>
           </div>
         </div>
       </div>

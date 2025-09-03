@@ -1,57 +1,20 @@
 <%- if controller_name != 'sessions' %>
-  <%= link_to "ログインはこちら", new_session_path(resource_name),  style: "
-    display: inline-block;
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #FC913A 100%);
-    background-color: #FC913A;
-    color: white;
-    text-decoration: none;
-    border: 2px solid #FC913A;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-sizing: border-box;
-    margin-bottom: 16px;
-    -webkit-appearance: none;
-    -webkit-tap-highlight-color: transparent;
-  " %><br />
+  <%= link_to "ログインはこちら", new_session_path(resource_name), class: "devise-primary-link" %>
 <% end %>
 
 <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <%= link_to "新規登録はこちら", new_registration_path(resource_name), style: "
-    display: inline-block;
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #FC913A 100%);
-    background-color: #FC913A;
-    color: white;
-    text-decoration: none;
-    border: 2px solid #FC913A;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-sizing: border-box;
-    margin-bottom: 16px;
-    -webkit-appearance: none;
-    -webkit-tap-highlight-color: transparent;
-  " %><br />
+  <%= link_to "新規登録はこちら", new_registration_path(resource_name), class: "devise-primary-link" %>
 <% end %>
 
 
 
-<%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
-  <%= link_to "Didn't receive confirmation instructions?", new_confirmation_path(resource_name) %><br />
-<% end %>
+<%# 未実装機能のため一時的にコメントアウト %>
+<%#- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+  <%#= link_to "確認メールが届かない場合", new_confirmation_path(resource_name), class: "devise-secondary-link" %>
+<%# end %>
 
-<%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
-  <%= link_to "Didn't receive unlock instructions?", new_unlock_path(resource_name) %><br />
-<% end %>
+<%#- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+  <%#= link_to "アカウントロック解除メールが届かない場合", new_unlock_path(resource_name), class: "devise-secondary-link" %>
+<%# end %}
 
 
