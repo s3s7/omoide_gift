@@ -1,0 +1,133 @@
+/* Devise Forms Common Styles */
+
+.devise-form-container {
+  width: 90%;
+  max-width: 400px;
+  padding: 40px 30px;
+  /* background-color: white; */
+  border-radius: 12px;
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
+  text-align: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+.devise-form-title {
+  margin: 0 0 40px 0;
+  padding: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}
+
+.devise-form-description {
+  margin: 0 0 32px 0;
+  padding: 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.devise-form-field {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.devise-form-field.last {
+  margin-bottom: 32px;
+}
+
+.devise-form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+}
+
+.devise-form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+  background-color: white;
+  color: black;
+}
+
+.devise-form-submit {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #FC913A 100%);
+  background-color: #FC913A;
+  color: white;
+  border: 2px solid #FC913A;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  margin-bottom: 32px;
+}
+
+.devise-form-divider {
+  border-top: 1px solid #FED7AA;
+  padding-top: 24px;
+}
+
+.devise-form-options-title {
+  margin: 0 0 32px 0;
+  padding: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}
+
+.devise-form-password-hint {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Devise Links Styles */
+
+.devise-primary-link {
+  display: inline-block;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #FC913A 100%);
+  background-color: #FC913A;
+  color: white;
+  text-decoration: none;
+  border: 2px solid #FC913A;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.devise-secondary-link {
+  color: #FC913A;
+  text-decoration: underline;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.devise-secondary-link:hover {
+  color: #e8820a;
+}

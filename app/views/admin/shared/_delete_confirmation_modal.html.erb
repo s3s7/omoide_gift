@@ -1,0 +1,50 @@
+<!-- 管理者用削除確認モーダル -->
+<div data-delete-modal-target="modal" 
+     data-action="click->delete-modal#backdropClick" 
+     class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 items-center justify-center p-4 z-[9999]">
+  
+  <!-- モーダルコンテンツ -->
+  <div class="bg-white rounded-lg shadow-xl border border-gray-200 max-w-md w-full mx-auto p-6" onclick="event.stopPropagation();">
+    <div class="text-center">
+      <!-- アイコン -->
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+      </div>
+      
+      <!-- タイトル -->
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">管理者として本当に削除しますか？</h3>
+      
+      <!-- 説明文 -->
+      <div class="mb-6">
+        <p class="text-sm text-gray-600 mb-3">
+          <span data-delete-modal-target="itemName" class="font-medium text-gray-900"></span>を削除しようとしています。
+        </p>
+        <p class="text-sm text-gray-600">
+          <span class="text-red-600 font-medium">この操作は取り消すことができません。</span><br>
+          削除すると、関連するすべての情報が永久に失われます。
+        </p>
+      </div>
+      
+      <!-- ボタン -->
+      <div class="flex items-center justify-center gap-3">
+        <!-- キャンセルボタン -->
+        <button type="button" 
+                data-delete-modal-target="cancelButton"
+                data-action="click->delete-modal#cancel"
+                class="px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">
+          <i class="fas fa-times mr-2"></i>
+          キャンセル
+        </button>
+        
+        <!-- 削除実行ボタン -->
+        <button type="button" 
+                data-delete-modal-target="confirmButton"
+                data-action="click->delete-modal#confirm"
+                class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors">
+          <i class="fas fa-trash mr-2"></i>
+          削除する
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
