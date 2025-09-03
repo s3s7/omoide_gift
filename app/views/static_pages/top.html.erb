@@ -43,80 +43,102 @@
 <div class="w-full mb-12">
   <div class="w-full block">
     <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
-      <div class="flex flex-col items-center text-center">
+      <div class="flex items-center justify-center space-x-6">
+        <!-- 左側：テキストとボタン -->
+        <div class="flex flex-col items-start text-left">
+          <p class="text-gray-600 leading-relaxed mb-6">
+            思い出を記録しよう！<br><br>
+            いつ、誰に、何を贈ったのかを<br>
+            ギフト相手ごとに記録が出来ます
+          </p>
+          <% if user_signed_in? %>
+            <%= link_to new_gift_record_path, 
+                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+                style: "background-color: #FC913A;",
+                onmouseenter: "this.style.backgroundColor='#E8823A'",
+                onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
+              <i class="fas fa-plus mr-2"></i>
+              記録する！
+            <% end %>
+          <% else %>
+            <%= link_to new_user_session_path, 
+                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+                style: "background-color: #FC913A;",
+                onmouseenter: "this.style.backgroundColor='#E8823A'",
+                onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
+              <i class="fas fa-sign-in-alt mr-2"></i>
+              記録する！
+            <% end %>
+          <% end %>
+        </div>
 
-        <p class="text-gray-600 leading-relaxed mb-6">
-          思い出を記録しよう！<br><br>
-          いつ、誰に、何を贈ったのかを<br>
-          ギフト相手ごとに記録が出来ます
-        </p>
-        <% if user_signed_in? %>
-          <%= link_to new_gift_record_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
-              style: "background-color: #FC913A;",
-              onmouseenter: "this.style.backgroundColor='#E8823A'",
-              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
-            <i class="fas fa-plus mr-2"></i>
-            記録する！
-          <% end %>
-        <% else %>
-          <%= link_to new_user_session_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
-              style: "background-color: #FC913A;",
-              onmouseenter: "this.style.backgroundColor='#E8823A'",
-              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
-            <i class="fas fa-sign-in-alt mr-2"></i>
-            記録する！
-          <% end %>
-        <% end %>
+        <!-- 右側：画像 -->
+        <div class="flex-shrink-0">
+          <%= image_tag "top_gift_record_new.png", alt: "思い出を記録", class: "w-80 md:w-96 lg:w-[440px] xl:w-[480px] 2xl:w-[520px]  h-auto object-contain rounded-lg" %>
+        </div>
       </div>
     </div>
 
     <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
-      <div class="flex flex-col items-center text-center">
+      <div class="flex items-center justify-center space-x-6">
+        <!-- 左側：画像 -->
+        <div class="flex-shrink-0">
+          <%= image_tag "top_gift_people_new.png", alt: "みんなのギフト", class: "w-80 md:w-96 lg:w-[440px] xl:w-[480px] 2xl:w-[520px]  h-auto object-contain rounded-lg" %>
+        </div>
 
-        <p class="text-gray-600 leading-relaxed mb-6">
-          ギフト相手の詳細を登録しよう！<br><br>
-          ギフト相手を登録することで、ギフト相手ごとに記録を見ることが出来ます。<br>
-          また、好き嫌いを登録しておくことで、より喜んでもらえるギフト選びが可能です
-        </p>
-        <% if user_signed_in? %>
-          <%= link_to new_gift_record_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
-              style: "background-color: #FC913A;",
-              onmouseenter: "this.style.backgroundColor='#E8823A'",
-              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
-            <i class="fas fa-user-plus mr-2"></i>
-            記録する！
+        <!-- 右側：テキストとボタン -->
+        <div class="flex flex-col items-start text-left">
+          <p class="text-gray-600 leading-relaxed mb-6">
+            ギフト相手の詳細を登録しよう！<br><br>
+            ギフト相手を登録することで、ギフト相手ごとに記録を見ることが出来ます。<br>
+            また、好き嫌いを登録しておくことで、より喜んでもらえるギフト選びが可能です
+          </p>
+          <% if user_signed_in? %>
+            <%= link_to new_gift_person_path,
+                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+                style: "background-color: #FC913A;",
+                onmouseenter: "this.style.backgroundColor='#E8823A'",
+                onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
+              <i class="fas fa-user-plus mr-2"></i>
+              記録する！
+            <% end %>
+          <% else %>
+            <%= link_to new_user_session_path, 
+                class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+                style: "background-color: #FC913A;",
+                onmouseenter: "this.style.backgroundColor='#E8823A'",
+                onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
+              <i class="fas fa-sign-in-alt mr-2"></i>
+              登録する！
+            <% end %>
           <% end %>
-        <% else %>
-          <%= link_to new_user_session_path, 
-              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
-              style: "background-color: #FC913A;",
-              onmouseenter: "this.style.backgroundColor='#E8823A'",
-              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
-            <i class="fas fa-sign-in-alt mr-2"></i>
-            登録する！
-          <% end %>
-        <% end %>
+        </div>
       </div>
     </div>
 
     <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
-      <div class="flex flex-col items-center text-center">
-        <p class="text-gray-600 leading-relaxed mb-6">
-          みんなのギフトを見に行こう！<br><br>
-          記録した思い出を公開出来ます。<br>
-          ギフト選びを迷った際にあっと驚くようなアイディが見つかるかも
-        </p>
-        <%= link_to gift_records_path, 
-            class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
-            style: "background-color: #FC913A;",
-            onmouseenter: "this.style.backgroundColor='#E8823A'",
-            onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
-          <i class="fas fa-eye mr-2"></i>
-          見に行く！
-        <% end %>
+      <div class="flex items-center justify-center space-x-6">
+
+        <!-- 左側：テキストとボタン -->
+        <div class="flex flex-col items-center text-center">
+          <p class="text-gray-600 leading-relaxed mb-6">
+            みんなのギフトを見に行こう！<br><br>
+            記録した思い出を公開出来ます。<br>
+            ギフト選びを迷った際にあっと驚くようなアイディが見つかるかも
+          </p>
+          <%= link_to gift_records_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+              style: "background-color: #FC913A;",
+              onmouseenter: "this.style.backgroundColor='#E8823A'",
+              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
+            <i class="fas fa-eye mr-2"></i>
+            見に行く！
+          <% end %>
+        </div>
+         <!-- 右側：画像 -->
+        <div class="flex-shrink-0">
+          <%= image_tag "top_minna_no_gift.png", alt: "みんなのギフト", class: "w-80 md:w-96 lg:w-[440px] xl:w-[480px] 2xl:w-[520px]  h-auto object-contain rounded-lg" %>
+        </div>
       </div>
     </div>
   </div>
