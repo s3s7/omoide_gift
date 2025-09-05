@@ -1,5 +1,30 @@
 /* ギフト記録フォーム用スタイル */
 
+/* ==================== フォームレイアウト ==================== */
+
+/* フォームのメインコンテナ */
+.gift-form-container {
+  width: 90%;
+  max-width: 600px;
+  padding: 40px 30px;
+  border-radius: 12px;
+  text-align: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* フォームのタイトル */
+.gift-form-title {
+  margin: 0 0 40px 0;
+  padding: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* ==================== フォーム要素スタイル ==================== */
+
 /* selectフィールドの統一的なスタイリング（二重矢印問題の解決） */
 select.form-control {
   -webkit-appearance: none;
@@ -93,6 +118,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
   }
+  
+  /* フォームコンテナのタブレット対応 */
+  .gift-form-container {
+    width: 95%;
+    padding: 30px 20px;
+  }
+  
+  .gift-form-title {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 480px) {
+  .gift-form-container {
+    width: 100%;
+    padding: 20px 15px;
+    border-radius: 8px;
+  }
+  
+  .gift-form-title {
+    font-size: 22px;
+    margin-bottom: 25px;
+  }
 }
 
 /* アクセシビリティ向上 */
@@ -173,8 +223,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding-bottom: 0;
 }
 
-ダークモード対応（将来実装用） */
+/* ダークモード対応（将来実装用） */
 @media (prefers-color-scheme: dark) {
+  .gift-form-title {
+    color: #e2e8f0;
+  }
+  
   .form-control {
     background-color: #2d3748;
     border-color: #4a5568;
@@ -182,7 +236,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   
   /* ダークモードでのselectフィールド統一スタイル */
-  /* select.form-control {
+  /*
+  select.form-control {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -219,4 +274,5 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .form-section {
     border-bottom-color: #4a5568;
   }
+  */
 }
