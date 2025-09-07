@@ -16,6 +16,12 @@ export default class extends Controller {
     "commentableToggleIcon",
     "commentableToggleStatus",
     "commentableToggleDescription",
+    "giftDirectionToggle",
+    "giftDirectionToggleLabel",
+    "giftDirectionToggleSlider",
+    "giftDirectionToggleIcon",
+    "giftDirectionToggleStatus",
+    "giftDirectionToggleDescription",
     "eventSelect",
     "dateField"
   ]
@@ -30,6 +36,7 @@ export default class extends Controller {
     this.initializeGiftPersonFields()
     this.initializeToggleSwitch()
     this.initializeCommentableToggleSwitch()
+    this.initializeGiftDirectionToggleSwitch()
     this.initializeFormValidation()
   }
 
@@ -51,6 +58,13 @@ export default class extends Controller {
   initializeCommentableToggleSwitch() {
     if (this.hasCommentableToggleTarget) {
       this.updateCommentableToggleUI()
+    }
+  }
+
+  // ギフト方向トグルスイッチの初期化
+  initializeGiftDirectionToggleSwitch() {
+    if (this.hasGiftDirectionToggleTarget) {
+      this.updateGiftDirectionToggleUI()
     }
   }
 
@@ -122,6 +136,23 @@ export default class extends Controller {
 
     this.commentableToggleTarget.checked = !this.commentableToggleTarget.checked
     this.updateCommentableToggleUI()
+  }
+
+  // ギフト方向トグルスイッチクリック時のアクション
+  toggleGiftDirectionStatus(event) {
+    if (!this.hasGiftDirectionToggleTarget) return
+    // label のデフォルト動作（関連付いた input の自動トグル）を抑止し、
+    // 二重トグルによる状態不一致を防ぐ
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault()
+      // 念のためバブリングも止める（他のクリックハンドラへの影響を防止）
+      if (typeof event.stopPropagation === 'function') {
+        event.stopPropagation()
+      }
+    }
+
+    this.giftDirectionToggleTarget.checked = !this.giftDirectionToggleTarget.checked
+    this.updateGiftDirectionToggleUI()
   }
 
   // トグルスイッチのUI更新
@@ -200,6 +231,46 @@ export default class extends Controller {
         this.commentableToggleDescriptionTarget.textContent = '他のユーザーがこのギフト記録にコメントできます'
       } else {
         this.commentableToggleDescriptionTarget.textContent = '他のユーザーはこのギフト記録にコメントできません'
+      }
+    }
+  }
+
+  // ギフト方向トグルスイッチのUI更新
+  updateGiftDirectionToggleUI() {
+    if (!this.hasGiftDirectionToggleTarget) return
+
+    const isReceived = this.giftDirectionToggleTarget.checked
+
+    // ラベルとスライダーの更新
+    if (this.hasGiftDirectionToggleLabelTarget && this.hasGiftDirectionToggleSliderTarget) {
+      if (isReceived) {
+        this.giftDirectionToggleLabelTarget.style.backgroundColor = '#FF6B6B'
+        this.giftDirectionToggleSliderTarget.style.transform = 'translateX(0)'
+      } else {
+        this.giftDirectionToggleLabelTarget.style.backgroundColor = '#28a745'
+        this.giftDirectionToggleSliderTarget.style.transform = 'translateX(26px)'
+      }
+    }
+
+    // アイコンとテキストの更新
+    if (this.hasGiftDirectionToggleIconTarget && this.hasGiftDirectionToggleStatusTarget) {
+      if (isReceived) {
+        this.giftDirectionToggleIconTarget.className = 'fas fa-hand-holding-heart'
+        this.giftDirectionToggleIconTarget.style.color = '#FF6B6B'
+        this.giftDirectionToggleStatusTarget.textContent = 'もらったギフト'
+      } else {
+        this.giftDirectionToggleIconTarget.className = 'fas fa-gift'
+        this.giftDirectionToggleIconTarget.style.color = '#28a745'
+        this.giftDirectionToggleStatusTarget.textContent = '贈ったギフト'
+      }
+    }
+
+    // 説明テキストの更新
+    if (this.hasGiftDirectionToggleDescriptionTarget) {
+      if (isReceived) {
+        this.giftDirectionToggleDescriptionTarget.textContent = 'あなたが受け取ったギフトを記録します'
+      } else {
+        this.giftDirectionToggleDescriptionTarget.textContent = 'あなたが贈ったギフトを記録します'
       }
     }
   }
