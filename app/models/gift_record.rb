@@ -10,11 +10,32 @@ class GiftRecord < ApplicationRecord
   # Active Storage - 複数画像対応
   has_many_attached :images
 
+  belongs_to :parent_gift_record, class_name: "GiftRecord", optional: true
+  has_many :return_gifts, class_name: "GiftRecord", foreign_key: "parent_gift_record_id"
+
+  # Enum定義
+  enum gift_direction: { given: 0, received: 1 }
+  enum return_status: {
+    not_required: 0,    # お返し不要
+    planned: 1,         # お返し予定
+    completed: 2        # お返し完了
+  }
+
+  # コールバック（データ整合性の自動保証）
+  before_validation :sync_return_gift_flag
+  before_validation :set_return_deadline
+
   # 必須フィールドのバリデーション（統一されたエラーメッセージ）
   validates :item_name, presence: { message: "を入力してください" }, length: { maximum: 30 }
   validates :gift_at, presence: { message: "を選択してください" }
   validates :event_id, presence: { message: "を選択してください" }
   validates :gift_people_id, presence: { message: "を選択してください" }
+
+  validates :commentable, inclusion: { in: [ true, false ] }
+
+  validates :parent_gift_record_id, presence: true, if: :is_return_gift?
+  validates :parent_gift_record_id, absence: true, unless: :is_return_gift?
+  validates :needs_return, inclusion: { in: [ false ] }, if: :is_return_gift?
 
   # オプションフィールドのバリデーション
   validates :amount, numericality: { greater_than: 0, allow_nil: true }
@@ -25,9 +46,7 @@ class GiftRecord < ApplicationRecord
   validate :gift_at_is_reasonable_date
   validate :images_validation
 
-  # バリデーション
-  validates :commentable, inclusion: { in: [ true, false ] }
-
+  validates :return_deadline, presence: true, if: -> { needs_return? && !is_return_gift? }
 
   private
 
@@ -96,14 +115,25 @@ class GiftRecord < ApplicationRecord
         errors.add(:images, "#{index + 1}枚目: JPEG、PNG、WEBP形式のファイルのみアップロードできます")
       end
 
-      # ファイルサイズチェック（10MBまで）
-      if image.blob.byte_size > 10.megabytes
-        errors.add(:images, "#{index + 1}枚目: ファイルサイズは10MB以下にしてください")
+      # ファイルサイズチェック（3MBまで）
+      if image.blob.byte_size > 3.megabytes
+        errors.add(:images, "#{index + 1}枚目: ファイルサイズは3MB以下にしてください")
       end
     end
   rescue StandardError => e
     Rails.logger.error "Images validation error: #{e.message}"
     errors.add(:images, "画像の検証中にエラーが発生しました")
+  end
+
+  def sync_return_gift_flag
+    self.is_return_gift = parent_gift_record_id.present?
+  end
+
+  def set_return_deadline
+    if needs_return? && !is_return_gift? && return_deadline.blank?
+      # 一般的に内祝いは1ヶ月以内
+      self.return_deadline = Date.current + 1.month
+    end
   end
 
   public
@@ -117,6 +147,12 @@ class GiftRecord < ApplicationRecord
   scope :current_year, -> { where(gift_at: Date.current.beginning_of_year..Date.current.end_of_year) }
   scope :commentable, -> { where(commentable: true) }
   scope :comment_disabled, -> { where(commentable: false) }
+
+  scope :received_gifts, -> { where(gift_direction: :received) }
+  scope :given_gifts, -> { where(gift_direction: :given) }
+  scope :return_gifts, -> { where(is_return_gift: true) }
+  scope :original_gifts, -> { where(is_return_gift: false) }
+  scope :needs_return, -> { where(needs_return: true) }
 
   # インスタンスメソッド
   def display_amount
@@ -147,7 +183,6 @@ class GiftRecord < ApplicationRecord
     images.attached? ? images.count : 0
   end
 
-  # メソッド（commentable?は自動的に使用可能）
   def comments_allowed?
     commentable?
   end

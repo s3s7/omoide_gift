@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_30_124451) do
+ActiveRecord::Schema[7.2].define(version: 2025_09_07_022409) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -111,10 +111,23 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_30_124451) do
     t.bigint "age_id"
     t.bigint "gift_item_category_id"
     t.boolean "commentable", default: true, null: false
+    t.integer "gift_direction", default: 0, null: false, comment: "ギフトの方向性（received/given）"
+    t.bigint "parent_gift_record_id", comment: "お返し元のギフトレコードID"
+    t.boolean "is_return_gift", default: false, null: false, comment: "お返しギフトかどうか"
+    t.boolean "needs_return", default: false, null: false, comment: "お返しが必要かどうか"
+    t.integer "return_status", default: 0, null: false, comment: "お返し状況"
+    t.date "return_deadline", comment: "お返し期限"
     t.index ["age_id"], name: "index_gift_records_on_age_id"
     t.index ["event_id"], name: "index_gift_records_on_event_id"
+    t.index ["gift_direction", "needs_return"], name: "index_gift_records_on_direction_and_return"
+    t.index ["gift_direction"], name: "index_gift_records_on_gift_direction"
     t.index ["gift_item_category_id"], name: "index_gift_records_on_gift_item_category_id"
     t.index ["gift_people_id"], name: "index_gift_records_on_gift_people_id"
+    t.index ["is_return_gift"], name: "index_gift_records_on_is_return_gift"
+    t.index ["needs_return", "return_status"], name: "index_gift_records_on_return_management"
+    t.index ["needs_return"], name: "index_gift_records_on_needs_return"
+    t.index ["parent_gift_record_id"], name: "index_gift_records_on_parent_gift_record_id"
+    t.index ["return_status"], name: "index_gift_records_on_return_status"
     t.index ["user_id"], name: "index_gift_records_on_user_id"
   end
 
@@ -167,6 +180,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_30_124451) do
   add_foreign_key "gift_records", "events"
   add_foreign_key "gift_records", "gift_item_categories"
   add_foreign_key "gift_records", "gift_people", column: "gift_people_id"
+  add_foreign_key "gift_records", "gift_records", column: "parent_gift_record_id"
   add_foreign_key "gift_records", "users"
   add_foreign_key "reminds", "gift_people"
   add_foreign_key "reminds", "users"
