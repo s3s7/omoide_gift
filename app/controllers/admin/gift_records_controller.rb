@@ -89,6 +89,14 @@ class Admin::GiftRecordsController < Admin::BaseController
       records = records.where(is_public: false)
     end
 
+    # ギフト方向フィルタ
+    case params[:gift_direction]
+    when "received"
+      records = records.where(gift_direction: :received)
+    when "given"
+      records = records.where(gift_direction: :given)
+    end
+
     # ユーザーフィルタ
     if params[:user_id].present?
       records = records.where(user_id: params[:user_id])
@@ -137,6 +145,10 @@ class Admin::GiftRecordsController < Admin::BaseController
 
   # ストロングパラメータ
   def gift_record_params
-    params.require(:gift_record).permit(:item_name, :memo, :is_public)
+    params.require(:gift_record).permit(
+      :item_name, :memo, :is_public, :commentable, :gift_direction,
+      :amount, :gift_at, :event_id, :gift_item_category_id, 
+      images: [], delete_image_ids: []
+    )
   end
 end

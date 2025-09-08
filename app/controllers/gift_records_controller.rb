@@ -3,6 +3,8 @@ class GiftRecordsController < ApplicationController
   before_action :set_gift_record, only: [ :show, :edit, :update, :destroy ]
   before_action :ensure_owner, only: [ :edit, :update, :destroy ]
   before_action :ensure_accessible, only: [ :show ]
+  ## 設定したprepare_meta_tagsをprivateにあってもpostコントローラー以外にも使えるようにする
+  helper_method :prepare_meta_tags
 
   def index
     # みんなのギフト画面：公開記録のみ表示
@@ -46,7 +48,6 @@ class GiftRecordsController < ApplicationController
     # 統計情報用のカウント（並び替え前に計算）
     filtered_query = @gift_records
     @total_records = filtered_query.count
-    @total_amount = filtered_query.sum("gift_records.amount") || 0
     @current_month_records = base_query.where(
       "gift_records.gift_at" => Date.current.beginning_of_month..Date.current.end_of_month
     ).count
@@ -219,7 +220,7 @@ class GiftRecordsController < ApplicationController
     # 統計情報用のカウント（並び替え前に計算）
     filtered_query = @gift_records
     @total_records = filtered_query.count
-    @total_amount = filtered_query.sum("gift_records.amount") || 0
+  
     @current_month_records = base_query.where(
       "gift_records.gift_at" => Date.current.beginning_of_month..Date.current.end_of_month
     ).count
@@ -404,6 +405,8 @@ class GiftRecordsController < ApplicationController
   def show
     # セキュリティ: set_gift_recordとensure_accessibleで処理済み
     # コメントも事前読み込み済み（set_gift_recordで処理）
+    ## メタタグを設定する。
+    # prepare_meta_tags(@gift_record)
   end
 
   def edit
@@ -601,7 +604,7 @@ class GiftRecordsController < ApplicationController
     params.require(:gift_record).permit(
       :title, :description, :body,
       :gift_people_id, :memo, :item_name, :amount, :gift_at, :event_id, :is_public, :commentable,
-      :gift_item_category_id, images: [], delete_image_ids: []
+      :gift_item_category_id, :gift_direction, images: [], delete_image_ids: []
     )
   end
 
@@ -687,4 +690,59 @@ class GiftRecordsController < ApplicationController
 
     text.length > length ? "#{text[0..length-1]}..." : text
   end
+
+  # def prepare_meta_tags(gift_record)
+  #   return unless gift_record
+
+  #   # アイテム名をOGP画像のテキストに使用
+  #   ogp_text = gift_record.item_name.presence || "ギフト記録"
+  #   image_url = "#{request.base_url}/images/ogp.png?text=#{CGI.escape(ogp_text)}"
+  #   page_title = "#{gift_record.item_name} - ギフト記録"
+
+  #   # メタタグを設定
+  #   set_meta_tags title: page_title,
+  #                 og: {
+  #                   site_name: 'おもいでギフト',
+  #                   title: page_title,
+  #                   type: 'article',
+  #                   url: request.original_url,
+  #                   image: image_url,
+  #                   image_width: 1200,
+  #                   image_height: 630,
+  #                   locale: 'ja_JP'
+  #                 },
+  #                 twitter: {
+  #                   card: 'summary_large_image',
+  #                   title: page_title,
+  #                   image: image_url
+  #                 }
+  # end
+  # def prepare_meta_tags(gift_record)
+  #   return unless gift_record
+
+  #   ## このimage_urlにMiniMagickで設定したOGPの生成した合成画像を代入する
+  #   image_url = "#{request.base_url}/images/ogp.png?text=#{CGI.escape(gift_record.item_name)}"
+  #   page_title = "#{gift_record.item_name} - ギフト記録"
+  #   page_description = "#{gift_record.item_name}のギフト記録です。"
+
+  #   set_meta_tags title: page_title,
+  #                 description: page_description,
+  #                 og: {
+  #                   site_name: '思い出ギフト',
+  #                   title: page_title,
+  #                   description: page_description,
+  #                   type: 'article',
+  #                   url: request.original_url,
+  #                   image: image_url,
+  #                   image_width: 1200,
+  #                   image_height: 630,
+  #                   locale: 'ja_JP'
+  #                 },
+  #                 twitter: {
+  #                   card: 'summary_large_image',
+  #                   title: page_title,
+  #                   description: page_description,
+  #                   image: image_url
+  #                 }
+  # end
 end
