@@ -89,7 +89,7 @@ class Admin::GiftRecordsController < Admin::BaseController
       records = records.where(is_public: false)
     end
 
-    # ギフト方向フィルタ
+    # ギフト分類フィルタ
     case params[:gift_direction]
     when "received"
       records = records.where(gift_direction: :received)
@@ -147,7 +147,7 @@ class Admin::GiftRecordsController < Admin::BaseController
   def gift_record_params
     params.require(:gift_record).permit(
       :item_name, :memo, :is_public, :commentable, :gift_direction,
-      :amount, :gift_at, :event_id, :gift_item_category_id, 
+      :amount, :gift_at, :event_id, :gift_item_category_id,
       images: [], delete_image_ids: []
     )
   end

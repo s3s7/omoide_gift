@@ -220,7 +220,7 @@ class GiftRecordsController < ApplicationController
     # 統計情報用のカウント（並び替え前に計算）
     filtered_query = @gift_records
     @total_records = filtered_query.count
-  
+
     @current_month_records = base_query.where(
       "gift_records.gift_at" => Date.current.beginning_of_month..Date.current.end_of_month
     ).count
