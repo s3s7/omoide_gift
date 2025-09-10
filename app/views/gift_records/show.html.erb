@@ -2,7 +2,25 @@
 <% content_for(:title, "#{@gift_record.display_item_name} - ギフト記録詳細") %>
 <!-- メインコンテナ - 中央寄せ -->
 <div class="max-w-6xl mx-auto">
-
+  <!-- パンくずナビ -->
+  <nav class="flex mb-6" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+      <li class="inline-flex items-center">
+        <%= link_to gift_records_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary" do %>
+          <i class="fas fa-home mr-2"></i>
+          ギフト記録一覧
+        <% end %>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+          <span class="text-sm font-medium text-gray-700">
+            <%= truncate(@gift_record.display_item_name, length: 20) %>
+          </span>
+        </div>
+      </li>
+    </ol>
+  </nav>
   <!-- メインコンテンツ -->
   <div class="bg-white shadow-lg rounded-lg overflow-hidden mt-6">
     <!-- ヘッダー -->
@@ -30,16 +48,6 @@
                 <i class="fas fa-edit mr-1"></i>
                 編集
               <% end %>
-              <button type="button" 
-                      data-action="click->delete-modal#show"
-                      data-item-name="<%= j(@gift_record.display_item_name) %>"
-                      data-delete-url="<%= gift_record_path(@gift_record) %>"
-                      data-csrf-token="<%= form_authenticity_token %>"
-                      class="inline-flex items-center px-3 py-2 border border-red-300 rounded-md text-sm font-medium text-red-100 hover:bg-red-600 transition-colors"
-                      aria-label="このギフト記録を削除">
-                <i class="fas fa-trash mr-1"></i>
-                削除
-              </button>
             </div>
           <% end %>
         </div>
@@ -98,6 +106,19 @@
               <div class="flex-1 text-sm text-gray-900">
                 <span class="<%= @gift_record.amount.present? ? 'font-semibold text-green-600' : 'text-gray-400' %>">
                   <%= @gift_record.display_amount %>
+                </span>
+              </div>
+            </div>
+
+            <!-- ギフト分類 -->
+            <div class="flex items-start">
+              <div class="flex-shrink-0 w-24 text-sm font-medium text-gray-500">
+                ギフト分類
+              </div>
+              <div class="flex-1 text-sm text-gray-900">
+                <span class="font-medium" style="color: <%= gift_direction_color(@gift_record) %>;">
+                  <i class="<%= gift_direction_icon_class(@gift_record) %> mr-1"></i>
+                  <%= gift_direction_display_text(@gift_record) %>
                 </span>
               </div>
             </div>
@@ -316,15 +337,6 @@
     <div class="px-6 py-6" data-controller="comments">
       <%= render 'comments' %>
     </div>
-  </div>
-
-  <!-- 関連アクション -->
-  <div class="mt-6 text-center">
-    <%= link_to new_gift_record_path, 
-        class: "inline-flex items-center px-6 py-3 text-sm font-medium text-white btn-primary border border-transparent rounded-lg shadow-sm hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors" do %>
-      <i class="fas fa-plus mr-2"></i>
-      新しい記録を作成
-    <% end %>
   </div>
 
   <!-- 削除確認モーダル -->
