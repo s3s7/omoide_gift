@@ -1,68 +1,43 @@
-<% content_for(:title, "お問い合わせ - 思い出ギフト") %>
+<% content_for(:title, "お問い合わせ") %>
 
-<div class="w-full">
-  <!-- ページヘッダー -->
-  <div class="w-full text-center py-16 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg mb-12">
-    <h1 class="text-4xl font-bold text-gray-800 mb-4">
-      <i class="fas fa-envelope mr-3 text-purple-600"></i>
-      お問い合わせ
-    </h1>
-    <p class="text-xl text-gray-600">
-      現在、お問い合わせフォームを準備中です
-    </p>
+<!-- メインコンテナ -->
+<div class="max-w-4xl mx-auto px-4 py-8">
+
+
+  <!-- お問い合わせフォーム -->
+  
+
+    <!-- Googleフォーム埋め込み -->
+    <div class="w-full" style="min-height: 1100px;">
+      <iframe 
+        src="https://docs.google.com/forms/d/e/1FAIpQLSfRJ4OVNBRE-E0FT6hRCkw9U7bL5g3A0Ypu_6HWGR4WnVIbYQ/viewform?usp=dialog" 
+        width="100%" 
+        height="1000" 
+        frameborder="0" 
+        marginheight="0" 
+        marginwidth="0"
+        class="rounded-lg"
+        style="border: none; overflow: hidden;">
+        読み込んでいます…
+      </iframe>
+    </div>
+
+  <!-- 注意事項 -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-blue-800 mb-4">
+      <i class="fas fa-info-circle mr-2"></i>
+      お問い合わせ前にご確認ください
+    </h3>
+    <ul class="list-disc list-inside space-y-2 text-blue-700">
+      <li>まずは<%= link_to "使い方ガイド", how_to_use_path, class: "underline hover:text-blue-900" %>をご確認ください</li>
+    </ul>
   </div>
 
-  <!-- 準備中のお知らせ -->
-  <div class="w-full text-center py-12 bg-white rounded-lg shadow-md mb-12">
-    <div class="mx-auto h-24 w-24 text-purple-300 mb-6">
-      <i class="fas fa-tools text-6xl"></i>
-    </div>
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">
-      お問い合わせフォーム準備中
-    </h2>
-    <p class="text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-      より便利にご利用いただけるよう、お問い合わせフォーム機能を開発中です。<br>
-      現在は以下の方法でお問い合わせを承っております。
+  <!-- その他の連絡手段 -->
+  <div class="text-center mt-8 p-4 bg-gray-50 rounded-lg">
+    <p class="text-sm text-gray-600">
+      <i class="fas fa-shield-alt mr-1"></i>
+      個人情報は<%= link_to "プライバシーポリシー", privacy_path, class: "text-primary hover:underline" %>に従って適切に管理いたします
     </p>
-    
-    <!-- 一時的な連絡方法 -->
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-md mx-auto">
-      <h3 class="text-lg font-bold text-gray-800 mb-3">
-        <i class="fas fa-envelope mr-2 text-blue-600"></i>
-        メールでのお問い合わせ
-      </h3>
-      <p class="text-blue-800 font-semibold mb-2">
-        準備中
-      </p>
-      <p class="text-sm text-gray-600">
-        ご質問・ご要望・不具合報告など<br>
-        お気軽にお問い合わせください
-      </p>
-    </div>
-  </div>
-
-  <!-- 他のページへのナビゲーション -->
-  <div class="w-full text-center py-8 bg-white rounded-lg shadow-md">
-    <h3 class="text-2xl font-bold text-gray-800 mb-6">その他の情報</h3>
-    
-    <div class="space-y-4">
-      <%= link_to how_to_use_path, 
-          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-300 shadow-sm hover:shadow-md mr-4 mb-4" do %>
-        <i class="fas fa-question-circle mr-2"></i>
-        使い方ガイド
-      <% end %>
-      
-      <%= link_to terms_path, 
-          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 shadow-sm hover:shadow-md mr-4 mb-4" do %>
-        <i class="fas fa-file-contract mr-2"></i>
-        利用規約
-      <% end %>
-      
-      <%= link_to privacy_path, 
-          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-300 shadow-sm hover:shadow-md mb-4" do %>
-        <i class="fas fa-shield-alt mr-2"></i>
-        プライバシーポリシー
-      <% end %>
-    </div>
   </div>
 </div>
