@@ -12,42 +12,79 @@
 <% end %>
 
 <!-- ヒーローセクション -->
-<div class="w-full text-center py-16 bg-gradient-to-r rounded-lg mb-12">
+<div class="container mx-auto px-4 py-16 bg-gradient-to-r rounded-lg  max-w-5xl">
+  
+  <!-- サービス説明テキスト -->
+  <div class="text-center mb-12">
+    <p class="text-xl text-black max-w-3xl mx-auto">
+      思い出ギフトは自分が贈ったギフトを記録し
+      <br>思い出を振り返るとともにギフト選びのサポートをするサービスです。
+    </p>
+  </div
 
-  <p class="text-xl text-black mb-8">
-    思い出ギフトは自分が贈ったギフトを記録し
-    <br>思い出を振り返るとともにギフト選びのサポートをするサービスです。
-  </p>
-  <% if user_signed_in? %>
-    <%= link_to new_gift_record_path, 
-        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white transition-colors duration-300 shadow-lg hover:shadow-xl",
-        style: "background-color: #FC913A;",
-        onmouseenter: "this.style.backgroundColor='#E8823A'",
-        onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
-      <i class="fas fa-plus mr-2"></i>
-      思い出を記録する
+  <!-- メインコンテンツ：画像とテキスト -->
+  <div class="mb-8 max-w-5xl mx-auto">
+  <!-- デスクトップ版：グリッドレイアウト -->
+  <div class="hidden md:grid md:items-center md:gap-8" style="grid-template-columns: 1fr auto 1fr;">
+    <!-- 左側：画像 -->
+    <div class="flex justify-center">
+      <%= image_tag "heart_lady.png", alt: "ギフトを贈る女性", class: "w-16 lg:w-20 xl:w-24 h-auto object-contain ml-16" %>
+    </div>
+
+    <!-- 中央：詳細説明テキスト -->
+    <div class="text-center">
+      <p class="text-xl text-black <%= user_signed_in? ? 'mb-10' : 'mb-8' %> leading-relaxed">
+      「相手のことを考えながらギフトを選ぶ時間」<br><br>「ギフトを贈るときのワクワク」<br><br><strong>その思い出、記録に残しませんか？</strong>
+      </p>
+    </div>
+
+    <!-- 右側：画像 -->
+    <div class="flex justify-center">
+      <%= image_tag "man_son.png", alt: "男性と子供", class: "w-44 lg:w-48 xl:w-52 h-auto object-contain" %>
+    </div>
+  </div>
+
+  <!-- モバイル版：テキストのみ中央寄せ -->
+  <div class="md:hidden text-center px-4">
+    <p class="text-lg text-black mb-8 leading-relaxed">
+      「相手のことを考えながらギフトを選ぶ時間」<br><br>
+      「ギフトを送るときのワクワク」<br><br>
+      <strong>その思い出、記録に残しませんか？</strong>
+    </p>
+  </div>
+</div>
+
+  <!-- ボタン部分 -->
+  <div class="text-center">
+    <% if user_signed_in? %>
+
+    <% else %>
+      <%= link_to new_user_session_path, 
+          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white transition-colors duration-300 shadow-lg hover:shadow-xl",
+          style: "background-color: #FC913A;",
+          onmouseenter: "this.style.backgroundColor='#E8823A'",
+          onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
+        <i class="fas fa-sign-in-alt mr-2"></i>
+        ログイン・新規登録
+      <% end %>
     <% end %>
-  <% else %>
-    <%= link_to new_user_session_path, 
-        class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white transition-colors duration-300 shadow-lg hover:shadow-xl",
-        style: "background-color: #FC913A;",
-        onmouseenter: "this.style.backgroundColor='#E8823A'",
-        onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
-      <i class="fas fa-sign-in-alt mr-2"></i>
-      ログイン・新規登録
-    <% end %>
-  <% end %>
+  </div>
 </div>
 
 <!-- 機能紹介セクション -->
 <div class="w-full mb-12">
+  <!-- セクション見出し -->
+  <div class="text-center mb-8">
+    <h2 class="text-2xl font-bold text-gray-800 tracking-wide" style="font-family: 'zen-maru-gothic', 'ヒラギノ丸ゴ ProN', sans-serif;">思い出ギフトの使い方</h2>
+  </div>
+  
   <div class="w-full block">
-    <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
-      <div class="flex items-center justify-center space-x-6">
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-8 block">
+      <div class="flex items-center justify-center space-x-16">
         <!-- 左側：テキストとボタン -->
-        <div class="flex flex-col items-start text-left">
+        <div class="flex flex-col items-center text-center">
           <p class="text-gray-600 leading-relaxed mb-6">
-            思い出を記録しよう！<br><br>
+            <strong>贈ったギフトを記録しよう！</strong><br><br>
             いつ、誰に、何を贈ったのかを<br>
             ギフト相手ごとに記録が出来ます
           </p>
@@ -74,24 +111,24 @@
 
         <!-- 右側：画像 -->
         <div class="flex-shrink-0">
-          <%= image_tag "top_gift_record_new.png", alt: "思い出を記録", class: "w-80 md:w-96 lg:w-[440px] xl:w-[480px] 2xl:w-[520px]  h-auto object-contain rounded-lg" %>
+          <%= image_tag "top_gift_people_index.png", alt: "みんなのギフト", class: "w-56 md:w-72 lg:w-[300px] xl:w-[340px] 2xl:w-[380px]  h-auto object-contain rounded-lg" %>
         </div>
       </div>
     </div>
 
-    <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-8 block">
       <div class="flex items-center justify-center space-x-6">
         <!-- 左側：画像 -->
         <div class="flex-shrink-0">
-          <%= image_tag "top_gift_people_new.png", alt: "みんなのギフト", class: "w-80 md:w-96 lg:w-[440px] xl:w-[480px] 2xl:w-[520px]  h-auto object-contain rounded-lg" %>
+          <%= image_tag "top_gift_people.png", alt: "みんなのギフト", class: "w-56 md:w-72 lg:w-[300px] xl:w-[340px] 2xl:w-[380px]  h-auto object-contain rounded-lg" %>
         </div>
 
         <!-- 右側：テキストとボタン -->
-        <div class="flex flex-col items-start text-left">
+        <div class="flex flex-col items-center text-center">
           <p class="text-gray-600 leading-relaxed mb-6">
-            ギフト相手の詳細を登録しよう！<br><br>
-            ギフト相手を登録することで、ギフト相手ごとに記録を見ることが出来ます。<br>
-            また、好き嫌いを登録しておくことで、より喜んでもらえるギフト選びが可能です
+            <strong>ギフト相手の詳細を登録しよう！</strong><br><br>
+            ギフト相手を登録することで<br>ギフト相手ごとに記録を見ることが出来ます。<br><br>
+            また、好き嫌いを登録しておくことで<br>より喜んでもらえるギフト選びが可能です
           </p>
           <% if user_signed_in? %>
             <%= link_to new_gift_person_path,
@@ -122,7 +159,7 @@
         <!-- 左側：テキストとボタン -->
         <div class="flex flex-col items-center text-center">
           <p class="text-gray-600 leading-relaxed mb-6">
-            みんなのギフトを見に行こう！<br><br>
+            <strong>みんなのギフトを見に行こう！</strong><br><br>
             記録した思い出を公開出来ます。<br>
             ギフト選びを迷った際にあっと驚くようなアイディが見つかるかも
           </p>
@@ -139,6 +176,32 @@
         <div class="flex-shrink-0">
           <%= image_tag "top_minna_no_gift.png", alt: "みんなのギフト", class: "w-80 md:w-96 lg:w-[440px] xl:w-[480px] 2xl:w-[520px]  h-auto object-contain rounded-lg" %>
         </div>
+      </div>
+    </div>
+
+    <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
+      <div class="flex items-center justify-center space-x-6">
+        <!-- 右側：画像 -->
+        <div class="flex-shrink-0">
+          <%= image_tag "top_gift_people_index.png", alt: "みんなのギフト", class: "w-56 md:w-72 lg:w-[300px] xl:w-[340px] 2xl:w-[380px]  h-auto object-contain rounded-lg" %>
+        </div>
+        <!-- 左側：テキストとボタン -->
+        <div class="flex flex-col items-center text-center">
+          <p class="text-gray-600 leading-relaxed mb-6">
+            <strong>みんなのギフトを見に行こう！</strong><br><br>
+            記録した思い出を公開出来ます。<br>
+            ギフト選びを迷った際にあっと驚くようなアイディが見つかるかも
+          </p>
+          <%= link_to gift_records_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+              style: "background-color: #FC913A;",
+              onmouseenter: "this.style.backgroundColor='#E8823A'",
+              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
+            <i class="fas fa-eye mr-2"></i>
+            見に行く！
+          <% end %>
+        </div>
+        
       </div>
     </div>
   </div>
