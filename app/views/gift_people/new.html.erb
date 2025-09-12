@@ -1,23 +1,8 @@
 
 <% content_for(:title, t('.title')) %>
 
-<div style="
-  width: 90%;
-  max-width: 600px;
-  padding: 40px 30px;
-  border-radius: 12px;
-  text-align: center;
-  margin: 0 auto;
-  position: relative;
-">
-  <h1 style="
-    margin: 0 0 40px 0;
-    padding: 0;
-    font-size: 28px;
-    font-weight: 600;
-    color: #333;
-    line-height: 1.4;
-  ">ギフト相手の追加</h1>
+<div class="w-[90%] max-w-[600px] py-10 px-8 rounded-xl text-center mx-auto relative">
+  <h1 class="text-3xl font-semibold text-black mb-10 leading-snug">ギフト相手の追加</h1>
 
   <%= render 'shared/error_messages', object: @gift_person %>
   
@@ -28,4 +13,3 @@
     <%= render 'form', gift_person: @gift_person, new_mode: true %>
   </div>
 </div>
-
