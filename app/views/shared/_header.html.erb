@@ -1,24 +1,44 @@
 <header class="fixed top-0 left-0 right-0 shadow-md z-10" style="background-color: #F6B352;">
   <div class="mx-auto pl-2 pr-4 py-3 flex justify-between items-center">
-    <div class="text-xl font-bold text-gray-900 text-left -ml-2" >
+    <div class="text-xl font-bold text-gray-900 text-left -ml-0" >
       <%= link_to root_path, class: "flex items-center gap-0 hover:text-gray-700 transition-colors duration-200 zen-maru-gothic" do %>
-        <%= image_tag "image 28.png", alt: "思い出ギフトロゴ", class: "w-12 h-12 -ml-0" %>
+        <%= image_tag "image 28.png", alt: "思い出ギフトロゴ", class: "w-12 h-12 ml-2" %>
         <span>思い出ギフト</span>
       <% end %>
     </div>
-
-    <!-- ハンバーガーメニュー -->
-    <div class="relative" data-controller="hamburger-menu">
+    <!-- 右側のボタンとメニューグループ -->
+    <div class="flex items-center gap-2">
+      <!-- デスクトップ版のみ表示される認証ボタン -->
+      <div class="hidden md:flex items-center gap-2">
+        <% if user_signed_in? %>
+          <%= link_to "ギフトを追加", new_gift_record_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-sm font-medium transition-colors duration-200" %>
+          <%= link_to "ログアウト", destroy_user_session_path, 
+              data: { 
+                turbo_method: :delete,
+                confirm: "ログアウトしますか？"
+              }, 
+              class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-sm font-medium transition-colors duration-200" %>
+        <% else %>
+          <div class="flex items-center">
+            <%= link_to "ログイン", new_user_session_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-base font-medium transition-colors duration-200" %>
+            <span class="text-black mx-2">|</span>
+            <%= link_to "新規登録", new_user_registration_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-base font-medium transition-colors duration-200" %>
+          </div>
+        <% end %>
+      </div>
+      <!-- ハンバーガーメニュー -->
+      <div class="relative" data-controller="hamburger-menu">
       <button id="menu-toggle" class="focus:outline-none p-2" data-action="click->hamburger-menu#toggle" data-hamburger-menu-target="toggle">
         <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
+      
       <div id="menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md border" style="z-index: 9999;" data-hamburger-menu-target="menu">
 
         <% if user_signed_in? %>
           <%= link_to "マイページ", mypage_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
-          <%= link_to "思い出を追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+          <%= link_to "ギフトを追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "ギフト相手を追加", new_gift_person_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "ログアウト", destroy_user_session_path, 
               data: { 
@@ -27,7 +47,8 @@
               }, 
               class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
         <% else %>
-          <%= link_to "ログイン/新規登録", new_user_session_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+          <%= link_to "ログイン", new_user_session_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+          <%= link_to "新規登録", new_user_registration_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
         <% end %>
         <%= link_to "みんなのギフト", gift_records_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
         <% if user_signed_in? %>
@@ -42,6 +63,7 @@
         <%= link_to "使い方", how_to_use_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
 
       </div>
+    </div>
     </div>
   </div>
 </header>
