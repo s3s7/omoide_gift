@@ -48,7 +48,7 @@
   <div class="md:hidden text-center px-4">
     <p class="text-lg text-black mb-8 leading-relaxed">
       「相手のことを考えながらギフトを選ぶ時間」<br><br>
-      「ギフトを送るときのワクワク」<br><br>
+      「ギフトを贈るときのワクワク」<br><br>
       <strong>その思い出、記録に残しませんか？</strong>
     </p>
   </div>
@@ -153,15 +153,15 @@
       </div>
     </div>
 
-    <div class="w-full p-6 bg-white rounded-lg shadow-md mb-8 block">
-      <div class="flex items-center justify-center space-x-6">
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-8 block">
+      <div class="flex items-center justify-center space-x-16">
 
         <!-- 左側：テキストとボタン -->
         <div class="flex flex-col items-center text-center">
           <p class="text-gray-600 leading-relaxed mb-6">
             <strong>みんなのギフトを見に行こう！</strong><br><br>
-            記録した思い出を公開出来ます。<br>
-            ギフト選びを迷った際にあっと驚くようなアイディが見つかるかも
+            記録したギフトを公開出来ます。<br>
+            ギフト選びに迷った際にあっと驚くようなアイディアが見つかるかも
           </p>
           <%= link_to gift_records_path, 
               class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
@@ -174,7 +174,7 @@
         </div>
          <!-- 右側：画像 -->
         <div class="flex-shrink-0">
-          <%= image_tag "top_minna_no_gift.png", alt: "みんなのギフト", class: "w-80 md:w-96 lg:w-[440px] xl:w-[480px] 2xl:w-[520px]  h-auto object-contain rounded-lg" %>
+          <%= image_tag "top_minna_no_gift.png", alt: "みんなのギフト", class: "w-56 md:w-72 lg:w-[300px] xl:w-[340px] 2xl:w-[380px]  h-auto object-contain rounded-lg" %>
         </div>
       </div>
     </div>
@@ -189,8 +189,8 @@
         <div class="flex flex-col items-center text-center">
           <p class="text-gray-600 leading-relaxed mb-6">
             <strong>みんなのギフトを見に行こう！</strong><br><br>
-            記録した思い出を公開出来ます。<br>
-            ギフト選びを迷った際にあっと驚くようなアイディが見つかるかも
+            記録したギフトを公開出来ます。<br>
+            ギフト選びに迷った際にあっと驚くようなアイディアが見つかるかも
           </p>
           <%= link_to gift_records_path, 
               class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
