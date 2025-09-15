@@ -52,10 +52,10 @@ relationship_names = [
   'その他'
 ]
 
-relationship_names.each_with_index do |relationship_name, index|
-  relationship = Relationship.find_or_create_by(name: relationship_name)
-  relationship.update!(position: index + 1)
-end
+# relationship_names.each_with_index do |relationship_name, index|
+#   relationship = Relationship.find_or_create_by(name: relationship_name)
+#   relationship.update!(position: index + 1)
+# end
 
 puts "関係性データの作成完了: #{Relationship.count}件の関係性が存在します"
 
