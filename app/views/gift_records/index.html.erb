@@ -219,26 +219,20 @@
             <div class="p-4 sm:p-4 md:p-4 lg:p-5 xl:p-5 bg-white">
               <!-- モバイル版表示項目 -->
               <div class="sm:hidden">
-                <!-- 投稿者名 -->
+                <!-- アイテム名 -->
                 <div class="mb-2">
-                  <div class="flex items-center text-sm">
-                    <% if record.user.has_avatar? && record.user.display_avatar(:small) %>
-                      <%= image_tag record.user.display_avatar(:small), 
-                          class: "w-4 h-4 rounded-full object-cover mr-2",
-                          alt: "#{record.user.name}のプロフィール画像" %>
-                    <% else %>
-                      <i class="fas fa-user mr-2 text-blue-500"></i>
-                    <% end %>
-                    <span class="font-medium" style="color: #374151 !important;">
-                      <%= truncate(record.user.name.presence || "ユーザー", length: 15) %>
-                    </span>
-                  </div>
+                  <h4 class="text-base sm:text-lg font-bold leading-tight" style="color: #111827 !important;">
+                    <%= record.item_name.presence || "未設定" %>
+                  </h4>
                 </div>
+
+               
 
                 <!-- イベント -->
                 <div class="mb-2">
                   <div class="flex items-center text-sm">
-                    <i class="fas fa-calendar-star mr-2 text-purple-500"></i>
+                    <%# <i class="fas fa-calendar mr-2 text--500"></i> %>
+                    <i class="fas fa-calendar mr-2" style="color: #4C4C4C;"></i>
                     <span style="color: #4b5563 !important;">
                       <%= truncate(record.event&.name || "未設定", length: 20) %>
                     </span>
@@ -248,18 +242,37 @@
                 <!-- 関係性 -->
                 <div class="mb-2">
                   <div class="flex items-center text-sm">
-                    <i class="fas fa-users mr-2 text-indigo-500"></i>
+                    <%# <i class="fas fa-users mr-2 text-orange-500"></i> %>
+                      <i class="fas fa-users mr-2" style="color: #4C4C4C;"></i>
+                      <%# <i class="fas fa-user mr-2 text-orange-500"></i> %>
+
                     <span style="color: #4b5563 !important;">
                       <%= truncate(record.gift_person&.relationship&.name || "未設定", length: 15) %>
                     </span>
                   </div>
                 </div>
 
-                <!-- アイテム名 -->
-                <div class="mb-2">
-                  <h4 class="text-xl sm:text-xl font-bold leading-tight" style="color: #111827 !important;">
-                    <%= record.item_name.presence || "未設定" %>
-                  </h4>
+                <!-- 投稿者情報（フッター） -->
+                <div class="mt-3 pt-3 border-t">
+                  <div class="flex items-center">
+                    <% if record.user.has_avatar? && record.user.display_avatar(:small) %>
+                      <%= image_tag record.user.display_avatar(:small), 
+                          class: "w-6 h-6 rounded-full object-cover mr-2",
+                          alt: "#{record.user.name}のプロフィール画像" %>
+                    <% else %>
+                      <div class="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center mr-2">
+                        <i class="fas fa-user text-gray-500 text-xs"></i>
+                      </div>
+                    <% end %>
+                    <div>
+                      <p class="text-xs font-medium" style="color: #374151 !important;">
+                        <%= record.user.name.presence || "ユーザー" %>
+                      </p>
+                      <p class="text-xs" style="color: #6b7280 !important;">
+                        <%= l(record.created_at, format: :short) %>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -267,7 +280,7 @@
               <div class="hidden sm:block">
                 <!-- アイテム名（メイン情報） -->
                 <div class="mb-3">
-                  <h4 class="text-lg lg:text-xl xl:text-xl font-bold leading-tight" style="color: #111827 !important;">
+                  <h4 class="text-base lg:text-lg xl:text-lg font-bold leading-tight" style="color: #111827 !important;">
                     <%= record.item_name.presence || "未設定" %>
                   </h4>
                 </div>
@@ -296,7 +309,7 @@
                 <!-- 関係性 -->
                 <div class="mb-3">
                   <div class="flex items-center text-sm">
-                    <i class="fas fa-users mr-2 text-indigo-500"></i>
+                    <i class="fas fa-users mr-2 text-orange-500"></i>
                     <span style="color: #4b5563 !important;">
                       <%= truncate(record.gift_person&.relationship&.name || "未設定", length: 15) %>
                     </span>
