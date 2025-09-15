@@ -12,6 +12,7 @@
       <div class="hidden md:flex items-center gap-2">
         <% if user_signed_in? %>
           <%= link_to "ギフトを追加", new_gift_record_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-sm font-medium transition-colors duration-200" %>
+          <%= link_to "みんなのギフト", gift_records_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-sm font-medium transition-colors duration-200" %>
           <%= link_to "ログアウト", destroy_user_session_path, 
               data: { 
                 turbo_method: :delete,
