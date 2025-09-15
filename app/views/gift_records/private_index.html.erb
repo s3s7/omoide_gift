@@ -42,7 +42,7 @@
 
         <!-- 動的フィルター値選択 -->
         <div>
-          <%= f.label :filter_value, "値", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+          <%= f.label :filter_value, "詳細", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
           
           <!-- 関係性選択プルダウン -->
           <%= f.select :relationship_id, 
@@ -69,7 +69,7 @@
           <!-- プレースホルダー表示 -->
           <div id="filter-placeholder" data-dynamic-filter-target="placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm text-gray-500" 
                style="<%= params[:filter_type].present? ? 'display: none; background-color: white;' : 'background-color: white;' %>">
-            左でフィルターを選択してください
+            フィルターを選択してください
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@
 
         <!-- 検索ボタン -->
         <div class="flex items-end">
-          <%= f.submit "検索", class: "w-full px-3 py-1.5 btn-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
+          <%= f.submit "この条件で検索する", class: "w-full px-3 py-1.5 btn-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
         </div>
       </div>
 
