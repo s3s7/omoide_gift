@@ -88,22 +88,7 @@
       <% end %>
 
       <div style="margin-bottom: 32px;">
-        <%= f.submit "ログイン", style: "
-          width: 100%;
-          padding: 16px;
-          background: linear-gradient(135deg,  #FC913A 100%);
-          background-color: #FC913A;
-          color: white;
-          border: 2px solid #FC913A;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 16px;
-          font-weight: 600;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          -webkit-appearance: none;
-          -webkit-tap-highlight-color: transparent;
-          box-sizing: border-box;
-        " %>
+        <%= f.submit "ログイン", class: "devise-primary-link" %>
       </div>
     <% end %>
 
