@@ -5,7 +5,7 @@
 <!-- ヘッダー部分 -->
 <div class="mb-2 mt-2 text-center">
   <h2 class="text-2xl font-bold text-gray-800 mb-3">
-    ギフト記録一覧
+  みんなのギフト
   </h2>
   <% if user_signed_in? %>
     <div class="flex justify-center">
@@ -154,25 +154,6 @@
       <% end %>
     <% end %>
   </div>
-  
-  <!-- 補助情報 -->
-  <div class="text-center text-sm text-gray-600 mb-4 max-w-2xl mx-auto">
-    <p>
-      <i class="fas fa-info-circle mr-1 text-gray-400"></i>
-      みんなの贈り物記録を見て、ギフト選びの参考にしよう
-    </p>
-  </div>
-  
-  <!-- ギフト記録一覧 -->
-  <div class="text-center mb-3 mt-1">
-    <h3 class="text-base font-medium text-gray-800">
-      <i class="fas fa-gift mr-2 text-primary"></i>
-      記録一覧
-      <span class="text-sm text-gray-500 font-normal ml-1">
-        （<%= pluralize(@total_records, "件") %>）
-      </span>
-    </h3>
-  </div>
 
   <% if @gift_records.any? %>
 
@@ -205,14 +186,6 @@
                 <%= render 'shared/favorite_button', gift_record: record %>
               </div>
 
-              <!-- 金額バッジ（右下） -->
-              <% if record.amount.present? %>
-                <div class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3">
-                  <span class="inline-flex items-center px-2 py-0.5 sm:px-2.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <%# ¥<%= number_with_delimiter(record.amount) %>
-                  </span>
-                </div>
-              <% end %>
             </div>
 
             <!-- 下半分：ギフト情報 -->
@@ -231,8 +204,7 @@
                 <!-- イベント -->
                 <div class="mb-2">
                   <div class="flex items-center text-sm">
-                    <%# <i class="fas fa-calendar mr-2 text--500"></i> %>
-                    <i class="fas fa-calendar mr-2" style="color: #4C4C4C;"></i>
+                    <i class="fas fa-calendar mr-2 text-blue-500"></i>
                     <span style="color: #4b5563 !important;">
                       <%= truncate(record.event&.name || "未設定", length: 20) %>
                     </span>
@@ -242,9 +214,7 @@
                 <!-- 関係性 -->
                 <div class="mb-2">
                   <div class="flex items-center text-sm">
-                    <%# <i class="fas fa-users mr-2 text-orange-500"></i> %>
-                      <i class="fas fa-users mr-2" style="color: #4C4C4C;"></i>
-                      <%# <i class="fas fa-user mr-2 text-orange-500"></i> %>
+                     <i class="fas fa-users mr-2 text-indigo-500"></i>
 
                     <span style="color: #4b5563 !important;">
                       <%= truncate(record.gift_person&.relationship&.name || "未設定", length: 15) %>
@@ -309,7 +279,7 @@
                 <!-- 関係性 -->
                 <div class="mb-3">
                   <div class="flex items-center text-sm">
-                    <i class="fas fa-users mr-2 text-orange-500"></i>
+                     <i class="fas fa-users mr-2 text-indigo-500"></i>
                     <span style="color: #4b5563 !important;">
                       <%= truncate(record.gift_person&.relationship&.name || "未設定", length: 15) %>
                     </span>
