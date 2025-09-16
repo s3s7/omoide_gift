@@ -85,3 +85,7 @@ gem "sidekiq-scheduler"
 gem "aws-sdk-s3", require: false
 
 gem "kaminari"
+
+gem "mini_magick"
+
+gem "meta-tags", require: "meta_tags"

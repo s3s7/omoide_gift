@@ -328,6 +328,12 @@
             一覧に戻る
           <% end %>
         </div>
+        <div class="text-gray-600">
+          <% twitter_share_url = "https://twitter.com/share?url=#{CGI.escape(gift_record_url(@gift_record))}" %> 
+          <%= link_to twitter_share_url, target: '_blank', data: { toggle: "tooltip", placement: "bottom" }, title: "Xでシェア" do %>
+             [Xでシェア]
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
