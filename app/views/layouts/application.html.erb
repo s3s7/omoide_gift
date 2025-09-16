@@ -2,7 +2,7 @@
 <html>
   <head>
     # <%= favicon_link_tag('gift_image.ico') %>
-
+      <%= stylesheet_link_tag 'application', 'data-turbo-track': 'reload' %>
      <%# <link href="<%= image_path("gift_image.ico")" rel="shortcut icon" type="image/x-icon" /> %>
     <title><%= content_for(:title) || "思い出ギフト" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -10,35 +10,7 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<%= content_for(:twitter_title) || content_for(:title) || 'Myapp' %>">
-    <meta name="twitter:description" content="<%= content_for(:twitter_description) || 'ギフトの思い出を記録・管理するアプリケーション' %>">
-    <%
-      ogp_image = content_for(:twitter_image)
-      if ogp_image.blank?
-        begin
-          ogp_image = "#{request.base_url}#{asset_path('gift-card-image.png')}"
-        rescue => e
-          ogp_image = "#{request.protocol}#{request.host_with_port}/assets/gift-card-image.png"
-        end
-      end
-    %>
-    <meta name="twitter:image" content="<%= ogp_image %>">
-    <% if content_for?(:twitter_url) %>
-    <meta name="twitter:url" content="<%= content_for(:twitter_url) %>">
-    <% end %>
-    
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="<%= content_for(:twitter_title) || content_for(:title) || 'Myapp' %>">
-    <meta property="og:description" content="<%= content_for(:twitter_description) || 'ギフトの思い出を記録・管理するアプリケーション' %>">
-    <meta property="og:image" content="<%= ogp_image %>">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:type" content="<%= content_for(:og_type) || 'website' %>">
-    <% if content_for?(:twitter_url) %>
-    <meta property="og:url" content="<%= content_for(:twitter_url) %>">
-    <% end %>
+    <!-- meta-tags gem handles OGP and Twitter Card meta tags -->
 
     <!-- Google Fonts: Zen Maru Gothic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,7 +40,8 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
 
-   
+     <!-- meta_tag -->
+     <%= display_meta_tags %>
   </head>
 
   <body data-controller="delete-modal">

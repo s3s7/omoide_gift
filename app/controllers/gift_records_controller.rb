@@ -406,7 +406,7 @@ class GiftRecordsController < ApplicationController
     # セキュリティ: set_gift_recordとensure_accessibleで処理済み
     # コメントも事前読み込み済み（set_gift_recordで処理）
     ## メタタグを設定する。
-    # prepare_meta_tags(@gift_record)
+    prepare_meta_tags(@gift_record)
   end
 
   def edit
@@ -717,32 +717,32 @@ class GiftRecordsController < ApplicationController
   #                   image: image_url
   #                 }
   # end
-  # def prepare_meta_tags(gift_record)
-  #   return unless gift_record
+  def prepare_meta_tags(gift_record)
+    return unless gift_record
 
-  #   ## このimage_urlにMiniMagickで設定したOGPの生成した合成画像を代入する
-  #   image_url = "#{request.base_url}/images/ogp.png?text=#{CGI.escape(gift_record.item_name)}"
-  #   page_title = "#{gift_record.item_name} - ギフト記録"
-  #   page_description = "#{gift_record.item_name}のギフト記録です。"
+    ## このimage_urlにMiniMagickで設定したOGPの生成した合成画像を代入する
+    image_url = "#{request.base_url}/images/ogp.png?text=#{CGI.escape(gift_record.item_name)}"
+    page_title = "#{gift_record.item_name} - ギフト記録"
+    page_description = "#{gift_record.item_name}のギフト記録です。"
 
-  #   set_meta_tags title: page_title,
-  #                 description: page_description,
-  #                 og: {
-  #                   site_name: '思い出ギフト',
-  #                   title: page_title,
-  #                   description: page_description,
-  #                   type: 'article',
-  #                   url: request.original_url,
-  #                   image: image_url,
-  #                   image_width: 1200,
-  #                   image_height: 630,
-  #                   locale: 'ja_JP'
-  #                 },
-  #                 twitter: {
-  #                   card: 'summary_large_image',
-  #                   title: page_title,
-  #                   description: page_description,
-  #                   image: image_url
-  #                 }
-  # end
+    set_meta_tags title: page_title,
+                  description: page_description,
+                  og: {
+                    site_name: '思い出ギフト',
+                    title: page_title,
+                    description: page_description,
+                    type: 'website',
+                    url: request.original_url,
+                    image: image_url,
+                    image_width: 1200,
+                    image_height: 630,
+                    locale: 'ja_JP'
+                  },
+                  twitter: {
+                    card: 'summary_large_image',
+                    title: page_title,
+                    description: page_description,
+                    image: image_url
+                  }
+  end
 end
