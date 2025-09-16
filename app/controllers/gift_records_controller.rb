@@ -728,18 +728,18 @@ class GiftRecordsController < ApplicationController
     set_meta_tags title: page_title,
                   description: page_description,
                   og: {
-                    site_name: '思い出ギフト',
+                    site_name: "思い出ギフト",
                     title: page_title,
                     description: page_description,
-                    type: 'website',
+                    type: "website",
                     url: request.original_url,
                     image: image_url,
                     image_width: 1200,
                     image_height: 630,
-                    locale: 'ja_JP'
+                    locale: "ja_JP"
                   },
                   twitter: {
-                    card: 'summary_large_image',
+                    card: "summary_large_image",
                     title: page_title,
                     description: page_description,
                     image: image_url

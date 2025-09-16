@@ -132,11 +132,11 @@
 #   end
 # end
 class OgpCreator
-  require 'mini_magick'
-  BASE_IMAGE_PATH = Rails.root.join('app', 'assets', 'images', 'ogp.png').to_s
-  GRAVITY = 'center'
-  TEXT_POSITION = '0,0'
-  FONT = Rails.root.join('app', 'assets', 'fonts', 'UtsukushiFONT.otf').to_s
+  require "mini_magick"
+  BASE_IMAGE_PATH = Rails.root.join("app", "assets", "images", "ogp.png").to_s
+  GRAVITY = "center"
+  TEXT_POSITION = "0,0"
+  FONT = Rails.root.join("app", "assets", "fonts", "UtsukushiFONT.otf").to_s
   FONT_SIZE = 65
   INDENTION_COUNT = 16
   ROW_LIMIT = 8
@@ -146,7 +146,7 @@ class OgpCreator
     image = MiniMagick::Image.open(BASE_IMAGE_PATH)
     image.combine_options do |config|
       config.font FONT
-      config.fill 'red'
+      config.fill "red"
       config.gravity GRAVITY
       config.pointsize FONT_SIZE
       config.draw "text #{TEXT_POSITION} '#{text}'"

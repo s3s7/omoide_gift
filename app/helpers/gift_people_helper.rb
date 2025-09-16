@@ -25,30 +25,11 @@ module GiftPeopleHelper
     (next_birthday - today).to_i
   end
 
-  # ギフト相手のアイコンを生成
-  # def gift_person_icon(gift_person, options = {})
-  #   css_class = options[:class] || "fas fa-user"
-  #   color_class =   case  gift_person&.relationship&.name
-  #                   when "家族", "父", "母", "兄弟", "姉妹"
-  #                     "text-red-500"
-  #                   when "友人", "親友"
-  #                     "text-blue-500"
-  #                   when "恋人", "夫", "妻"
-  #                     "text-pink-500"
-  #                   when "同僚", "上司", "部下"
-  #                     "text-green-500"
-  #                   else
-  #                     "text-gray-500"
-  #                   end
-  #   content_tag :i, "", class: "#{css_class} #{color_class}"
-  # end
-
   # ギフト相手の統計情報を取得
   def gift_person_stats(gift_person, user)
     gift_records = user.gift_records.where(gift_people_id: gift_person.id)
     {
       total_gifts: gift_records.count,
-      total_amount: gift_records.sum(:amount) || 0,
       last_gift_date: gift_records.maximum(:gift_at),
       first_gift_date: gift_records.minimum(:gift_at)
     }

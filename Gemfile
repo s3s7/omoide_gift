@@ -88,4 +88,4 @@ gem "kaminari"
 
 gem "mini_magick"
 
-gem 'meta-tags', require: "meta_tags"
+gem "meta-tags", require: "meta_tags"
