@@ -25,11 +25,11 @@ RUN apt-get update -qq && \
     libvips \
     postgresql-client \
     imagemagick \
-    libmagickwand-dev \
+    libmagickwand-dev && \
     fonts-noto-cjk \
     fontconfig && \
     fc-cache -fv && \
-rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # Set production environment
 ENV RAILS_ENV="production" \

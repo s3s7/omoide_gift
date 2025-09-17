@@ -1,9 +1,9 @@
 # 管理者用イベント管理コントローラー
 class Admin::EventsController < Admin::BaseController
-  before_action :set_event, only: [ :edit, :update, :destroy ]
+  before_action :set_event, only: [ :edit, :update, :destroy, :move_up, :move_down ]
 
   def index
-    @events = Event.order(:name).page(params[:page]).per(per_page)
+    @events = Event.ordered.page(params[:page]).per(per_page)
     log_admin_action("イベント一覧表示")
   end
 
@@ -46,6 +46,26 @@ class Admin::EventsController < Admin::BaseController
       log_admin_action("イベント削除", "Event", @event.id, @event.name)
     else
       admin_flash_error("イベントの削除に失敗しました。")
+    end
+    redirect_to admin_events_path
+  end
+
+  def move_up
+    if @event.move_up!
+      admin_flash_success("「#{@event.name}」の順序を上に移動しました。")
+      log_admin_action("イベント順序変更（上）", "Event", @event.id)
+    else
+      admin_flash_error("順序の変更に失敗しました。")
+    end
+    redirect_to admin_events_path
+  end
+
+  def move_down
+    if @event.move_down!
+      admin_flash_success("「#{@event.name}」の順序を下に移動しました。")
+      log_admin_action("イベント順序変更（下）", "Event", @event.id)
+    else
+      admin_flash_error("順序の変更に失敗しました。")
     end
     redirect_to admin_events_path
   end

@@ -42,7 +42,12 @@ Rails.application.routes.draw do
     resources :comments, only: [ :index, :show, :edit, :update, :destroy ]
 
     # 基本データ管理
-    resources :events, except: [ :show ]
+    resources :events, except: [ :show ] do
+      member do
+        patch :move_up
+        patch :move_down
+      end
+    end
     resources :relationships, except: [ :show ] do
       member do
         patch :move_up
