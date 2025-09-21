@@ -11,7 +11,8 @@
       <!-- デスクトップ版のみ表示される認証ボタン -->
       <div class="hidden md:flex items-center gap-2">
         <% if user_signed_in? %>
-          <%= link_to "ギフトを追加", new_gift_record_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-sm font-medium transition-colors duration-200" %>
+          <%= link_to "贈ったギフトを追加", new_gift_record_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-sm font-medium transition-colors duration-200" %>
+          <%= link_to "貰ったギフトを追加", new_received_gift_records_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-sm font-medium transition-colors duration-200" %>
           <%= link_to "みんなのギフト", gift_records_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-sm font-medium transition-colors duration-200" %>
           <%= link_to "ログアウト", destroy_user_session_path, 
               data: { 
@@ -39,7 +40,9 @@
 
         <% if user_signed_in? %>
           <%= link_to "マイページ", mypage_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
-          <%= link_to "ギフトを追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+          <%= link_to "贈ったギフトを追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+          <%= link_to "貰ったギフトを追加", new_received_gift_records_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+
           <%= link_to "ギフト相手を追加", new_gift_person_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "ログアウト", destroy_user_session_path, 
               data: { 
