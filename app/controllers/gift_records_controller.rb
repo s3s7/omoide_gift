@@ -204,14 +204,14 @@ class GiftRecordsController < ApplicationController
     @gift_record = GiftRecord.new(gift_direction: :given)
     @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
     prepare_events_for_form
-    session[:gift_direction_default] = 'given'
+    session[:gift_direction_default] = "given"
   end
 
   def new_received
     @gift_record = GiftRecord.new(gift_direction: :received)
     @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
     prepare_events_for_form
-    session[:gift_direction_default] = 'received'
+    session[:gift_direction_default] = "received"
   end
 
   def create
@@ -753,7 +753,7 @@ class GiftRecordsController < ApplicationController
     return if record.gift_direction.present?
 
     default = session[:gift_direction_default]
-    record.gift_direction = (default == 'received') ? :received : :given
+    record.gift_direction = (default == "received") ? :received : :given
   end
 
   # オートコンプリート用ヘルパーメソッド
