@@ -282,7 +282,7 @@ class GiftRecordsController < ApplicationController
     end
   end
 
-  # もらったギフト用の作成エンドポイント（UIでは分類なし、サーバ側で固定）
+  # もらったギフト用の作成エンドポイント（
   def create_received
     if params[:gift_record][:gift_people_id] == "new"
       unless params[:gift_person].present?
