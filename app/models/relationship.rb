@@ -5,7 +5,7 @@ class Relationship < ApplicationRecord
   # バリデーション
   validates :name, presence: true, length: { maximum: 50 }
   validates :name, uniqueness: { case_sensitive: false }
- validates :position, presence: true, uniqueness: true
+  validates :position, presence: true, uniqueness: true
 
   # スコープ
   scope :active, -> { where.not(name: [ nil, "" ]) }

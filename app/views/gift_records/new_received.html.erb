@@ -1,0 +1,16 @@
+<% content_for(:title, t('.title')) %>
+
+<div style="
+  width: 90%;
+  max-width: 600px;
+  padding: 40px 30px;
+  border-radius: 12px;
+  text-align: center;
+  margin: 0 auto;
+  position: relative;
+">
+  <h1 class="text-3xl font-semibold text-black mb-10 leading-snug"><%= t('.title') %></h1>
+
+  <%= render 'shared/error_messages', object: @gift_record %>
+  <%= render 'form', gift_record: @gift_record, form_context: :received %>
+</div>

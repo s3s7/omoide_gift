@@ -124,7 +124,7 @@
         <div class="flex flex-col items-center text-center">
           <p class="text-gray-600 leading-relaxed mb-6">
             <strong>ギフト相手の詳細を登録しよう！</strong><br><br>
-            ギフト相手を登録することで<br>ギフト相手ごとに記録を見ることが出来ます<br><br>
+            ギフト相手を登録することで<br>相手ごとに記録を見ることが出来ます<br><br>
             また、好き嫌いを登録しておくことで<br>より喜んでもらえるギフト選びが可能です
           </p>
           <% if user_signed_in? %>
@@ -185,6 +185,30 @@
             <strong>大切な日を登録しよう！</strong><br><br>
             大切な日を登録することで<br>事前にLINE通知が届きます<br><br>
             えっ…過ぎてる！？こんなお祝い忘れを防止出来ます
+          </p>
+          <%= link_to gift_records_path, 
+              class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
+              style: "background-color: #FC913A;",
+              onmouseenter: "this.style.backgroundColor='#E8823A'",
+              onmouseleave: "this.style.backgroundColor='#FC913A'" do %>
+            登録する！
+          <% end %>
+        </div>
+        
+      </div>
+    </div>
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-8 block">
+      <div class="flex items-center justify-center space-x-6">
+        <!-- 右側：画像 -->
+        <div class="flex-shrink-0">
+          <%= image_tag "top_remind.png", alt: "記念日通知機能", class: "w-65 md:w-72 lg:w-[300px] xl:w-[340px] 2xl:w-[380px]  h-auto object-contain rounded-lg" %>
+        </div>
+        <!-- 左側：テキストとボタン -->
+        <div class="flex flex-col items-center text-center">
+          <p class="text-gray-600 leading-relaxed mb-6">
+            <strong>もらったギフトを登録しよう！</strong><br><br>
+           ことで<br><br><br>
+            出来ます
           </p>
           <%= link_to gift_records_path, 
               class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",

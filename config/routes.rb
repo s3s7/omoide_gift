@@ -68,7 +68,10 @@ Rails.application.routes.draw do
 
   resources :gift_records do
     collection do
+      get :new_received
+      post :create_received
       get :private_index
+      get :my_index
       get :autocomplete
       post :dismiss_share
     end

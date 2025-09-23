@@ -126,6 +126,9 @@ ja:
       no_records: "まだギフト記録がありません"
       create_first: "最初の記録を作成しましょう"
     
+    new_received:
+      title: "もらったギフト登録"
+    
     form:
       submit_create: "ギフト記録を作成"
       submit_update: "ギフト記録を更新"
