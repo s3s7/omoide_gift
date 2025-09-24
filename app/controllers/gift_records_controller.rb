@@ -899,7 +899,7 @@ end
   end
 
   def default_ogp_image_url
-    "#{request.base_url}#{image_path('default_ogp.png')}"
+    "#{request.base_url}#{image_path('ogp.png')}"
   end
 
   def prepare_filter_options(base_query)
