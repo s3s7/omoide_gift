@@ -1,5 +1,11 @@
 # 日本語ローカライゼーション
 ja:
+  meta_tags:
+    defaults:
+      site: "思い出ギフト"
+      title: "ギフトの思い出を記録・共有"
+      description: "思い出ギフトは、贈り物の記録や思い出をきれいに残して公開・共有できるサービスです。"
+      keywords: "ギフト,プレゼント,思い出,記録,贈り物"
   # ActiveRecordエラーメッセージ
   activerecord:
     models:
