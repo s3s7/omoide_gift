@@ -1,3 +1,5 @@
+require "stringio"
+
 class GiftRecord < ApplicationRecord
   # リレーション
   belongs_to :user
@@ -9,6 +11,8 @@ class GiftRecord < ApplicationRecord
 
   # Active Storage - 複数画像対応
   has_many_attached :images
+  # 動的に生成したOGP画像（S3に保存）
+  has_one_attached :ogp_image
 
   belongs_to :parent_gift_record, class_name: "GiftRecord", optional: true
   has_many :return_gifts, class_name: "GiftRecord", foreign_key: "parent_gift_record_id"
@@ -47,6 +51,87 @@ class GiftRecord < ApplicationRecord
   validate :images_validation
 
   validates :return_deadline, presence: true, if: -> { needs_return? && !is_return_gift? }
+
+  # OGP画像戦略の決定
+  def ogp_strategy
+    case
+    when suitable_ogp_images.any?
+      :use_suitable_uploaded_image
+    when images.attached? && images.any?
+      :use_first_image_resized
+    when item_name.present?
+      :generate_dynamic_text_image
+    else
+      :use_default_image
+    end
+  end
+
+  # OGP画像URLの取得（S3保存を含む）
+  def ogp_image_url(request)
+    helpers = Rails.application.routes.url_helpers
+    host = request.host_with_port
+    protocol = request.protocol
+    case ogp_strategy
+    when :use_suitable_uploaded_image
+      # アップロード済みでOGPに適した画像を使用
+      helpers.rails_blob_url(suitable_ogp_images.first, host:, protocol:)
+    when :use_first_image_resized
+      # 最初の画像をOGPサイズにリサイズ
+      variant = ogp_resized_image
+      return default_ogp_fallback_url(request) unless variant
+      helpers.rails_representation_url(variant.processed, host:, protocol:)
+    when :generate_dynamic_text_image
+      # 動的にテキスト画像を生成しS3に保存
+      ensure_generated_ogp!
+      if ogp_image.attached?
+        helpers.rails_blob_url(ogp_image, host:, protocol:)
+      else
+        default_ogp_fallback_url(request)
+      end
+    when :use_default_image
+      # デフォルト画像を使用
+      default_ogp_fallback_url(request)
+    end
+  end
+
+  # OGP用リサイズ画像
+  def ogp_resized_image
+    return nil unless images.attached? && images.any?
+
+    images.first.variant(
+      resize_to_fill: [ 1200, 630 ],
+      format: :png,
+      background: "white",
+      gravity: "center"
+    )
+  end
+
+  # OGPに適した画像の抽出
+  def suitable_ogp_images
+    @suitable_ogp_images ||= images.select { |img| image_suitable_for_ogp?(img) }
+  end
+
+  # 生成OGPの作成と添付（S3へ）
+  def ensure_generated_ogp!
+    return if ogp_image.attached?
+
+    text = item_name.presence || "ギフト記録"
+    image = OgpCreator.build(text)
+    io = StringIO.new(image.to_blob)
+    ogp_image.attach(
+      io: io,
+      filename: "ogp_#{id}.png",
+      content_type: "image/png"
+    )
+  rescue => e
+    Rails.logger.error "OGP生成/添付エラー: #{e.message}"
+  end
+
+  def default_ogp_fallback_url(request)
+    # app/assets/images/ogp.png を指すURL
+    path = ActionController::Base.helpers.image_path("ogp.png")
+    "#{request.base_url}#{path}"
+  end
 
   private
 
@@ -185,5 +270,27 @@ class GiftRecord < ApplicationRecord
 
   def comments_allowed?
     commentable?
+  end
+
+  # OGPに適した画像かどうかの判定
+  def image_suitable_for_ogp?(image)
+    return false unless image.attached?
+
+    begin
+      metadata = image.metadata
+      return false unless metadata["width"] && metadata["height"]
+
+      # アスペクト比チェック（1.91:1 = 1200x630に近い）
+      aspect_ratio = metadata["width"].to_f / metadata["height"].to_f
+      suitable_ratio = (1.7..2.1).include?(aspect_ratio)
+
+      # サイズチェック（最小サイズ）
+      suitable_size = metadata["width"] >= 600 && metadata["height"] >= 315
+
+      suitable_ratio && suitable_size
+    rescue => e
+      Rails.logger.error "OGP画像適性チェックエラー: #{e.message}"
+      false
+    end
   end
 end
