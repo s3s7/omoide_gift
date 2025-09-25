@@ -39,6 +39,8 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   # config.active_storage.service = :local
   config.active_storage.service = :amazon
+  # Ensure image variants use MiniMagick (consistent with OgpCreator)
+  config.active_storage.variant_processor = :mini_magick
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -100,6 +102,7 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  # Keep analysis disabled for performance; code falls back when needed
   config.active_storage.analyze = false
   config.active_job.queue_adapter = :inline
 
