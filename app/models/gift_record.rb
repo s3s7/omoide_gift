@@ -1,4 +1,5 @@
 require "stringio"
+require "mini_magick"
 
 class GiftRecord < ApplicationRecord
   # リレーション
@@ -58,7 +59,7 @@ class GiftRecord < ApplicationRecord
     when suitable_ogp_images.any?
       :use_suitable_uploaded_image
     when images.attached? && images.any?
-      :use_first_image_resized
+      :use_generated_variant_from_first
     when item_name.present?
       :generate_dynamic_text_image
     else
@@ -76,11 +77,14 @@ class GiftRecord < ApplicationRecord
     when :use_suitable_uploaded_image
       # アップロード済みでOGPに適した画像を使用
       helpers.rails_blob_url(suitable_ogp_images.first, host:, protocol:)
-    when :use_first_image_resized
-      # 最初の画像をOGPサイズにリサイズ
-      variant = ogp_resized_image
-      return default_ogp_fallback_url(request) unless variant
-      helpers.rails_representation_url(variant.processed, host:, protocol:)
+    when :use_generated_variant_from_first
+      # 最初の画像から1200x630のPNGを生成して添付（安定したURLを提供）
+      ensure_generated_ogp_from_first_image!
+      if ogp_image.attached?
+        helpers.rails_blob_url(ogp_image, host:, protocol:)
+      else
+        default_ogp_fallback_url(request)
+      end
     when :generate_dynamic_text_image
       # 動的にテキスト画像を生成しS3に保存
       ensure_generated_ogp!
@@ -132,6 +136,34 @@ class GiftRecord < ApplicationRecord
     # app/assets/images/ogp.png を指すURL
     path = ActionController::Base.helpers.image_path("ogp.png")
     "#{request.base_url}#{path}"
+  end
+
+  # 最初のアップロード画像からOGP用画像を生成して添付（1200x630 PNG）
+  def ensure_generated_ogp_from_first_image!
+    return if ogp_image.attached?
+    return unless images.attached? && images.any?
+
+    begin
+      blob_data = images.first.download
+      image = MiniMagick::Image.read(blob_data)
+      # 画像を中央トリミングでOGPサイズに
+      image.combine_options do |c|
+        c.resize "1200x630^"
+        c.gravity "center"
+        c.extent "1200x630"
+        c.background "white"
+      end
+      image.format "png"
+
+      io = StringIO.new(image.to_blob)
+      ogp_image.attach(
+        io: io,
+        filename: "ogp_#{id}.png",
+        content_type: "image/png"
+      )
+    rescue => e
+      Rails.logger.error "OGP生成(アップロード画像ベース)エラー: #{e.message}"
+    end
   end
 
   private
@@ -275,16 +307,22 @@ class GiftRecord < ApplicationRecord
 
   # OGPに適した画像かどうかの判定
   def image_suitable_for_ogp?(image)
-    return false unless image.attached?
+    # Accept either an Attachment or a Blob
+    blob = image.respond_to?(:blob) ? image.blob : image
+    return false unless blob.present?
 
     begin
-      metadata = image.metadata
+      # Quick type guard
+      return false unless blob.content_type.to_s.start_with?("image/")
+
+      metadata = blob.metadata || {}
       width = metadata["width"]
       height = metadata["height"]
 
       # If analysis is disabled or metadata missing, fallback to MiniMagick to inspect dimensions
       if width.blank? || height.blank?
-        mini = MiniMagick::Image.read(image.download)
+        data = image.respond_to?(:download) ? image.download : blob.download
+        mini = MiniMagick::Image.read(data)
         width = mini.width
         height = mini.height
       end
