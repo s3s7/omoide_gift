@@ -71,7 +71,7 @@ class GiftRecord < ApplicationRecord
     helpers = Rails.application.routes.url_helpers
     host = request.host_with_port
     # Always prefer HTTPS in production to satisfy social scrapers
-    protocol = Rails.env.production? ? 'https' : (request.ssl? ? 'https' : 'http')
+    protocol = Rails.env.production? ? "https" : (request.ssl? ? "https" : "http")
     case ogp_strategy
     when :use_suitable_uploaded_image
       # アップロード済みでOGPに適した画像を使用
