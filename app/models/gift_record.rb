@@ -70,7 +70,8 @@ class GiftRecord < ApplicationRecord
   def ogp_image_url(request)
     helpers = Rails.application.routes.url_helpers
     host = request.host_with_port
-    protocol = request.protocol
+    # Always prefer HTTPS in production to satisfy social scrapers
+    protocol = Rails.env.production? ? 'https' : (request.ssl? ? 'https' : 'http')
     case ogp_strategy
     when :use_suitable_uploaded_image
       # アップロード済みでOGPに適した画像を使用
@@ -278,14 +279,23 @@ class GiftRecord < ApplicationRecord
 
     begin
       metadata = image.metadata
-      return false unless metadata["width"] && metadata["height"]
+      width = metadata["width"]
+      height = metadata["height"]
+
+      # If analysis is disabled or metadata missing, fallback to MiniMagick to inspect dimensions
+      if width.blank? || height.blank?
+        mini = MiniMagick::Image.read(image.download)
+        width = mini.width
+        height = mini.height
+      end
+      return false unless width && height
 
       # アスペクト比チェック（1.91:1 = 1200x630に近い）
-      aspect_ratio = metadata["width"].to_f / metadata["height"].to_f
+      aspect_ratio = width.to_f / height.to_f
       suitable_ratio = (1.7..2.1).include?(aspect_ratio)
 
       # サイズチェック（最小サイズ）
-      suitable_size = metadata["width"] >= 600 && metadata["height"] >= 315
+      suitable_size = width >= 600 && height >= 315
 
       suitable_ratio && suitable_size
     rescue => e
