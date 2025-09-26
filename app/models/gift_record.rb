@@ -55,15 +55,18 @@ class GiftRecord < ApplicationRecord
 
   # OGP画像戦略の決定
   def ogp_strategy
+    # OGP生成は「アップロード済み画像のみ」を使用する方針
     case
     when suitable_ogp_images.any?
       :use_suitable_uploaded_image
     when images.attached? && images.any?
       :use_generated_variant_from_first
-    when item_name.present?
-      :generate_dynamic_text_image
+    # when item_name.present?
+    #   # 動的テキスト画像の生成は無効化
+    #   :generate_dynamic_text_image
     else
-      :use_default_image
+      # デフォルト画像の使用は無効化
+      :no_image
     end
   end
 
@@ -83,19 +86,11 @@ class GiftRecord < ApplicationRecord
       if ogp_image.attached?
         helpers.rails_blob_url(ogp_image, host:, protocol:)
       else
-        default_ogp_fallback_url(request)
+        nil
       end
-    when :generate_dynamic_text_image
-      # 動的にテキスト画像を生成しS3に保存
-      ensure_generated_ogp!
-      if ogp_image.attached?
-        helpers.rails_blob_url(ogp_image, host:, protocol:)
-      else
-        default_ogp_fallback_url(request)
-      end
-    when :use_default_image
-      # デフォルト画像を使用
-      default_ogp_fallback_url(request)
+    else
+      # 画像は設定しない
+      nil
     end
   end
 
@@ -116,21 +111,20 @@ class GiftRecord < ApplicationRecord
     @suitable_ogp_images ||= images.select { |img| image_suitable_for_ogp?(img) }
   end
 
-  # 生成OGPの作成と添付（S3へ）
-  def ensure_generated_ogp!
-    return if ogp_image.attached?
-
-    text = item_name.presence || "ギフト記録"
-    image = OgpCreator.build(text)
-    io = StringIO.new(image.to_blob)
-    ogp_image.attach(
-      io: io,
-      filename: "ogp_#{id}.png",
-      content_type: "image/png"
-    )
-  rescue => e
-    Rails.logger.error "OGP生成/添付エラー: #{e.message}"
-  end
+  # 生成OGP（テキストベース）は無効化
+  # def ensure_generated_ogp!
+  #   return if ogp_image.attached?
+  #   text = item_name.presence || "ギフト記録"
+  #   image = OgpCreator.build(text)
+  #   io = StringIO.new(image.to_blob)
+  #   ogp_image.attach(
+  #     io: io,
+  #     filename: "ogp_#{id}.png",
+  #     content_type: "image/png"
+  #   )
+  # rescue => e
+  #   Rails.logger.error "OGP生成/添付エラー: #{e.message}"
+  # end
 
   def default_ogp_fallback_url(request)
     # app/assets/images/ogp.png を指すURL
@@ -150,8 +144,8 @@ class GiftRecord < ApplicationRecord
       image.combine_options do |c|
         c.resize "1200x630^"
         c.gravity "center"
-        c.extent "1200x630"
         c.background "white"
+        c.extent "1200x630"
       end
       image.format "png"
 
