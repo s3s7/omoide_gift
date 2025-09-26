@@ -3,7 +3,7 @@ class GiftRecordsController < ApplicationController
   before_action :set_gift_record, only: [ :show, :edit, :update, :destroy ]
   before_action :ensure_owner, only: [ :edit, :update, :destroy ]
   before_action :ensure_accessible, only: [ :show ]
-  ## 設定したprepare_meta_tagsをprivateにあってもpostコントローラー以外にも使えるようにする
+  ## 設定したprepare_meta_tagsをprivateにあってもgiftrecordコントローラー以外にも使えるようにする
   helper_method :prepare_meta_tags
 
   def index
@@ -827,11 +827,13 @@ class GiftRecordsController < ApplicationController
   #                   image: image_url
   #                 }
   # end
+
   def prepare_meta_tags(gift_record)
   return unless gift_record
 
-  # より安全な画像URL生成
-  image_url = generate_ogp_image_url(gift_record)
+  # OGP画像: ActiveStorageの画像優先、なければ動的生成をS3保存
+  image_url = gift_record.ogp_image_url(request)
+  secure_image_url = image_url.present? ? image_url.to_s.sub(%r{^http://}, "https://") : nil
   page_title = build_page_title(gift_record)
   page_description = build_page_description(gift_record)
 
@@ -839,13 +841,14 @@ class GiftRecordsController < ApplicationController
                 description: page_description,
                 canonical: request.original_url,
                 keywords: build_keywords(gift_record),
-                og: {
+                 og: {
                   site_name: "思い出ギフト",
                   title: page_title,
                   description: page_description,
                   type: "website",
                   url: request.original_url,
                   image: image_url,
+                  image_secure_url: image_url,
                   image_width: 1200,
                   image_height: 630,
                   locale: "ja_JP"
@@ -894,12 +897,12 @@ end
   def build_keywords(gift_record)
     keywords = [ "ギフト", "プレゼント", "記録", "思い出" ]
     keywords << gift_record.item_name if gift_record.item_name.present?
-    keywords << gift_record.item_name if gift_record.item_name.present?
     keywords.join(",")
   end
 
   def default_ogp_image_url
-    "#{request.base_url}#{image_path('ogp.png')}"
+    url = "#{request.base_url}#{image_path('ogp.png')}"
+    Rails.env.production? ? url.sub(%r{^http://}, "https://") : url
   end
 
   def prepare_filter_options(base_query)
