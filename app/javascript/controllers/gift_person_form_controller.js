@@ -17,7 +17,7 @@ export default class extends Controller {
   ]
   
   static values = {
-    maxFileSize: { type: Number, default: 5242880 }, // ファイルサイズ上限（5MB）
+    maxFileSize: { type: Number, default: 3145728 }, // ファイルサイズ上限（3MB）
     allowedTypes: { type: Array, default: ["image/jpeg", "image/jpg", "image/png", "image/webp"] }, // 許可する画像形式
     focusColor: { type: String, default: "#FC913A" }, // フォーカス時の枠線色
     blurColor: { type: String, default: "#e1e5e9" }, // 通常時の枠線色
@@ -289,6 +289,11 @@ export default class extends Controller {
 
   // フォームに変更があるかチェック
   hasFormChanges() {
+    // ファイルフィールドの変更をチェック
+    if (this.hasAvatarInputTarget && this.avatarInputTarget.files && this.avatarInputTarget.files.length > 0) {
+      return true
+    }
+    
     return this.inputTargets.some(field => {
       let currentValue
       
@@ -492,7 +497,7 @@ export default class extends Controller {
   }
 
   // フォーム送信バリデーション（必要に応じて追加のバリデーションを実装）
-  validateForm(event) {
+  validateForm() {
     // 追加のバリデーションロジックをここに記述
     return true
   }

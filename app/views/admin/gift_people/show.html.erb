@@ -34,7 +34,7 @@
           <div class="flex items-start space-x-4">
             <div class="flex-shrink-0">
               <% if @gift_person.has_avatar? %>
-                <%= image_tag @gift_person.display_avatar(:large), 
+                <%= image_tag display_avatar(@gift_person, :large), 
                     class: "w-20 h-20 rounded-full object-cover border-4 border-purple-100" %>
               <% else %>
                 <div class="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center border-4 border-purple-200">

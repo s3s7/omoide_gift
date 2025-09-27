@@ -60,27 +60,6 @@ class GiftPerson < ApplicationRecord
     avatar.attached?
   end
 
-  def display_avatar(size = :medium)
-    return unless avatar.attached? && persisted?
-
-    # Active Storageのvariantは保存済みレコードのみで動作するため、
-    # レコードが新しい場合や適切にアタッチされていない場合はnilを返す
-    begin
-      case size
-      when :small
-        avatar.variant(resize_to_fill: [ 40, 40 ])
-      when :medium
-        avatar.variant(resize_to_fill: [ 80, 80 ])
-      when :large
-        avatar.variant(resize_to_fill: [ 160, 160 ])
-      else
-        avatar
-      end
-    rescue ActiveRecord::RecordNotFound, NoMethodError => e
-      Rails.logger.warn "Gift person avatar variant generation failed: #{e.message}"
-      nil
-    end
-  end
 
   private
 
@@ -93,9 +72,9 @@ class GiftPerson < ApplicationRecord
       errors.add(:avatar, "はJPEG、PNG、WEBP形式のファイルのみアップロードできます")
     end
 
-    # ファイルサイズチェック（5MBまで）
-    if avatar.blob.byte_size > 5.megabytes
-      errors.add(:avatar, "のファイルサイズは5MB以下にしてください")
+    # ファイルサイズチェック（2MBまで）
+    if avatar.blob.byte_size > 2.megabytes
+      errors.add(:avatar, "のファイルサイズは2MB以下にしてください")
     end
   rescue StandardError => e
     Rails.logger.error "Gift person avatar validation error: #{e.message}"

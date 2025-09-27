@@ -97,7 +97,7 @@
               <!-- プロフィール画像 -->
               <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
                 <% if current_user.has_avatar? %>
-                  <%= image_tag current_user.display_avatar(:small), 
+                  <%= image_tag display_avatar(current_user, :small), 
                       class: "w-8 h-8 rounded-full object-cover" %>
                 <% else %>
                   <i class="fas fa-user-shield text-sm"></i>

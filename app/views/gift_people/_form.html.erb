@@ -81,8 +81,8 @@
       <!-- 現在の画像表示 -->
       <div style="flex-shrink: 0;">
         <div style="position: relative;">
-          <% if gift_person.has_avatar? && gift_person.display_avatar(:large) %>
-            <%= image_tag gift_person.display_avatar(:large), 
+          <% if gift_person.has_avatar? && display_avatar(gift_person, :large) %>
+            <%= image_tag display_avatar(gift_person, :large), 
                 data: { "gift-person-form-target": "currentAvatar" },
                 style: "width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #e1e5e9; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" %>
           <% else %>
@@ -475,4 +475,3 @@
         " %>
   </div>
 <% end %>
-

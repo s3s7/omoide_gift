@@ -22,16 +22,12 @@ class ImagesController < ApplicationController
   def ogp
     text = sanitize_text(ogp_params[:text])
 
-    # ETagを使った条件付きレスポンス
+    # ETagを使った条件付きレスポンス（stale? を利用）
     etag = generate_etag(text)
-
-    if request.fresh?(response)
-      head :not_modified
-      return
+    if stale?(etag: etag, public: true)
+      # 画像生成とレスポンス
+      render_ogp_image(text, etag)
     end
-
-    # 画像生成とレスポンス
-    render_ogp_image(text, etag)
   end
 
   private

@@ -43,8 +43,8 @@
       <!-- ユーザー基本情報 -->
       <div class="flex items-center mb-6">
         <div class="w-16 h-16 mr-4 relative">
-          <% if @user.has_avatar? && @user.display_avatar(:medium) %>
-            <%= image_tag @user.display_avatar(:medium), 
+          <% if @user.has_avatar? && display_avatar(@user, :medium) %>
+            <%= image_tag display_avatar(@user, :medium), 
                 class: "w-16 h-16 rounded-full object-cover border-4 border-primary-light shadow-md" %>
           <% else %>
             <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center border-4 border-primary-light shadow-md">
@@ -430,4 +430,3 @@
     </div>
   </div>
 </div>
-

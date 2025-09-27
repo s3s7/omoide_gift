@@ -181,8 +181,8 @@
           <div class="p-2 sm:p-3 md:p-4">
             <!-- プロフィール画像 -->
             <div class="flex justify-center mb-2 sm:mb-3 md:mb-4">
-              <% if person.has_avatar? && person.display_avatar(:medium) %>
-                <%= image_tag person.display_avatar(:medium), 
+              <% if person.has_avatar? && display_avatar(person, :medium) %>
+                <%= image_tag display_avatar(person, :medium), 
                     class: "w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full object-cover border-3 border-gray-200 shadow-md",
                     alt: "#{person.name}のプロフィール画像",
                     loading: "lazy" %>

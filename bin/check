@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "==> RuboCop"
+if [ -x "bin/rubocop" ]; then
+  bin/rubocop --parallel
+else
+  bundle exec rubocop --parallel
+fi
+
+echo "==> Brakeman"
+if [ -x "bin/brakeman" ]; then
+  bin/brakeman -q
+else
+  bundle exec brakeman -q
+fi
+
+echo "==> RSpec"
+RAILS_ENV=test bundle exec rspec
+
+# Optional: build JS to ensure assets compile locally
+if command -v yarn >/dev/null 2>&1; then
+  echo "==> Yarn build"
+  yarn build
+else
+  echo "(skip) Yarn not found; skipping JS build"
+fi
+
+echo "All checks passed."
+

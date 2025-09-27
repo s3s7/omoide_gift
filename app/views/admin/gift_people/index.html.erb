@@ -121,7 +121,7 @@
                 <div class="flex items-center">
                   <div class="flex-shrink-0 w-10 h-10">
                     <% if gift_person.has_avatar? %>
-                      <%= image_tag gift_person.display_avatar(:medium), 
+                      <%= image_tag display_avatar(gift_person, :medium), 
                           class: "w-10 h-10 rounded-full object-cover" %>
                     <% else %>
                       <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -160,7 +160,7 @@
                 <div class="flex items-center">
                   <div class="flex-shrink-0 w-8 h-8">
                     <% if gift_person.user.has_avatar? %>
-                      <%= image_tag gift_person.user.display_avatar(:small), 
+                      <%= image_tag display_avatar(gift_person.user, :small), 
                           class: "w-8 h-8 rounded-full object-cover" %>
                     <% else %>
                       <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">

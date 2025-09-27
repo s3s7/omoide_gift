@@ -148,7 +148,7 @@
             <div class="flex items-center p-3 bg-gray-50 rounded-lg">
               <div class="flex-shrink-0">
                 <% if gift_person.has_avatar? %>
-                  <%= image_tag gift_person.display_avatar(:small), 
+                  <%= image_tag display_avatar(gift_person, :small), 
                       class: "w-8 h-8 rounded-full object-cover" %>
                 <% else %>
                   <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">

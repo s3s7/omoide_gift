@@ -141,7 +141,7 @@
                 <div class="flex items-center">
                   <div class="flex-shrink-0 w-10 h-10">
                     <% if user.has_avatar? %>
-                      <%= image_tag user.display_avatar(:medium), 
+                      <%= image_tag display_avatar(user, :medium), 
                           class: "w-10 h-10 rounded-full object-cover" %>
                     <% else %>
                       <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
@@ -314,4 +314,3 @@
     </div>
   <% end %>
 </div>
-

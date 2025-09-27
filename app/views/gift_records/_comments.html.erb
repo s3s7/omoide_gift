@@ -64,8 +64,8 @@
           <div class="flex justify-between items-start mb-2">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <% if comment.user.has_avatar? && comment.user.display_avatar(:small) %>
-                  <%= image_tag comment.user.display_avatar(:small), 
+                <% if comment.user.has_avatar? && display_avatar(comment.user, :small) %>
+                  <%= image_tag display_avatar(comment.user, :small), 
                       class: "w-8 h-8 rounded-full object-cover",
                       alt: "#{comment.user.display_name}のプロフィール画像" %>
                 <% else %>

@@ -37,8 +37,8 @@
       <div class="mb-6 text-center">
         <label class="block mb-4 font-semibold text-gray-700 text-sm">プロフィール画像</label>
         <div class="flex justify-center">
-          <% if @gift_person.has_avatar? && @gift_person.display_avatar(:large) %>
-            <%= image_tag @gift_person.display_avatar(:large), 
+          <% if @gift_person.has_avatar? && display_avatar(@gift_person, :large) %>
+            <%= image_tag display_avatar(@gift_person, :large), 
                 class: "w-32 h-32 rounded-full object-cover border-4 border-gray-200 shadow-lg" %>
           <% else %>
             <div class="w-32 h-32 rounded-full bg-gray-100 border-4 border-gray-200 flex items-center justify-center shadow-lg">
