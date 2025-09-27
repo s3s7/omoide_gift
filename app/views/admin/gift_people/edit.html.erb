@@ -306,7 +306,7 @@
           <% if @gift_person.has_avatar? %>
             <div class="mt-3 flex items-center space-x-4">
               <div class="flex-shrink-0">
-                <%= image_tag @gift_person.display_avatar(:medium), 
+                <%= image_tag display_avatar(@gift_person, :medium), 
                     class: "w-16 h-16 rounded-full object-cover border-2 border-purple-200" %>
               </div>
               <div>

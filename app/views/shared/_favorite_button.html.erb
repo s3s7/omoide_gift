@@ -3,14 +3,20 @@
   <% favorited = Favorite.favorited_by_user?(current_user, gift_record) %>
   <% favorites_count = Favorite.favorites_count_for_gift_record(gift_record) %>
   
-  <div class="favorite-button-container" data-controller="favorites" data-favorites-record-id-value="<%= gift_record.id %>" data-gift-record-id="<%= gift_record.id %>">
+  <!-- デバッグ情報（一時的） -->
+  <div style="display: none;">
+    Debug: favorited=<%= favorited %>, favorites_count=<%= favorites_count %>, user_id=<%= current_user.id %>, gift_record_id=<%= gift_record.id %>
+  </div>
+  
+  <div class="favorite-button-container" data-controller="favorites" data-favorites-record-id-value="<%= gift_record.id %>" data-gift-record-id="<%= gift_record.id %>" style="z-index: 999 !important;">
     <button type="button" 
             class="favorite-button <%= favorited ? 'favorited' : '' %>"
             data-favorited="<%= favorited %>"
             data-action="click->favorites#toggle"
             data-favorites-target="button"
             title="<%= favorited ? 'お気に入りから削除' : 'お気に入りに追加' %>"
-            aria-label="<%= favorited ? 'お気に入りから削除' : 'お気に入りに追加' %>">
+            aria-label="<%= favorited ? 'お気に入りから削除' : 'お気に入りに追加' %>"
+            style="z-index: 999 !important; position: relative;">
       
       <!-- ハートアイコン -->
       <i class="favorite-heart <%= favorited ? 'fas' : 'far' %> fa-heart" data-favorites-target="heart"></i>
@@ -23,12 +29,13 @@
   </div>
 <% else %>
   <% favorites_count = Favorite.favorites_count_for_gift_record(gift_record) %>
-  <div class="favorite-button-container" data-controller="favorites" data-favorites-login-url-value="<%= new_user_session_path %>">
+  <div class="favorite-button-container" data-controller="favorites" data-favorites-login-url-value="<%= new_user_session_path %>" style="z-index: 999 !important;">
     <button type="button"
             class="favorite-button"
             data-action="click->favorites#requireLogin"
             title="ログインが必要です"
-            aria-label="ログインが必要です">
+            aria-label="ログインが必要です"
+            style="z-index: 999 !important; position: relative;">
       <i class="favorite-heart far fa-heart"></i>
       <% if favorites_count > 0 %>
         <span class="favorite-count" data-favorites-target="count"><%= favorites_count %></span>

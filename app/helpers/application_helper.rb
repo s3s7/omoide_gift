@@ -41,29 +41,27 @@ module ApplicationHelper
     set_meta_tags(configs)
   end
 
-  # zdef default_meta_tags
-  #   {
-  #     site: "Live Fes",
-  #     title: "音楽ライブ・フェスの余韻を共有できるサービス",
-  #     reverse: true,
-  #     charset: "utf-8",
-  #     description: "Live Fesでは、音楽ライブやフェスの余韻や喪失感を参加者同士で共通し、感想や思い出を語り合うことができます。",
-  #     keywords: "音楽,ライブ,フェス,余韻,喪失感,共有",
-  #     canonical: request.original_url,
-  #     separator: "|",
-  #     og: {
-  #       site_name: :site,
-  #       title: :title,
-  #       description: :description,
-  #       type: "website",
-  #       url: request.original_url,
-  #       image: image_url("ogp.png"),
-  #       local: "ja-JP"
-  #     },
-  #     twitter: {
-  #       card: "summary_large_image",
-  #       image: image_url("ogp.png")
-  #     }
-  #   }
-  # end
+  # 汎用アバター表示ヘルパー
+  def display_avatar(record, size = :medium)
+    return nil unless record&.respond_to?(:avatar)
+    avatar = record.avatar
+    return nil unless avatar&.attached? && record.respond_to?(:persisted?) && record.persisted?
+
+    begin
+      case size
+      when :small
+        avatar.variant(resize_to_fill: [ 40, 40 ])
+      when :medium
+        avatar.variant(resize_to_fill: [ 80, 80 ])
+      when :large
+        avatar.variant(resize_to_fill: [ 160, 160 ])
+      else
+        avatar
+      end
+    rescue ActiveRecord::RecordNotFound, NoMethodError => e
+      Rails.logger.warn "Avatar variant generation failed: #{e.message}"
+      nil
+    end
+  end
+  
 end

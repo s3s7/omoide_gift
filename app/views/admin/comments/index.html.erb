@@ -137,7 +137,7 @@
                 <div class="flex items-center">
                   <div class="flex-shrink-0 w-8 h-8">
                     <% if comment.user.has_avatar? %>
-                      <%= image_tag comment.user.display_avatar(:small), 
+                      <%= image_tag display_avatar(comment.user, :small), 
                           class: "w-8 h-8 rounded-full object-cover" %>
                     <% else %>
                       <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">

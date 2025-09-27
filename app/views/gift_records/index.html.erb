@@ -216,8 +216,8 @@
                 <!-- 投稿者情報（フッター） -->
                 <div class="mt-3 pt-3 border-t">
                   <div class="flex items-center">
-                    <% if record.user.has_avatar? && record.user.display_avatar(:small) %>
-                      <%= image_tag record.user.display_avatar(:small), 
+                    <% if record.user.has_avatar? && display_avatar(record.user, :small) %>
+                      <%= image_tag display_avatar(record.user, :small), 
                           class: "w-6 h-6 rounded-full object-cover mr-2",
                           alt: "#{record.user.name}のプロフィール画像" %>
                     <% else %>
@@ -290,8 +290,8 @@
                 <!-- 投稿者情報（フッター） -->
                 <div class="mt-3 pt-3 border-t">
                   <div class="flex items-center">
-                    <% if record.user.has_avatar? && record.user.display_avatar(:small) %>
-                      <%= image_tag record.user.display_avatar(:small), 
+                    <% if record.user.has_avatar? && display_avatar(record.user, :small) %>
+                      <%= image_tag display_avatar(record.user, :small), 
                           class: "w-6 h-6 rounded-full object-cover mr-2",
                           alt: "#{record.user.name}のプロフィール画像" %>
                     <% else %>

@@ -61,7 +61,7 @@ export default class extends Controller {
     }
   }
 
-  // ギフト方向トグルスイッチの初期化
+  // ギフト分類トグルスイッチの初期化
   initializeGiftDirectionToggleSwitch() {
     if (this.hasGiftDirectionToggleTarget) {
       this.updateGiftDirectionToggleUI()
@@ -138,7 +138,7 @@ export default class extends Controller {
     this.updateCommentableToggleUI()
   }
 
-  // ギフト方向トグルスイッチクリック時のアクション
+  // ギフト分類トグルスイッチクリック時のアクション
   toggleGiftDirectionStatus(event) {
     if (!this.hasGiftDirectionToggleTarget) return
     // label のデフォルト動作（関連付いた input の自動トグル）を抑止し、
@@ -235,7 +235,7 @@ export default class extends Controller {
     }
   }
 
-  // ギフト方向トグルスイッチのUI更新
+  // ギフト分類トグルスイッチのUI更新
   updateGiftDirectionToggleUI() {
     if (!this.hasGiftDirectionToggleTarget) return
 
