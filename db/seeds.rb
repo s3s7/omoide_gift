@@ -22,9 +22,12 @@ event_names = [
   'その他'
 ]
 
-event_names.each do |event_name|
-  Event.find_or_create_by(name: event_name)
-end
+# event_names.each_with_index do |event_name, index|
+#   event = Event.find_or_create_by(name: event_name)
+#   # 既にpositionが設定されている場合はスキップ（重複を避けるため）
+#   next if event.position.present? && event.position == (index + 1)
+#   event.update!(position: index + 1)
+# end
 
 puts "イベントデータの作成完了: #{Event.count}件のイベントが存在します"
 
@@ -52,8 +55,11 @@ relationship_names = [
   'その他'
 ]
 
+
 # relationship_names.each_with_index do |relationship_name, index|
 #   relationship = Relationship.find_or_create_by(name: relationship_name)
+#   # 既にpositionが設定されている場合はスキップ（重複を避けるため）
+#   next if relationship.position.present? && relationship.position == (index + 1)
 #   relationship.update!(position: index + 1)
 # end
 

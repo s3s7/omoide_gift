@@ -2,4 +2,3 @@
 //= link_directory ../stylesheets .css
 //= link_tree ../builds
 //= link btn_login_base.png
-//= link gift_flower.png
