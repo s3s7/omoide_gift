@@ -1,10 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="dynamic-filter"
 export default class extends Controller {
   static targets = [
     "filterTypeSelect",
     "filterTypeHidden",
+    "giftPersonSelect",
     "relationshipSelect",
     "eventSelect",
     "placeholder"
@@ -15,42 +15,54 @@ export default class extends Controller {
   }
 
   update() {
-    const selectedType = this.filterTypeSelectTarget?.value || ""
+    const selectedType = this.hasFilterTypeSelectTarget ? this.filterTypeSelectTarget.value : ""
 
-    // Update hidden field
     if (this.hasFilterTypeHiddenTarget) {
       this.filterTypeHiddenTarget.value = selectedType
     }
 
-    // Hide all first
-    this.hide(this.relationshipSelectTarget)
-    this.hide(this.eventSelectTarget)
-    this.hide(this.placeholderTarget)
+    if (this.hasGiftPersonSelectTarget) this.hide(this.giftPersonSelectTarget)
+    if (this.hasRelationshipSelectTarget) this.hide(this.relationshipSelectTarget)
+    if (this.hasEventSelectTarget) this.hide(this.eventSelectTarget)
+    if (this.hasPlaceholderTarget) this.hide(this.placeholderTarget)
 
-    // Show by type and clear the other
-    if (selectedType === "relationship") {
-      this.show(this.relationshipSelectTarget)
-      this.clearValue(this.eventSelectTarget)
+    // 種類ごとに表示し、無関係なフィールドをクリア
+    if (selectedType === "gift_person") {
+      // ギフト相手のセレクトのみ表示し、現在の値は保持
+      if (this.hasGiftPersonSelectTarget) this.show(this.giftPersonSelectTarget)
+      if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
+    } else if (selectedType === "relationship") {
+      // 関係性のセレクトのみ表示
+      if (this.hasRelationshipSelectTarget) this.show(this.relationshipSelectTarget)
+      if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
+      if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
     } else if (selectedType === "event") {
-      this.show(this.eventSelectTarget)
-      this.clearValue(this.relationshipSelectTarget)
+      // イベントのセレクトのみ表示
+      if (this.hasEventSelectTarget) this.show(this.eventSelectTarget)
+      if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
+      if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
     } else {
-      this.show(this.placeholderTarget)
-      this.clearValue(this.relationshipSelectTarget)
-      this.clearValue(this.eventSelectTarget)
+      // フィルタ未選択
+      if (this.hasPlaceholderTarget) this.show(this.placeholderTarget)
+      if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
+      if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
     }
   }
 
   show(element) {
     if (!element) return
-    element.style.display = "block"
     element.classList.remove("hidden")
+    element.removeAttribute("aria-hidden")
+    if (element.disabled !== undefined) element.disabled = false
   }
 
   hide(element) {
     if (!element) return
-    element.style.display = "none"
     element.classList.add("hidden")
+    element.setAttribute("aria-hidden", "true")
+    if (element.disabled !== undefined) element.disabled = true
   }
 
   clearValue(element) {
