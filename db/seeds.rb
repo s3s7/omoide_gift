@@ -91,16 +91,16 @@ gift_item_categories = [
   'その他'
 ]
 
-# gift_item_categories.each do |name|
-#   GiftItemCategory.find_or_create_by(name: name)
-# end
-
-gift_item_categories.each_with_index do |gift_item_name, index|
-  gift_item_category = GiftItemCategory.find_or_create_by(name: gift_item_name)
-  # 既にpositionが設定されている場合はスキップ（重複を避けるため）
-  next if gift_item_category.position.present? && gift_item_category.position == (index + 1)
-  gift_item_category.update!(position: index + 1)
+gift_item_categories.each do |name|
+  GiftItemCategory.find_or_create_by(name: name)
 end
+
+# gift_item_categories.each_with_index do |gift_item_name, index|
+#   gift_item_category = GiftItemCategory.find_or_create_by(name: gift_item_name)
+#   # 既にpositionが設定されている場合はスキップ（重複を避けるため）
+#   next if gift_item_category.position.present? && gift_item_category.position == (index + 1)
+#   gift_item_category.update!(position: index + 1)
+# end
 
 puts "アイテムカテゴリーの作成完了: #{GiftItemCategory.count}件のカテゴリが存在します"
 
