@@ -15,7 +15,7 @@
   gap: 4px;
   padding: 6px 8px;
   background: rgba(255, 255, 255, 0.9);
-  border: 2px solid #f9a8d4;
+  border: 2px solid #ec4899; /* Pink border */
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -40,7 +40,7 @@
 }
 
 .favorite-button:not(.favorited) .favorite-heart {
-  color: #d1d5db; /* Light gray for unfavorited */
+  color: #ec4899 !important; /* Pink for unfavorited (outline) */
 }
 
 .favorite-button:not(.favorited):hover .favorite-heart {
@@ -75,7 +75,7 @@
   gap: 4px;
   padding: 6px 8px;
   background: rgba(255, 255, 255, 0.7);
-  border: 2px solid #f9a8d4;
+  border: 2px solid #ec4899; /* Pink border (static) */
   border-radius: 20px;
   font-size: 14px;
 }
@@ -89,7 +89,7 @@
 /* 詳細ページ用のスタイル調整 */
 .favorite-show-page .favorite-button {
   background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(249, 168, 212, 0.8);
+  border: 2px solid #ec4899; /* Pink border on show page */
   color: white;
   backdrop-filter: blur(8px);
 }
@@ -108,7 +108,7 @@
 }
 
 .favorite-show-page .favorite-button:not(.favorited) .favorite-heart {
-  color: rgba(255, 255, 255, 0.7);
+  color: #ec4899 !important; /* Pink for unfavorited on show page */
 }
 
 .favorite-show-page .favorite-button:not(.favorited):hover .favorite-heart {

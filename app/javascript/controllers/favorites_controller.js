@@ -7,7 +7,12 @@ export default class extends Controller {
   static values = { recordId: Number, loginUrl: String }
 
   connect() {
-    // No-op: click handled via action on button
+    // 初期状態でもハート色をピンクに強制（CSS未反映ケースの保険）
+    const button = this.buttonTarget || this.element.querySelector('.favorite-button')
+    const heart = this.heartTarget || this.element.querySelector('.favorite-heart')
+    if (heart) {
+      heart.style.color = '#ec4899'
+    }
   }
 
   requireLogin(event) {
@@ -72,6 +77,8 @@ export default class extends Controller {
         heart.style.animation = 'none'
         setTimeout(() => { heart.style.animation = 'heartBeat 0.3s ease' }, 10)
       }
+      // トグル後も常にピンクに統一
+      heart.style.color = '#ec4899'
     }
 
     if (favoritesCount > 0) {
