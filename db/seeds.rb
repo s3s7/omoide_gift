@@ -22,12 +22,12 @@ event_names = [
   'その他'
 ]
 
-# event_names.each_with_index do |event_name, index|
-#   event = Event.find_or_create_by(name: event_name)
-#   # 既にpositionが設定されている場合はスキップ（重複を避けるため）
-#   next if event.position.present? && event.position == (index + 1)
-#   event.update!(position: index + 1)
-# end
+event_names.each_with_index do |event_name, index|
+  event = Event.find_or_create_by(name: event_name)
+  # 既にpositionが設定されている場合はスキップ（重複を避けるため）
+  next if event.position.present? && event.position == (index + 1)
+  event.update!(position: index + 1)
+end
 
 puts "イベントデータの作成完了: #{Event.count}件のイベントが存在します"
 
@@ -56,12 +56,12 @@ relationship_names = [
 ]
 
 
-# relationship_names.each_with_index do |relationship_name, index|
-#   relationship = Relationship.find_or_create_by(name: relationship_name)
-#   # 既にpositionが設定されている場合はスキップ（重複を避けるため）
-#   next if relationship.position.present? && relationship.position == (index + 1)
-#   relationship.update!(position: index + 1)
-# end
+relationship_names.each_with_index do |relationship_name, index|
+  relationship = Relationship.find_or_create_by(name: relationship_name)
+  # 既にpositionが設定されている場合はスキップ（重複を避けるため）
+  next if relationship.position.present? && relationship.position == (index + 1)
+  relationship.update!(position: index + 1)
+end
 
 puts "関係性データの作成完了: #{Relationship.count}件の関係性が存在します"
 
@@ -91,8 +91,15 @@ gift_item_categories = [
   'その他'
 ]
 
-gift_item_categories.each do |name|
-  GiftItemCategory.find_or_create_by(name: name)
+# gift_item_categories.each do |name|
+#   GiftItemCategory.find_or_create_by(name: name)
+# end
+
+gift_item_categories.each_with_index do |gift_item_name, index|
+  gift_item_category = GiftItemCategory.find_or_create_by(name: gift_item_name)
+  # 既にpositionが設定されている場合はスキップ（重複を避けるため）
+  next if gift_item_category.position.present? && gift_item_category.position == (index + 1)
+  gift_item_category.update!(position: index + 1)
 end
 
 puts "アイテムカテゴリーの作成完了: #{GiftItemCategory.count}件のカテゴリが存在します"
