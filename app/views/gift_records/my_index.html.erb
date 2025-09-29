@@ -66,8 +66,8 @@
               { 
                 id: "gift-person-select",
                 data: { "dynamic-filter-target": "giftPersonSelect" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-                style: (params[:filter_type] == "gift_person" ? "background-color: white; color: black;" : "display: none; background-color: white; color: black;")
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'gift_person' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
               } %>
           
           <!-- 関係性選択プルダウン -->
@@ -77,8 +77,8 @@
               { 
                 id: "relationship-select",
                 data: { "dynamic-filter-target": "relationshipSelect" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-                style: (params[:filter_type] == "relationship" ? "background-color: white; color: black;" : "display: none; background-color: white; color: black;")
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'relationship' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
               } %>
           
           <!-- イベント選択プルダウン -->
@@ -88,13 +88,13 @@
               { 
                 id: "event-select",
                 data: { "dynamic-filter-target": "eventSelect" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-                style: (params[:filter_type] == "event" ? "background-color: white; color: black;" : "display: none; background-color: white; color: black;")
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'event' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
               } %>
           
           <!-- プレースホルダー表示 -->
-          <div id="filter-placeholder" data-dynamic-filter-target="placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm text-gray-500" 
-              style="<%= params[:filter_type].present? ? 'display: none; background-color: white;' : 'background-color: white;' %>">
+          <div id="filter-placeholder" data-dynamic-filter-target="placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm text-gray-500 <%= params[:filter_type].present? ? 'hidden' : '' %>" 
+              style="background-color: white;">
           フィルターを選択してください
           </div>
         </div>
@@ -254,7 +254,7 @@
     <!-- ページネーション -->
     <% if @gift_records.respond_to?(:current_page) && @gift_records.total_pages > 1 %>
       <div class="flex justify-center">
-        <%= paginate @gift_records, params: @pagination_params, theme: 'twitter_bootstrap_4' %>
+        <%= paginate @gift_records, params: @pagination_params %>
       </div>
     <% end %>
   <% else %>
