@@ -353,14 +353,6 @@ class GiftRecordsController < ApplicationController
   end
 
   def update
-    # デバッグ: 受信したパラメータをログ出力
-    Rails.logger.debug "=== GiftRecord Update Debug ==="
-    Rails.logger.debug "All params: #{params.inspect}"
-    Rails.logger.debug "Gift record params: #{params[:gift_record].inspect}"
-    Rails.logger.debug "Delete image IDs: #{params.dig(:gift_record, :delete_image_ids).inspect}"
-    Rails.logger.debug "Current images count: #{@gift_record.images.count}"
-    Rails.logger.debug "================================"
-
     # 削除対象画像の処理（バリデーション前に実行）
     delete_image_ids = params.dig(:gift_record, :delete_image_ids)
     if delete_image_ids.present?
