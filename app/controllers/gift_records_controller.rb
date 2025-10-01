@@ -906,7 +906,7 @@ def gift_record_image_url(gift_record)
   # nilチェック
   if gift_record.nil?
     Rails.logger.info "gift_record is nil, using default image"
-    return view_context.image_url("ogp.png")
+    return view_context.image_url("default_gift.png")
   end
 
   # 画像が添付されているかチェック
@@ -932,7 +932,7 @@ def gift_record_image_url(gift_record)
 
   # フォールバック
   Rails.logger.info "Using default image"
-  view_context.image_url("ogp.png")
+  view_context.image_url("default_gift.png")
 end
 
 
