@@ -84,9 +84,12 @@ export default class extends Controller {
     if (favoritesCount > 0) {
       if (countEl) {
         countEl.textContent = favoritesCount
+        // 数字はピンクで表示（Tailwindクラスを強制付与）
+        countEl.classList.add('text-pink-500')
       } else {
         const newCount = document.createElement('span')
-        newCount.className = 'favorite-count'
+        // 生成時にもピンクを付与
+        newCount.className = 'favorite-count text-pink-500'
         newCount.textContent = favoritesCount
         button.appendChild(newCount)
       }

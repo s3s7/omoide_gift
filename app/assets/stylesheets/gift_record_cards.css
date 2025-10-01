@@ -57,8 +57,9 @@
   animation: heartBeat 0.3s ease;
 }
 
+/* お気に入り数（通常表示）をピンクに統一 */
 .favorite-count {
-  color: #9ca3af;
+  color: #ec4899; /* 数字もピンク */
   font-size: 12px;
   font-weight: 500;
   margin-left: 2px;
@@ -80,8 +81,9 @@
   font-size: 14px;
 }
 
+/* 未ログイン時の静的なお気に入り数もピンクに */
 .favorite-count-static {
-  color: #9ca3af;
+  color: #ec4899; /* 数字もピンク（静的） */
   font-size: 12px;
   font-weight: 500;
 }
@@ -115,12 +117,14 @@
   color: #ec4899;
 }
 
+/* 詳細ページでも常にピンクで表示 */
 .favorite-show-page .favorite-button .favorite-count {
-  color: rgba(255, 255, 255, 0.8);
+  color: #ec4899; /* 詳細ページでもピンク */
 }
 
+/* いいね済み状態でもピンクを維持 */
 .favorite-show-page .favorite-button.favorited .favorite-count {
-  color: rgba(255, 255, 255, 0.95);
+  color: #ec4899; /* いいね済みでもピンク */
 }
 
 /* ハートビートアニメーション */
