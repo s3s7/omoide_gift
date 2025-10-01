@@ -270,9 +270,7 @@ end
   end
 
   def default_ogp_fallback_url(request)
-    # app/assets/images/ogp.png を指すURL
-    path = ActionController::Base.helpers.image_path("ogp.png")
-    "#{request.base_url}#{path}"
+    OgpUrlService.default_fallback_url(request)
   end
 
   private

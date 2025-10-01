@@ -828,7 +828,7 @@ class GiftRecordsController < ApplicationController
   secure_image_url = image_url.present? ? image_url.to_s.sub(%r{^http://}, "https://") : nil
   page_title = build_page_title(gift_record)
   page_description = build_page_description(gift_record)
-
+  p "!!!!!!image_url:#{image_url}"
   set_meta_tags title: page_title,
                 description: page_description,
                 canonical: request.original_url,
@@ -962,4 +962,6 @@ end
       .order("gift_people.name")
       .pluck("gift_people.name", "gift_people.id")
   end
+
+  
 end
