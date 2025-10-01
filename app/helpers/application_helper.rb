@@ -63,4 +63,32 @@ module ApplicationHelper
       nil
     end
   end
+
+  # OGP設定
+  def default_meta_tags
+    {
+      site: "思い出ギフト",
+      title: "思い出ギフトー大切な人との思い出を記録し、共有するアプリ",
+      reverse: true,
+      charset: "utf-8",
+      description: "思い出ギフトはギフトの記録などできます",
+      keywords: "ギフト、記録、共有",
+      canonical: request.original_url,
+      separator: "|",
+      og: {
+        site_name: :site,
+        title: :title,
+        description: :description,
+        type: "website",
+        url: request.original_url,
+        image: image_url("ogp.png"),
+        locale: "ja_JP"
+      },
+      twitter: {
+        card: "summary_large_image",
+        site: "@",
+        image: image_url("ogp.png")
+      }
+    }
+  end
 end
