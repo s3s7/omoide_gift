@@ -185,13 +185,13 @@ class GiftRecord < ApplicationRecord
 
   # デフォルト画像を使用
   def handle_default_image(request)
-    default_url = Rails.application.routes.url_helpers.asset_url(
-      "ogp.png",
-      host: request.base_url
-    )
-
-    Rails.logger.info "Using default OGP image: #{default_url}"
-    default_url
+    # モデル層からは routes の asset_url は使えないため、Viewヘルパー経由で解決
+    helpers = ActionController::Base.helpers
+    path = helpers.image_path("ogp.png")
+    url = "#{request.base_url}#{path}"
+    url = url.sub(%r{^http://}, "https://") if Rails.env.production?
+    Rails.logger.info "Using default OGP image: #{url}"
+    url
   rescue => e
     Rails.logger.error "Error getting default image: #{e.message}"
     "#{request.base_url}/assets/ogp.png"
