@@ -121,9 +121,9 @@ class GiftRecord < ApplicationRecord
               p "!!!CASE: use_first_image_resized"
               handle_first_image_resized(request)
 
-    when :generate_dynamic_text_image
-              p "!!!CASE: generate_dynamic_text_image"
-              handle_dynamic_text_image(helpers, request)
+    # when :generate_dynamic_text_image
+    #           p "!!!CASE: generate_dynamic_text_image"
+    #           handle_dynamic_text_image(helpers, request)
 
     when :use_default_image
               p "!!!CASE: use_default_image"
@@ -181,6 +181,50 @@ class GiftRecord < ApplicationRecord
       Rails.logger.error "Error resizing first image: #{e.message}"
       handle_default_image(request)
     end
+  end
+
+  # アップロード済みでOGPに適した画像を使用
+  # - 適合画像の先頭を 1200x630 に収まるようリサイズし、公開URLを返す
+  # - 失敗時は元の画像URL、さらに失敗時はデフォルト画像へフォールバック
+  def handle_suitable_uploaded_image(helpers, request)
+    attachment = suitable_ogp_images.first
+    return handle_default_image(request) unless attachment
+
+    begin
+      variant = attachment.variant(resize_to_limit: [ 1200, 630 ])
+      url = helpers.rails_representation_url(variant.processed, host: request.base_url)
+      url = url.sub(%r{^http://}, "https://") if Rails.env.production?
+      Rails.logger.info "Using suitable uploaded image (variant): #{url}"
+      url
+    rescue => e
+      Rails.logger.warn "Variant generation failed for suitable image: #{e.message}"
+      begin
+        url = helpers.rails_blob_url(attachment, host: request.base_url)
+        url = url.sub(%r{^http://}, "https://") if Rails.env.production?
+        Rails.logger.info "Using suitable uploaded image (original): #{url}"
+        url
+      rescue => e2
+        Rails.logger.error "Blob URL generation failed: #{e2.message}"
+        handle_default_image(request)
+      end
+    end
+  end
+
+  # テキストから動的にOGP画像を生成して使用
+  # - S3へ添付した上で公開URLを返す
+  def handle_dynamic_text_image(helpers, request)
+    ensure_generated_ogp!
+    if ogp_image.attached?
+      url = helpers.rails_blob_url(ogp_image, host: request.base_url)
+      url = url.sub(%r{^http://}, "https://") if Rails.env.production?
+      Rails.logger.info "Using dynamically generated OGP image: #{url}"
+      url
+    else
+      default_ogp_fallback_url(request)
+    end
+  rescue => e
+    Rails.logger.error "Dynamic OGP handling error: #{e.message}"
+    default_ogp_fallback_url(request)
   end
 
   # デフォルト画像を使用
