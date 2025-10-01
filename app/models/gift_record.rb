@@ -127,7 +127,8 @@ class GiftRecord < ApplicationRecord
 
     when :use_default_image
               p "!!!CASE: use_default_image"
-              handle_default_image(request)
+              # モデル内で直接 image_url は使えないため、フォールバックURLを使用
+              default_ogp_fallback_url(request)
 
     else
               p "!!!CASE: unknown strategy - #{strategy}"
@@ -227,19 +228,25 @@ class GiftRecord < ApplicationRecord
     default_ogp_fallback_url(request)
   end
 
-  # デフォルト画像を使用
-  def handle_default_image(request)
-    # モデル層からは routes の asset_url は使えないため、Viewヘルパー経由で解決
-    helpers = ActionController::Base.helpers
-    path = helpers.image_path("ogp.png")
-    url = "#{request.base_url}#{path}"
-    url = url.sub(%r{^http://}, "https://") if Rails.env.production?
-    Rails.logger.info "Using default OGP image: #{url}"
-    url
-  rescue => e
-    Rails.logger.error "Error getting default image: #{e.message}"
-    "#{request.base_url}/assets/ogp.png"
-  end
+ def handle_default_image(request)
+  # image_urlを使って完全なURLを取得
+  helpers = ActionController::Base.helpers
+
+  # 完全なURLを生成（ドメイン + アセットハッシュ込み）
+  url = helpers.image_url("ogp.png", host: request.base_url)
+
+  # 本番環境でのHTTPS強制
+  url = url.sub(%r{^http://}, "https://") if Rails.env.production?
+
+  Rails.logger.info "Using default OGP image: #{url}"
+  url
+rescue => e
+  Rails.logger.error "Error getting default image: #{e.message}"
+  # フォールバックもimage_urlを使用
+  fallback_url = helpers.image_url("ogp.png", host: request.base_url)
+  fallback_url.sub(%r{^http://}, "https://") if Rails.env.production?
+  fallback_url
+end
 
   # OGPに適した画像の抽出
   def suitable_ogp_images
