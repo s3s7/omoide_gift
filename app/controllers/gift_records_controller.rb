@@ -854,7 +854,7 @@ class GiftRecordsController < ApplicationController
                 }
 end
 
- 
+
 
 private
 
