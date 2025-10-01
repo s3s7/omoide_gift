@@ -855,7 +855,7 @@ class GiftRecordsController < ApplicationController
                 }
 end
 
- 
+
 
 
 private
@@ -894,7 +894,7 @@ def setup_meta_tags
 #       )
 #     else
 #         p "!!!!!!gift_record_image_url view_context"
-      
+
 #       view_context.image_url("ogp.png")
 #     end
 #   end
@@ -902,25 +902,25 @@ def setup_meta_tags
 def gift_record_image_url(gift_record)
   Rails.logger.info "=== gift_record_image_url Debug ==="
   Rails.logger.info "gift_record: #{gift_record.inspect}"
-  
+
   # nilチェック
   if gift_record.nil?
     Rails.logger.info "gift_record is nil, using default image"
     return view_context.image_url("ogp.png")
   end
-  
+
   # 画像が添付されているかチェック
   if gift_record.images.attached? && gift_record.images.any?
     Rails.logger.info "Images attached: #{gift_record.images.count} images"
-    
+
     begin
       first_image = gift_record.images.first
       Rails.logger.info "First image blob: #{first_image.blob.filename}"
-      
+
       # url_forを使用（最も安全）
       url = url_for(first_image)
       Rails.logger.info "Generated URL: #{url}"
-      
+
       return url
     rescue => e
       Rails.logger.error "Error generating image URL: #{e.class} - #{e.message}"
@@ -929,7 +929,7 @@ def gift_record_image_url(gift_record)
   else
     Rails.logger.info "No images attached or images array is empty"
   end
-  
+
   # フォールバック
   Rails.logger.info "Using default image"
   view_context.image_url("ogp.png")
