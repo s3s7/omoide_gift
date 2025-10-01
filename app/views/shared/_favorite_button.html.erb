@@ -23,7 +23,8 @@
       
       <!-- お気に入り数（1以上の場合のみ表示） -->
       <% if favorites_count > 0 %>
-        <span class="favorite-count" data-favorites-target="count"><%= favorites_count %></span>
+        <!-- 数字も常にピンクで表示するため、Tailwindのクラスも付与 -->
+        <span class="favorite-count text-pink-500" data-favorites-target="count"><%= favorites_count %></span>
       <% end %>
     </button>
   </div>
@@ -38,7 +39,8 @@
             style="z-index: 999 !important; position: relative;">
       <i class="favorite-heart far fa-heart"></i>
       <% if favorites_count > 0 %>
-        <span class="favorite-count" data-favorites-target="count"><%= favorites_count %></span>
+        <!-- 未ログインの静的表示でもピンクで統一 -->
+        <span class="favorite-count text-pink-500" data-favorites-target="count"><%= favorites_count %></span>
       <% end %>
     </button>
   </div>

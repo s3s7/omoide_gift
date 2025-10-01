@@ -57,8 +57,8 @@ class GiftRecord < ApplicationRecord
       :use_suitable_uploaded_image
     when images.attached? && images.any?
       :use_first_image_resized
-    when item_name.present?
-      :generate_dynamic_text_image
+    # when item_name.present?
+    #   :generate_dynamic_text_image
     else
       :use_default_image
     end
