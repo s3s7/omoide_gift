@@ -21,4 +21,3 @@ class OgpUrlService
     end
   end
 end
-

@@ -962,6 +962,4 @@ end
       .order("gift_people.name")
       .pluck("gift_people.name", "gift_people.id")
   end
-
-  
 end
