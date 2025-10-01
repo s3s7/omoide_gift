@@ -329,8 +329,22 @@
           <% end %>
         </div>
         <div class="text-gray-600">
-          <% twitter_share_url = "https://twitter.com/share?url=#{CGI.escape(gift_record_url(@gift_record))}" %> 
-          <%= link_to twitter_share_url, target: '_blank', data: { toggle: "tooltip", placement: "bottom" }, title: "Xでシェア" do %>
+          <%# Build tweet text including item name, relationship, and event %>
+          <% item_name = @gift_record.item_name.presence || "未設定" %>
+          <% relationship_name = @gift_record.gift_person&.relationship&.name.presence || "未設定" %>
+          <% event_name = @gift_record.event&.name.presence || "未設定" %>
+          <% event_tag = @gift_record.event&.name.to_s.gsub(/\s+/, '') %>
+          <% tweet_text = [
+              "✨ おすすめのギフト記録！",
+              "",
+              "🎁 ギフトアイテム: #{item_name}",
+              "👥 関係性: #{relationship_name}",
+              "📅 イベント: #{event_name}",
+              "",
+              ["#思い出ギフト", "#ギフト記録", "#プレゼント", (event_tag.present? ? "##{event_tag}" : nil)].compact.join(' ')
+            ].join("\n") %>
+          <% x_intent_url = "https://x.com/intent/tweet?text=#{CGI.escape(tweet_text)}&url=#{CGI.escape(gift_record_url(@gift_record))}" %>
+          <%= link_to x_intent_url, target: '_blank', data: { toggle: "tooltip", placement: "bottom" }, title: "Xでシェア" do %>
              [Xでシェア]
           <% end %>
         </div>

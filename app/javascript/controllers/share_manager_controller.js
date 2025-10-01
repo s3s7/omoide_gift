@@ -43,6 +43,20 @@ export default class extends Controller {
       this.open()
     }
 
+ 
+    if (!this.shareGiftRecord && (this.hasItemNameValue || this.hasGiftPersonNameValue || this.hasEventNameValue || this.hasRelationshipNameValue || this.hasMemoValue)) {
+      this.shareGiftRecord = {
+        id: this.lastCreatedGiftRecordId,
+        itemName: this.itemNameValue,
+        giftPersonName: this.giftPersonNameValue,
+        relationshipName: this.relationshipNameValue,
+        eventName: this.eventNameValue,
+        memo: this.memoValue,
+        hasImage: this.hasImageValue,
+        imageUrl: this.imageUrlValue
+      }
+    }
+
     // ESC to close
     this.boundEscHandler = (e) => {
       if (e.key === "Escape" && this.isVisible()) this.close()
