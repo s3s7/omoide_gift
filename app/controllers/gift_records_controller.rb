@@ -5,6 +5,7 @@ class GiftRecordsController < ApplicationController
   before_action :ensure_accessible, only: [ :show ]
   ## 設定したprepare_meta_tagsをprivateにあってもgiftrecordコントローラー以外にも使えるようにする
   helper_method :prepare_meta_tags
+  before_action :setup_meta_tags, only: [ :show ]
 
   def index
     base_query = build_base_query
@@ -343,7 +344,7 @@ class GiftRecordsController < ApplicationController
     # セキュリティ: set_gift_recordとensure_accessibleで処理済み
     # コメントも事前読み込み済み（set_gift_recordで処理）
     ## メタタグを設定する。
-    prepare_meta_tags(@gift_record)
+    # prepare_meta_tags(@gift_record)
   end
 
   def edit
@@ -856,7 +857,84 @@ end
 
 
 
+
 private
+
+def setup_meta_tags
+    description = "#{@gift_record.item_name}のギフト記録です。"
+    title =  "#{@gift_record.item_name} - 思い出ギフト"
+
+    set_meta_tags(
+      title: title,
+      description: description,
+      og: {
+        title: title,
+        description: description,
+        image: gift_record_image_url(@gift_record),
+        url: request.original_url,
+        type: "article"
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: title,
+        description: description,
+        image: gift_record_image_url(@gift_record)
+      }
+    )
+  end
+
+
+#  def gift_record_image_url(gift_record)
+#     if gift_record.images.attached?
+#       p "!!!!!!gift_record_image_url "
+#       Rails.application.routes.url_helpers.rails_blobs_url(
+#         gift_record.images,
+#         host: request.host_with_port,
+#         protocol: request.protocol
+#       )
+#     else
+#         p "!!!!!!gift_record_image_url view_context"
+
+#       view_context.image_url("ogp.png")
+#     end
+#   end
+
+def gift_record_image_url(gift_record)
+  Rails.logger.info "=== gift_record_image_url Debug ==="
+  Rails.logger.info "gift_record: #{gift_record.inspect}"
+
+  # nilチェック
+  if gift_record.nil?
+    Rails.logger.info "gift_record is nil, using default image"
+    return view_context.image_url("ogp.png")
+  end
+
+  # 画像が添付されているかチェック
+  if gift_record.images.attached? && gift_record.images.any?
+    Rails.logger.info "Images attached: #{gift_record.images.count} images"
+
+    begin
+      first_image = gift_record.images.first
+      Rails.logger.info "First image blob: #{first_image.blob.filename}"
+
+      # url_forを使用（最も安全）
+      url = url_for(first_image)
+      Rails.logger.info "Generated URL: #{url}"
+
+      return url
+    rescue => e
+      Rails.logger.error "Error generating image URL: #{e.class} - #{e.message}"
+      Rails.logger.error e.backtrace.first(3).join("\n")
+    end
+  else
+    Rails.logger.info "No images attached or images array is empty"
+  end
+
+  # フォールバック
+  Rails.logger.info "Using default image"
+  view_context.image_url("ogp.png")
+end
+
 
 def generate_ogp_image_url(gift_record)
   return default_ogp_image_url unless gift_record&.item_name.present?
