@@ -854,6 +854,8 @@ class GiftRecordsController < ApplicationController
                 }
 end
 
+
+
 private
 
 def generate_ogp_image_url(gift_record)

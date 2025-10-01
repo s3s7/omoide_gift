@@ -55,7 +55,8 @@ class GiftRecord < ApplicationRecord
     case
     when suitable_ogp_images.any?
       :use_suitable_uploaded_image
-    when images.attached? && images.any?
+    # 実体のある画像のみを判定対象にする（削除直後の残骸などを除外）
+    when valid_image_attachments.any?
       :use_first_image_resized
     # when item_name.present?
     #   :generate_dynamic_text_image
@@ -151,9 +152,10 @@ class GiftRecord < ApplicationRecord
 
   # OGP用リサイズ画像
   def ogp_resized_image
-    return nil unless images.attached? && images.any?
+    attachment = valid_image_attachments.first
+    return nil unless attachment
 
-    images.first.variant(
+    attachment.variant(
       resize_to_fill: [ 1200, 630 ],
       format: :png,
       background: "white",
@@ -163,9 +165,7 @@ class GiftRecord < ApplicationRecord
 
   # 最初の画像をリサイズして使用
   def handle_first_image_resized(request)
-    return handle_default_image(request) unless images.attached?
-
-    first_attachment = images.attachments.first
+    first_attachment = valid_image_attachments.first
     return handle_default_image(request) unless first_attachment
 
     begin
@@ -199,7 +199,7 @@ class GiftRecord < ApplicationRecord
 
   # OGPに適した画像の抽出
   def suitable_ogp_images
-    @suitable_ogp_images ||= images.select { |img| image_suitable_for_ogp?(img) }
+    @suitable_ogp_images ||= valid_image_attachments.select { |img| image_suitable_for_ogp?(img) }
   end
 
   # 生成OGPの作成と添付（S3へ）
@@ -352,15 +352,34 @@ class GiftRecord < ApplicationRecord
   end
 
   def has_images?
-    images.attached? && images.any?
+    valid_image_attachments.any?
   end
 
   def images_count
-    images.attached? ? images.count : 0
+    valid_image_attachments.count
   end
 
   def comments_allowed?
     commentable?
+  end
+
+  # 実体のある画像添付のみを返すユーティリティ
+  # - blobが存在し、MIMEがimage/*、サイズ>0 を満たすもの
+  # - 遅延パージや不完全な添付を除外
+  def valid_image_attachments
+    return [] unless images.attached?
+
+    images.attachments.select do |attachment|
+      begin
+        blob = attachment.blob
+        blob.present? &&
+          blob.content_type.to_s.start_with?("image/") &&
+          blob.byte_size.to_i > 0
+      rescue => e
+        Rails.logger.warn "無効な画像添付を除外: #{e.class}: #{e.message} (attachment_id=#{attachment.id})"
+        false
+      end
+    end
   end
 
  # OGPに適した画像かどうかの判定
