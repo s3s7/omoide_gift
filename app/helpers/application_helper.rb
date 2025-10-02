@@ -12,7 +12,7 @@ module ApplicationHelper
     description = options[:description]
     keywords = options[:keywords]
     # Fallback image must exist and be absolute. Use the base OGP image.
-    image = options[:image].presence || image_url("ogp.png")
+    image = options[:image].presence || image_url("default_gift.webp")
     configs = {
       separator: "|",
       reverse: true,
@@ -22,7 +22,7 @@ module ApplicationHelper
       keywords:,
       canonical: request.original_url,
       icon: {
-        href: image_url("ogp.png")
+        href: image_url("default_gift.webp")
       },
       og: {
         type: "website",
@@ -81,13 +81,13 @@ module ApplicationHelper
         description: :description,
         type: "website",
         url: request.original_url,
-        image: image_url("ogp.png"),
+        image: image_url("default_gift.webp"),
         locale: "ja_JP"
       },
       twitter: {
         card: "summary_large_image",
         site: "@",
-        image: image_url("ogp.png")
+        image: image_url("default_gift.webp")
       }
     }
   end
