@@ -3,8 +3,6 @@ class GiftRecordsController < ApplicationController
   before_action :set_gift_record, only: [ :show, :edit, :update, :destroy ]
   before_action :ensure_owner, only: [ :edit, :update, :destroy ]
   before_action :ensure_accessible, only: [ :show ]
-  ## 設定したprepare_meta_tagsをprivateにあってもgiftrecordコントローラー以外にも使えるようにする
-  helper_method :prepare_meta_tags
   before_action :setup_meta_tags, only: [ :show ]
 
   def index
@@ -343,8 +341,6 @@ class GiftRecordsController < ApplicationController
   def show
     # セキュリティ: set_gift_recordとensure_accessibleで処理済み
     # コメントも事前読み込み済み（set_gift_recordで処理）
-    ## メタタグを設定する。
-    # prepare_meta_tags(@gift_record)
   end
 
   def edit
@@ -766,98 +762,6 @@ class GiftRecordsController < ApplicationController
     text.length > length ? "#{text[0..length-1]}..." : text
   end
 
-  # def prepare_meta_tags(gift_record)
-  #   return unless gift_record
-
-  #   # アイテム名をOGP画像のテキストに使用
-  #   ogp_text = gift_record.item_name.presence || "ギフト記録"
-  #   image_url = "#{request.base_url}/images/ogp.png?text=#{CGI.escape(ogp_text)}"
-  #   page_title = "#{gift_record.item_name} - ギフト記録"
-
-  #   # メタタグを設定
-  #   set_meta_tags title: page_title,
-  #                 og: {
-  #                   site_name: 'おもいでギフト',
-  #                   title: page_title,
-  #                   type: 'article',
-  #                   url: request.original_url,
-  #                   image: image_url,
-  #                   image_width: 1200,
-  #                   image_height: 630,
-  #                   locale: 'ja_JP'
-  #                 },
-  #                 twitter: {
-  #                   card: 'summary_large_image',
-  #                   title: page_title,
-  #                   image: image_url
-  #                 }
-  # end
-  # def prepare_meta_tags(gift_record)
-  #   return unless gift_record
-
-  #   ## このimage_urlにMiniMagickで設定したOGPの生成した合成画像を代入する
-  #   image_url = "#{request.base_url}/images/ogp.png?text=#{CGI.escape(gift_record.item_name)}"
-  #   page_title = "#{gift_record.item_name} - ギフト記録"
-  #   page_description = "#{gift_record.item_name}のギフト記録です。"
-
-  #   set_meta_tags title: page_title,
-  #                 description: page_description,
-  #                 og: {
-  #                   site_name: "思い出ギフト",
-  #                   title: page_title,
-  #                   description: page_description,
-  #                   type: "website",
-  #                   url: request.original_url,
-  #                   image: image_url,
-  #                   image_width: 1200,
-  #                   image_height: 630,
-  #                   locale: "ja_JP"
-  #                 },
-  #                 twitter: {
-  #                   card: "summary_large_image",
-  #                   title: page_title,
-  #                   description: page_description,
-  #                   image: image_url
-  #                 }
-  # end
-
-  def prepare_meta_tags(gift_record)
-  return unless gift_record
-
-  # OGP画像: ActiveStorageの画像優先、なければ動的生成をS3保存
-  image_url = gift_record.ogp_image_url(request)
-  secure_image_url = image_url.present? ? image_url.to_s.sub(%r{^http://}, "https://") : nil
-  page_title = build_page_title(gift_record)
-  page_description = build_page_description(gift_record)
-  p "!!!!!!image_url:#{image_url}"
-  set_meta_tags title: page_title,
-                description: page_description,
-                canonical: request.original_url,
-                keywords: build_keywords(gift_record),
-                 og: {
-                  site_name: "思い出ギフト",
-                  title: page_title,
-                  description: page_description,
-                  type: "website",
-                  url: request.original_url,
-                  image: image_url,
-                  image_secure_url: image_url,
-                  image_width: 1200,
-                  image_height: 630,
-                  locale: "ja_JP"
-                },
-                twitter: {
-                  card: "summary_large_image",
-                  site: "@your_twitter_handle", # Twitterアカウントがあれば
-                  title: page_title,
-                  description: page_description,
-                  image: image_url
-                }
-end
-
-
-
-
 private
 
 def setup_meta_tags
@@ -882,22 +786,6 @@ def setup_meta_tags
       }
     )
   end
-
-
-#  def gift_record_image_url(gift_record)
-#     if gift_record.images.attached?
-#       p "!!!!!!gift_record_image_url "
-#       Rails.application.routes.url_helpers.rails_blobs_url(
-#         gift_record.images,
-#         host: request.host_with_port,
-#         protocol: request.protocol
-#       )
-#     else
-#         p "!!!!!!gift_record_image_url view_context"
-
-#       view_context.image_url("ogp.png")
-#     end
-#   end
 
 def gift_record_image_url(gift_record)
   Rails.logger.info "=== gift_record_image_url Debug ==="
