@@ -65,39 +65,6 @@ class GiftRecord < ApplicationRecord
     end
   end
 
-  # # OGP画像URLの取得（S3保存を含む）
-  # def ogp_image_url(request)
-  #   p "!!!ogp_image_url"
-  #   helpers = Rails.application.routes.url_helpers
-  #   p "!!!ogp_image_url"
-  #   case ogp_strategy
-  #   when :use_suitable_uploaded_image
-  #     # アップロード済みでOGPに適した画像を使用
-  #     helpers.rails_blob_url(suitable_ogp_images.first, host: request.base_url)
-  #     p "!!!use_suitable_uploaded_image"
-  #   when :use_first_image_resized
-  #     # 最初の画像をOGPサイズにリサイズ
-  #     variant = ogp_resized_image
-  #     return default_ogp_fallback_url(request) unless variant
-  #     helpers.rails_representation_url(variant.processed, host: request.base_url)
-  #     p "!!!use_first_image_resized"
-
-  #   when :generate_dynamic_text_image
-  #     p "!!!generate_dynamic_text_image"
-  #     # 動的にテキスト画像を生成しS3に保存
-  #     ensure_generated_ogp!
-  #     if ogp_image.attached?
-  #       helpers.rails_blob_url(ogp_image, host: request.base_url)
-  #     else
-  #       default_ogp_fallback_url(request)
-  #     end
-  #   when :use_default_image
-  #     p "!!!use_default_image"
-  #     # デフォルト画像を使用
-  #     default_ogp_fallback_url(request)
-  #   end
-  # end
-
   def ogp_image_url(request)
     p "!!!getting helpers"
 
