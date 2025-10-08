@@ -45,7 +45,7 @@
       <% gift_record = favorite.gift_record %>
       <% next unless gift_record.present? %>
       
-      <div class="card bg-white shadow-md compact hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 gift-record-card-fixed" onclick="window.location.href='<%= gift_record_path(gift_record) %>'" style="cursor: pointer; width: 200px !important; min-width: 200px !important; max-width: 200px !important;">
+      <div class="card bg-white shadow-md compact hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 gift-record-card-fixed" onclick="window.location.href='<%= gift_record_path(gift_record, origin: 'favorites') %>'" style="cursor: pointer; width: 200px !important; min-width: 200px !important; max-width: 200px !important;">
         <div class="h-48 sm:h-52 md:h-56 lg:h-52 xl:h-56 bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center relative">
           <div class="text-center">
             <div class="w-16 h-16 sm:w-18 sm:h-18 lg:w-18 lg:h-18 xl:w-20 xl:h-20 mx-auto mb-2 sm:mb-3 bg-white rounded-full flex items-center justify-center shadow-sm">
@@ -154,4 +154,3 @@
   </div>
 <% end %>
 </div>
-
