@@ -14,4 +14,3 @@ class EnqueueDueRemindsJob < ApplicationJob
     Rails.logger.error "EnqueueDueRemindsJob error: #{e.class}: #{e.message}"
   end
 end
-

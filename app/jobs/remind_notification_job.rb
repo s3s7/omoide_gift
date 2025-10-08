@@ -13,4 +13,3 @@ class RemindNotificationJob < ApplicationJob
     Rails.logger.error "RemindNotificationJob error: remind_id=#{remind_id} #{e.class}: #{e.message}"
   end
 end
-
