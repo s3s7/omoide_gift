@@ -1,60 +1,53 @@
 <% content_for(:title, "マイページ") %>
 <!-- メインコンテナ - 中央寄せ -->
-<div class="max-w-6xl mx-auto" data-controller="user-profile">
+<div class="max-w-6xl mx-auto"data-controller="user-profile">
   <!-- ヘッダー部分 -->
   <div class="mb-6 mt-4">
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center">
-        <h2 class="text-2xl font-bold text-gray-800">
-          <i class="fas fa-user-circle mr-2 text-primary"></i>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+      <div class="flex items-center w-full sm:w-auto justify-center sm:justify-start">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 text-center sm:text-left">
           マイページ
         </h2>
       </div>
-      
+
       <!-- 操作ボタン -->
-      <div class="flex space-x-3">
-        <!-- 管理者専用リンク -->
-        <% if current_user_admin? %>
-          <%= link_to admin_root_path,
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
-            <i class="fas fa-shield-alt mr-2"></i>
-            管理者画面
-          <% end %>
-        <% end %>
-        
+      <div class="w-full sm:w-auto flex flex-col sm:flex-row flex-wrap items-center gap-2 sm:gap-3">
         <%= link_to mypage_edit_path,
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
+            class: "inline-flex items-center px-3 sm:px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mx-auto sm:mx-0" do %>
           <i class="fas fa-edit mr-2"></i>
           プロフィール編集
         <% end %>
-        
-        <%= link_to new_gift_record_path,
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
-          <i class="fas fa-plus mr-2"></i>
-          新しいギフト記録
+
+        <!-- 管理者専用リンク（右寄せ） -->
+        <% if current_user_admin? %>
+          <%= link_to admin_root_path,
+              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 self-end sm:self-auto sm:ml-auto" do %>
+            <i class="fas fa-shield-alt mr-2"></i>
+            管理者画面
+          <% end %>
         <% end %>
       </div>
     </div>
 
     <!-- ユーザー情報カード -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6 w-full max-w-4xl mx-auto"
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 sm:p-6 mb-6 w-full max-w-4xl mx-auto"
          data-user-profile-target="card"
          data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
       <!-- ユーザー基本情報 -->
       <div class="flex items-center mb-6">
-        <div class="w-16 h-16 mr-4 relative">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 mr-4 relative">
           <% if @user.has_avatar? && display_avatar(@user, :medium) %>
             <%= image_tag display_avatar(@user, :medium), 
-                class: "w-16 h-16 rounded-full object-cover border-4 border-primary-light shadow-md" %>
+                class: "w-full h-full rounded-full object-cover border-4 border-primary-light shadow-md" %>
           <% else %>
-            <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center border-4 border-primary-light shadow-md">
+            <div class="w-full h-full bg-pink-100 rounded-full flex items-center justify-center border-4 border-primary-light shadow-md">
               <i class="fas fa-user text-2xl text-primary"></i>
             </div>
           <% end %>
         </div>
         <div class="flex-1">
-          <h3 class="text-xl font-semibold text-gray-800"><%= @user.display_name %></h3>
-          <p class="text-gray-600"><%= @user.display_email %></p>
+          <h3 class="text-lg sm:text-xl font-semibold text-gray-800"><%= @user.display_name %></h3>
+          <p class="text-gray-600 break-words"><%= @user.display_email %></p>
           <% if @user.fake_email? && @user.line_connected? %>
             <div class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
               <span class="text-yellow-800 text-sm font-medium">
@@ -86,9 +79,9 @@
       </div>
       
       <!-- 統計情報 -->
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <!-- 総ギフト数 -->
-        <div class="bg-pink-50 rounded-lg p-4">
+        <div class="bg-pink-50 rounded-lg p-3 sm:p-4">
           <div class="flex items-center">
             <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-gift text-primary"></i>
@@ -101,7 +94,7 @@
         </div>
 
         <!-- ギフト相手 -->
-        <div class="bg-blue-50 rounded-lg p-4">
+        <div class="bg-blue-50 rounded-lg p-3 sm:p-4">
           <div class="flex items-center">
             <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-users text-blue-600"></i>
@@ -114,7 +107,7 @@
         </div>
 
         <!-- 今年のギフト -->
-        <div class="bg-purple-50 rounded-lg p-4">
+        <div class="bg-purple-50 rounded-lg p-3 sm:p-4">
           <div class="flex items-center">
             <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-calendar-alt text-purple-600"></i>
@@ -127,7 +120,7 @@
         </div>
 
         <!-- 記念日リマインダー -->
-        <div class="bg-orange-50 rounded-lg p-4">
+        <div class="bg-orange-50 rounded-lg p-3 sm:p-4">
           <div class="flex items-center">
             <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-bell text-orange-600"></i>
@@ -140,7 +133,7 @@
         </div>
 
         <!-- 今後の記念日 -->
-        <div class="bg-yellow-50 rounded-lg p-4">
+        <div class="bg-yellow-50 rounded-lg p-3 sm:p-4">
           <div class="flex items-center">
             <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-clock text-yellow-600"></i>
@@ -153,7 +146,7 @@
         </div>
 
         <!-- お気に入り -->
-        <div class="bg-green-50 rounded-lg p-4">
+        <div class="bg-green-50 rounded-lg p-3 sm:p-4">
           <div class="flex items-center">
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
               <i class="fas fa-heart text-green-600"></i>
@@ -202,7 +195,7 @@
   <!-- メインコンテンツ -->
   <div class="max-w-2xl mx-auto space-y-8 mb-8">
     <!-- アカウント管理 -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6"
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 sm:p-6"
          data-user-profile-target="card"
          data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
       <h3 class="text-lg font-medium text-gray-800 mb-4">
@@ -290,7 +283,7 @@
       <% if @popular_gift_people.any? %>
         <div class="space-y-3">
           <% @popular_gift_people.each_with_index do |person, index| %>
-            <div class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            <div class="flex items-center p-2 sm:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                  data-user-profile-target="monthlyRow"
                  data-action="mouseenter->user-profile#monthlyRowMouseEnter mouseleave->user-profile#monthlyRowMouseLeave">
               <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
@@ -327,7 +320,7 @@
     </div>
 
     <!-- 公開設定統計 -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6"
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 sm:p-6"
          data-user-profile-target="card"
          data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
       <h3 class="text-lg font-medium text-gray-800 mb-4">
@@ -336,7 +329,7 @@
       </h3>
       
       <div class="space-y-4">
-        <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+        <div class="flex items-center justify-between p-2 sm:p-3 bg-green-50 rounded-lg">
           <div class="flex items-center">
             <i class="fas fa-globe text-green-600 mr-2"></i>
             <span class="font-medium text-gray-800">公開ギフト記録</span>
@@ -344,7 +337,7 @@
           <span class="text-lg font-bold text-green-600"><%= @public_records_count %>件</span>
         </div>
         
-        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div class="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
           <div class="flex items-center">
             <i class="fas fa-lock text-gray-600 mr-2"></i>
             <span class="font-medium text-gray-800">非公開ギフト記録</span>
@@ -360,7 +353,7 @@
     </div>
 
     <!-- 今後の記念日 -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6"
+    <div class="bg-white rounded-lg shadow-md border border-gray-200 p-4 sm:p-6"
          data-user-profile-target="card"
          data-action="mouseenter->user-profile#cardMouseEnter mouseleave->user-profile#cardMouseLeave">
       <div class="flex items-center justify-between mb-4">
@@ -374,7 +367,7 @@
       <% if @upcoming_reminds.any? %>
         <div class="space-y-3">
           <% @upcoming_reminds.each do |remind| %>
-            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            <div class="flex items-center justify-between p-2 sm:p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                  data-user-profile-target="monthlyRow"
                  data-action="mouseenter->user-profile#monthlyRowMouseEnter mouseleave->user-profile#monthlyRowMouseLeave">
               <div class="flex-1">
