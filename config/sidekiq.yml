@@ -2,8 +2,8 @@
 :queues:
   - default
 :schedule:
-  remind_notification_worker:
+  enqueue_due_reminds_job:
     cron: "* * * * *"
-    class: "RemindNotificationWorker"
+    class: "EnqueueDueRemindsJob"
     queue: default
-    description: "Send due LINE reminders every minute"
+    description: "Enqueue due LINE reminders every minute"
