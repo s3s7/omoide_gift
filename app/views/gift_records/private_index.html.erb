@@ -177,7 +177,7 @@
     <!-- カードグリッドレイアウト（レスポンシブ対応） -->
     <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-2 md:gap-3 lg:gap-4 justify-items-center">
       <% @gift_records.each do |record| %>
-        <div class="gift-card-container bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2 relative" onclick="window.location.href='<%= gift_record_path(record) %>'" style="cursor: pointer;">
+        <div class="gift-card-container bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2 relative" onclick="window.location.href='<%= gift_record_path(record, @pagination_params.merge(page: params[:page], origin: 'private')) %>'" style="cursor: pointer;">
           <!-- 非公開インジケーター -->
           <div class="absolute top-2 right-2 z-10">
             <div class="bg-gray-600 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center">

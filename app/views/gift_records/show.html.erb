@@ -1,19 +1,34 @@
 <%# ギフト記録詳細ページ %>
 <% content_for(:title, "#{@gift_record.display_item_name} - ギフト記録詳細") %>
 <!-- メインコンテナ - 中央寄せ -->
-<div class="max-w-6xl mx-auto">
+<div class="max-w-6xl mx-auto w-full">
+  <%# 一覧への戻り先を判定 %>
+  <% back_params = (@pagination_params || {}).dup %>
+  <% back_params[:page] = params[:page] if params[:page].present? %>
+  <% back_link_path = case params[:origin]
+     when 'my' then my_index_gift_records_path(back_params)
+     when 'private' then private_index_gift_records_path(back_params)
+     when 'favorites' then favorites_path
+     else gift_records_path(back_params)
+     end %>
+  <% list_label = case params[:origin]
+     when 'my' then '自分のギフト'
+     when 'favorites' then 'お気に入り一覧'
+     when 'private' then '非公開ギフト記録一覧'
+     else 'みんなのギフト'
+     end %>
   <!-- パンくずナビ -->
   <nav class="flex mb-6" aria-label="Breadcrumb">
     <ol class="inline-flex items-center space-x-1 md:space-x-3">
       <li class="inline-flex items-center">
-        <%= link_to gift_records_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary" do %>
+        <%= link_to back_link_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary" do %>
           <i class="fas fa-home mr-2"></i>
-          ギフト記録一覧
+          <%= list_label %>
         <% end %>
       </li>
+         <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
       <li>
         <div class="flex items-center">
-          <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
           <span class="text-sm font-medium text-gray-700">
             <%= truncate(@gift_record.display_item_name, length: 20) %>
           </span>
@@ -22,7 +37,7 @@
     </ol>
   </nav>
   <!-- メインコンテンツ -->
-  <div class="bg-white shadow-lg rounded-lg overflow-hidden mt-6">
+<div class="bg-white shadow-lg rounded-lg overflow-hidden mt-8 w-full">
     <!-- ヘッダー -->
     <div class="px-6 py-4 text-white" style="background-color: #FC913A;">
       <div class="flex justify-between items-start">
@@ -64,7 +79,8 @@
             基本情報
           </h2>
           
-          <div class="space-y-4">
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div class="space-y-4">
 
               <!-- イベント -->
             <% if @gift_record.event.present? %>
@@ -123,6 +139,7 @@
               </div>
             </div>
 
+            </div>
           </div>
         </div>
 
@@ -322,8 +339,8 @@
         <div class="flex items-center space-x-4">
 
 
-          <%= link_to gift_records_path, 
-              class: "inline-flex items-center text-primary hover:text-primary-hover font-medium" do %>
+          <%= link_to back_link_path, 
+               class: "inline-flex items-center text-primary hover:text-primary-hover font-medium" do %>
             <i class="fas fa-arrow-left mr-1"></i>
             一覧に戻る
           <% end %>

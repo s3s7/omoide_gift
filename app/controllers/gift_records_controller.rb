@@ -4,6 +4,7 @@ class GiftRecordsController < ApplicationController
   before_action :ensure_owner, only: [ :edit, :update, :destroy ]
   before_action :ensure_accessible, only: [ :show ]
   before_action :setup_meta_tags, only: [ :show ]
+  before_action :prepare_pagination_params, only: [ :show ]
 
   def index
     base_query = build_base_query
@@ -724,7 +725,9 @@ class GiftRecordsController < ApplicationController
       :sort_by,
       :sort_order,
       :filter_type,
-      :filter_value
+      :filter_value,
+      :page,
+      :origin
     ).to_h
   end
 
