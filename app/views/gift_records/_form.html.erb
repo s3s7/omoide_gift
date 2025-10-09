@@ -59,7 +59,7 @@
           ",
           id: "gift_record_event_id",
           required: true,
-          data: { gift_records_target: "eventSelect", event_selector_target: "select", action: "change->gift-records#stopEvent click->gift-records#stopEvent" }
+          data: { gift_records_target: "eventSelect", event_selector_target: "select", action: "pointerdown->gift-records#stopEvent touchstart->gift-records#stopEvent click->gift-records#stopEvent change->gift-records#stopEvent" }
         } %>
     
     <!-- ヘルプテキスト -->
@@ -147,7 +147,7 @@
           required: true,
           data: { 
             gift_records_target: "giftPeopleSelect",
-            action: "change->gift-records#giftPersonChanged change->gift-records#stopEvent click->gift-records#stopEvent"
+            action: "pointerdown->gift-records#stopEvent touchstart->gift-records#stopEvent change->gift-records#giftPersonChanged change->gift-records#stopEvent click->gift-records#stopEvent"
           }
         } %>
 
@@ -242,7 +242,7 @@
                 color: black;
               ",
               id: "gift_person_relationship_id",
-              data: { action: "change->gift-records#stopEvent click->gift-records#stopEvent" }
+              data: { action: "pointerdown->gift-records#stopEvent touchstart->gift-records#stopEvent change->gift-records#stopEvent click->gift-records#stopEvent" }
             } %>
       </div>
       
@@ -546,7 +546,7 @@
               color: black;
             ",
             id: "gift_record_gift_item_category_id",
-            data: { action: "change->gift-records#stopEvent click->gift-records#stopEvent" }
+            data: { action: "pointerdown->gift-records#stopEvent touchstart->gift-records#stopEvent change->gift-records#stopEvent click->gift-records#stopEvent" }
           }
     %>
 
