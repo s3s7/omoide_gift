@@ -40,6 +40,15 @@ export default class extends Controller {
     this.initializeFormValidation()
   }
 
+  // 共通: 不要なバブリングを抑止（モバイルでの二重発火対策）
+  stopEvent(event) {
+    if (event) {
+      if (typeof event.stopPropagation === 'function') event.stopPropagation()
+      // iOS/Safari でのネイティブ UI 操作時の不意な既定動作抑止は避ける
+      // ここでは preventDefault は行わず、バブリングのみ止める
+    }
+  }
+
   // ギフト相手選択の初期化
   initializeGiftPersonFields() {
     if (this.hasGiftPeopleSelectTarget && this.hasNewGiftPersonFieldsTarget) {
