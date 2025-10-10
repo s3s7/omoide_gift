@@ -43,7 +43,8 @@
                 ["選択してください", ""],
                 ["ギフト相手", "gift_person"],
                 ["関係性", "relationship"],
-                ["イベント", "event"]
+                ["イベント", "event"],
+                ["公開設定", "is_public"]
               ], params[:filter_type]),
               {},
               { 
@@ -89,6 +90,21 @@
                 id: "event-select",
                 data: { "dynamic-filter-target": "eventSelect" },
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'event' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
+              } %>
+
+          <!-- 公開設定選択プルダウン -->
+          <%= f.select :is_public,
+              options_for_select([
+                ["すべて", ""],
+                ["公開", "public"],
+                ["非公開", "private"]
+              ], params[:is_public]),
+              {},
+              {
+                id: "public-select",
+                data: { "dynamic-filter-target": "publicSelect" },
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'is_public' ? '' : 'hidden'}",
                 style: "background-color: white; color: black;"
               } %>
           
