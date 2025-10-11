@@ -558,6 +558,15 @@ class GiftRecordsController < ApplicationController
     end
 
     query = query.where(event_id: params[:event_id]) if params[:event_id].present?
+    # 公開設定フィルタ（my_index などで使用）
+    if params[:is_public].present?
+      case params[:is_public]
+      when "public"
+        query = query.where(is_public: true)
+      when "private"
+        query = query.where(is_public: false)
+      end
+    end
     query = query.where("gift_at >= ?", params[:date_from]) if params[:date_from].present?
     query = query.where("gift_at <= ?", params[:date_to]) if params[:date_to].present?
 

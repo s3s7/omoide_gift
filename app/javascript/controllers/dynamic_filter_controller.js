@@ -7,6 +7,7 @@ export default class extends Controller {
     "giftPersonSelect",
     "relationshipSelect",
     "eventSelect",
+    "publicSelect",
     "placeholder"
   ]
 
@@ -24,6 +25,7 @@ export default class extends Controller {
     if (this.hasGiftPersonSelectTarget) this.hide(this.giftPersonSelectTarget)
     if (this.hasRelationshipSelectTarget) this.hide(this.relationshipSelectTarget)
     if (this.hasEventSelectTarget) this.hide(this.eventSelectTarget)
+    if (this.hasPublicSelectTarget) this.hide(this.publicSelectTarget)
     if (this.hasPlaceholderTarget) this.hide(this.placeholderTarget)
 
     // 種類ごとに表示し、無関係なフィールドをクリア
@@ -32,22 +34,32 @@ export default class extends Controller {
       if (this.hasGiftPersonSelectTarget) this.show(this.giftPersonSelectTarget)
       if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
       if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
+      if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
     } else if (selectedType === "relationship") {
       // 関係性のセレクトのみ表示
       if (this.hasRelationshipSelectTarget) this.show(this.relationshipSelectTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
       if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
+      if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
     } else if (selectedType === "event") {
       // イベントのセレクトのみ表示
       if (this.hasEventSelectTarget) this.show(this.eventSelectTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
       if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
+    } else if (selectedType === "is_public") {
+      // 公開設定のセレクトのみ表示
+      if (this.hasPublicSelectTarget) this.show(this.publicSelectTarget)
+      if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
+      if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
     } else {
       // フィルタ未選択
       if (this.hasPlaceholderTarget) this.show(this.placeholderTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
       if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
       if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
+      if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
     }
   }
 
