@@ -4,7 +4,9 @@ Rails.application.routes.draw do
   get "images/ogp.png", to: "images#ogp", as: "images_ogp"
 
   devise_for :users, controllers: {
-    omniauth_callbacks: "omniauth_callbacks"
+    omniauth_callbacks: "omniauth_callbacks",
+    sessions: "users/sessions",
+    registrations: "users/registrations"
   }
   # User mypage routes
   get "mypage", to: "users#show"
