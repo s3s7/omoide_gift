@@ -561,9 +561,9 @@ class GiftRecordsController < ApplicationController
     # 公開設定フィルタ（my_index などで使用）
     if params[:is_public].present?
       case params[:is_public]
-      when 'public'
+      when "public"
         query = query.where(is_public: true)
-      when 'private'
+      when "private"
         query = query.where(is_public: false)
       end
     end
