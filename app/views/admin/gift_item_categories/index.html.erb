@@ -158,7 +158,36 @@
               </td>
 
               <!-- アクション -->
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <!-- 順序変更ボタン -->
+                <% unless category.position == 1 %>
+                  <%= button_to move_up_admin_gift_item_category_path(category),
+                      method: :patch,
+                      class: "text-orange-600 hover:text-orange-900 border-0 bg-transparent p-0 cursor-pointer",
+                      form: { style: "display: inline;" },
+                      title: "上に移動" do %>
+                    <i class="fas fa-chevron-up"></i>
+                  <% end %>
+                <% else %>
+                  <span class="text-gray-300" title="最上位のため上に移動できません">
+                    <i class="fas fa-chevron-up"></i>
+                  </span>
+                <% end %>
+
+                <% unless category.position == GiftItemCategory.maximum(:position) %>
+                  <%= button_to move_down_admin_gift_item_category_path(category),
+                      method: :patch,
+                      class: "text-orange-600 hover:text-orange-900 border-0 bg-transparent p-0 cursor-pointer",
+                      form: { style: "display: inline;" },
+                      title: "下に移動" do %>
+                    <i class="fas fa-chevron-down"></i>
+                  <% end %>
+                <% else %>
+                  <span class="text-gray-300" title="最下位のため下に移動できません">
+                    <i class="fas fa-chevron-down"></i>
+                  </span>
+                <% end %>
+
                 <%= link_to "編集", edit_admin_gift_item_category_path(category), 
                     class: "text-blue-600 hover:text-blue-900" %>
               </td>

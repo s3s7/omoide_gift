@@ -56,7 +56,12 @@ Rails.application.routes.draw do
         patch :move_down
       end
     end
-    resources :gift_item_categories, except: [ :show ]
+    resources :gift_item_categories, except: [ :show ] do
+      member do
+        patch :move_up
+        patch :move_down
+      end
+    end
 
     # システム統計
     get "statistics", to: "statistics#index"
