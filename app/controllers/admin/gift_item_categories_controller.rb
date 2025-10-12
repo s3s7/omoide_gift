@@ -1,9 +1,9 @@
 # 管理者用ギフトアイテムカテゴリ管理コントローラー
 class Admin::GiftItemCategoriesController < Admin::BaseController
-  before_action :set_gift_item_category, only: [ :edit, :update, :destroy ]
+  before_action :set_gift_item_category, only: [ :edit, :update, :destroy, :move_up, :move_down ]
 
   def index
-    @gift_item_categories = GiftItemCategory.order(:name).page(params[:page]).per(per_page)
+    @gift_item_categories = GiftItemCategory.ordered.page(params[:page]).per(per_page)
     log_admin_action("ギフトカテゴリ一覧表示")
   end
 
@@ -46,6 +46,26 @@ class Admin::GiftItemCategoriesController < Admin::BaseController
       log_admin_action("ギフトカテゴリ削除", "GiftItemCategory", @gift_item_category.id, @gift_item_category.name)
     else
       admin_flash_error("ギフトカテゴリの削除に失敗しました。")
+    end
+    redirect_to admin_gift_item_categories_path
+  end
+
+  def move_up
+    if @gift_item_category.move_up!
+      admin_flash_success("「#{@gift_item_category.name}」の順序を上に移動しました。")
+      log_admin_action("ギフトカテゴリ順序変更（上）", "GiftItemCategory", @gift_item_category.id)
+    else
+      admin_flash_error("順序の変更に失敗しました。")
+    end
+    redirect_to admin_gift_item_categories_path
+  end
+
+  def move_down
+    if @gift_item_category.move_down!
+      admin_flash_success("「#{@gift_item_category.name}」の順序を下に移動しました。")
+      log_admin_action("ギフトカテゴリ順序変更（下）", "GiftItemCategory", @gift_item_category.id)
+    else
+      admin_flash_error("順序の変更に失敗しました。")
     end
     redirect_to admin_gift_item_categories_path
   end
