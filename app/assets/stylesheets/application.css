@@ -12,7 +12,12 @@
  *
  *= require_tree .
  *= require_self
- */
+*/
+
+.\n+/* Prevent horizontal scroll on mobile */
+html, body {
+  overflow-x: hidden;
+}
 
 .header {
   background-color: #F6B352; /* ヘッダーの色を指定 */
