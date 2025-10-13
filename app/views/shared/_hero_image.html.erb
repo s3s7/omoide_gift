@@ -49,13 +49,13 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
-  /* レスポンシブ対応 - 縦幅を大幅に拡大 */
+  /* レスポンシブ対応 */
   @media (max-width: 640px) {
-    /* モバイルは動的ビューポートを使用して全画面表示に近づける */
+    /* モバイルはヒーロー画像を小さめに */
     .hero-image-section .hero-container {
-      height: 100dvh !important;
-      min-height: 100dvh !important;
-      max-height: none !important;
+      height: 45dvh !important;
+      min-height: 220px !important;
+      max-height: 420px !important;
     }
     /* フルブリードのマージンハックを解除してはみ出しを防止 */
     .hero-image-section {
