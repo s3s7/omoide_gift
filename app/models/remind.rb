@@ -214,7 +214,7 @@ class Remind < ApplicationRecord
     duplicate_query = duplicate_query.where.not(id: id) if persisted?
 
     if duplicate_query.exists?
-      errors.add(:notification_at, "この相手の記念日は既に登録されています")
+      errors.add(:base, "この相手の記念日は同じ日に既に登録されています")
     end
   end
 end

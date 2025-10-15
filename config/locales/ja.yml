@@ -1,15 +1,4 @@
 ja:
-  activerecord:
-    models:
-      remind: リマインダー
-    attributes:
-      remind:
-        notification_sent_at: 通知予定日時
-        notification_at: 記念日
-        gift_person: ギフト相手
-        gift_person_id: ギフト相手
-        notification_days_before: 通知日数
-        notification_time: 通知時刻
   meta_tags:
     defaults:
       site: "思い出ギフト"
