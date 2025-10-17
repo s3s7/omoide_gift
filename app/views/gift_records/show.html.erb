@@ -358,7 +358,7 @@
               "👥 関係性: #{relationship_name}",
               "📅 イベント: #{event_name}",
               "",
-              ["#思い出ギフト", "#ギフト記録", "#プレゼント", (event_tag.present? ? "##{event_tag}" : nil)].compact.join(' ')
+              ["#めぐりギフト", "#ギフト記録", "#プレゼント", (event_tag.present? ? "##{event_tag}" : nil)].compact.join(' ')
             ].join("\n") %>
           <% x_intent_url = "https://x.com/intent/tweet?text=#{CGI.escape(tweet_text)}&url=#{CGI.escape(gift_record_url(@gift_record))}" %>
           <%= link_to x_intent_url, target: '_blank', data: { toggle: "tooltip", placement: "bottom" }, title: "Xでシェア" do %>

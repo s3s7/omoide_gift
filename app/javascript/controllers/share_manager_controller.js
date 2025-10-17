@@ -43,7 +43,7 @@ export default class extends Controller {
       this.open()
     }
 
- 
+
     if (!this.shareGiftRecord && (this.hasItemNameValue || this.hasGiftPersonNameValue || this.hasEventNameValue || this.hasRelationshipNameValue || this.hasMemoValue)) {
       this.shareGiftRecord = {
         id: this.lastCreatedGiftRecordId,
@@ -131,7 +131,7 @@ export default class extends Controller {
   updatePreview() {
     if (!this.hasPreviewTarget) return
     const record = this.shareGiftRecord || {}
-    
+
     const html = `
       <div class=\"flex items-start space-x-3\">
         <div class=\"flex-shrink-0 w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center\">
@@ -175,7 +175,7 @@ export default class extends Controller {
     if (record.hasImage) text += "📸 画像付きの投稿です\n"
     if (record.memo) text += `📝 ${record.memo}\n`
     const eventTag = (record.eventName || "").replace(/\s+/g, "")
-    text += "\n #思い出ギフト #ギフト記録 #プレゼント"
+    text += "\n #めぐりギフト #ギフト記録 #プレゼント"
     if (eventTag) text += ` #${eventTag}`
     return text
   }
