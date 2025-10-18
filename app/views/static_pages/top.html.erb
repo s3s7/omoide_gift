@@ -1,23 +1,22 @@
-<% content_for(:title, "思い出ギフト") %>
-<% content_for(:twitter_description, "思い出ギフトで、あなたの贈り物を記録し、素敵な思い出を残しましょう。誰かの定番が誰かの特別なギフトに。") %>
+<% content_for(:title, "めぐりギフト") %>
+<% content_for(:twitter_description, "めぐりギフトで、あなたの贈り物を記録し、素敵な思い出を残しましょう。誰かの定番が誰かの特別なギフトに。") %>
 <% content_for(:twitter_image) do %>
 <%
   begin
-    asset_url('Group 6.png')
+    asset_url('default_gift.webp')
   rescue => e
-    Rails.logger.error "Asset path resolution failed for image 26.png: #{e.message}"
-    "#{request.base_url}/assets/gift-card-image.png"
+    Rails.logger.error "Asset path resolution failed for Group 6.png: #{e.message}"
+    "#{request.base_url}/assets/default_gift.webp"
   end
 %>
 <% end %>
 
 <!-- ヒーローセクション -->
-<%# <div class="container mx-auto px-4 py-16 bg-gradient-to-r rounded-lg  max-w-5xl"> %>
   <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-gradient-to-r rounded-lg">
   <!-- サービス説明テキスト -->
   <div class="text-center mb-12">
     <p class="text-xl text-black max-w-3xl mx-auto">
-      思い出ギフトは自分が贈ったギフトを記録し
+      めぐりギフトは自分が贈ったギフトを記録し
       <br>思い出を振り返るとともにギフト選びのサポートをするサービスです。
     </p>
   </div
@@ -74,7 +73,7 @@
 <div class="w-full mb-12">
   <!-- セクション見出し -->
   <div class="text-center mb-8">
-    <h2 class="text-2xl font-bold text-gray-800 tracking-wide" style="font-family: 'zen-maru-gothic', 'ヒラギノ丸ゴ ProN', sans-serif;">思い出ギフトの使い方</h2>
+    <h2 class="text-2xl font-bold text-gray-800 tracking-wide" style="font-family: 'zen-maru-gothic', 'ヒラギノ丸ゴ ProN', sans-serif;">めぐりギフトの使い方</h2>
   </div>
   
   <div class="w-full block">

@@ -778,7 +778,7 @@ private
 
 def setup_meta_tags
     description = "#{@gift_record.item_name}のギフト記録です。"
-    title =  "#{@gift_record.item_name} - 思い出ギフト"
+    title =  "#{@gift_record.item_name} - めぐりギフト"
 
     set_meta_tags(
       title: title,
@@ -848,7 +848,7 @@ def generate_ogp_image_url(gift_record)
 end
 
 def build_page_title(gift_record)
-  "#{gift_record.item_name} - 思い出ギフト"
+  "#{gift_record.item_name} - めぐりギフト"
 end
 
 def build_page_description(gift_record)
