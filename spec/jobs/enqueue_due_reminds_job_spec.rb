@@ -47,4 +47,3 @@ RSpec.describe EnqueueDueRemindsJob, type: :job do
     expect(enqueued_ids).not_to include(already_sent.id)
   end
 end
-

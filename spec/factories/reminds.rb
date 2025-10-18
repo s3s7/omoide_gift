@@ -7,4 +7,3 @@ FactoryBot.define do
     is_sent { false }
   end
 end
-
