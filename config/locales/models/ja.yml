@@ -55,6 +55,9 @@ ja:
       image_upload: ギフト画像をアップロード
       submit: 登録
       to_gift_record_index: ギフト記録一覧へ
+    new_received:
+      title: もらったギフト登録
+      subtitle: もらったギフトを登録します
   #   edit:
   #     title: ギフト記録編集
   #     subtitle: ギフト記録を編集します
@@ -91,6 +94,7 @@ ja:
       subtitle: ギフト記録を登録します
   activerecord:
     models:
+      gift_record: ギフト記録
       remind: リマインダー
     attributes:
       remind:

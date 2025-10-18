@@ -38,4 +38,3 @@ RSpec.describe RemindNotificationJob, type: :job do
     described_class.perform_now(remind.id)
   end
 end
-

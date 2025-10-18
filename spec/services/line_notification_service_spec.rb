@@ -78,4 +78,3 @@ RSpec.describe LineNotificationService, type: :service do
     end
   end
 end
-

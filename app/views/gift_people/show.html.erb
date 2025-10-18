@@ -148,7 +148,7 @@
       </h3>
       
       <% if @gift_records.any? %>
-        <%= link_to gift_records_path(gift_person_id: @gift_person.id),
+        <%= link_to my_index_gift_records_path(filter_type: "gift_person", gift_person_id: @gift_person.id),
             class: "text-sm text-primary hover:text-primary-hover font-medium" do %>
           すべて見る →
         <% end %>
