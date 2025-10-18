@@ -6,7 +6,7 @@
   display: inline-flex;
   align-items: center;
   position: relative;
-  z-index: 999 !important;
+  z-index: 5 !important;
 }
 
 .favorite-button {
@@ -24,7 +24,7 @@
   font-size: 14px;
   font-weight: 500;
   position: relative;
-  z-index: 999 !important;
+  z-index: 5 !important;
 }
 
 .favorite-button:hover {
