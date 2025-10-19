@@ -98,22 +98,22 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
+  config.hosts = [
+    "meguri-gift.com",     # Allow requests from example.com
+    /.*\.meguri-gift\.com/ # Allow requests from subdomains like `www.example.com`
+  ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
   # Keep analysis disabled for performance; code falls back when needed
   config.active_storage.analyze = false
   config.active_job.queue_adapter = :inline
 
-  config.action_mailer.default_url_options = { host: "https://omoide-gift.onrender.com/" }
+  config.action_mailer.default_url_options = { host: "https://meguri-gift.com/" }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address:              "smtp.gmail.com",
     port:                 587,
-    domain:               "omoide-gift.onrender.com",
+    domain:               "meguri-gift.com",
     user_name:            ENV["MAILER_SENDER"],
     password:             ENV["MAILER_PASSWORD"],
     authentication:       "plain",
@@ -121,4 +121,5 @@ Rails.application.configure do
   }
 
   config.middleware.use Rack::Attack
+  # config.hosts << 'meguri-gift.com'
 end
