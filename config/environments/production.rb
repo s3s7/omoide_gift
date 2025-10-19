@@ -119,4 +119,6 @@ Rails.application.configure do
     authentication:       "plain",
     enable_starttls_auto: true
   }
+
+  config.middleware.use Rack::Attack
 end
