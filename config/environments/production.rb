@@ -103,7 +103,8 @@ Rails.application.configure do
   #   "meguri-gift.com",
   #   /.*\.meguri-gift\.com/
   # ] 
-  config.hosts << "meguri-gift.com"      # 独自ドメイン 
+  config.hosts << "omoide-gift.onrender.com" 
+  config.hosts << "meguri-gift.com"      # 独自ドメイン
   config.hosts << "www.meguri-gift.com"  # サブドメイン
 
   # Skip DNS rebinding protection for the default health check endpoint.
