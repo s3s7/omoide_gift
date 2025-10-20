@@ -99,7 +99,7 @@ Rails.application.configure do
 
   # Enable DNS rebinding protection and other `Host` header attacks.
   config.hosts = [
-    "omoide-gift.onrender.com",
+    # "omoide-gift.onrender.com",
     "meguri-gift.com",
     /.*\.meguri-gift\.com/
   ]
