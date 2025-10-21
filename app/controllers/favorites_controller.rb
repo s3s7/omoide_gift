@@ -54,16 +54,22 @@ class FavoritesController < ApplicationController
 
   # お気に入り一覧
   def index
-    @favorites = current_user.favorites
+    favorites_scope = current_user.favorites
       .includes(gift_record: [ :gift_person, :event, :user, { gift_person: :relationship } ])
       .recent
 
     # アクセス可能な記録のみ表示
-    @favorites = @favorites.select do |favorite|
+    accessible_favorites = favorites_scope.select do |favorite|
       gift_record = favorite.gift_record
       gift_record.present? &&
       (gift_record.user_id == current_user.id || gift_record.is_public?)
     end
+
+    @total_favorites = accessible_favorites.size
+    @favorites = Kaminari.paginate_array(accessible_favorites)
+      .page(params[:page])
+      .per(per_page_count)
+    @pagination_params = favorites_pagination_params
   end
 
   private
@@ -88,5 +94,17 @@ class FavoritesController < ApplicationController
   def format_errors(errors)
     return "エラーが発生しました" unless errors.respond_to?(:full_messages)
     errors.full_messages.join(", ")
+  end
+
+  def per_page_count
+    @per_page_count ||= if request.user_agent =~ /Mobile|Android|iPhone|iPad/
+      12
+    else
+      15
+    end
+  end
+
+  def favorites_pagination_params
+    params.permit(:search).to_h # allow extension; currently returns {}
   end
 end

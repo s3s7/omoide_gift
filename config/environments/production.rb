@@ -102,8 +102,8 @@ Rails.application.configure do
   #   # "omoide-gift.onrender.com",
   #   "meguri-gift.com",
   #   /.*\.meguri-gift\.com/
-  # ] 
-  config.hosts << "omoide-gift.onrender.com" 
+  # ]
+  config.hosts << "omoide-gift.onrender.com"
   config.hosts << "meguri-gift.com"      # 独自ドメイン
   config.hosts << "www.meguri-gift.com"  # サブドメイン
 

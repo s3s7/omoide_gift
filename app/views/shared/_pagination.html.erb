@@ -1,0 +1,97 @@
+<% collection = local_assigns.fetch(:collection) %>
+<% page_path = local_assigns.fetch(:page_path) %>
+
+<% unless collection.respond_to?(:current_page) && collection.total_pages.to_i > 0 %>
+  <% return %>
+<% end %>
+
+<% raise ArgumentError, "page_path must be callable" unless page_path.respond_to?(:call) %>
+<% path_for = ->(page_number) { page_path.call(page_number) } %>
+
+<% start_page = [collection.current_page - 2, 1].max %>
+<% end_page = [start_page + 4, collection.total_pages].min %>
+<% start_page = [end_page - 4, 1].max if end_page - start_page < 4 %>
+
+<div class="mt-8 mb-6 flex justify-center">
+  <div class="join">
+    <% if collection.prev_page %>
+      <%= link_to path_for.call(collection.prev_page),
+          class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+        <i class="fas fa-chevron-left"></i>
+        前へ
+      <% end %>
+    <% else %>
+      <button class="join-item px-4 py-2 rounded-md bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 font-medium border-0" disabled>
+        <i class="fas fa-chevron-left"></i>
+        前へ
+      </button>
+    <% end %>
+
+    <% if start_page > 1 %>
+      <%= link_to path_for.call(1),
+          class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+        1
+      <% end %>
+      <% if start_page > 2 %>
+        <button class="join-item px-4 py-2 rounded-md bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 font-medium border-0" disabled>…</button>
+      <% end %>
+    <% end %>
+
+    <% (start_page..end_page).each do |page_num| %>
+      <% if page_num == collection.current_page %>
+        <button class="join-item px-4 py-2 rounded-md bg-primary-dark text-white font-bold border-0">
+          <%= page_num %>
+        </button>
+      <% else %>
+        <%= link_to path_for.call(page_num),
+            class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+          <%= page_num %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if end_page < collection.total_pages %>
+      <% if end_page < collection.total_pages - 1 %>
+        <button class="join-item px-4 py-2 rounded-md bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 font-medium border-0" disabled>…</button>
+      <% end %>
+      <%= link_to path_for.call(collection.total_pages),
+          class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+        <%= collection.total_pages %>
+      <% end %>
+    <% end %>
+
+    <% if collection.next_page %>
+      <%= link_to path_for.call(collection.next_page),
+          class: "join-item btn-primary text-white font-medium px-4 py-2 rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 border-0" do %>
+        次へ
+        <i class="fas fa-chevron-right"></i>
+      <% end %>
+    <% else %>
+      <button class="join-item px-4 py-2 rounded-md bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 font-medium border-0" disabled>
+        次へ
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    <% end %>
+  </div>
+</div>
+
+<% if collection.total_count.to_i > 0 %>
+  <% offset_value = collection.respond_to?(:offset_value) && !collection.offset_value.nil? ? collection.offset_value.to_i : 0 %>
+  <% limit_value = if collection.respond_to?(:limit_value) && collection.limit_value.present?
+      collection.limit_value.to_i
+    else
+      collection.size
+    end %>
+  <% limit_value = collection.size if limit_value.to_i <= 0 %>
+  <% start_index = offset_value + 1 %>
+  <% end_index = [offset_value + limit_value, collection.total_count].min %>
+  <div class="text-center text-sm text-gray-600 mb-4">
+    <span class="font-medium"><%= start_index %></span>
+    ～
+    <span class="font-medium"><%= end_index %></span>
+    件目（全<span class="font-medium"><%= collection.total_count %></span>件）
+    <span class="ml-2 text-xs">
+      <%= collection.current_page %>/<%= collection.total_pages %>ページ
+    </span>
+  </div>
+<% end %>

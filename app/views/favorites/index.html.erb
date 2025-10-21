@@ -33,7 +33,7 @@
       <i class="fas fa-heart text-2xl text-green-600"></i>
     </div>
     <h3 class="text-lg font-medium text-gray-800 mb-2">お気に入り登録数</h3>
-    <p class="text-3xl font-bold text-green-600"><%= @favorites.length %>件</p>
+    <p class="text-3xl font-bold text-green-600"><%= @total_favorites %>件</p>
     <p class="text-sm text-gray-600 mt-2">あなたがお気に入りに登録したギフト記録です</p>
   </div>
 </div>
@@ -139,6 +139,11 @@
       </div>
     <% end %>
   </div>
+  <% if @favorites.respond_to?(:current_page) %>
+    <%= render 'shared/pagination',
+        collection: @favorites,
+        page_path: ->(page_number) { favorites_path(@pagination_params.merge(page: page_number)) } %>
+  <% end %>
 <% else %>
   <!-- 空の状態 -->
   <div class="text-center py-12 max-w-md mx-auto">

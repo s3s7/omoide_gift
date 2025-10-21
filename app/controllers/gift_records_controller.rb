@@ -178,7 +178,7 @@ class GiftRecordsController < ApplicationController
       .joins(gift_person: :relationship)
       .select("relationships.name, relationships.id")
       .distinct
-      .order("relationships.name")
+      .order("relationships.position")
       .pluck("relationships.name", "relationships.id")
 
     # イベントオプション準備（実際に使われているイベントのみ）
@@ -186,7 +186,7 @@ class GiftRecordsController < ApplicationController
       .joins(:event)
       .select("events.name, events.id")
       .distinct
-      .order("events.name")
+      .order("events.position")
       .pluck("events.name", "events.id")
 
     # ページネーション用の安全なパラメータを準備
@@ -452,6 +452,7 @@ class GiftRecordsController < ApplicationController
             item_name: record.item_name,
             type: "item",
             display_text: record.item_name,
+            input_text: record.item_name,
             search_highlight: highlight_match(record.item_name, query)
           }
         end
@@ -467,7 +468,8 @@ class GiftRecordsController < ApplicationController
             id: record.id,
             item_name: record.item_name,
             type: "memo",
-            display_text: "#{record.item_name} (メモ: #{truncate_text(record.memo, 15)})",
+            display_text: "#{truncate_text(record.memo, 15)}",
+            input_text: record.memo.to_s,
             search_highlight: highlight_match(record.memo, query)
           }
         end
@@ -886,7 +888,7 @@ end
     base_query
       .joins(gift_person: :relationship)
       .group("relationships.id, relationships.name")
-      .order("relationships.name")
+      .order("relationships.position")
       .pluck("relationships.name", "relationships.id")
   end
 
@@ -894,7 +896,7 @@ end
     base_query
       .joins(:event)
       .group("events.id, events.name")
-      .order("events.name")
+      .order("events.position")
       .pluck("events.name", "events.id")
   end
 
