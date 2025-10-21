@@ -5,39 +5,22 @@
   <%# 一覧への戻り先を判定 %>
   <% back_params = (@pagination_params || {}).dup %>
   <% back_params[:page] = params[:page] if params[:page].present? %>
-  <% back_link_path = case params[:origin]
-     when 'my' then my_index_gift_records_path(back_params)
-     when 'private' then private_index_gift_records_path(back_params)
-     when 'favorites' then favorites_path
-     else gift_records_path(back_params)
+  <% first_item = case params[:origin]
+     when 'my'
+       { label: '自分のギフト', url: my_index_gift_records_path(back_params), icon: 'fas fa-gift text-primary' }
+     when 'favorites'
+       { label: 'お気に入り一覧', url: favorites_path, icon: 'fas fa-heart text-red-500' }
+     else
+       { label: 'みんなのギフト', url: gift_records_path(back_params), icon: 'fas fa-home text-primary' }
      end %>
-  <% list_label = case params[:origin]
-     when 'my' then '自分のギフト'
-     when 'favorites' then 'お気に入り一覧'
-     when 'private' then '非公開ギフト記録一覧'
-     else 'みんなのギフト'
-     end %>
-  <!-- パンくずナビ -->
-  <nav class="flex mb-6" aria-label="Breadcrumb">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3">
-      <li class="inline-flex items-center">
-        <%= link_to back_link_path, class: "inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary" do %>
-          <i class="fas fa-home mr-2"></i>
-          <%= list_label %>
-        <% end %>
-      </li>
-         <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
-      <li>
-        <div class="flex items-center">
-          <span class="text-sm font-medium text-gray-700">
-            <%= truncate(@gift_record.display_item_name, length: 20) %>
-          </span>
-        </div>
-      </li>
-    </ol>
-  </nav>
+  <% back_link_path = first_item[:url] || gift_records_path(back_params) %>
+
+  <%= render 'shared/breadcrumbs', items: [
+        first_item,
+        { label: truncate(@gift_record.display_item_name, length: 20), current: true }
+      ] %>
   <!-- メインコンテンツ -->
-<div class="bg-white shadow-lg rounded-lg overflow-hidden mt-8 w-full">
+ <div class="bg-white shadow-lg rounded-lg overflow-hidden mt-8 w-full">
     <!-- ヘッダー -->
     <div class="px-6 py-4 text-white" style="background-color: #FC913A;">
       <div class="flex justify-between items-start">
@@ -56,8 +39,9 @@
           </div>
           
           <% if user_signed_in? && @gift_record.user == current_user %>
+            <% edit_params = params.permit(:origin, :page).to_h %>
             <div class="flex space-x-2">
-              <%= link_to edit_gift_record_path(@gift_record), 
+              <%= link_to edit_gift_record_path(@gift_record, edit_params), 
                   class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
                   aria: { label: "このギフト記録を編集" } do %>
                 <i class="fas fa-edit mr-1"></i>
