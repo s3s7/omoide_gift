@@ -31,179 +31,37 @@
   </div>
 
   <!-- 検索・フィルター機能 -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto" data-controller="dynamic-filter">
-    <%= form_with url: my_index_gift_records_path, method: :get, local: true, class: "space-y-2" do |f| %>
-      <!-- フィルターと値 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <!-- フィルタータイプ選択 -->
-        <div>
-          <%= f.label :filter_type, "フィルター", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
-          <%= f.select :filter_type, 
-              options_for_select([
-                ["選択してください", ""],
-                ["ギフト相手", "gift_person"],
-                ["関係性", "relationship"],
-                ["イベント", "event"],
-                ["公開設定", "is_public"]
-              ], params[:filter_type]),
-              {},
-              { 
-                id: "filter-type-select",
-                data: { "dynamic-filter-target": "filterTypeSelect", action: "change->dynamic-filter#update" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-                style: "background-color: white; color: black;"
-              } %>
-          <%= f.hidden_field :filter_type, id: "filter-type-hidden", data: { "dynamic-filter-target": "filterTypeHidden" } %>
-        </div>
-
-        <!-- 動的フィルター値選択 -->
-        <div>
-          <%= f.label :filter_value, "詳細", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
-          
-          <!-- ギフト相手選択プルダウン -->
-          <%= f.select :gift_person_id, 
-              options_for_select([["すべて", ""]] + @gift_people_options, params[:gift_person_id]),
-              {},
-              { 
-                id: "gift-person-select",
-                data: { "dynamic-filter-target": "giftPersonSelect" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'gift_person' ? '' : 'hidden'}",
-                style: "background-color: white; color: black;"
-              } %>
-          
-          <!-- 関係性選択プルダウン -->
-          <%= f.select :relationship_id, 
-              options_for_select([["すべて", ""]] + @relationship_options, params[:relationship_id]),
-              {},
-              { 
-                id: "relationship-select",
-                data: { "dynamic-filter-target": "relationshipSelect" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'relationship' ? '' : 'hidden'}",
-                style: "background-color: white; color: black;"
-              } %>
-          
-          <!-- イベント選択プルダウン -->
-          <%= f.select :event_id, 
-              options_for_select([["すべて", ""]] + @event_options, params[:event_id]),
-              {},
-              { 
-                id: "event-select",
-                data: { "dynamic-filter-target": "eventSelect" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'event' ? '' : 'hidden'}",
-                style: "background-color: white; color: black;"
-              } %>
-
-          <!-- 公開設定選択プルダウン -->
-          <%= f.select :is_public,
-              options_for_select([
-                ["すべて", ""],
-                ["公開", "public"],
-                ["非公開", "private"]
-              ], params[:is_public]),
-              {},
-              {
-                id: "public-select",
-                data: { "dynamic-filter-target": "publicSelect" },
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'is_public' ? '' : 'hidden'}",
-                style: "background-color: white; color: black;"
-              } %>
-          
-          <!-- プレースホルダー表示 -->
-          <div id="filter-placeholder" data-dynamic-filter-target="placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm text-gray-500 <%= params[:filter_type].present? ? 'hidden' : '' %>" 
-              style="background-color: white;">
-          フィルターを選択してください
-          </div>
-        </div>
-      </div>
-
-      <!-- 並び替え -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <!-- 並び替えタイプ -->
-        <div>
-          <%= f.label :sort_by, "並び替え", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
-          <%= f.select :sort_by, 
-              options_for_select([
-                ["投稿日", "created_at"],
-                ["お気に入り順", "favorites"]
-              ], params[:sort_by]),
-              { prompt: "選択してください" },
-              { 
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-                style: "background-color: white; color: black;"
-              } %>
-        </div>
-
-        <!-- 並び順 -->
-        <div>
-          <%= f.label :sort_order, "順序", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
-          <%= f.select :sort_order, 
-              options_for_select([
-                ["昇順", "asc"],
-                ["降順", "desc"]
-              ], params[:sort_order]),
-              { prompt: "選択してください" },
-              { 
-                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-                style: "background-color: white; color: black;"
-              } %>
-        </div>
-      </div>
-
-      <!-- 検索欄と検索ボタン -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <!-- 検索キーワード（オートコンプリート付き） -->
-        <div class="relative" data-controller="gift-records-autocomplete">
-          <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
-          <%= f.text_field :search, 
-              value: params[:search],
-              placeholder: "アイテム名、メモ、相手名で検索",
-              id: "gift-records-search-input",
-              autocomplete: "off",
-              data: { "gift-records-autocomplete-target": "input" },
-              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
-              style: "background-color: white; color: black;" %>
-          
-          <!-- オートコンプリートドロップダウン -->
-          <div id="gift-records-autocomplete-dropdown" 
-              data-gift-records-autocomplete-target="dropdown"
-              class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-md shadow-lg hidden max-h-48 overflow-y-auto">
-            <!-- 検索結果がここに動的に追加される -->
-          </div>
-          
-          <!-- ローディング表示 -->
-          <div id="gift-records-search-loading" 
-              data-gift-records-autocomplete-target="loading"
-              class="absolute right-2 top-7 hidden">
-            <i class="fas fa-spinner fa-spin text-gray-400 text-sm"></i>
-          </div>
-        </div>
-
-        <!-- 検索ボタン -->
-        <div class="flex items-end">
-          <%= f.submit "この条件で検索する", class: "w-full px-3 py-1.5 btn-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
-        </div>
-      </div>
-
-      <% if params[:search].present? || params[:gift_person_id].present? || params[:relationship_id].present? || params[:event_id].present? || params[:sort_by].present? %>
-        <div class="flex items-center justify-between pt-1.5 border-t border-gray-200">
-          <span class="text-xs text-gray-600">
-            <%= pluralize(@total_records, "件") %>の結果
-          </span>
-          <%= link_to "クリア", my_index_gift_records_path, class: "text-xs text-primary hover:text-primary-hover" %>
-        </div>
-      <% end %>
-    <% end %>
-  </div>
+  <%= render 'shared/filter_form',
+      form_url: my_index_gift_records_path,
+      relationship_options: @relationship_options,
+      event_options: @event_options,
+      gift_people_options: @gift_people_options,
+      public_filter_options: [
+        ["すべて", ""],
+        ["公開", "public"],
+        ["非公開", "private"]
+      ],
+      filter_type_options: [
+        ["選択してください", ""],
+        ["ギフト相手", "gift_person"],
+        ["関係性", "relationship"],
+        ["イベント", "event"],
+        ["公開設定", "is_public"]
+      ],
+      search_placeholder: "アイテム名、メモ、相手名で検索",
+      total_records: @total_records,
+      active_filter_params: [:search, :gift_person_id, :relationship_id, :event_id, :sort_by, :is_public]
+    %>
 
   <!-- ギフト記録一覧 -->
-  <% if @gift_records.any? %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+  <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-2 md:gap-3 lg:gap-4 justify-items-center mb-6">
+    <% if @gift_records.any? %>
       <% @gift_records.each do |gift_record| %>
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+        <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow gift-card-container w-[165px] sm:w-[165px] md:w-[240px] lg:w-[200px] xl:w-[200px]">
           <!-- 画像部分 -->
           <div class="aspect-w-16 aspect-h-9 bg-gray-100">
             <% if gift_record.images.any? %>
-              <%= image_tag gift_record.images.first, 
+              <%= image_tag gift_record.images.first,
                   class: "w-full h-48 object-cover",
                   alt: gift_record.item_name %>
             <% else %>
@@ -265,27 +123,26 @@
           </div>
         </div>
       <% end %>
-    </div>
-
-    <!-- ページネーション -->
-    <% if @gift_records.respond_to?(:current_page) && @gift_records.total_pages > 1 %>
-      <div class="flex justify-center">
-        <%= paginate @gift_records, params: @pagination_params %>
+    <% else %>
+      <!-- 空の状態 -->
+      <div class="gift-card-container w-[165px] sm:w-[165px] md:w-[240px] lg:w-[200px] xl:w-[200px] bg-white border border-gray-200 rounded-lg text-center p-6 flex flex-col justify-center">
+        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-gift text-3xl text-gray-400"></i>
+        </div>
+        <h3 class="text-base font-medium text-gray-900 mb-2">まだギフト記録がありません</h3>
+        <p class="text-xs text-gray-500 mb-4">最初のギフト記録を作成してみましょう！</p>
+        <%= link_to new_gift_record_path,
+            class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
+          <i class="fas fa-plus mr-1"></i>
+          ギフト記録を作成
+        <% end %>
       </div>
     <% end %>
-  <% else %>
-    <!-- 空の状態 -->
-    <div class="text-center py-12">
-      <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fas fa-gift text-4xl text-gray-400"></i>
-      </div>
-      <h3 class="text-xl font-medium text-gray-900 mb-2">まだギフト記録がありません</h3>
-      <p class="text-gray-500 mb-6">最初のギフト記録を作成してみましょう！</p>
-      <%= link_to new_gift_record_path,
-          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
-        <i class="fas fa-plus mr-2"></i>
-        ギフト記録を作成
-      <% end %>
-    </div>
+  </div>
+
+  <% if @gift_records.any? && @gift_records.respond_to?(:current_page) %>
+    <%= render 'shared/pagination',
+        collection: @gift_records,
+        page_path: ->(page_number) { my_index_gift_records_path(@pagination_params.merge(page: page_number)) } %>
   <% end %>
 </div>

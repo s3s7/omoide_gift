@@ -119,6 +119,7 @@ class GiftPeopleController < ApplicationController
             relationship: person.relationship&.name || "未設定",
             type: "name",
             display_text: person.name,
+            input_text: person.name,
             search_highlight: highlight_match(person.name, query)
           }
         end
@@ -137,6 +138,7 @@ class GiftPeopleController < ApplicationController
             relationship: person.relationship&.name || "未設定",
             type: "likes",
             display_text: "#{person.name} (好き: #{truncate_text(person.likes, 20)})",
+            input_text: person.likes.to_s,
             search_highlight: highlight_match(person.likes, query)
           }
         end
@@ -155,6 +157,7 @@ class GiftPeopleController < ApplicationController
             relationship: person.relationship&.name || "未設定",
             type: "memo",
             display_text: "#{person.name} (メモ: #{truncate_text(person.memo, 20)})",
+            input_text: person.memo.to_s,
             search_highlight: highlight_match(person.memo, query)
           }
         end

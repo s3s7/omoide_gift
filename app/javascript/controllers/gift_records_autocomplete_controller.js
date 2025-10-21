@@ -148,8 +148,8 @@ export default class extends Controller {
     const form = this.inputTarget.closest('form')
     this.dropdownTarget.querySelectorAll('.autocomplete-item').forEach((item) => {
       item.addEventListener('click', () => {
-        const displayText = item.dataset.displayText || ''
-        this.inputTarget.value = displayText
+        const inputText = item.dataset.inputText || item.dataset.displayText || ''
+        this.inputTarget.value = inputText
         this.hideDropdown()
         if (form) form.submit()
       })
@@ -158,13 +158,14 @@ export default class extends Controller {
 
   buildItemHTML(result) {
     const displayText = escapeHtml(result.display_text || result.name || '')
+    const inputText = escapeHtml(result.input_text || result.display_text || result.name || '')
     const highlight = result.search_highlight || displayText
     const typeIcon = this.iconFor(result.type)
     const typeLabel = this.labelFor(result.type)
 
     return `
       <div class="autocomplete-item px-3 py-2 hover:bg-primary-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-           data-display-text="${displayText}" data-id="${result.id}">
+           data-display-text="${displayText}" data-input-text="${inputText}" data-id="${result.id}">
         <div class="flex items-start space-x-2">
           <div class="flex-shrink-0 w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
             <i class="${typeIcon} text-primary text-xs"></i>

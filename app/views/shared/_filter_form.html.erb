@@ -1,0 +1,193 @@
+<% form_url = local_assigns.fetch(:form_url) %>
+<% relationship_options = Array(local_assigns.fetch(:relationship_options, [])) %>
+<% event_options = Array(local_assigns.fetch(:event_options, [])) %>
+<% gift_people_options = local_assigns.key?(:gift_people_options) ? Array(local_assigns[:gift_people_options]) : nil %>
+<% public_filter_options = local_assigns.key?(:public_filter_options) ? Array(local_assigns[:public_filter_options]) : nil %>
+<% filter_type_options = local_assigns.fetch(:filter_type_options, [
+  ["選択してください", ""],
+  ["関係性", "relationship"],
+  ["イベント", "event"]
+]) %>
+<% sort_by_options = local_assigns.fetch(:sort_by_options, [
+  ["投稿日", "created_at"],
+  ["お気に入り順", "favorites"]
+]) %>
+<% sort_order_options = local_assigns.fetch(:sort_order_options, [
+  ["昇順", "asc"],
+  ["降順", "desc"]
+]) %>
+<% search_placeholder = local_assigns.fetch(:search_placeholder, "アイテム名、メモで検索") %>
+<% search_value = local_assigns.fetch(:search_value, params[:search]) %>
+<% total_records = local_assigns.fetch(:total_records, 0) %>
+<% active_filter_params = Array(local_assigns.fetch(:active_filter_params, [:search, :relationship_id, :event_id, :sort_by])) %>
+<% search_autocomplete_controller = local_assigns.fetch(:search_autocomplete_controller, "gift-records-autocomplete") %>
+<% search_autocomplete_data = local_assigns.fetch(:search_autocomplete_data, {}) %>
+<% id_prefix = local_assigns[:field_id_prefix] %>
+<% prefixed_id = ->(suffix) { id_prefix.present? ? "#{id_prefix}-#{suffix}" : suffix } %>
+<% filter_type_select_id = local_assigns.fetch(:filter_type_select_id, prefixed_id.call("filter-type-select")) %>
+<% filter_type_hidden_id = local_assigns.fetch(:filter_type_hidden_id, prefixed_id.call("filter-type-hidden")) %>
+<% relationship_select_id = local_assigns.fetch(:relationship_select_id, prefixed_id.call("relationship-select")) %>
+<% event_select_id = local_assigns.fetch(:event_select_id, prefixed_id.call("event-select")) %>
+<% gift_person_select_id = local_assigns.fetch(:gift_person_select_id, prefixed_id.call("gift-person-select")) %>
+<% public_select_id = local_assigns.fetch(:public_select_id, prefixed_id.call("public-select")) %>
+<% filter_placeholder_id = local_assigns.fetch(:filter_placeholder_id, prefixed_id.call("filter-placeholder")) %>
+<% search_input_id = local_assigns.fetch(:search_input_id, "gift-records-search-input") %>
+<% search_dropdown_id = local_assigns.fetch(:search_dropdown_id, "gift-records-autocomplete-dropdown") %>
+<% search_loading_id = local_assigns.fetch(:search_loading_id, "gift-records-search-loading") %>
+<% search_autocomplete_extra_attrs = search_autocomplete_data.map do |key, value|
+     attr_name = "data-#{key.to_s.tr('_', '-')}"
+     %(#{attr_name}="#{ERB::Util.html_escape(value)}")
+   end.join(' ') %>
+
+<!-- 検索・フィルター機能 -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto" data-controller="dynamic-filter">
+  <%= form_with url: form_url, method: :get, local: true, class: "space-y-2" do |f| %>
+    <!-- フィルターと値 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <!-- フィルタータイプ選択 -->
+      <div>
+        <%= f.label :filter_type, "フィルター", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+        <%= f.select :filter_type,
+            options_for_select(filter_type_options, params[:filter_type]),
+            {},
+            {
+              id: filter_type_select_id,
+              data: { "dynamic-filter-target": "filterTypeSelect", action: "change->dynamic-filter#update" },
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+              style: "background-color: white; color: black;"
+            } %>
+        <%= f.hidden_field :filter_type, id: filter_type_hidden_id, data: { "dynamic-filter-target": "filterTypeHidden" } %>
+      </div>
+
+      <!-- 動的フィルター値選択 -->
+      <div>
+        <%= f.label :filter_value, "詳細", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+
+        <% if gift_people_options %>
+          <!-- ギフト相手選択プルダウン -->
+          <%= f.select :gift_person_id,
+              options_for_select([["すべて", ""]] + gift_people_options, params[:gift_person_id]),
+              {},
+              {
+                id: gift_person_select_id,
+                data: { "dynamic-filter-target": "giftPersonSelect" },
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'gift_person' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
+              } %>
+        <% end %>
+
+        <!-- 関係性選択プルダウン -->
+        <%= f.select :relationship_id,
+            options_for_select([["すべて", ""]] + relationship_options, params[:relationship_id]),
+            {},
+            {
+              id: relationship_select_id,
+              data: { "dynamic-filter-target": "relationshipSelect" },
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'relationship' ? '' : 'hidden'}",
+              style: "background-color: white; color: black;"
+            } %>
+
+        <!-- イベント選択プルダウン -->
+        <%= f.select :event_id,
+            options_for_select([["すべて", ""]] + event_options, params[:event_id]),
+            {},
+            {
+              id: event_select_id,
+              data: { "dynamic-filter-target": "eventSelect" },
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'event' ? '' : 'hidden'}",
+              style: "background-color: white; color: black;"
+            } %>
+
+        <% if public_filter_options %>
+          <!-- 公開設定選択プルダウン -->
+          <%= f.select :is_public,
+              options_for_select(public_filter_options, params[:is_public]),
+              {},
+              {
+                id: public_select_id,
+                data: { "dynamic-filter-target": "publicSelect" },
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'is_public' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
+              } %>
+        <% end %>
+
+        <!-- プレースホルダー表示 -->
+        <div id="<%= filter_placeholder_id %>" data-dynamic-filter-target="placeholder" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm text-gray-500 <%= params[:filter_type].present? ? 'hidden' : '' %>"
+            style="background-color: white;">
+        フィルターを選択してください
+        </div>
+      </div>
+    </div>
+
+    <!-- 並び替え -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <!-- 並び替えタイプ -->
+      <div>
+        <%= f.label :sort_by, "並び替え", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+        <%= f.select :sort_by,
+            options_for_select(sort_by_options, params[:sort_by]),
+            { prompt: "選択してください" },
+            {
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+              style: "background-color: white; color: black;"
+            } %>
+      </div>
+
+      <!-- 並び順 -->
+      <div>
+        <%= f.label :sort_order, "順序", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+        <%= f.select :sort_order,
+            options_for_select(sort_order_options, params[:sort_order]),
+            { prompt: "選択してください" },
+            {
+              class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+              style: "background-color: white; color: black;"
+            } %>
+      </div>
+    </div>
+
+    <!-- 検索欄と検索ボタン -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <!-- 検索キーワード（オートコンプリート付き） -->
+      <div class="relative" data-controller="<%= search_autocomplete_controller %>"<%= search_autocomplete_extra_attrs.present? ? " #{search_autocomplete_extra_attrs}" : "" %>>
+        <%= f.label :search, "検索", class: "block text-xs font-medium text-gray-700 mb-0.5" %>
+        <%= f.text_field :search,
+            value: search_value,
+            placeholder: search_placeholder,
+            id: search_input_id,
+            autocomplete: "off",
+            data: { "gift-records-autocomplete-target": "input" },
+            class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary",
+            style: "background-color: white; color: black;" %>
+
+        <!-- オートコンプリートドロップダウン -->
+        <div id="<%= search_dropdown_id %>"
+            data-gift-records-autocomplete-target="dropdown"
+            class="absolute z-50 w-full mt-0.5 bg-white border border-gray-300 rounded-md shadow-lg hidden max-h-48 overflow-y-auto">
+          <!-- 検索結果がここに動的に追加される -->
+        </div>
+
+        <!-- ローディング表示 -->
+        <div id="<%= search_loading_id %>"
+            data-gift-records-autocomplete-target="loading"
+            class="absolute right-2 top-7 hidden">
+          <i class="fas fa-spinner fa-spin text-gray-400 text-sm"></i>
+        </div>
+      </div>
+
+      <!-- 検索ボタン -->
+      <div class="flex items-end">
+        <%= f.submit "この条件で検索する", class: "w-full px-3 py-1.5 btn-primary text-white text-sm font-medium rounded-md hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" %>
+      </div>
+    </div>
+
+    <% if active_filter_params.any? { |key| params[key].present? } %>
+      <div class="flex items-center justify-between pt-1.5 border-t border-gray-200">
+        <span class="text-xs text-gray-600">
+          <%= pluralize(total_records, "件") %>の結果
+        </span>
+        <%= link_to "クリア", form_url, class: "text-xs text-primary hover:text-primary-hover" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
