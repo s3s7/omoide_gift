@@ -83,3 +83,15 @@ jobs:
           name: screenshots
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
+
+# - name: Install packages
+#   run: sudo apt-get update && sudo apt-get install --no-install-recommends -y curl libjemalloc2
+# libvips postgresql-client
+# - name: Setup Chrome
+#   uses: browser-actions/setup-chrome@v1
+
+# - name: Run tests
+#   env:
+#     RAILS_ENV: test
+#     DATABASE_URL: postgres://postgres:postgres@localhost:5432/myapp_test
+#   run: bundle exec rails db:test:prepare && bundle exec rspec

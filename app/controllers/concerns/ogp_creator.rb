@@ -133,7 +133,7 @@
 # end
 class OgpCreator
   require "mini_magick"
-  BASE_IMAGE_PATH = Rails.root.join("app", "assets", "images", "ogp.png").to_s
+  BASE_IMAGE_PATH = Rails.root.join("app", "assets", "images", "ogp.webp").to_s
   GRAVITY = "center"
   TEXT_POSITION = "0,0"
   FONT = Rails.root.join("app", "assets", "fonts", "UtsukushiFONT.otf").to_s
