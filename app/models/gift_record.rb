@@ -1,4 +1,5 @@
 class GiftRecord < ApplicationRecord
+  require "tempfile"
   # リレーション
   belongs_to :user
   belongs_to :event
@@ -58,8 +59,8 @@ class GiftRecord < ApplicationRecord
     # 実体のある画像のみを判定対象にする（削除直後の残骸などを除外）
     when valid_image_attachments.any?
       :use_first_image_resized
-    # when item_name.present?
-    #   :generate_dynamic_text_image
+    when item_name.present?
+      :generate_dynamic_text_image
     else
       :use_default_image
     end
@@ -200,7 +201,7 @@ class GiftRecord < ApplicationRecord
   helpers = ActionController::Base.helpers
 
   # 完全なURLを生成（ドメイン + アセットハッシュ込み）
-  url = helpers.image_url("ogp.png", host: request.base_url)
+  url = helpers.image_url("ogp.webp", host: request.base_url)
 
   # 本番環境でのHTTPS強制
   url = url.sub(%r{^http://}, "https://") if Rails.env.production?
@@ -210,7 +211,7 @@ class GiftRecord < ApplicationRecord
 rescue => e
   Rails.logger.error "Error getting default image: #{e.message}"
   # フォールバックもimage_urlを使用
-  fallback_url = helpers.image_url("ogp.png", host: request.base_url)
+  fallback_url = helpers.image_url("ogp.webp", host: request.base_url)
   fallback_url.sub(%r{^http://}, "https://") if Rails.env.production?
   fallback_url
 end
@@ -226,13 +227,19 @@ end
 
     text = item_name.presence || "ギフト記録"
     image = OgpCreator.build(text)
-    io = StringIO.new(image.to_blob)
+    tempfile = Tempfile.new(["ogp_#{id}", ".webp"])
+    tempfile.binmode
+    tempfile.write(image.to_blob)
+    tempfile.rewind
+
     ogp_image.attach(
-      io: io,
+      io: tempfile,
       filename: "ogp_#{id}.webp",
       content_type: "image/webp"
     )
+
     image.destroy!
+    tempfile.close!
   rescue => e
     Rails.logger.error "OGP生成/添付エラー: #{e.message}"
   end

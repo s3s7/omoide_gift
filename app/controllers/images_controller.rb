@@ -60,7 +60,7 @@ class ImagesController < ApplicationController
       response.headers["Cache-Control"] = "public, max-age=3600"
       response.headers["ETag"] = etag
 
-      send_data image_data, type: "image/png", disposition: "inline"
+      send_data image_data, type: "image/webp", disposition: "inline"
     else
       send_default_ogp_image
     end
@@ -78,13 +78,13 @@ class ImagesController < ApplicationController
 
   def send_default_ogp_image
     # Prefer explicit default, fallback to base OGP image
-    default_path = Rails.root.join("app/assets/images/default_ogp.png")
-    fallback_path = Rails.root.join("app/assets/images/ogp.png")
+    default_path = Rails.root.join("app/assets/images/default_ogp.webp")
+    fallback_path = Rails.root.join("app/assets/images/ogp.webp")
 
     if File.exist?(default_path)
-      send_file default_path, type: "image/png", disposition: "inline"
+      send_file default_path, type: "image/webp", disposition: "inline"
     elsif File.exist?(fallback_path)
-      send_file fallback_path, type: "image/png", disposition: "inline"
+      send_file fallback_path, type: "image/webp", disposition: "inline"
     else
       head :not_found
     end
