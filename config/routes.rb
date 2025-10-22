@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root "static_pages#top"
 
-  get "images/ogp.png", to: "images#ogp", as: "images_ogp"
+  get "images/ogp.webp", to: "images#ogp", as: "images_ogp"
 
   devise_for :users, controllers: {
     omniauth_callbacks: "omniauth_callbacks",
