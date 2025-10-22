@@ -1,9 +1,20 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
-        :recoverable, :rememberable, :validatable, :confirmable,
-        :omniauthable, omniauth_providers: %i[line]
+  devise_modules = [
+    :database_authenticatable,
+    :registerable,
+    :recoverable,
+    :rememberable,
+    :validatable
+  ]
+  disable_confirmable = ActiveModel::Type::Boolean.new.cast(
+    ENV.fetch("DISABLE_CONFIRMABLE", Rails.env.production?)
+  )
+  devise_modules << :confirmable unless disable_confirmable
+  devise_modules << :omniauthable
+
+  devise(*devise_modules, omniauth_providers: %i[line])
 
   has_many :gift_records, dependent: :destroy
   has_many :gift_people, dependent: :destroy
