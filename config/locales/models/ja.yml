@@ -96,6 +96,7 @@ ja:
     models:
       gift_record: ギフト記録
       remind: リマインダー
+      user: ユーザー
     attributes:
       remind:
         notification_sent_at: 通知予定日時
@@ -104,6 +105,11 @@ ja:
         gift_person_id: ギフト相手
         notification_days_before: 通知日数
         notification_time: 通知時刻
+      user:
+        name: 名前
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード確認
     errors:
       models:
         remind:
