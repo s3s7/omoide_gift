@@ -113,12 +113,15 @@ Rails.application.configure do
   config.active_storage.analyze = false
   config.active_job.queue_adapter = :inline
 
-  config.action_mailer.default_url_options = { host: "https://meguri-gift.com/" }
+  config.action_mailer.default_url_options = {
+    host: "omoide-gift.onrender.com",
+    protocol: "https"
+  }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address:              "smtp.gmail.com",
     port:                 587,
-    domain:               "meguri-gift.com",
+    domain:               "omoide-gift.onrender.com",
     user_name:            ENV["MAILER_SENDER"],
     password:             ENV["MAILER_PASSWORD"],
     authentication:       "plain",
