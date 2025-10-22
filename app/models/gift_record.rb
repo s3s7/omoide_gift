@@ -88,9 +88,9 @@ class GiftRecord < ApplicationRecord
               p "!!!CASE: use_first_image_resized"
               handle_first_image_resized(request)
 
-    # when :generate_dynamic_text_image
-    #           p "!!!CASE: generate_dynamic_text_image"
-    #           handle_dynamic_text_image(helpers, request)
+    when :generate_dynamic_text_image
+              p "!!!CASE: generate_dynamic_text_image"
+              handle_dynamic_text_image(helpers, request)
 
     when :use_default_image
               p "!!!CASE: use_default_image"
@@ -229,9 +229,10 @@ end
     io = StringIO.new(image.to_blob)
     ogp_image.attach(
       io: io,
-      filename: "ogp_#{id}.png",
-      content_type: "image/png"
+      filename: "ogp_#{id}.webp",
+      content_type: "image/webp"
     )
+    image.destroy!
   rescue => e
     Rails.logger.error "OGP生成/添付エラー: #{e.message}"
   end

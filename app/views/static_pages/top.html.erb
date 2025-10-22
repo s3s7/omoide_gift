@@ -5,7 +5,7 @@
   begin
     asset_url('default_gift.webp')
   rescue => e
-    Rails.logger.error "Asset path resolution failed for Group 6.png: #{e.message}"
+    Rails.logger.error "Asset path resolution failed for default_gift.webp: #{e.message}"
     "#{request.base_url}/assets/default_gift.webp"
   end
 %>
