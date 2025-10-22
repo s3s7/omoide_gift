@@ -1,0 +1,40 @@
+<%# Shared empty state partial %>
+<% icon = local_assigns.fetch(:icon, 'fas fa-box-open') %>
+<% title = local_assigns.fetch(:title) %>
+<% body = local_assigns[:body] %>
+<% primary_action = local_assigns[:primary_action] %>
+<% secondary_action = local_assigns[:secondary_action] %>
+
+<div class="text-center py-8">
+  <div class="mx-auto h-24 w-24 text-gray-300 flex items-center justify-center">
+    <i class="<%= icon %> text-6xl"></i>
+  </div>
+  <h3 class="mt-3 text-lg font-medium text-gray-900">
+    <%= title %>
+  </h3>
+  <% if body.present? %>
+    <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
+      <%= body %>
+    </p>
+  <% end %>
+  <% if primary_action || secondary_action %>
+    <div class="mt-4">
+      <% if secondary_action %>
+        <%= link_to secondary_action[:url], class: secondary_action.fetch(:class) { 'inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mr-3' } do %>
+          <% if secondary_action[:icon] %>
+            <i class="<%= secondary_action[:icon] %> mr-2"></i>
+          <% end %>
+          <%= secondary_action[:label] %>
+        <% end %>
+      <% end %>
+      <% if primary_action %>
+        <%= link_to primary_action[:url], class: primary_action.fetch(:class) { 'inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary' } do %>
+          <% if primary_action[:icon] %>
+            <i class="<%= primary_action[:icon] %> mr-2"></i>
+          <% end %>
+          <%= primary_action[:label] %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

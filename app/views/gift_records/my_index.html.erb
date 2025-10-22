@@ -114,7 +114,8 @@
                 <i class="fas fa-eye mr-1"></i>
                 詳細
               <% end %>
-              <%= link_to edit_gift_record_path(gift_record),
+              <% edit_params = (@pagination_params || {}).merge(page: params[:page], origin: 'my') %>
+              <%= link_to edit_gift_record_path(gift_record, edit_params),
                   class: "flex-1 text-center bg-green-500 text-white px-3 py-2 text-sm rounded-md hover:bg-green-600 focus:outline-none" do %>
                 <i class="fas fa-edit mr-1"></i>
                 編集
@@ -124,18 +125,20 @@
         </div>
       <% end %>
     <% else %>
-      <!-- 空の状態 -->
-      <div class="gift-card-container w-[165px] sm:w-[165px] md:w-[240px] lg:w-[200px] xl:w-[200px] bg-white border border-gray-200 rounded-lg text-center p-6 flex flex-col justify-center">
-        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-gift text-3xl text-gray-400"></i>
+      <div class="gift-card-container col-span-full flex justify-center">
+        <div class="w-[165px] sm:w-[165px] md:w-[240px] lg:w-[200px] xl:w-[200px]">
+          <%= render 'shared/empty_state',
+              icon: 'fas fa-gift',
+              title: 'まだギフト記録がありません',
+              body: '最初のギフト記録を作成してみましょう！',
+              primary_action: {
+                url: new_gift_record_path,
+                icon: 'fas fa-plus',
+                label: 'ギフト記録を作成',
+                class: 'inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
+              }
+            %>
         </div>
-        <h3 class="text-base font-medium text-gray-900 mb-2">まだギフト記録がありません</h3>
-        <p class="text-xs text-gray-500 mb-4">最初のギフト記録を作成してみましょう！</p>
-        <%= link_to new_gift_record_path,
-            class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
-          <i class="fas fa-plus mr-1"></i>
-          ギフト記録を作成
-        <% end %>
       </div>
     <% end %>
   </div>

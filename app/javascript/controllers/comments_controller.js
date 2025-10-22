@@ -69,7 +69,7 @@ export default class extends Controller {
             <div class="text-center py-8 text-gray-500">
               <i class="fas fa-comment-dots text-3xl mb-3"></i>
               <p class="text-sm">まだコメントがありません</p>
-              <p class="text-xs mt-1">最初のコメントを投稿してみませんか？</p>
+              <p class="text-xs mt-1">コメントを投稿して盛り上げよう！</p>
             </div>
           `
         }

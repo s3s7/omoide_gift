@@ -189,48 +189,35 @@
     <% end %>
     
     <% else %>
-      <!-- 空状態 -->
-      <div class="text-center py-8">
-        <div class="mx-auto h-24 w-24 text-gray-300">
-          <i class="fas fa-gift text-6xl"></i>
-        </div>
-        <h3 class="mt-3 text-lg font-medium text-gray-900">
-          <% if params[:search].present? %>
-            検索結果が見つかりませんでした
-          <% else %>
-            ギフト記録がありません
-          <% end %>
-        </h3>
-        <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
-          <% if params[:search].present? %>
-            検索条件を変更して再度お試しください。
-          <% else %>
-            最初のギフト記録を作成して、大切な思い出を記録しましょう。
-          <% end %>
-        </p>
-        <div class="mt-4">
-          <% if params[:search].present? %>
-            <%= link_to gift_records_path,
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mr-3" do %>
-              <i class="fas fa-list mr-2"></i>
-              すべて表示
-            <% end %>
-          <% end %>
-          <% if user_signed_in? %>
-            <%= link_to new_gift_record_path,
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
-              <i class="fas fa-plus mr-2"></i>
-              <% if params[:search].present? %>新しい記録を作成<% else %>最初の記録を作成<% end %>
-            <% end %>
-          <% else %>
-            <%= link_to new_user_session_path,
-                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
-              <i class="fas fa-sign-in-alt mr-2"></i>
-              ログインして記録を作成
-            <% end %>
-          <% end %>
-        </div>
-      </div>
+      <% secondary_action = if params[:search].present?
+           {
+             url: gift_records_path,
+             icon: 'fas fa-list',
+             label: 'すべて表示'
+           }
+         end %>
+      <% primary_action = if user_signed_in?
+           {
+             url: new_gift_record_path,
+             icon: 'fas fa-plus',
+             label: params[:search].present? ? '新しい記録を作成' : '最初の記録を作成',
+             class: 'inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
+           }
+         else
+           {
+             url: new_user_session_path,
+             icon: 'fas fa-sign-in-alt',
+             label: 'ログインして記録を作成',
+             class: 'inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+           }
+         end %>
+
+      <%= render 'shared/empty_state',
+          icon: 'fas fa-gift',
+          title: params[:search].present? ? '検索結果が見つかりませんでした' : 'ギフト記録がありません',
+          body: params[:search].present? ? '検索条件を変更して再度お試しください。' : '最初のギフト記録を作成して、大切な思い出を記録しましょう。',
+          primary_action: primary_action,
+          secondary_action: secondary_action %>
     <% end %>
 </div>
 <!-- シェア確認モーダル -->

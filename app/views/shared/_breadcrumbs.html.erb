@@ -1,0 +1,47 @@
+<%# Generic breadcrumb partial
+    Expected locals:
+      :items - array of hashes/objects with keys:
+        :label (String or safe HTML)
+        :url (optional, path or URL)
+        :icon (optional, font-awesome class)
+        :current (boolean, optional) %>
+
+<% items = Array(local_assigns.fetch(:items)) %>
+
+<nav class="flex mb-6" aria-label="Breadcrumb">
+  <ol class="inline-flex items-center space-x-1 md:space-x-3">
+    <% items.each_with_index do |item, index| %>
+      <% label = item[:label] || item['label'] %>
+      <% url = item[:url] || item['url'] %>
+      <% icon = item[:icon] || item['icon'] %>
+      <% current = item.fetch(:current, index == items.length - 1) %>
+
+      <% if index.positive? %>
+        <li>
+          <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+        </li>
+      <% end %>
+
+      <li class="inline-flex items-center">
+        <% content = capture do %>
+          <% if icon.present? %>
+            <i class="<%= icon %> mr-2"></i>
+          <% end %>
+          <span class="<%= current ? 'text-sm font-medium text-gray-500' : 'text-sm font-medium text-gray-700 hover:text-primary' %>">
+            <%= label %>
+          </span>
+        <% end %>
+
+        <% if url.present? && !current %>
+          <%= link_to url, class: 'inline-flex items-center' do %>
+            <%= content %>
+          <% end %>
+        <% else %>
+          <div class="inline-flex items-center">
+            <%= content %>
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</nav>
