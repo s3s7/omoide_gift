@@ -227,7 +227,7 @@ end
 
     text = item_name.presence || "ギフト記録"
     image = OgpCreator.build(text)
-    tempfile = Tempfile.new(["ogp_#{id}", ".webp"])
+    tempfile = Tempfile.new([ "ogp_#{id}", ".webp" ])
     tempfile.binmode
     tempfile.write(image.to_blob)
     tempfile.rewind
