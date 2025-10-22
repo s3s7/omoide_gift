@@ -111,4 +111,5 @@ Rails.application.routes.draw do
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # Defines the root path route ("/")
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 end
