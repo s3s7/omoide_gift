@@ -27,6 +27,7 @@ class GiftRecord < ApplicationRecord
   # コールバック（データ整合性の自動保証）
   before_validation :sync_return_gift_flag
   before_validation :set_return_deadline
+  after_commit :refresh_generated_ogp_image, on: :update, if: :saved_change_to_item_name?
 
   # 必須フィールドのバリデーション（統一されたエラーメッセージ）
   validates :item_name, presence: { message: "を入力してください" }, length: { maximum: 30 }
@@ -67,54 +68,36 @@ class GiftRecord < ApplicationRecord
   end
 
   def ogp_image_url(request)
-    p "!!!getting helpers"
-
   begin
-    p "!!!getting helpers"
     helpers = Rails.application.routes.url_helpers
-    p "!!!helpers obtained"
 
-    p "!!!getting ogp_strategy"
     strategy = ogp_strategy
-    p "!!!ogp_strategy result: #{strategy}"
-
-    p "!!!entering case statement with strategy: #{strategy}"
-
     result = case strategy
     when :use_suitable_uploaded_image
-              p "!!!CASE: use_suitable_uploaded_image"
               handle_suitable_uploaded_image(helpers, request)
 
     when :use_first_image_resized
-              p "!!!CASE: use_first_image_resized"
               handle_first_image_resized(request)
 
     when :generate_dynamic_text_image
-              p "!!!CASE: generate_dynamic_text_image"
               handle_dynamic_text_image(helpers, request)
 
     when :use_default_image
-              p "!!!CASE: use_default_image"
               # モデル内で直接 image_url は使えないため、フォールバックURLを使用
               default_ogp_fallback_url(request)
 
     else
-              p "!!!CASE: unknown strategy - #{strategy}"
               default_ogp_fallback_url(request)
     end
 
-    p "!!!case statement completed, result: #{result}"
     result
 
     rescue => e
-      p "!!!EXCEPTION in ogp_image_url: #{e.message}"
-      p "!!!EXCEPTION class: #{e.class}"
       Rails.logger.error "Error in ogp_image_url: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
 
       # 例外が発生した場合のフォールバック
       fallback_url = default_ogp_fallback_url(request)
-      p "!!!returning fallback_url: #{fallback_url}"
       fallback_url
     end
   end
@@ -242,6 +225,15 @@ end
     tempfile.close!
   rescue => e
     Rails.logger.error "OGP生成/添付エラー: #{e.message}"
+  end
+
+  def refresh_generated_ogp_image
+    return unless ogp_strategy == :generate_dynamic_text_image
+
+    ogp_image.purge if ogp_image.attached?
+    ensure_generated_ogp!
+  rescue => e
+    Rails.logger.error "OGP再生成エラー: #{e.message}"
   end
 
   def default_ogp_fallback_url(request)
