@@ -1,5 +1,12 @@
 # 管理者用システム統計コントローラー
 class Admin::StatisticsController < Admin::BaseController
+  FIRST_MONTH = 1
+  LAST_MONTH = 12
+  FIRST_DAY_OF_MONTH = 1
+  LAST_DAY_OF_YEAR = 31
+  MONTHS_PER_YEAR = LAST_MONTH
+  BACKTRACE_LINES = 5
+
   def index
     @statistics = build_detailed_statistics
     log_admin_action("システム統計表示")
@@ -32,8 +39,8 @@ class Admin::StatisticsController < Admin::BaseController
 
     # 月別登録数を効率的に取得
     current_year = Date.current.year
-    year_start = Time.zone.local(current_year, 1, 1).beginning_of_day
-    year_end = Time.zone.local(current_year, 12, 31).end_of_day
+    year_start = Time.zone.local(current_year, FIRST_MONTH, FIRST_DAY_OF_MONTH).beginning_of_day
+    year_end = Time.zone.local(current_year, LAST_MONTH, LAST_DAY_OF_YEAR).end_of_day
 
     Rails.logger.info "ユーザー統計: #{current_year}年の範囲 #{year_start} - #{year_end}"
 
@@ -44,7 +51,7 @@ class Admin::StatisticsController < Admin::BaseController
     Rails.logger.info "月別ユーザー登録データ: #{monthly_data}"
 
     # EXTRACTの結果は文字列または数値の可能性があるため、両方チェック
-    monthly_registrations = (1..12).map do |month|
+    monthly_registrations = (FIRST_MONTH..LAST_MONTH).map do |month|
       monthly_data[month.to_f] || monthly_data[month.to_s] || monthly_data[month] || 0
     end
 
@@ -60,14 +67,14 @@ class Admin::StatisticsController < Admin::BaseController
     }
   rescue => e
     Rails.logger.error "統計データ取得エラー (ユーザー): #{e.message}"
-    Rails.logger.error "スタックトレース: #{e.backtrace.first(5).join("\n")}"
+    Rails.logger.error "スタックトレース: #{e.backtrace.first(BACKTRACE_LINES).join("\n")}"
     {
       total: 0,
       admins: 0,
       general: 0,
       line_users: 0,
       email_users: 0,
-      monthly_registrations: Array.new(12, 0)
+      monthly_registrations: Array.new(MONTHS_PER_YEAR, 0)
     }
   end
 
@@ -77,8 +84,8 @@ class Admin::StatisticsController < Admin::BaseController
 
     # 月別投稿数を効率的に取得
     current_year = Date.current.year
-    year_start = Time.zone.local(current_year, 1, 1).beginning_of_day
-    year_end = Time.zone.local(current_year, 12, 31).end_of_day
+    year_start = Time.zone.local(current_year, FIRST_MONTH, FIRST_DAY_OF_MONTH).beginning_of_day
+    year_end = Time.zone.local(current_year, LAST_MONTH, LAST_DAY_OF_YEAR).end_of_day
 
     Rails.logger.info "ギフト記録統計: #{current_year}年の範囲 #{year_start} - #{year_end}"
 
@@ -89,7 +96,7 @@ class Admin::StatisticsController < Admin::BaseController
     Rails.logger.info "月別ギフト記録データ: #{monthly_data}"
 
     # EXTRACTの結果は文字列または数値の可能性があるため、両方チェック
-    monthly_posts = (1..12).map do |month|
+    monthly_posts = (FIRST_MONTH..LAST_MONTH).map do |month|
       monthly_data[month.to_f] || monthly_data[month.to_s] || monthly_data[month] || 0
     end
 
@@ -104,21 +111,21 @@ class Admin::StatisticsController < Admin::BaseController
     }
   rescue => e
     Rails.logger.error "統計データ取得エラー (ギフト記録): #{e.message}"
-    Rails.logger.error "スタックトレース: #{e.backtrace.first(5).join("\n")}"
+    Rails.logger.error "スタックトレース: #{e.backtrace.first(BACKTRACE_LINES).join("\n")}"
     {
       total: 0,
       public: 0,
       private: 0,
       with_images: 0,
-      monthly_posts: Array.new(12, 0)
+      monthly_posts: Array.new(MONTHS_PER_YEAR, 0)
     }
   end
 
   def build_comment_statistics
     # 月別コメント数を効率的に取得
     current_year = Date.current.year
-    year_start = Time.zone.local(current_year, 1, 1).beginning_of_day
-    year_end = Time.zone.local(current_year, 12, 31).end_of_day
+    year_start = Time.zone.local(current_year, FIRST_MONTH, FIRST_DAY_OF_MONTH).beginning_of_day
+    year_end = Time.zone.local(current_year, LAST_MONTH, LAST_DAY_OF_YEAR).end_of_day
 
     Rails.logger.info "コメント統計: #{current_year}年の範囲 #{year_start} - #{year_end}"
 
@@ -129,7 +136,7 @@ class Admin::StatisticsController < Admin::BaseController
     Rails.logger.info "月別コメントデータ: #{monthly_data}"
 
     # EXTRACTの結果は文字列または数値の可能性があるため、両方チェック
-    monthly_comments = (1..12).map do |month|
+    monthly_comments = (FIRST_MONTH..LAST_MONTH).map do |month|
       monthly_data[month.to_f] || monthly_data[month.to_s] || monthly_data[month] || 0
     end
 
@@ -141,10 +148,10 @@ class Admin::StatisticsController < Admin::BaseController
     }
   rescue => e
     Rails.logger.error "統計データ取得エラー (コメント): #{e.message}"
-    Rails.logger.error "スタックトレース: #{e.backtrace.first(5).join("\n")}"
+    Rails.logger.error "スタックトレース: #{e.backtrace.first(BACKTRACE_LINES).join("\n")}"
     {
       total: 0,
-      monthly_comments: Array.new(12, 0)
+      monthly_comments: Array.new(MONTHS_PER_YEAR, 0)
     }
   end
 
@@ -167,8 +174,8 @@ class Admin::StatisticsController < Admin::BaseController
   def calculate_monthly_data_alternative(model, year_start, year_end)
     Rails.logger.info "代替方式で月別データを計算: #{model.name}"
 
-    (1..12).map do |month|
-      month_start = Time.zone.local(Date.current.year, month, 1).beginning_of_month
+    (FIRST_MONTH..LAST_MONTH).map do |month|
+      month_start = Time.zone.local(Date.current.year, month, FIRST_DAY_OF_MONTH).beginning_of_month
       month_end = month_start.end_of_month
       count = model.where(created_at: month_start..month_end).count
       Rails.logger.debug "#{month}月: #{count}件"
@@ -176,6 +183,6 @@ class Admin::StatisticsController < Admin::BaseController
     end
   rescue => e
     Rails.logger.error "代替方式でのエラー: #{e.message}"
-    Array.new(12, 0)
+    Array.new(MONTHS_PER_YEAR, 0)
   end
 end

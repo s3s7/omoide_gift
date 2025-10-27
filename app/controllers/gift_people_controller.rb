@@ -1,4 +1,12 @@
 class GiftPeopleController < ApplicationController
+  MIN_QUERY_LENGTH = 1
+  NAME_RESULTS_LIMIT = 5
+  SECONDARY_RESULTS_LIMIT = 3
+  COMBINED_RESULTS_LIMIT = 8
+  TRUNCATE_DEFAULT_LENGTH = 20
+  MOBILE_PER_PAGE = 12
+  DESKTOP_PER_PAGE = 15
+
   before_action :authenticate_user!
   before_action :set_gift_person, only: [ :show, :edit, :update, :destroy ]
   before_action :ensure_owner, only: [ :show, :edit, :update, :destroy ]
@@ -20,7 +28,7 @@ class GiftPeopleController < ApplicationController
   def autocomplete
     query = params[:q]&.strip
 
-    if query.present? && query.length >= 1
+    if query.present? && query.length >= MIN_QUERY_LENGTH
       search_term = "%#{query}%"
 
       # 名前検索結果
@@ -28,7 +36,7 @@ class GiftPeopleController < ApplicationController
         .includes(:relationship)
         .where.not(name: [ nil, "" ])
         .where("gift_people.name ILIKE ?", search_term)
-        .limit(5)
+        .limit(NAME_RESULTS_LIMIT)
         .map do |person|
           {
             id: person.id,
@@ -47,14 +55,14 @@ class GiftPeopleController < ApplicationController
         .where.not(name: [ nil, "" ])
         .where.not(likes: [ nil, "" ])
         .where("gift_people.likes ILIKE ?", search_term)
-        .limit(3)
+        .limit(SECONDARY_RESULTS_LIMIT)
         .map do |person|
           {
             id: person.id,
             name: person.name,
             relationship: person.relationship&.name || "未設定",
             type: "likes",
-            display_text: "#{person.name} (好き: #{truncate_text(person.likes, 20)})",
+            display_text: "#{person.name} (好き: #{truncate_text(person.likes, TRUNCATE_DEFAULT_LENGTH)})",
             input_text: person.likes.to_s,
             search_highlight: highlight_match(person.likes, query)
           }
@@ -66,20 +74,20 @@ class GiftPeopleController < ApplicationController
         .where.not(name: [ nil, "" ])
         .where.not(memo: [ nil, "" ])
         .where("gift_people.memo ILIKE ?", search_term)
-        .limit(3)
+        .limit(SECONDARY_RESULTS_LIMIT)
         .map do |person|
           {
             id: person.id,
             name: person.name,
             relationship: person.relationship&.name || "未設定",
             type: "memo",
-            display_text: "#{person.name} (メモ: #{truncate_text(person.memo, 20)})",
+            display_text: "#{person.name} (メモ: #{truncate_text(person.memo, TRUNCATE_DEFAULT_LENGTH)})",
             input_text: person.memo.to_s,
             search_highlight: highlight_match(person.memo, query)
           }
         end
 
-      results = (name_results + likes_results + memo_results).uniq { |item| item[:id] }.take(8)
+      results = (name_results + likes_results + memo_results).uniq { |item| item[:id] }.take(COMBINED_RESULTS_LIMIT)
 
       render json: {
         results: results,
@@ -107,7 +115,7 @@ class GiftPeopleController < ApplicationController
       .where(gift_people_id: @gift_person.id)
       .includes(:event)
       .order(gift_at: :desc)
-      .limit(5)
+      .limit(NAME_RESULTS_LIMIT)
   end
 
   def new
@@ -206,7 +214,7 @@ class GiftPeopleController < ApplicationController
     ERB::Util.html_escape(text)
   end
 
-  def truncate_text(text, length = 20)
+  def truncate_text(text, length = TRUNCATE_DEFAULT_LENGTH)
     return "" unless text.present?
 
     text.length > length ? "#{text[0..length-1]}..." : text
@@ -256,9 +264,9 @@ class GiftPeopleController < ApplicationController
 
   def per_page_count
     @per_page_count ||= if request.user_agent =~ /Mobile|Android|iPhone|iPad/
-      12  # モバイル
+      MOBILE_PER_PAGE
     else
-      15  # PC
+      DESKTOP_PER_PAGE
     end
   end
 

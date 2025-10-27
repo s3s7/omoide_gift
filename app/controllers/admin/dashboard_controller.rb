@@ -1,6 +1,12 @@
 # 管理者ダッシュボードコントローラー
 # システム統計情報と管理者向けクイックアクションを提供
 class Admin::DashboardController < Admin::BaseController
+  RECENT_USERS_LIMIT = 5
+  RECENT_GIFT_RECORDS_LIMIT = 10
+  RECENT_COMMENTS_LIMIT = 10
+  ALERT_GIFT_RECORD_THRESHOLD = 50
+  ALERT_COMMENT_THRESHOLD = 100
+
   def index
     # システム統計情報を取得
     @statistics = build_system_statistics
@@ -46,17 +52,17 @@ class Admin::DashboardController < Admin::BaseController
   def build_recent_activities
     {
       # 最近登録されたユーザー（直近5人）
-      recent_users: User.order(created_at: :desc).limit(5),
+      recent_users: User.order(created_at: :desc).limit(RECENT_USERS_LIMIT),
 
       # 最近作成されたギフト記録（直近10件）
       recent_gift_records: GiftRecord.includes(:user, :gift_person)
                                    .order(created_at: :desc)
-                                   .limit(10),
+                                   .limit(RECENT_GIFT_RECORDS_LIMIT),
 
       # 最近投稿されたコメント（直近10件）
       recent_comments: Comment.includes(:user, :gift_record)
                              .order(created_at: :desc)
-                             .limit(10)
+                             .limit(RECENT_COMMENTS_LIMIT)
     }
   end
 
@@ -68,7 +74,7 @@ class Admin::DashboardController < Admin::BaseController
     today_gift_records = GiftRecord.where(created_at: Date.current.all_day).count
     today_comments = Comment.where(created_at: Date.current.all_day).count
 
-    if today_gift_records > 50  # 閾値は調整可能
+    if today_gift_records > ALERT_GIFT_RECORD_THRESHOLD  # 閾値は調整可能
       alerts << {
         type: "warning",
         message: "本日のギフト記録投稿数が多くなっています（#{today_gift_records}件）",
@@ -77,7 +83,7 @@ class Admin::DashboardController < Admin::BaseController
       }
     end
 
-    if today_comments > 100  # 閾値は調整可能
+    if today_comments > ALERT_COMMENT_THRESHOLD  # 閾値は調整可能
       alerts << {
         type: "warning",
         message: "本日のコメント投稿数が多くなっています（#{today_comments}件）",

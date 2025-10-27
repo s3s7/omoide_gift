@@ -1,5 +1,8 @@
 class User < ApplicationRecord
   include AvatarAttachable
+  NAME_MAX_LENGTH = 10
+  RECENT_GIFT_RECORDS_DEFAULT_LIMIT = 5
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise_modules = [
@@ -33,7 +36,7 @@ class User < ApplicationRecord
   }
 
   # バリデーション
-  validates :name, presence: true, length: { maximum: 10 }
+  validates :name, presence: true, length: { maximum: NAME_MAX_LENGTH }
 
   # セキュリティを考慮したエラーメッセージの置き換え
   after_validation :customize_validation_errors
@@ -59,7 +62,7 @@ class User < ApplicationRecord
     gift_people.where.not(name: [ nil, "" ]).count
   end
 
-  def recent_gift_records(limit = 5)
+  def recent_gift_records(limit = RECENT_GIFT_RECORDS_DEFAULT_LIMIT)
     gift_records.includes(:gift_person, :event).order(gift_at: :desc).limit(limit)
   end
 

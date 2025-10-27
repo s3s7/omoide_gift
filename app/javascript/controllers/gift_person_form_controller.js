@@ -23,8 +23,7 @@ export default class extends Controller {
     blurColor: { type: String, default: "#e1e5e9" }, // 通常時の枠線色
     errorColor: { type: String, default: "#ef4444" }, // エラー時の枠線色
     editMode: { type: Boolean, default: false }, // 編集モードかどうか
-    newMode: { type: Boolean, default: false }, // 新規作成モードかどうか
-    autoSaveEnabled: { type: Boolean, default: false } // 自動保存機能の有効化
+    newMode: { type: Boolean, default: false } // 新規作成モードかどうか
   }
 
   connect() {
@@ -64,11 +63,6 @@ export default class extends Controller {
       this.validateNameFieldOnBlur(event.target)
     } else {
       event.target.style.borderColor = this.blurColorValue
-    }
-    
-    // 自動保存機能
-    if (this.autoSaveEnabledValue) {
-      this.autoSaveField(event.target)
     }
   }
 
@@ -219,14 +213,6 @@ export default class extends Controller {
     this.updateMemoCounter()
   }
 
-  // 汎用入力ハンドラー（自動保存用）
-  inputChanged(event) {
-    // 自動保存機能
-    if (this.autoSaveEnabledValue) {
-      this.autoSaveField(event.target)
-    }
-  }
-
   updateMemoCounter() {
     if (!this.hasMemoFieldTarget || !this.hasMemoCounterTarget) return
     
@@ -362,63 +348,10 @@ export default class extends Controller {
 
   // 新規作成モード専用の初期設定
   setupNewMode() {
-    // ドラフト復元機能
-    if (this.autoSaveEnabledValue) {
-      if (this.shouldRestoreDrafts()) {
-        this.restoreDrafts()
-      } else {
-        this.clearAllDrafts()
-      }
-    }
-
     // フォーム送信イベントリスナーを追加
     if (this.hasFormTarget) {
       this.formTarget.addEventListener('submit', this.handleNewModeFormSubmit.bind(this))
     }
-  }
-
-  shouldRestoreDrafts() {
-    if (typeof window === 'undefined' || typeof document === 'undefined') {
-      return false
-    }
-
-    try {
-      const navigationEntries = typeof performance !== 'undefined' &&
-        typeof performance.getEntriesByType === 'function'
-        ? performance.getEntriesByType('navigation')
-        : []
-
-      if (navigationEntries.length > 0) {
-        const navigationType = navigationEntries[0].type
-        if (navigationType === 'reload' || navigationType === 'back_forward') {
-          return true
-        }
-        return false
-      }
-
-      if (typeof performance !== 'undefined' && performance.navigation) {
-        const type = performance.navigation.type
-        if (type === performance.navigation.TYPE_RELOAD || type === performance.navigation.TYPE_BACK_FORWARD) {
-          return true
-        }
-      }
-    } catch (error) {
-      // パフォーマンスAPIが利用できない場合はフォールバックを使用
-    }
-
-    if (document.referrer) {
-      try {
-        const currentUrl = new URL(window.location.href)
-        const referrerUrl = new URL(document.referrer)
-        if (currentUrl.origin === referrerUrl.origin && currentUrl.pathname === referrerUrl.pathname) {
-          return true
-        }
-      } catch (error) {
-        return false
-      }
-    }
-
-    return false
   }
 
   // 新規作成モードでのフォーム送信処理
@@ -433,13 +366,6 @@ export default class extends Controller {
     
     // 送信ボタンをローディング状態に設定
     this.setNewModeSubmitButtonLoading()
-    
-    // 成功時のドラフトクリア（遅延実行）
-    if (this.autoSaveEnabledValue) {
-      setTimeout(() => {
-        this.clearAllDrafts()
-      }, 1000)
-    }
   }
 
   // 新規作成モードでの必須フィールドバリデーション
@@ -487,61 +413,6 @@ export default class extends Controller {
       this.originalSubmitText = this.submitButtonTarget.value
       this.submitButtonTarget.value = '登録中...'
     }
-  }
-
-  // 自動保存機能：フィールドの値をローカルストレージに保存
-  autoSaveField(field) {
-    if (!field.name || !this.isAutoSaveTargetField(field)) return
-    
-    const storageKey = `draft_${field.id || field.name}`
-    localStorage.setItem(storageKey, field.value)
-  }
-
-  // 自動保存対象フィールドかどうかの判定
-  isAutoSaveTargetField(field) {
-    const autoSaveFields = [
-      'gift_person_name',
-      'gift_person_likes', 
-      'gift_person_dislikes',
-      'gift_person_memo'
-    ]
-    
-    return autoSaveFields.some(fieldId => 
-      field.id === fieldId || field.name.includes(fieldId.replace('gift_person_', ''))
-    )
-  }
-
-  // ドラフト復元機能
-  restoreDrafts() {
-    this.inputTargets.forEach(field => {
-      if (!this.isAutoSaveTargetField(field) || field.value) return
-      
-      const storageKey = `draft_${field.id || field.name}`
-      const draftValue = localStorage.getItem(storageKey)
-      
-      if (draftValue) {
-        field.value = draftValue
-        
-        // メモフィールドの場合は文字数カウンターを更新
-        if (field === this.memoFieldTarget && this.hasMemoFieldTarget) {
-          this.updateMemoCounter()
-        }
-      }
-    })
-  }
-
-  // 全ドラフトデータをクリア
-  clearAllDrafts() {
-    const autoSaveFields = [
-      'gift_person_name',
-      'gift_person_likes',
-      'gift_person_dislikes', 
-      'gift_person_memo'
-    ]
-    
-    autoSaveFields.forEach(fieldId => {
-      localStorage.removeItem(`draft_${fieldId}`)
-    })
   }
 
   // フォーム送信バリデーション（必要に応じて追加のバリデーションを実装）
