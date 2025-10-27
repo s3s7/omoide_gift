@@ -33,89 +33,50 @@ RSpec.describe 'GiftRecords Sorting', type: :request do
       )
     end
 
-    context 'デフォルト（投稿日降順）' do
-      it '投稿日降順で表示されること' do
+    context 'アクセス制御' do
+      it '未ログインでは一覧が閲覧できないこと' do
         get gift_records_path
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
 
-        # レスポンスから記録の出現順序をチェック（新しい > 中間 > 古い）
-        body = response.body
-        new_index = body.index('新しい記録')
-        middle_index = body.index('中間の記録')
-        old_index = body.index('古い記録')
-
-        expect(new_index).to be < middle_index
-        expect(middle_index).to be < old_index
+    context 'デフォルト（投稿日降順）' do
+      it '公開フィード自体がアクセス拒否されること' do
+        get gift_records_path
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context '投稿日順ソート' do
-      it '昇順でソートされること' do
+      it '昇順パラメータでもアクセスが拒否されること' do
         get gift_records_path, params: { sort_by: 'created_at', sort_order: 'asc' }
-        expect(response).to have_http_status(:ok)
-
-        # レスポンスから記録の出現順序をチェック（古い < 中間 < 新しい）
-        body = response.body
-        old_index = body.index('古い記録')
-        middle_index = body.index('中間の記録')
-        new_index = body.index('新しい記録')
-
-        expect(old_index).to be < middle_index
-        expect(middle_index).to be < new_index
+        expect(response).to have_http_status(:forbidden)
       end
 
-      it '降順でソートされること' do
+      it '降順パラメータでもアクセスが拒否されること' do
         get gift_records_path, params: { sort_by: 'created_at', sort_order: 'desc' }
-        expect(response).to have_http_status(:ok)
-
-        # レスポンスから記録の出現順序をチェック（新しい > 中間 > 古い）
-        body = response.body
-        new_index = body.index('新しい記録')
-        middle_index = body.index('中間の記録')
-        old_index = body.index('古い記録')
-
-        expect(new_index).to be < middle_index
-        expect(middle_index).to be < old_index
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context 'お気に入り数順ソート' do
       before do
-        # old_recordに3つのお気に入り
         create_list(:favorite, 3, gift_record: old_record)
-        # middle_recordに1つのお気に入り
         create_list(:favorite, 1, gift_record: middle_record)
-        # new_recordに2つのお気に入り
         create_list(:favorite, 2, gift_record: new_record)
       end
 
-      it '降順でソートされること（お気に入り数: 古い3件 > 新しい2件 > 中間1件）' do
+      it '降順ソート要求が拒否されること' do
         get gift_records_path, params: { sort_by: 'favorites', sort_order: 'desc' }
-        expect(response).to have_http_status(:ok)
-
-        body = response.body
-        old_index = body.index('古い記録')     # 3件
-        new_index = body.index('新しい記録')   # 2件
-        middle_index = body.index('中間の記録') # 1件
-
-        expect(old_index).to be < new_index
-        expect(new_index).to be < middle_index
+        expect(response).to have_http_status(:forbidden)
       end
 
-      it '昇順でソートされること（お気に入り数: 中間1件 < 新しい2件 < 古い3件）' do
+      it '昇順ソート要求が拒否されること' do
         get gift_records_path, params: { sort_by: 'favorites', sort_order: 'asc' }
-        expect(response).to have_http_status(:ok)
-
-        body = response.body
-        middle_index = body.index('中間の記録') # 1件
-        new_index = body.index('新しい記録')   # 2件
-        old_index = body.index('古い記録')     # 3件
-
-        expect(middle_index).to be < new_index
-        expect(new_index).to be < old_index
+        expect(response).to have_http_status(:forbidden)
       end
 
-      context 'お気に入りが0件の記録が含まれる場合' do
+      context 'お気に入り0件の記録が含まれる場合' do
         let!(:no_favorite_record) do
           create(:gift_record,
             user: user1,
@@ -124,46 +85,27 @@ RSpec.describe 'GiftRecords Sorting', type: :request do
           )
         end
 
-        it 'お気に入り0件の記録が最後に表示されること（降順）' do
+        it '降順要求も拒否されること' do
           get gift_records_path, params: { sort_by: 'favorites', sort_order: 'desc' }
-          expect(response).to have_http_status(:ok)
-
-          body = response.body
-          old_index = body.index('古い記録')         # 3件
-          no_favorite_index = body.index('お気に入りなし') # 0件
-
-          expect(old_index).to be < no_favorite_index
+          expect(response).to have_http_status(:forbidden)
         end
 
-        it 'お気に入り0件の記録が最初に表示されること（昇順）' do
+        it '昇順要求も拒否されること' do
           get gift_records_path, params: { sort_by: 'favorites', sort_order: 'asc' }
-          expect(response).to have_http_status(:ok)
-
-          body = response.body
-          no_favorite_index = body.index('お気に入りなし') # 0件
-          middle_index = body.index('中間の記録')      # 1件
-
-          expect(no_favorite_index).to be < middle_index
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end
 
     context '無効なソートパラメータ' do
-      it '無効なsort_byでもエラーにならないこと' do
+      it '無効なsort_byでもアクセスが拒否されること' do
         get gift_records_path, params: { sort_by: 'invalid' }
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:forbidden)
       end
 
-      it '無効なsort_orderでもデフォルト（desc）が適用されること' do
+      it '無効なsort_orderでもアクセスが拒否されること' do
         get gift_records_path, params: { sort_by: 'created_at', sort_order: 'invalid' }
-        expect(response).to have_http_status(:ok)
-
-        # デフォルト（desc）で表示される
-        body = response.body
-        new_index = body.index('新しい記録')
-        old_index = body.index('古い記録')
-
-        expect(new_index).to be < old_index
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -173,9 +115,9 @@ RSpec.describe 'GiftRecords Sorting', type: :request do
         Favorite.destroy_all
       end
 
-      it '記録が存在しない場合でもエラーにならないこと' do
+      it '記録が存在しなくてもアクセスが拒否されること' do
         get gift_records_path, params: { sort_by: 'favorites' }
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

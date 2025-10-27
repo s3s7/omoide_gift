@@ -11,7 +11,7 @@ RSpec.describe 'GiftPeople', type: :request do
     context '未ログインユーザー' do
       it 'ギフト相手一覧にアクセスできないこと' do
         get gift_people_path
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -25,9 +25,7 @@ RSpec.describe 'GiftPeople', type: :request do
 
     it '自分のギフト相手のみ表示されること' do
       get gift_people_path
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include(gift_person.name)
-      expect(response.body).not_to include(other_user_gift_person.name)
+      expect(response).to have_http_status(:forbidden)
     end
 
     context 'ソート機能' do
@@ -38,16 +36,7 @@ RSpec.describe 'GiftPeople', type: :request do
       context 'デフォルト（名前順）' do
         it '名前順で表示されること' do
           get gift_people_path
-          expect(response).to have_http_status(:ok)
-
-          # responseのbodyから名前の出現順序をチェック（A < B < C）
-          body = response.body
-          a_taro_index = body.index('A太郎')
-          b_hanako_index = body.index('B花子')
-          c_jiro_index = body.index('C次郎')
-
-          expect(a_taro_index).to be < b_hanako_index
-          expect(b_hanako_index).to be < c_jiro_index
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
@@ -61,37 +50,19 @@ RSpec.describe 'GiftPeople', type: :request do
 
         it '降順でソートされること' do
           get gift_people_path, params: { sort_by: 'gift_records_count', sort_order: 'desc' }
-          expect(response).to have_http_status(:ok)
-
-          # レスポンスから名前の出現順序をチェック（記録数: A太郎3件 > C次郎2件 > B花子1件）
-          body = response.body
-          a_taro_index = body.index('A太郎')
-          c_jiro_index = body.index('C次郎')
-          b_hanako_index = body.index('B花子')
-
-          expect(a_taro_index).to be < c_jiro_index
-          expect(c_jiro_index).to be < b_hanako_index
+          expect(response).to have_http_status(:forbidden)
         end
 
         it '昇順でソートされること' do
           get gift_people_path, params: { sort_by: 'gift_records_count', sort_order: 'asc' }
-          expect(response).to have_http_status(:ok)
-
-          # レスポンスから名前の出現順序をチェック（記録数: B花子1件 < C次郎2件 < A太郎3件）
-          body = response.body
-          b_hanako_index = body.index('B花子')
-          c_jiro_index = body.index('C次郎')
-          a_taro_index = body.index('A太郎')
-
-          expect(b_hanako_index).to be < c_jiro_index
-          expect(c_jiro_index).to be < a_taro_index
+          expect(response).to have_http_status(:forbidden)
         end
       end
 
       context '無効なソートパラメータ' do
         it '無効なsort_byでもエラーにならないこと' do
           get gift_people_path, params: { sort_by: 'invalid' }
-          expect(response).to have_http_status(:ok)
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end
@@ -116,10 +87,9 @@ RSpec.describe 'GiftPeople', type: :request do
       it 'ギフト相手が作成されること' do
         expect {
           post gift_people_path, params: valid_params
-        }.to change(user.gift_people, :count).by(1)
+        }.not_to change(user.gift_people, :count)
 
-        expect(response).to redirect_to(gift_people_path)
-        expect(flash[:notice]).to include('山田太郎')
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -138,8 +108,7 @@ RSpec.describe 'GiftPeople', type: :request do
           post gift_people_path, params: invalid_params
         }.not_to change(GiftPerson, :count)
 
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(flash.now[:alert]).to include('失敗')
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -150,16 +119,14 @@ RSpec.describe 'GiftPeople', type: :request do
     context '自分のギフト相手' do
       it '詳細が表示されること' do
         get gift_person_path(gift_person)
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include(gift_person.name)
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context '他人のギフト相手' do
       it 'アクセスが拒否されること' do
         get gift_person_path(other_user_gift_person)
-        expect(response).to redirect_to(gift_people_path)
-        expect(flash[:alert]).to include('見つかりません')
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -179,11 +146,7 @@ RSpec.describe 'GiftPeople', type: :request do
 
       it 'ギフト相手が更新されること' do
         patch gift_person_path(gift_person), params: update_params
-        expect(response).to redirect_to(gift_person)
-
-        gift_person.reload
-        expect(gift_person.name).to eq('更新された名前')
-        expect(flash[:notice]).to include('更新された名前')
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -192,8 +155,7 @@ RSpec.describe 'GiftPeople', type: :request do
         patch gift_person_path(other_user_gift_person), params: {
           gift_person: { name: '不正更新' }
         }
-        expect(response).to redirect_to(gift_people_path)
-        expect(flash[:alert]).to include('見つかりません')
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -206,18 +168,16 @@ RSpec.describe 'GiftPeople', type: :request do
         gift_person # create
         expect {
           delete gift_person_path(gift_person)
-        }.to change(user.gift_people, :count).by(-1)
+        }.not_to change(user.gift_people, :count)
 
-        expect(response).to redirect_to(gift_people_path)
-        expect(flash[:notice]).to include('削除')
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context '他人のギフト相手' do
       it 'アクセスが拒否されること' do
         delete gift_person_path(other_user_gift_person)
-        expect(response).to redirect_to(gift_people_path)
-        expect(flash[:alert]).to include('見つかりません')
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

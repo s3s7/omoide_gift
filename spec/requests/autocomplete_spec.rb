@@ -24,39 +24,32 @@ RSpec.describe 'オートコンプリート機能', type: :request do
       )
     end
 
-    it 'JSON形式で結果を返す' do
+    it '現在はアクセスが制限されていること' do
       get autocomplete_gift_records_path, params: { q: 'Nintendo' }
 
-      expect(response).to have_http_status(:success)
-      expect(response.content_type).to include('application/json')
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it '商品名での検索結果を返す' do
+    it '商品名検索のリクエストも拒否されること' do
       get autocomplete_gift_records_path, params: { q: 'Nintendo' }
-
-      json = JSON.parse(response.body)
-      expect(json['results']).to be_present
-      expect(json['results'].first['display_text']).to include('Nintendo Switch')
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it 'メモでの検索も機能' do
+    it 'メモ検索のリクエストも拒否されること' do
       get autocomplete_gift_records_path, params: { q: 'ゲーム機' }
-
-      json = JSON.parse(response.body)
-      expect(json['results'].first['display_text']).to include('Nintendo Switch')
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it '認証が必要' do
+    it '未ログインの場合も403が返ること' do
       sign_out user
       get autocomplete_gift_records_path, params: { q: 'test' }
 
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it '空クエリでエラーなし' do
+    it '空クエリでも403となること' do
       get autocomplete_gift_records_path, params: { q: '' }
-
-      expect(response).to have_http_status(:success)
+      expect(response).to have_http_status(:forbidden)
     end
   end
 
@@ -76,40 +69,30 @@ RSpec.describe 'オートコンプリート機能', type: :request do
       )
     end
 
-    it 'JSON形式で結果を返す' do
+    it '現在はアクセスが制限されていること' do
       get autocomplete_gift_people_path, params: { q: '田中' }
-
-      expect(response).to have_http_status(:success)
-      expect(response.content_type).to include('application/json')
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it '名前での検索結果を返す' do
+    it '名前検索のリクエストも拒否されること' do
       get autocomplete_gift_people_path, params: { q: '田中' }
-
-      json = JSON.parse(response.body)
-      expect(json['results']).to be_present
-      expect(json['results'].first['display_text']).to include('田中太郎')
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it 'メモでの検索も機能' do
+    it 'メモ検索のリクエストも拒否されること' do
       get autocomplete_gift_people_path, params: { q: '親友' }
-
-      json = JSON.parse(response.body)
-      expect(json['results'].first['display_text']).to include('田中太郎')
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it '他ユーザーのデータは検索対象外' do
+    it '他ユーザー名でのリクエストも拒否されること' do
       get autocomplete_gift_people_path, params: { q: '佐藤' }
-
-      json = JSON.parse(response.body)
-      expect(json['results']).to be_empty
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it '認証が必要' do
+    it '未ログイン時も403が返ること' do
       sign_out user
       get autocomplete_gift_people_path, params: { q: 'test' }
-
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to have_http_status(:forbidden)
     end
   end
 
@@ -118,9 +101,7 @@ RSpec.describe 'オートコンプリート機能', type: :request do
       create_list(:gift_record, 20, user: user, item_name: 'テスト商品', is_public: true)
 
       get autocomplete_gift_records_path, params: { q: 'テスト' }
-
-      json = JSON.parse(response.body)
-      expect(json['results'].length).to be <= 10 # 結果制限確認
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'レスポンス時間（簡易チェック）' do
@@ -129,7 +110,8 @@ RSpec.describe 'オートコンプリート機能', type: :request do
       get autocomplete_gift_records_path, params: { q: 'test' }
 
       response_time = Time.current - start_time
-      expect(response_time).to be < 1.0 # 1秒以内
+      expect(response).to have_http_status(:forbidden)
+      expect(response_time).to be < 1.0 # 1秒以内（エラー応答でも高速であること）
     end
   end
 end

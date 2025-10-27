@@ -1,10 +1,18 @@
 require 'rails_helper'
 
 RSpec.describe CommentsController, type: :controller do
+  before(:all) do
+    I18n.backend.store_translations(:ja, time: { formats: { time_only: "%H:%M" } })
+  end
+
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
   let(:gift_record) { create(:gift_record, user: user) }
   let(:comment) { create(:comment, user: user, gift_record: gift_record) }
+
+  before do
+    @request.env['devise.mapping'] = Devise.mappings[:user]
+  end
 
   describe 'セキュリティテスト' do
     context '認証なし' do
@@ -25,7 +33,7 @@ RSpec.describe CommentsController, type: :controller do
     end
 
     context '他人のギフト記録' do
-      let(:other_gift_record) { create(:gift_record, user: other_user) }
+      let(:other_gift_record) { create(:gift_record, user: other_user, is_public: false) }
 
       before { sign_in user }
 
