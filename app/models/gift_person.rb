@@ -49,5 +49,4 @@ class GiftPerson < ApplicationRecord
   end
 
   private
-
 end

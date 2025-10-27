@@ -11,5 +11,4 @@ class GiftItemCategory < ApplicationRecord
 
   # スコープ（クエリの再利用性と可読性向上）
   scope :active, -> { where.not(name: [ nil, "" ]) }
-
 end

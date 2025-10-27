@@ -11,5 +11,4 @@ class Relationship < ApplicationRecord
 
   # スコープ
   scope :active, -> { where.not(name: [ nil, "" ]) }
-
 end
