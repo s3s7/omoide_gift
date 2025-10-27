@@ -97,6 +97,7 @@ ja:
       gift_record: ギフト記録
       remind: リマインダー
       user: ユーザー
+      comment: コメント
     attributes:
       remind:
         notification_sent_at: 通知予定日時
@@ -105,6 +106,8 @@ ja:
         gift_person_id: ギフト相手
         notification_days_before: 通知日数
         notification_time: 通知時刻
+      comment:
+        body: コメント
       user:
         name: 名前
         email: メールアドレス

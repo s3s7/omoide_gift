@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include AvatarAttachable
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise_modules = [
@@ -33,7 +34,6 @@ class User < ApplicationRecord
 
   # バリデーション
   validates :name, presence: true, length: { maximum: 10 }
-  validate :avatar_validation
 
   # セキュリティを考慮したエラーメッセージの置き換え
   after_validation :customize_validation_errors
@@ -141,21 +141,6 @@ class User < ApplicationRecord
     self.save!
   end
 
-  # プロフィール画像関連メソッド
-  def avatar_url
-    return unless avatar.attached? && persisted?
-    begin
-      avatar
-    rescue ActiveRecord::RecordNotFound, NoMethodError => e
-      Rails.logger.warn "Avatar URL generation failed: #{e.message}"
-      nil
-    end
-  end
-
-  def has_avatar?
-    avatar.attached?
-  end
-
   private
 
   # バリデーションエラーメッセージのカスタマイズ
@@ -173,21 +158,4 @@ class User < ApplicationRecord
     end
   end
 
-  # プロフィール画像のバリデーション
-  def avatar_validation
-    return unless avatar.attached?
-
-    # ファイル形式チェック
-    unless avatar.content_type.in?(%w[image/jpeg image/jpg image/png image/webp])
-      errors.add(:avatar, "はJPEG、PNG、WEBP形式のファイルのみアップロードできます")
-    end
-
-    # ファイルサイズチェック（2MBまで）
-    if avatar.blob.byte_size > 2.megabytes
-      errors.add(:avatar, "のファイルサイズは2MB以下にしてください")
-    end
-  rescue StandardError => e
-    Rails.logger.error "Avatar validation error: #{e.message}"
-    errors.add(:avatar, "の検証中にエラーが発生しました")
-  end
 end
