@@ -5,3 +5,6 @@ ja:
       title: "めぐりギフトー大切な人との思い出を記録し、共有するアプリ"
       description: "めぐりギフトはギフトの記録などできます"
       keywords: "ギフト、記録、共有"
+  time:
+    formats:
+      time_only: "%H:%M"

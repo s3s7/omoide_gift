@@ -40,10 +40,10 @@ RSpec.describe 'フィルタースコープ', type: :model do
 
     it '使用頻度順で取得' do
       results = Event.frequently_used.to_a
-      filtered_results = results.select { |event| [popular_event.id, rare_event.id].include?(event.id) }
+      filtered_results = results.select { |event| [ popular_event.id, rare_event.id ].include?(event.id) }
 
       expect(filtered_results.size).to eq(2)
-      expect(filtered_results.map(&:id)).to eq([popular_event.id, rare_event.id])
+      expect(filtered_results.map(&:id)).to eq([ popular_event.id, rare_event.id ])
     end
   end
 
