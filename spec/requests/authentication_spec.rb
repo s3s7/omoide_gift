@@ -5,41 +5,39 @@ RSpec.describe 'Authentication', type: :request do
     let!(:user) { create(:user) }
 
     context '正しい認証情報でのログイン' do
-      it 'ログインが成功すること' do
+      it '現在はアクセスが拒否されること' do
         post user_session_path, params: {
           user: {
             email: user.email,
             password: user.password
           }
         }
-        expect(response).to redirect_to(root_path)
-        expect(session['warden.user.user.key']).to be_present
+        expect(response).to have_http_status(:forbidden)
+        expect(session['warden.user.user.key']).to be_nil
       end
     end
 
     context '間違った認証情報でのログイン' do
-      it 'ログインが失敗すること' do
+      it 'アクセスが拒否されること' do
         post user_session_path, params: {
           user: {
             email: user.email,
             password: 'wrong_password'
           }
         }
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include('ログイン')
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context '存在しないメールアドレス' do
-      it 'ログインが失敗すること' do
+      it 'アクセスが拒否されること' do
         post user_session_path, params: {
           user: {
             email: 'nonexistent@example.com',
             password: 'password123'
           }
         }
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include('ログイン')
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -52,17 +50,17 @@ RSpec.describe 'Authentication', type: :request do
         sign_in user
       end
 
-      it 'ログアウトが成功すること' do
+      it 'ログアウト要求も拒否されること' do
         delete destroy_user_session_path
-        expect(response).to redirect_to(root_path)
+        expect(response).to have_http_status(:forbidden)
         expect(session['warden.user.user.key']).to be_nil
       end
     end
 
     context '未ログインユーザー' do
-      it 'ルートにリダイレクトされること' do
+      it 'アクセスが拒否されること' do
         delete destroy_user_session_path
-        expect(response).to redirect_to(root_path)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

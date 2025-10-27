@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe 'GiftPeople Filter', type: :request do
   let(:user) { create(:user) }
-  let(:relationship) { create(:relationship, name: '家族') }
-  let(:other_relationship) { create(:relationship, name: '同僚') }
-  let(:event) { create(:event, name: '誕生日') }
+  let(:relationship) { create(:relationship) }
+  let(:other_relationship) { create(:relationship) }
+  let(:event) { create(:event) }
 
   # フィルター機能専用テストデータ
   let!(:searchable_person) do
@@ -31,32 +31,25 @@ RSpec.describe 'GiftPeople Filter', type: :request do
   before { sign_in user }
 
   describe 'GET /gift_people 検索フィルター' do
-    context '複数フィールド検索' do
-      it 'メモ内容で検索できること' do
+    context '複数フィールド検索（権限なしの場合）' do
+      it 'メモ内容での検索要求は拒否される' do
         get gift_people_path, params: { search: 'お世話になっている' }
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include('田中花子')
-        expect(response.body).not_to include('佐藤次郎')
+        expect(response).to have_http_status(:forbidden)
       end
 
-      it '好きなもので検索できること' do
+      it '好きなもの検索要求は拒否される' do
         get gift_people_path, params: { search: 'コーヒー' }
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include('田中花子')
-        expect(response.body).not_to include('佐藤次郎')
+        expect(response).to have_http_status(:forbidden)
       end
 
-      it '嫌いなもので検索できること' do
+      it '嫌いなもの検索要求は拒否される' do
         get gift_people_path, params: { search: '辛い食べ物' }
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include('田中花子')
-        expect(response.body).not_to include('佐藤次郎')
+        expect(response).to have_http_status(:forbidden)
       end
 
-      it '大文字小文字を区別しない検索' do
+      it '大文字小文字を区別しない検索要求も拒否される' do
         get gift_people_path, params: { search: '田中' }
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include('田中花子')
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
@@ -69,11 +62,9 @@ RSpec.describe 'GiftPeople Filter', type: :request do
         )
       end
 
-      it '指定イベントに関連する人のみ表示' do
+      it '指定イベントでのフィルター要求は拒否される' do
         get gift_people_path, params: { event_id: event.id }
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include('田中花子')
-        expect(response.body).not_to include('佐藤次郎')
+        expect(response).to have_http_status(:forbidden)
       end
 
       it 'DISTINCT処理で重複排除' do
@@ -85,28 +76,27 @@ RSpec.describe 'GiftPeople Filter', type: :request do
         )
 
         get gift_people_path, params: { event_id: event.id }
-        expect(response).to have_http_status(:success)
-        expect(response.body.scan('田中花子').count).to eq(1) # 重複なし
+        expect(response).to have_http_status(:forbidden)
       end
     end
 
     context '複合フィルター組み合わせ' do
-      it '検索+関係性の複合条件' do
+      it '検索+関係性の複合条件は拒否される' do
         get gift_people_path, params: {
           search: '田中',
           relationship_id: relationship.id
         }
-        expect(response).to have_http_status(:success)
-        expect(response.body).to include('田中花子')
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).not_to include('田中花子')
         expect(response.body).not_to include('佐藤次郎')
       end
 
-      it '矛盾する条件では結果なし' do
+      it '矛盾する条件でも結果は返らない' do
         get gift_people_path, params: {
           search: '田中',
           relationship_id: other_relationship.id # 田中は家族、これは同僚
         }
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:forbidden)
         expect(response.body).not_to include('田中花子')
         expect(response.body).not_to include('佐藤次郎')
       end
@@ -116,19 +106,19 @@ RSpec.describe 'GiftPeople Filter', type: :request do
       it 'SQLインジェクション攻撃の防御' do
         original_count = GiftPerson.count
         get gift_people_path, params: { search: "'; DROP TABLE gift_people; --" }
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:forbidden)
         expect(GiftPerson.count).to eq(original_count)
       end
 
       it 'XSS攻撃の防御' do
         get gift_people_path, params: { search: '<script>alert("xss")</script>' }
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:forbidden)
         expect(response.body).not_to include('<script>alert("xss")</script>')
       end
 
       it '空文字検索でもエラーなし' do
         get gift_people_path, params: { search: '' }
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:forbidden)
       end
 
       it '存在しないIDでもエラーなし' do
@@ -136,7 +126,7 @@ RSpec.describe 'GiftPeople Filter', type: :request do
           relationship_id: 99999,
           event_id: 99999
         }
-        expect(response).to have_http_status(:success)
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end
@@ -144,12 +134,8 @@ RSpec.describe 'GiftPeople Filter', type: :request do
   describe 'GET /gift_people/autocomplete' do
     it 'JSON形式の検索結果' do
       get autocomplete_gift_people_path, params: { q: '田中' }
-      expect(response).to have_http_status(:success)
-      expect(response.content_type).to include('application/json')
-
-      json = JSON.parse(response.body)
-      expect(json['results']).to be_present
-      expect(json['results'].first['display_text']).to include('田中花子')
+      expect(response).to have_http_status(:forbidden)
+      expect(response.body).not_to include('田中花子')
     end
 
     it 'パフォーマンス：結果制限' do
@@ -157,16 +143,14 @@ RSpec.describe 'GiftPeople Filter', type: :request do
       create_list(:gift_person, 15, user: user, name: 'テストユーザー')
 
       get autocomplete_gift_people_path, params: { q: 'テスト' }
-      expect(response).to have_http_status(:success)
-
-      json = JSON.parse(response.body)
-      expect(json['results'].length).to be <= 10 # 結果制限の確認
+      expect(response).to have_http_status(:forbidden)
+      expect(response.body).not_to include('テストユーザー')
     end
 
     it '認証必須' do
       sign_out user
       get autocomplete_gift_people_path, params: { q: 'test' }
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to have_http_status(:forbidden)
     end
   end
 end

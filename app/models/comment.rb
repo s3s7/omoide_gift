@@ -1,9 +1,12 @@
 class Comment < ApplicationRecord
+  BODY_MAX_LENGTH = 100
+  EXCERPT_DEFAULT_LIMIT = 50
+
   belongs_to :user
   belongs_to :gift_record
 
   validates :body, presence: { message: "を入力してください" },
-                  length: { maximum: 100, message: "は100文字以内で入力してください" }
+                  length: { maximum: BODY_MAX_LENGTH, message: "は#{BODY_MAX_LENGTH}文字以内で入力してください" }
 
   scope :recent, -> { order(created_at: :desc) }
   scope :oldest_first, -> { order(created_at: :asc) }
@@ -20,7 +23,7 @@ class Comment < ApplicationRecord
     end
   end
 
-  def excerpt(limit = 50)
+  def excerpt(limit = EXCERPT_DEFAULT_LIMIT)
     body.length > limit ? "#{body[0, limit]}..." : body
   end
 end

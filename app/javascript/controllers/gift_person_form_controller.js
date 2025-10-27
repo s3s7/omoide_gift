@@ -364,13 +364,61 @@ export default class extends Controller {
   setupNewMode() {
     // ドラフト復元機能
     if (this.autoSaveEnabledValue) {
-      this.restoreDrafts()
+      if (this.shouldRestoreDrafts()) {
+        this.restoreDrafts()
+      } else {
+        this.clearAllDrafts()
+      }
     }
-    
+
     // フォーム送信イベントリスナーを追加
     if (this.hasFormTarget) {
       this.formTarget.addEventListener('submit', this.handleNewModeFormSubmit.bind(this))
     }
+  }
+
+  shouldRestoreDrafts() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return false
+    }
+
+    try {
+      const navigationEntries = typeof performance !== 'undefined' &&
+        typeof performance.getEntriesByType === 'function'
+        ? performance.getEntriesByType('navigation')
+        : []
+
+      if (navigationEntries.length > 0) {
+        const navigationType = navigationEntries[0].type
+        if (navigationType === 'reload' || navigationType === 'back_forward') {
+          return true
+        }
+        return false
+      }
+
+      if (typeof performance !== 'undefined' && performance.navigation) {
+        const type = performance.navigation.type
+        if (type === performance.navigation.TYPE_RELOAD || type === performance.navigation.TYPE_BACK_FORWARD) {
+          return true
+        }
+      }
+    } catch (error) {
+      // パフォーマンスAPIが利用できない場合はフォールバックを使用
+    }
+
+    if (document.referrer) {
+      try {
+        const currentUrl = new URL(window.location.href)
+        const referrerUrl = new URL(document.referrer)
+        if (currentUrl.origin === referrerUrl.origin && currentUrl.pathname === referrerUrl.pathname) {
+          return true
+        }
+      } catch (error) {
+        return false
+      }
+    }
+
+    return false
   }
 
   // 新規作成モードでのフォーム送信処理

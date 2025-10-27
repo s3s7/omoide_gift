@@ -118,9 +118,8 @@ RSpec.describe GiftRecord, type: :model do
 
     describe '.recent' do
       it '作成日の降順で並んでいる' do
-        records = GiftRecord.recent
-        expect(records.first).to eq(recent_record)
-        expect(records.last).to eq(old_record)
+        records = GiftRecord.recent.where(id: [ recent_record.id, old_record.id ]).to_a
+        expect(records).to eq([ recent_record, old_record ])
       end
     end
 

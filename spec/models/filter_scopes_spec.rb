@@ -39,15 +39,16 @@ RSpec.describe 'フィルタースコープ', type: :model do
     end
 
     it '使用頻度順で取得' do
-      results = Event.frequently_used.limit(2)
+      results = Event.frequently_used.to_a
+      filtered_results = results.select { |event| [ popular_event.id, rare_event.id ].include?(event.id) }
 
-      expect(results.first).to eq(popular_event)
-      expect(results.second).to eq(rare_event)
+      expect(filtered_results.size).to eq(2)
+      expect(filtered_results.map(&:id)).to eq([ popular_event.id, rare_event.id ])
     end
   end
 
   describe 'Relationship.active' do
-    let!(:valid_rel) { create(:relationship, name: '友人') }
+    let!(:valid_rel) { create(:relationship) }
     let!(:empty_rel) do
       # バリデーションをスキップして空の名前のRelationshipを作成
       relationship = build(:relationship, name: '')
