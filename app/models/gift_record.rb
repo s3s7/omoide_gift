@@ -240,95 +240,6 @@ end
     OgpUrlService.default_fallback_url(request)
   end
 
-  private
-
-  def gift_at_is_valid_date
-    return unless gift_at.present?
-
-    # 日付型の妥当性チェック
-    unless gift_at.is_a?(Date) || gift_at.is_a?(Time)
-      begin
-        Date.parse(gift_at.to_s)
-      rescue ArgumentError
-        errors.add(:gift_at, "は有効な日付を入力してください")
-      end
-    end
-  end
-
-  def gift_at_is_reasonable_date
-    return unless gift_at.present? && !errors.has_key?(:gift_at)
-
-    # 日付を正規化
-    date = gift_at.is_a?(Date) ? gift_at : Date.parse(gift_at.to_s)
-
-    # 過去100年以内の妥当性チェック
-    if date < 100.years.ago
-      errors.add(:gift_at, "は100年以内の日付を入力してください")
-    end
-
-    # 未来1年以内の妥当性チェック（ギフトの予定日も考慮）
-    if date > 1.year.from_now
-      errors.add(:gift_at, "は1年以内の日付を入力してください")
-    end
-  end
-
-  def event_exists_and_valid
-    return unless event_id.present?
-
-    # 選択されたイベントが存在するかチェック
-    unless Event.exists?(event_id)
-      errors.add(:event_id, "選択されたイベントは存在しません")
-      return
-    end
-
-    # イベントが有効な状態かチェック（将来の拡張用）
-    event_record = Event.find_by(id: event_id)
-    if event_record&.name.blank?
-      errors.add(:event_id, "選択されたイベントは無効です")
-    end
-  rescue StandardError => e
-    Rails.logger.error "Event validation error: #{e.message}"
-    errors.add(:event_id, "イベントの確認中にエラーが発生しました")
-  end
-
-  # 画像アップロードのバリデーション
-  def images_validation
-    return unless images.attached?
-
-    # 枚数制限チェック（5枚まで）
-    if images.count > 5
-      errors.add(:images, "は5枚まで添付できます")
-      return
-    end
-
-    images.each_with_index do |image, index|
-      # ファイル形式チェック
-      unless image.content_type.in?(%w[image/jpeg image/jpg image/png image/webp])
-        errors.add(:images, "#{index + 1}枚目: JPEG、PNG、WEBP形式のファイルのみアップロードできます")
-      end
-
-      # ファイルサイズチェック（3MBまで）
-      if image.blob.byte_size > 3.megabytes
-        errors.add(:images, "#{index + 1}枚目: ファイルサイズは3MB以下にしてください")
-      end
-    end
-  rescue StandardError => e
-    Rails.logger.error "Images validation error: #{e.message}"
-    errors.add(:images, "画像の検証中にエラーが発生しました")
-  end
-
-  def sync_return_gift_flag
-    self.is_return_gift = parent_gift_record_id.present?
-  end
-
-  def set_return_deadline
-    if needs_return? && !is_return_gift? && return_deadline.blank?
-      # 一般的に内祝いは1ヶ月以内
-      self.return_deadline = Date.current + 1.month
-    end
-  end
-
-  public
 
   # スコープ（クエリの再利用性と可読性向上）
   scope :recent, -> { order(created_at: :desc) }
@@ -434,4 +345,92 @@ end
     false
   end
 end
+
+  private
+
+  def gift_at_is_valid_date
+    return unless gift_at.present?
+
+    # 日付型の妥当性チェック
+    unless gift_at.is_a?(Date) || gift_at.is_a?(Time)
+      begin
+        Date.parse(gift_at.to_s)
+      rescue ArgumentError
+        errors.add(:gift_at, "は有効な日付を入力してください")
+      end
+    end
+  end
+
+  def gift_at_is_reasonable_date
+    return unless gift_at.present? && !errors.has_key?(:gift_at)
+
+    # 日付を正規化
+    date = gift_at.is_a?(Date) ? gift_at : Date.parse(gift_at.to_s)
+
+    # 過去100年以内の妥当性チェック
+    if date < 100.years.ago
+      errors.add(:gift_at, "は100年以内の日付を入力してください")
+    end
+
+    # 未来1年以内の妥当性チェック（ギフトの予定日も考慮）
+    if date > 1.year.from_now
+      errors.add(:gift_at, "は1年以内の日付を入力してください")
+    end
+  end
+
+  def event_exists_and_valid
+    return unless event_id.present?
+
+    # 選択されたイベントが存在するかチェック
+    unless Event.exists?(event_id)
+      errors.add(:event_id, "選択されたイベントは存在しません")
+      return
+    end
+
+    # イベントが有効な状態かチェック（将来の拡張用）
+    event_record = Event.find_by(id: event_id)
+    if event_record&.name.blank?
+      errors.add(:event_id, "選択されたイベントは無効です")
+    end
+  rescue StandardError => e
+    Rails.logger.error "Event validation error: #{e.message}"
+    errors.add(:event_id, "イベントの確認中にエラーが発生しました")
+  end
+
+  # 画像アップロードのバリデーション
+  def images_validation
+    return unless images.attached?
+
+    # 枚数制限チェック（5枚まで）
+    if images.count > 5
+      errors.add(:images, "は5枚まで添付できます")
+      return
+    end
+
+    images.each_with_index do |image, index|
+      # ファイル形式チェック
+      unless image.content_type.in?(%w[image/jpeg image/jpg image/png image/webp])
+        errors.add(:images, "#{index + 1}枚目: JPEG、PNG、WEBP形式のファイルのみアップロードできます")
+      end
+
+      # ファイルサイズチェック（3MBまで）
+      if image.blob.byte_size > 3.megabytes
+        errors.add(:images, "#{index + 1}枚目: ファイルサイズは3MB以下にしてください")
+      end
+    end
+  rescue StandardError => e
+    Rails.logger.error "Images validation error: #{e.message}"
+    errors.add(:images, "画像の検証中にエラーが発生しました")
+  end
+
+  def sync_return_gift_flag
+    self.is_return_gift = parent_gift_record_id.present?
+  end
+
+  def set_return_deadline
+    if needs_return? && !is_return_gift? && return_deadline.blank?
+      # 一般的に内祝いは1ヶ月以内
+      self.return_deadline = Date.current + 1.month
+    end
+  end
 end
