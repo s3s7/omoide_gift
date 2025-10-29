@@ -30,7 +30,7 @@ class User < ApplicationRecord
   has_one_attached :avatar
   end
   # 権限設定
-  enum role: {
+  enum :role, {
     general: 0,    # 一般ユーザー
     admin: 1       # 管理者
   }
