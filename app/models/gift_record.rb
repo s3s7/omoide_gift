@@ -17,8 +17,8 @@ class GiftRecord < ApplicationRecord
   has_many :return_gifts, class_name: "GiftRecord", foreign_key: "parent_gift_record_id"
 
   # Enum定義
-  enum gift_direction: { given: 0, received: 1 }
-  enum return_status: {
+  enum :gift_direction, { given: 0, received: 1 }
+  enum :return_status, {
     not_required: 0,    # お返し不要
     planned: 1,         # お返し予定
     completed: 2        # お返し完了
