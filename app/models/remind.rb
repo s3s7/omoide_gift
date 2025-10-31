@@ -1,4 +1,12 @@
 class Remind < ApplicationRecord
+  DAYS_RANGE = (0..30).freeze
+  HOURS_RANGE = (0..23).freeze
+  HALF_HOUR_MINUTES = [ 0, 30 ].freeze
+  MAX_MINUTE = 59
+  NOTIFY_RANGE_START_LABEL = "0:00".freeze
+  NOTIFY_RANGE_END_LABEL = "23:30".freeze
+  NOTIFY_RANGE_ERROR_MESSAGE = "通知時刻は#{NOTIFY_RANGE_START_LABEL}-#{NOTIFY_RANGE_END_LABEL}の範囲で30分刻みで設定してください".freeze
+
   belongs_to :user
   belongs_to :gift_person
 
@@ -21,28 +29,28 @@ class Remind < ApplicationRecord
 
   # 通知日数の選択肢
   def self.notification_days_before_options
-    [
-      [ "記念日当日", 0 ],
-      [ "1日前", 1 ],
-      [ "2日前", 2 ],
-      [ "3日前", 3 ],
-      [ "1週間前", 7 ],
-      [ "2週間前", 14 ],
-      [ "1ヶ月前", 30 ]
-    ]
+    DAYS_RANGE.map do |days|
+      label = case days
+      when 0
+        "記念日当日"
+      when 1
+        "1日前"
+      else
+        "#{days}日前"
+      end
+      [ label, days ]
+    end
   end
 
   # 通知時刻の選択肢
   def self.notification_time_options
-    times = []
-    (6..23).each do |hour|
-      [ 0, 30 ].each do |minute|
+    HOURS_RANGE.flat_map do |hour|
+      HALF_HOUR_MINUTES.map do |minute|
         time_str = sprintf("%02d:%02d", hour, minute)
-        display_str = sprintf("%d時%s", hour, minute == 0 ? "00分" : "30分")
-        times << [ display_str, time_str ]  # labelとvalueを正しい順序に修正
+        display_str = sprintf("%d時%s", hour, minute.zero? ? "00分" : "30分")
+        [ display_str, time_str ]
       end
     end
-    times
   end
 
   # 通知が必要かチェック
@@ -106,7 +114,7 @@ class Remind < ApplicationRecord
 
     # 時刻をパース
     hour, minute = time_str.split(":").map(&:to_i)
-    unless hour.between?(0, 23) && minute.between?(0, 59)
+    unless HOURS_RANGE.cover?(hour) && minute.between?(0, MAX_MINUTE)
       errors.add(:base, "通知時刻の形式が無効です")
       return false
     end
@@ -186,14 +194,14 @@ class Remind < ApplicationRecord
       errors.add(:base, "通知日数の設定が無効です")
     end
 
-    # 通知時刻が定義範囲内かチェック（6:00-23:30の範囲）
+    # 通知時刻が定義範囲内かチェック（0:00-23:30の範囲）
     time_str = notification_time
     return unless time_str.present?
 
     hour, minute = time_str.split(":").map(&:to_i)
 
-    unless hour.between?(6, 23) && [ 0, 30 ].include?(minute)
-      errors.add(:base, "通知時刻は6:00-23:30の範囲で30分刻みで設定してください")
+    unless HOURS_RANGE.cover?(hour) && HALF_HOUR_MINUTES.include?(minute)
+      errors.add(:base, NOTIFY_RANGE_ERROR_MESSAGE)
     end
   rescue StandardError
     errors.add(:base, "通知タイミングの設定に問題があります")

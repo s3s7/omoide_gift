@@ -1,14 +1,17 @@
 class GiftPerson < ApplicationRecord
   include AvatarAttachable
+  NAME_MIN_LENGTH = 1
+  ADDRESS_MAX_LENGTH = 100
+
   belongs_to :user
   belongs_to :relationship
   has_many :gift_records, foreign_key: "gift_people_id", dependent: :destroy
   has_many :reminds, dependent: :destroy
   has_one_attached :avatar
 
-  validates :name, presence: true, length: { minimum: 1 }
+  validates :name, presence: true, length: { minimum: NAME_MIN_LENGTH }
   validates :name, format: { with: /\A\S+.*\S*\z/, message: "空白のみは無効です" }
-  validates :address, length: { maximum: 100 }, allow_blank: true
+  validates :address, length: { maximum: ADDRESS_MAX_LENGTH }, allow_blank: true
 
   # 指定された日付時点での年齢を計算
   def age_at(reference_date = Date.current)
@@ -46,6 +49,4 @@ class GiftPerson < ApplicationRecord
   end
 
   private
-
-  # ギフト相手のプロフィール画像のバリデーション
 end

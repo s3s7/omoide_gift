@@ -1,4 +1,10 @@
 class UsersController < ApplicationController
+  RECENT_GIFT_RECORDS_LIMIT = 5
+  UPCOMING_REMIND_LIMIT = 5
+  RECENT_REMIND_LIMIT = 3
+  MONTHLY_STATS_RANGE = 5
+  POPULAR_GIFT_PEOPLE_LIMIT = 5
+
   before_action :authenticate_user!, except: [ :new, :create ]
   before_action :set_current_user, only: [ :show, :edit, :update ]
 
@@ -21,7 +27,7 @@ class UsersController < ApplicationController
     @total_gift_records = @user.total_gift_records
     @total_gift_amount = @user.total_gift_amount
     @total_gift_people = @user.total_gift_people
-    @recent_gift_records = @user.recent_gift_records(5)
+    @recent_gift_records = @user.recent_gift_records(RECENT_GIFT_RECORDS_LIMIT)
     @current_year_stats = @user.current_year_stats
     @public_records_count = @user.public_gift_records_count
     @private_records_count = @user.private_gift_records_count
@@ -31,11 +37,11 @@ class UsersController < ApplicationController
 
     # 記念日リマインダー統計
     @total_reminds = @user.reminds.count
-    @upcoming_reminds = @user.reminds.unsent.where("notification_at >= ?", Date.current).limit(5)
+    @upcoming_reminds = @user.reminds.unsent.where("notification_at >= ?", Date.current).limit(UPCOMING_REMIND_LIMIT)
     @upcoming_reminds_count = @user.reminds.unsent.where("notification_at >= ?", Date.current).count
-    @recent_sent_reminds = @user.reminds.sent.order(notification_sent_at: :desc).limit(3)
+    @recent_sent_reminds = @user.reminds.sent.order(notification_sent_at: :desc).limit(RECENT_REMIND_LIMIT)
     # 月別統計（過去6ヶ月）
-    @monthly_stats = (0..5).map do |i|
+    @monthly_stats = (0..MONTHLY_STATS_RANGE).map do |i|
       date = Date.current - i.months
       {
         month: date.strftime("%Y年%m月"),
@@ -52,7 +58,7 @@ class UsersController < ApplicationController
       .joins(:gift_records)
       .group("gift_people.id")
       .order("COUNT(gift_records.id) DESC")
-      .limit(5)
+      .limit(POPULAR_GIFT_PEOPLE_LIMIT)
       .includes(:relationship)
   end
 

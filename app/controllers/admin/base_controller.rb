@@ -10,6 +10,10 @@ class Admin::BaseController < ApplicationController
   # 管理者アクションのログ記録
   before_action :log_admin_access
 
+  DEFAULT_PER_PAGE = 25
+  MIN_PER_PAGE = 10
+  MAX_PER_PAGE = 100
+
   protected
 
   # 管理者アクションの共通ログ記録
@@ -32,7 +36,7 @@ class Admin::BaseController < ApplicationController
 
   # ページネーション用の1ページあたりの件数設定
   def per_page
-    params[:per_page]&.to_i&.clamp(10, 100) || 25
+    params[:per_page]&.to_i&.clamp(MIN_PER_PAGE, MAX_PER_PAGE) || DEFAULT_PER_PAGE
   end
 
   # 管理者用の検索パラメータ処理

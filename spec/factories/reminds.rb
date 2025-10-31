@@ -10,10 +10,8 @@ module RemindFactoryHelpers
       (time + 1.hour).change(min: 0)
     end
 
-    if rounded_time.hour < 6
-      rounded_time = rounded_time.change(hour: 6, min: 0)
-    elsif rounded_time.hour > 23 || (rounded_time.hour == 23 && rounded_time.min > 30)
-      rounded_time = (rounded_time + 1.day).change(hour: 6, min: 0)
+    if rounded_time.hour > 23 || (rounded_time.hour == 23 && rounded_time.min > 30)
+      rounded_time = (rounded_time + 1.day).change(hour: 0, min: 0)
     end
 
     rounded_time

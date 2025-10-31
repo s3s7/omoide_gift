@@ -129,7 +129,7 @@ ja:
               time_required: 通知時刻を選択してください
               time_format_invalid: 通知時刻の形式が無効です
               invalid_days_before: 通知日数の設定が無効です
-              invalid_time_window: 通知時刻は6:00-23:30の範囲で30分刻みで設定してください
+              invalid_time_window: 通知時刻は0:00-23:30の範囲で30分刻みで設定してください
               timing_invalid: 通知タイミングの設定に問題があります
               schedule_error: "通知日時の設定でエラーが発生しました: %{error}"
   # shared:

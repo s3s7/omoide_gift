@@ -32,31 +32,3 @@ end
 Sidekiq.configure_client do |config|
   config.redis = { url: Rails.env.production? ? ENV.fetch("REDIS_URL", nil) : ENV["REDIS_URL_DEVELOPMENT"] }
 end
-
-# redis_url = ENV["REDIS_URL"]
-
-# Sidekiq.configure_server do |config|
-#   config.redis = { url: redis_url }
-# end
-
-# Sidekiq.configure_client do |config|
-#   config.redis = { url: redis_url }
-# end
-
-# require "sidekiq-scheduler/web"
-
-# redis_url = ENV["REDIS_URL"] || "redis://redis:6379/1"
-
-# Sidekiq.configure_server do |config|
-#   config.redis = { url: redis_url }
-
-#   config.on(:startup) do
-#     Sidekiq::Scheduler.reload_schedule!
-#   end
-# end
-
-# Sidekiq.configure_client do |config|
-#   config.redis = { url: redis_url }
-# end
-
-# require "sidekiq-scheduler/web"

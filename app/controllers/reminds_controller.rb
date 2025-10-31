@@ -1,4 +1,5 @@
 class RemindsController < ApplicationController
+  PAST_REMIND_LIMIT = 10
   before_action :authenticate_user!
   before_action :set_remind, only: [ :show, :edit, :update, :destroy, :resend ]
   before_action :ensure_owner, only: [ :show, :edit, :update, :destroy, :resend ]
@@ -10,7 +11,7 @@ class RemindsController < ApplicationController
 
     # 今後の予定とイベント履歴を分離
     @upcoming_reminds = @reminds.unsent.where("notification_at >= ?", Date.current)
-    @past_reminds = @reminds.sent.order(notification_sent_at: :desc).limit(10)
+    @past_reminds = @reminds.sent.order(notification_sent_at: :desc).limit(PAST_REMIND_LIMIT)
 
     # 統計情報
     @total_reminds = @reminds.count

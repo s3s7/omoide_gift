@@ -30,9 +30,8 @@
     " %>
     <%= f.text_field :name, 
         data: { 
-          "gift-person-form-target": "input",
-          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
-        }.compact,
+          "gift-person-form-target": "input"
+        },
         class: "gift-form-input",
         style: "
           width: 100%;
@@ -280,9 +279,8 @@
     " %>
     <%= f.text_area :likes, 
         data: { 
-          "gift-person-form-target": "input",
-          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
-        }.compact,
+          "gift-person-form-target": "input"
+        },
         class: "gift-form-input",
         style: "
           width: 100%;
@@ -326,9 +324,8 @@
     " %>
     <%= f.text_area :dislikes, 
         data: { 
-          "gift-person-form-target": "input",
-          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
-        }.compact,
+          "gift-person-form-target": "input"
+        },
         class: "gift-form-input",
         style: "
           width: 100%;
@@ -372,9 +369,8 @@
     " %>
     <%= f.text_area :address, 
         data: { 
-          "gift-person-form-target": "input",
-          "action": local_assigns[:new_mode] ? "input->gift-person-form#inputChanged" : nil
-        }.compact,
+          "gift-person-form-target": "input"
+        },
         class: "gift-form-input",
         style: "
           width: 100%;
@@ -419,9 +415,7 @@
     <%= f.text_area :memo, 
         data: { 
           "gift-person-form-target": "input memoField",
-          "action": local_assigns[:new_mode] ? 
-            "input->gift-person-form#memoInput input->gift-person-form#inputChanged" : 
-            "input->gift-person-form#memoInput"
+          "action": "input->gift-person-form#memoInput"
         },
         class: "gift-form-input",
         style: "

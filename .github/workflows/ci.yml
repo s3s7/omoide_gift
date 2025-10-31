@@ -37,30 +37,30 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
-    test:
-      runs-on: ubuntu-latest
-      services:
-        postgres:
-          image: postgres:15
-          env:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-          ports: ['5432:5432']
-          options: >-
-            --health-cmd="pg_isready" --health-interval=10s
-            --health-timeout=5s --health-retries=3
-      env:
-        RAILS_ENV: test
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/omoide_gift_test
-        MAILER_SENDER: no-reply@example.com
-      steps:
-        - uses: actions/checkout@v4
-        - uses: ruby/setup-ruby@v1
-          with:
-            ruby-version: .ruby-version
-            bundler-cache: true
-        - uses: actions/setup-node@v4
-          with: { node-version: '20' }
-        - run: corepack enable && yarn install --frozen-lockfile && yarn build
-        - run: bundle exec rails db:test:prepare
-        - run: bundle exec rspec
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd="pg_isready" --health-interval=10s
+          --health-timeout=5s --health-retries=3
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/omoide_gift_test
+      MAILER_SENDER: no-reply@example.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: corepack enable && yarn install --frozen-lockfile && yarn build
+      - run: bundle exec rails db:test:prepare
+      - run: bundle exec rspec

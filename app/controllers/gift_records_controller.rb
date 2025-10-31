@@ -1,4 +1,25 @@
 class GiftRecordsController < ApplicationController
+  MIN_AUTOCOMPLETE_QUERY_LENGTH = 1
+  AUTOCOMPLETE_ITEM_LIMIT = 4
+  AUTOCOMPLETE_MEMO_LIMIT = 3
+  AUTOCOMPLETE_RESULT_LIMIT = 8
+  PER_PAGE_MOBILE = 12
+  PER_PAGE_DESKTOP = 15
+  MEMO_AUTOCOMPLETE_TRUNCATE_LENGTH = 15
+  DEFAULT_TRUNCATE_LENGTH = 20
+  SHARE_CONFIRM_VALUE = "true".freeze
+  RECEIVED_DIRECTION = "received".freeze
+  GIVEN_DIRECTION = "given".freeze
+  DEFAULT_ITEM_NAME = "ギフト記録".freeze
+  META_TITLE_SUFFIX = " - めぐりギフト".freeze
+  META_DESCRIPTION_SUFFIX = "のギフト記録です。".freeze
+  META_DESCRIPTION_TRUNCATE_LENGTH = 50
+  BASE_KEYWORDS = [ "ギフト", "プレゼント", "記録", "思い出" ].freeze
+  POPULAR_EVENTS_LIMIT = 5
+  DEFAULT_GIFT_IMAGE = "default_gift.webp".freeze
+  DEFAULT_OGP_IMAGE = "ogp.webp".freeze
+  LOG_BACKTRACE_LINES = 3
+
   before_action :authenticate_user!, except: [ :index, :show ]
   before_action :set_gift_record, only: [ :show, :edit, :update, :destroy ]
   before_action :ensure_owner, only: [ :edit, :update, :destroy ]
@@ -44,14 +65,14 @@ class GiftRecordsController < ApplicationController
     @gift_record = GiftRecord.new(gift_direction: :given)
     @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
     prepare_events_for_form
-    session[:gift_direction_default] = "given"
+    session[:gift_direction_default] = GIVEN_DIRECTION
   end
 
   def new_received
     @gift_record = GiftRecord.new(gift_direction: :received)
     @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
     prepare_events_for_form
-    session[:gift_direction_default] = "received"
+    session[:gift_direction_default] = RECEIVED_DIRECTION
   end
 
   def create
@@ -83,7 +104,7 @@ class GiftRecordsController < ApplicationController
 
         if @gift_record.save
           flash_success(:created, item: GiftRecord.model_name.human)
-          redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
+          redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
         else
           # ギフト記録の作成に失敗した場合、ギフト相手を削除
           @gift_person.destroy
@@ -112,7 +133,7 @@ class GiftRecordsController < ApplicationController
       apply_gift_direction_default(@gift_record)
       if @gift_record.save
         flash_success(:created, item: GiftRecord.model_name.human)
-        redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
+        redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
       else
         # エラー時のフォーム再表示用データ準備
         @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
@@ -146,7 +167,7 @@ class GiftRecordsController < ApplicationController
 
         if @gift_record.save
           flash_success(:created, item: GiftRecord.model_name.human)
-          redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
+          redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
         else
           @gift_person.destroy
           @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
@@ -170,7 +191,7 @@ class GiftRecordsController < ApplicationController
 
       if @gift_record.save
         flash_success(:created, item: GiftRecord.model_name.human)
-        redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
+        redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
       else
         @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
         prepare_events_for_form
@@ -256,7 +277,7 @@ class GiftRecordsController < ApplicationController
   end
 
   def destroy
-    item_name = @gift_record.item_name.presence || "ギフト記録"
+    item_name = @gift_record.item_name.presence || DEFAULT_ITEM_NAME
 
     if @gift_record.destroy
       flash[:notice] = "#{item_name}を削除しました。"
@@ -275,7 +296,7 @@ class GiftRecordsController < ApplicationController
   def autocomplete
     query = params[:q]&.strip
 
-    if query.present? && query.length >= 1
+    if query.present? && query.length >= MIN_AUTOCOMPLETE_QUERY_LENGTH
       search_term = "%#{query}%"
 
       # みんなのギフト画面：公開記録のみ検索対象
@@ -285,7 +306,7 @@ class GiftRecordsController < ApplicationController
       item_results = base_query
         .includes(:gift_person, :user, gift_person: :relationship)
         .where("gift_records.item_name ILIKE ?", search_term)
-        .limit(4)
+        .limit(AUTOCOMPLETE_ITEM_LIMIT)
         .map do |record|
           {
             id: record.id,
@@ -302,19 +323,19 @@ class GiftRecordsController < ApplicationController
         .includes(:gift_person, :user, gift_person: :relationship)
         .where.not(memo: [ nil, "" ])
         .where("gift_records.memo ILIKE ?", search_term)
-        .limit(3)
+        .limit(AUTOCOMPLETE_MEMO_LIMIT)
         .map do |record|
           {
             id: record.id,
             item_name: record.item_name,
             type: "memo",
-            display_text: "#{truncate_text(record.memo, 15)}",
+            display_text: "#{truncate_text(record.memo, MEMO_AUTOCOMPLETE_TRUNCATE_LENGTH)}",
             input_text: record.memo.to_s,
             search_highlight: highlight_match(record.memo, query)
           }
         end
 
-      results = (item_results + memo_results).uniq { |item| item[:id] }.take(8)
+      results = (item_results + memo_results).uniq { |item| item[:id] }.take(AUTOCOMPLETE_RESULT_LIMIT)
 
       render json: {
         results: results,
@@ -424,9 +445,9 @@ class GiftRecordsController < ApplicationController
 
   def per_page_count
     @per_page_count ||= if request.user_agent =~ /Mobile|Android|iPhone|iPad/
-      12  # モバイル
+      PER_PAGE_MOBILE
     else
-      15  # PC
+      PER_PAGE_DESKTOP
     end
   end
 
@@ -499,7 +520,7 @@ class GiftRecordsController < ApplicationController
   end
 
   def prepare_share_confirmation_data
-    return unless user_signed_in? && params[:share_confirm] == "true" && params[:gift_record_id].present?
+    return unless user_signed_in? && params[:share_confirm] == SHARE_CONFIRM_VALUE && params[:gift_record_id].present?
 
     gift_record_id = params[:gift_record_id].to_s
     dismissed_records = session[:dismissed_share_records] || []
@@ -588,7 +609,7 @@ class GiftRecordsController < ApplicationController
     @popular_events = Event.joins(:gift_records)
       .group("events.id")
       .order("COUNT(gift_records.id) DESC")
-      .limit(5)
+      .limit(POPULAR_EVENTS_LIMIT)
   end
 
   # gift_directionが未指定の場合に、新規画面の種別に基づいて自動設定
@@ -596,7 +617,7 @@ class GiftRecordsController < ApplicationController
     return if record.gift_direction.present?
 
     default = session[:gift_direction_default]
-    record.gift_direction = (default == "received") ? :received : :given
+    record.gift_direction = (default == RECEIVED_DIRECTION) ? :received : :given
   end
 
   # オートコンプリート用ヘルパーメソッド
@@ -610,7 +631,7 @@ class GiftRecordsController < ApplicationController
     text
   end
 
-  def truncate_text(text, length = 20)
+  def truncate_text(text, length = DEFAULT_TRUNCATE_LENGTH)
     return "" unless text.present?
 
     text.length > length ? "#{text[0..length-1]}..." : text
@@ -619,8 +640,9 @@ class GiftRecordsController < ApplicationController
 private
 
 def setup_meta_tags
-    description = "#{@gift_record.item_name}のギフト記録です。"
-    title =  "#{@gift_record.item_name} - めぐりギフト"
+    item_name = @gift_record.item_name.presence || DEFAULT_ITEM_NAME
+    description = "#{item_name}#{META_DESCRIPTION_SUFFIX}"
+    title =  "#{item_name}#{META_TITLE_SUFFIX}"
 
     set_meta_tags(
       title: title,
@@ -645,13 +667,13 @@ def gift_record_image_url(gift_record)
   Rails.logger.info "=== gift_record_image_url Debug ==="
   Rails.logger.info "gift_record: #{gift_record.inspect}"
 
-  return view_context.image_url("default_gift.webp") if gift_record.nil?
+  return view_context.image_url(DEFAULT_GIFT_IMAGE) if gift_record.nil?
 
   gift_record.ogp_image_url(request)
 rescue => e
   Rails.logger.error "Error generating gift record image URL: #{e.class} - #{e.message}"
-  Rails.logger.error e.backtrace.first(3).join("\n")
-  view_context.image_url("default_gift.webp")
+  Rails.logger.error e.backtrace.first(LOG_BACKTRACE_LINES).join("\n")
+  view_context.image_url(DEFAULT_GIFT_IMAGE)
 end
 
 
@@ -659,7 +681,7 @@ def generate_ogp_image_url(gift_record)
   return default_ogp_image_url unless gift_record&.item_name.present?
 
   begin
-    "#{request.base_url}/images/ogp.webp?text=#{CGI.escape(gift_record.item_name)}"
+    "#{request.base_url}/images/#{DEFAULT_OGP_IMAGE}?text=#{CGI.escape(gift_record.item_name)}"
   rescue => e
     Rails.logger.error "OGP URL生成エラー: #{e.message}"
     default_ogp_image_url
@@ -667,32 +689,30 @@ def generate_ogp_image_url(gift_record)
 end
 
 def build_page_title(gift_record)
-  "#{gift_record.item_name} - めぐりギフト"
+  item_name = gift_record.item_name.presence || DEFAULT_ITEM_NAME
+  "#{item_name}#{META_TITLE_SUFFIX}"
 end
 
 def build_page_description(gift_record)
-  base_description = "#{gift_record.item_name}のギフト記録です。"
+  name = gift_record.item_name.presence || DEFAULT_ITEM_NAME
+  base_description = "#{name}#{META_DESCRIPTION_SUFFIX}"
 
-  # より詳細な説明を追加
   if gift_record.item_name.present?
     base_description = "#{gift_record.item_name}からいただいた#{base_description}"
-  end
-
-  if gift_record.item_name.present?
-    base_description += " #{gift_record.item_name.truncate(50)}"
+    base_description += " #{gift_record.item_name.truncate(META_DESCRIPTION_TRUNCATE_LENGTH)}"
   end
 
   base_description
 end
 
   def build_keywords(gift_record)
-    keywords = [ "ギフト", "プレゼント", "記録", "思い出" ]
+    keywords = BASE_KEYWORDS.dup
     keywords << gift_record.item_name if gift_record.item_name.present?
     keywords.join(",")
   end
 
   def default_ogp_image_url
-    url = "#{request.base_url}#{image_path('ogp.webp')}"
+    url = "#{request.base_url}#{image_path(DEFAULT_OGP_IMAGE)}"
     Rails.env.production? ? url.sub(%r{^http://}, "https://") : url
   end
 
