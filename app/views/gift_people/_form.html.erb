@@ -268,6 +268,80 @@
     <% end %>
   </div>
 
+  <% line_connected = local_assigns.fetch(:line_connected, true) %>
+  <% if local_assigns[:new_mode] && local_assigns[:remind] %>
+    <% remind_for_partial = local_assigns[:remind] %>
+    <% remind_gift_people = local_assigns[:remind_gift_people] || [] %>
+    <% remind_form_values = local_assigns[:remind_form_values] || {} %>
+    <% remind_form_enabled = line_connected && local_assigns.fetch(:remind_form_enabled, remind_form_values.values.any?(&:present?)) %>
+    <div style="margin-bottom: 24px; text-align: left;">
+      <label style="
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 14px;
+      ">
+        通知設定
+      </label>
+      <select
+        class="gift-form-input <%= line_connected ? '' : 'bg-gray-100 text-gray-400 cursor-not-allowed' %>"
+        style="
+          width: 100%;
+          padding: 14px 16px;
+          border: 2px solid #e1e5e9;
+          border-radius: 8px;
+          font-size: 16px;
+          box-sizing: border-box;
+          transition: border-color 0.3s ease;
+        "
+        <%= 'disabled' unless line_connected %>
+        data-action="<%= 'change->gift-person-form#toggleNotificationSection' if line_connected %>"
+        data-gift-person-form-target="notificationToggle input">
+        <option value="" <%= 'selected' unless remind_form_enabled %>>設定しない</option>
+        <option value="set" <%= 'selected' if remind_form_enabled %>>通知日を設定する</option>
+      </select>
+      <% section_style = "margin-top: 16px;" %>
+      <% section_style += ' display: none;' unless remind_form_enabled && line_connected %>
+      <div
+        data-gift-person-form-target="notificationSection"
+        style="<%= section_style %>">
+        <% if line_connected %>
+          <%= fields_for :remind, remind_for_partial do |remind_form| %>
+            <%= render 'reminds/form',
+                form_builder: remind_form,
+                remind: remind_for_partial,
+                gift_people: remind_gift_people,
+                mode: :new,
+                back_path: reminds_path,
+                submit_label: "記念日を設定",
+                show_gift_person_select: false,
+                show_actions: false,
+                show_status_card: false,
+                notification_days_before: remind_form_values[:notification_days_before],
+                notification_time: remind_form_values[:notification_time] %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="mt-2 text-xs text-gray-500">
+        <i class="fas fa-info-circle mr-1"></i>
+        <% if line_connected %>
+          通知を設定すると、記念日前にリマインドを受け取れます（任意）
+        <% else %>
+          通知設定を利用するにはLINE連携が必要です。
+          <div class="mt-2 inline-flex items-center gap-2">
+            <%= button_tag type: "submit",
+                form: "line-omniauth-authorize-form",
+                class: "inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-xs font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" do %>
+              <i class="fab fa-line mr-1"></i>
+              LINE連携する
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <!-- 好きなもの入力 -->
   <div style="margin-bottom: 24px; text-align: left;">
     <%= f.label :likes, "好きなもの・趣味", style: "
@@ -468,4 +542,13 @@
           transition: transform 0.2s ease, box-shadow 0.2s ease;
         " %>
   </div>
+<% end %>
+
+<% unless line_connected %>
+  <%= form_with url: user_line_omniauth_authorize_path,
+      method: :post,
+      local: true,
+      data: { turbo: false },
+      html: { id: "line-omniauth-authorize-form", style: "display:none;" } do %>
+  <% end %>
 <% end %>
