@@ -1,0 +1,226 @@
+<% remind = local_assigns.fetch(:remind) %>
+<% form = local_assigns.fetch(:form) %>
+<% gift_people = local_assigns[:gift_people] || [] %>
+<% mode = local_assigns.fetch(:mode, :new) %>
+<% back_path = local_assigns.fetch(:back_path, reminds_path) %>
+<% selected_notification_days_before = local_assigns.fetch(:selected_notification_days_before) %>
+<% selected_notification_time = local_assigns.fetch(:selected_notification_time) %>
+<% submit_label = local_assigns.fetch(:submit_label, mode == :edit ? "変更を保存" : "記念日を設定") %>
+<% show_gift_person_select = local_assigns.fetch(:show_gift_person_select, true) %>
+<% show_actions = local_assigns.fetch(:show_actions, true) %>
+<% show_info_card = local_assigns.fetch(:show_info_card, mode != :edit) %>
+<% show_status_card = local_assigns.fetch(:show_status_card, mode == :edit) %>
+
+<% if remind.errors.any? %>
+  <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <i class="fas fa-exclamation-circle text-red-400"></i>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-red-800">
+          入力内容に問題があります
+        </h3>
+        <div class="mt-2 text-sm text-red-700">
+          <ul class="list-disc list-inside space-y-1">
+            <% remind.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if show_gift_person_select %>
+  <div>
+    <%= form.label :gift_person_id, "ギフト相手", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= form.select :gift_person_id,
+        options_from_collection_for_select(gift_people, :id, :name, remind.gift_person_id),
+        { prompt: "記念日を設定する相手を選択してください" },
+        {
+          class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm",
+          required: true
+        } %>
+    <p class="mt-1 text-xs text-gray-500">
+      <i class="fas fa-info-circle mr-1"></i>
+      ギフト相手が表示されない場合は、
+      <%= link_to "ギフト相手管理", gift_people_path, class: "text-orange-600 hover:text-orange-700 underline" %>
+      から先に相手を登録してください
+    </p>
+  </div>
+<% else %>
+  <%= form.hidden_field :gift_person_id, value: remind.gift_person_id if remind.gift_person_id.present? %>
+<% end %>
+
+<div>
+  <%= form.label :notification_at, "記念日", class: "block text-sm font-medium text-gray-700 mb-2" %>
+  <%= form.date_field :notification_at,
+      class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm",
+      style: "color-scheme: light;",
+      required: true,
+      min: Date.current.strftime("%Y-%m-%d"),
+      data: { notification_required: true } %>
+  <p class="mt-1 text-xs text-gray-500">
+    <i class="fas fa-calendar mr-1"></i>
+    記念日の日付を設定してください（記念日は過去の日付は選択出来ません）
+  </p>
+</div>
+
+<div class="space-y-4">
+  <h3 class="text-sm font-medium text-gray-700">通知タイミング</h3>
+
+  <div>
+    <%= label_tag :notification_days_before, "通知日", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= select_tag "remind[notification_days_before]",
+        options_for_select(Remind.notification_days_before_options, selected_notification_days_before),
+        {
+          class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm",
+          required: true,
+          data: { notification_required: true }
+        } %>
+    <p class="mt-1 text-xs text-gray-500">
+      <i class="fas fa-calendar mr-1"></i>
+      記念日の何日前に通知するかを選択してください
+    </p>
+  </div>
+
+  <div>
+    <%= label_tag :notification_time, "通知時刻", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= select_tag "remind[notification_time]",
+        options_for_select([["時刻を選択してください", ""]] + Remind.notification_time_options, selected_notification_time),
+        {
+          class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm",
+          required: true,
+          data: { notification_required: true }
+        } %>
+    <p class="mt-1 text-xs text-gray-500">
+      <i class="fas fa-clock mr-1"></i>
+      その日の何時に通知を受け取るかを選択してください
+    </p>
+  </div>
+</div>
+
+<% if show_status_card %>
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <i class="fas fa-info-circle text-blue-400"></i>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-blue-800">
+          現在の設定状況
+        </h3>
+        <div class="mt-2 text-sm text-blue-700">
+          <div class="space-y-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <span class="font-medium">通知状態:</span>
+                <% if remind.is_sent? %>
+                  <span class="text-green-600 font-medium">
+                    <i class="fas fa-check mr-1"></i>
+                    送信済み
+                  </span>
+                <% else %>
+                  <span class="text-orange-600 font-medium">
+                    <i class="fas fa-clock mr-1"></i>
+                    未送信
+                  </span>
+                <% end %>
+              </div>
+              <div>
+                <span class="font-medium">記念日まで:</span>
+                <% days_left = remind.days_until_notification %>
+                <span class="<%= days_left <= 3 ? 'text-red-600' : 'text-blue-600' %> font-medium">
+                  <% if days_left == 0 %>
+                    今日！
+                  <% elsif days_left == 1 %>
+                    明日
+                  <% elsif days_left < 0 %>
+                    <%= days_left.abs %>日経過
+                  <% else %>
+                    あと<%= days_left %>日
+                  <% end %>
+                </span>
+              </div>
+            </div>
+
+            <% if remind.notification_sent_at.present? %>
+              <div>
+                <span class="font-medium">通知予定日時:</span>
+                <span class="text-blue-600 font-medium">
+                  <i class="fas fa-bell mr-1"></i>
+                  <%= l(remind.notification_sent_at.in_time_zone, format: :long) %>
+                </span>
+                <% notify_days_left = remind.days_until_notify %>
+                <% if notify_days_left > 0 %>
+                  <span class="text-gray-500 ml-2">（あと<%= notify_days_left %>日）</span>
+                <% elsif notify_days_left == 0 %>
+                  <span class="text-red-600 font-medium ml-2">（今日！）</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% elsif show_info_card %>
+  <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <i class="fas fa-lightbulb text-orange-400"></i>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-orange-800">
+          記念日通知について
+        </h3>
+        <div class="mt-2 text-sm text-orange-700">
+          <ul class="list-disc list-inside space-y-1">
+            <li>通知日と通知時刻を設定してください（必須）</li>
+            <li>記念日前に通知することで、ギフトの準備時間を確保できます</li>
+            <li>LINE連携しているアカウントのみ通知を受け取れます</li>
+            <li>同じ相手に対して複数の記念日を設定することはできません</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if show_actions %>
+  <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+    <% if mode == :edit %>
+      <div class="flex items-center space-x-3">
+        <%= link_to back_path,
+            class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" do %>
+          <i class="fas fa-arrow-left mr-2"></i>
+          戻る
+        <% end %>
+
+        <%= link_to remind_path(remind),
+            data: {
+              confirm: "「#{remind.gift_person.name}」さんの記念日を削除しますか？この操作は取り消せません。",
+              turbo_method: :delete
+            },
+            class: "inline-flex items-center px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" do %>
+          <i class="fas fa-trash mr-2"></i>
+          削除
+        <% end %>
+      </div>
+
+      <%= form.submit submit_label,
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" %>
+    <% else %>
+      <%= link_to back_path,
+          class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" do %>
+        <i class="fas fa-arrow-left mr-2"></i>
+        戻る
+      <% end %>
+
+      <%= form.submit submit_label,
+          class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500" %>
+    <% end %>
+  </div>
+<% end %>

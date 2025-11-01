@@ -1,0 +1,50 @@
+<% remind = local_assigns.fetch(:remind) %>
+<% gift_people = local_assigns[:gift_people] || [] %>
+<% mode = local_assigns.fetch(:mode, :new) %>
+<% back_path = local_assigns.fetch(:back_path, reminds_path) %>
+<% selected_notification_days_before = local_assigns.key?(:notification_days_before) ? local_assigns[:notification_days_before] : remind.notification_days_before %>
+<% selected_notification_days_before = 0 if selected_notification_days_before.nil? %>
+<% selected_notification_time = local_assigns.key?(:notification_time) ? local_assigns[:notification_time] : remind.notification_time %>
+<% submit_label = local_assigns.fetch(:submit_label, mode == :edit ? "変更を保存" : "記念日を設定") %>
+<% show_gift_person_select = local_assigns.fetch(:show_gift_person_select, true) %>
+<% has_custom_builder = local_assigns.key?(:form_builder) %>
+<% show_actions = local_assigns.fetch(:show_actions, has_custom_builder ? false : true) %>
+<% show_info_card = local_assigns.fetch(:show_info_card, mode != :edit) %>
+<% show_status_card = local_assigns.fetch(:show_status_card, mode == :edit) %>
+
+<div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+  <% if has_custom_builder %>
+    <% form = local_assigns[:form_builder] %>
+    <div class="space-y-6">
+      <%= render "reminds/form_body",
+          form: form,
+          remind: remind,
+          gift_people: gift_people,
+          mode: mode,
+          back_path: back_path,
+          selected_notification_days_before: selected_notification_days_before,
+          selected_notification_time: selected_notification_time,
+          submit_label: submit_label,
+          show_gift_person_select: show_gift_person_select,
+          show_actions: show_actions,
+          show_info_card: show_info_card,
+          show_status_card: show_status_card %>
+    </div>
+  <% else %>
+    <%= form_with model: remind, local: true, class: "space-y-6" do |form| %>
+      <%= render "reminds/form_body",
+          form: form,
+          remind: remind,
+          gift_people: gift_people,
+          mode: mode,
+          back_path: back_path,
+          selected_notification_days_before: selected_notification_days_before,
+          selected_notification_time: selected_notification_time,
+          submit_label: submit_label,
+          show_gift_person_select: show_gift_person_select,
+          show_actions: show_actions,
+          show_info_card: show_info_card,
+          show_status_card: show_status_card %>
+    <% end %>
+  <% end %>
+</div>
