@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:15
+        image: postgres:15.5
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -62,5 +62,6 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
       - run: corepack enable && yarn install --frozen-lockfile && yarn build
+      - run: bundle exec rails tailwindcss:build
       - run: bundle exec rails db:test:prepare
       - run: bundle exec rspec

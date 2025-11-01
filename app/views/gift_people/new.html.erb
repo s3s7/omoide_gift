@@ -5,11 +5,19 @@
   <h1 class="text-3xl font-semibold text-black mb-10 leading-snug">ギフト相手の追加</h1>
 
   <%= render 'shared/error_messages', object: @gift_person %>
+  <%= render 'shared/error_messages', object: @remind %>
   
   <!-- 新規作成モード用のフォーム -->
   <div data-controller="gift-person-form" 
        data-gift-person-form-new-mode-value="true"
        data-gift-person-form-auto-save-enabled-value="true">
-    <%= render 'form', gift_person: @gift_person, new_mode: true %>
+    <%= render 'form',
+        gift_person: @gift_person,
+        new_mode: true,
+        remind: @remind,
+        remind_gift_people: @remindable_gift_people,
+        line_connected: @line_connected,
+        remind_form_values: @remind_form_values,
+        remind_form_enabled: @remind_form_enabled %>
   </div>
 </div>

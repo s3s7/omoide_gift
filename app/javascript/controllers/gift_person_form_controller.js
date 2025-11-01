@@ -13,7 +13,9 @@ export default class extends Controller {
     "memoField",
     "memoCounter",
     "form",
-    "submitButton"
+    "submitButton",
+    "notificationToggle",
+    "notificationSection"
   ]
   
   static values = {
@@ -39,6 +41,8 @@ export default class extends Controller {
     if (this.newModeValue) {
       this.setupNewMode()
     }
+
+    this.updateNotificationSectionVisibility()
   }
 
   disconnect() {
@@ -419,5 +423,38 @@ export default class extends Controller {
   validateForm() {
     // 追加のバリデーションロジックをここに記述
     return true
+  }
+
+  // 通知設定セクションの表示切り替え
+  toggleNotificationSection(event) {
+    this.showNotificationSection(event.target.value === 'set')
+  }
+
+  updateNotificationSectionVisibility() {
+    if (!this.hasNotificationToggleTarget) return
+    this.showNotificationSection(this.notificationToggleTarget.value === 'set')
+  }
+
+  showNotificationSection(shouldShow) {
+    if (!this.hasNotificationSectionTarget) return
+    this.notificationSectionTarget.style.display = shouldShow ? 'block' : 'none'
+    this.toggleNotificationFieldState(shouldShow)
+  }
+
+  toggleNotificationFieldState(shouldEnable) {
+    if (!this.hasNotificationSectionTarget) return
+
+    const fields = this.notificationSectionTarget.querySelectorAll('[data-notification-required]')
+    fields.forEach(field => {
+      if (shouldEnable) {
+        if (field.dataset.notificationRequired === 'true') {
+          field.setAttribute('required', 'required')
+        }
+        field.disabled = false
+      } else {
+        field.removeAttribute('required')
+        field.disabled = true
+      }
+    })
   }
 }

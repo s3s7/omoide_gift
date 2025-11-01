@@ -120,17 +120,40 @@ class GiftPeopleController < ApplicationController
 
   def new
     @gift_person = current_user.gift_people.build
+    @line_connected = current_user.line_connected?
+    @remind_form_values = {}
+    @remind_form_enabled = false
     prepare_relationships_for_form
+    prepare_remind_for_form
   end
 
   def create
+    @line_connected = current_user.line_connected?
     @gift_person = current_user.gift_people.build(gift_person_params)
+    @remind_form_values = permitted_remind_params.to_h.transform_values { |value| value.presence }
+    @remind_form_enabled = remind_form_enabled?(@remind_form_values)
+    @remind_form_enabled &&= @line_connected
+    prepare_remind_for_form
 
-    if @gift_person.save
+    success = true
+
+    ActiveRecord::Base.transaction do
+    success &&= @gift_person.save
+
+    if success && @remind_form_enabled
+      success &&= build_and_save_remind_for(@gift_person, @remind_form_values)
+    end
+
+      raise ActiveRecord::Rollback unless success
+    end
+
+    if success
       flash_success(:created, item: "ギフト相手「#{@gift_person.name}」")
       redirect_to gift_people_path
     else
       prepare_relationships_for_form
+      prepare_remind_for_form
+      @remind_form_enabled = true if @remind&.errors&.any?
       flash.now[:alert] = "ギフト相手の作成に失敗しました。"
       render :new, status: :unprocessable_entity
     end
@@ -198,6 +221,51 @@ class GiftPeopleController < ApplicationController
 
   def prepare_relationships_for_form
     @relationships = Relationship.active.ordered
+  end
+
+  def prepare_remind_for_form
+    @remind_form_values ||= {}
+    @remind ||= current_user.reminds.build
+    if @remind_form_values.present?
+      @remind.notification_at = @remind_form_values[:notification_at]
+    end
+    @remindable_gift_people = current_user.gift_people.includes(:relationship).order(:name)
+    if @line_connected && @remind&.errors&.any?
+      @remind_form_enabled = true
+    end
+  end
+
+  def permitted_remind_params
+    if params[:remind].present?
+      params.require(:remind).permit(:notification_at, :notification_days_before, :notification_time)
+    elsif params.dig(:gift_person, :remind).present?
+      params.require(:gift_person).require(:remind).permit(:notification_at, :notification_days_before, :notification_time)
+    else
+      {}
+    end
+  end
+
+  def remind_form_enabled?(values)
+    values.values.compact.any?
+  end
+
+  def build_and_save_remind_for(gift_person, values)
+    @remind.gift_person = gift_person
+    @remind.notification_at = values[:notification_at]
+
+    days_before = values[:notification_days_before]
+    time_str = values[:notification_time]
+
+    if days_before.blank? || time_str.blank?
+      @remind.errors.add(:base, "通知日数と通知時刻を設定してください")
+      return false
+    end
+
+    unless @remind.set_notification_sent_at(days_before, time_str)
+      return false
+    end
+
+    @remind.save
   end
 
   # オートコンプリート用ヘルパーメソッド
