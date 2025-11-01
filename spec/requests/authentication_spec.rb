@@ -1,17 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe 'Authentication', type: :request do
+  before { host! 'www.example.com' }
+
   describe 'ログイン機能' do
     let!(:user) { create(:user) }
 
     context '正しい認証情報でのログイン' do
-      it '現在はアクセスが拒否されること' do
+      it 'アクセスが拒否されること' do
         post user_session_path, params: {
           user: {
             email: user.email,
             password: user.password
           }
-        }
+        }, headers: { 'ACCEPT' => 'text/html' }
         expect(response).to have_http_status(:forbidden)
         expect(session['warden.user.user.key']).to be_nil
       end
@@ -24,8 +26,9 @@ RSpec.describe 'Authentication', type: :request do
             email: user.email,
             password: 'wrong_password'
           }
-        }
+        }, headers: { 'ACCEPT' => 'text/html' }
         expect(response).to have_http_status(:forbidden)
+        expect(session['warden.user.user.key']).to be_nil
       end
     end
 
@@ -36,8 +39,9 @@ RSpec.describe 'Authentication', type: :request do
             email: 'nonexistent@example.com',
             password: 'password123'
           }
-        }
+        }, headers: { 'ACCEPT' => 'text/html' }
         expect(response).to have_http_status(:forbidden)
+        expect(session['warden.user.user.key']).to be_nil
       end
     end
   end
@@ -50,8 +54,8 @@ RSpec.describe 'Authentication', type: :request do
         sign_in user
       end
 
-      it 'ログアウト要求も拒否されること' do
-        delete destroy_user_session_path
+      it 'アクセスが拒否され、ログイン状態が解除されること' do
+        delete destroy_user_session_path, headers: { 'ACCEPT' => 'text/html' }
         expect(response).to have_http_status(:forbidden)
         expect(session['warden.user.user.key']).to be_nil
       end
@@ -59,7 +63,7 @@ RSpec.describe 'Authentication', type: :request do
 
     context '未ログインユーザー' do
       it 'アクセスが拒否されること' do
-        delete destroy_user_session_path
+        delete destroy_user_session_path, headers: { 'ACCEPT' => 'text/html' }
         expect(response).to have_http_status(:forbidden)
       end
     end
