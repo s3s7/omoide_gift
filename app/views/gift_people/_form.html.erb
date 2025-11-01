@@ -14,7 +14,13 @@
 </style>
 
 <%# Determine LINE linkage directly from current_user to avoid stale locals %>
-<% line_connected = (defined?(current_user) && current_user.present?) ? current_user.line_connected? : local_assigns.fetch(:line_connected, false) %>
+<% line_connected = if local_assigns.key?(:line_connected)
+                      local_assigns[:line_connected]
+                    elsif defined?(current_user) && current_user.present?
+                      current_user.line_connected?
+                    else
+                      false
+                    end %>
 
 <%= form_with model: gift_person, data: { 
       controller: (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? nil : "gift-person-form",
@@ -278,6 +284,7 @@
     <% remind_form_enabled = line_connected && local_assigns.fetch(:remind_form_enabled, remind_form_values.values.any?(&:present?)) %>
     <div style="margin-bottom: 24px; text-align: left;">
       <label style="
+        color-scheme: light;
         display: block;
         margin-bottom: 8px;
         font-weight: 600;
@@ -296,6 +303,9 @@
           font-size: 16px;
           box-sizing: border-box;
           transition: border-color 0.3s ease;
+          background-color: white;
+          color: black;
+          color-scheme: light;
         "
         <%= 'disabled' unless line_connected %>
         data-action="<%= 'change->gift-person-form#toggleNotificationSection' if line_connected %>"
