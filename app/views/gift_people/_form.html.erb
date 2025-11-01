@@ -13,6 +13,8 @@
   }
 </style>
 
+<% line_connected = local_assigns.fetch(:line_connected, true) %>
+
 <%= form_with model: gift_person, data: { 
       controller: (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? nil : "gift-person-form",
       "gift-person-form-target": (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? "form" : nil
@@ -268,7 +270,6 @@
     <% end %>
   </div>
 
-  <% line_connected = local_assigns.fetch(:line_connected, true) %>
   <% if local_assigns[:new_mode] && local_assigns[:remind] %>
     <% remind_for_partial = local_assigns[:remind] %>
     <% remind_gift_people = local_assigns[:remind_gift_people] || [] %>
