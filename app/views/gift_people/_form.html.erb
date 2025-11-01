@@ -13,7 +13,8 @@
   }
 </style>
 
-<% line_connected = local_assigns.fetch(:line_connected, true) %>
+<%# Determine LINE linkage directly from current_user to avoid stale locals %>
+<% line_connected = (defined?(current_user) && current_user.present?) ? current_user.line_connected? : local_assigns.fetch(:line_connected, false) %>
 
 <%= form_with model: gift_person, data: { 
       controller: (local_assigns[:edit_mode] || local_assigns[:new_mode]) ? nil : "gift-person-form",
