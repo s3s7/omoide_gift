@@ -430,6 +430,13 @@ class GiftRecordsController < ApplicationController
         query = query.where(is_public: false)
       end
     end
+
+    if params[:gift_direction].present?
+      case params[:gift_direction]
+      when GIVEN_DIRECTION, RECEIVED_DIRECTION
+        query = query.where(gift_direction: params[:gift_direction])
+      end
+    end
     query = query.where("gift_at >= ?", params[:date_from]) if params[:date_from].present?
     query = query.where("gift_at <= ?", params[:date_to]) if params[:date_to].present?
 
@@ -592,6 +599,7 @@ class GiftRecordsController < ApplicationController
       :gift_person_id,
       :relationship_id,
       :event_id,
+      :gift_direction,
       :date_from,
       :date_to,
       :sort_by,
@@ -719,6 +727,11 @@ end
   def prepare_filter_options(base_query)
     @relationship_options = build_relationship_options(base_query)
     @event_options = build_event_options(base_query)
+    @gift_direction_options = [
+      ["すべて", ""],
+      ["あげたギフト", GIVEN_DIRECTION],
+      ["もらったギフト", RECEIVED_DIRECTION]
+    ]
   end
 
   def build_relationship_options(base_query)
@@ -769,6 +782,11 @@ end
     @gift_people_options = build_user_gift_people_options(base_query)
     @relationship_options = build_relationship_options(base_query)
     @event_options = build_event_options(base_query)
+    @gift_direction_options = [
+      ["すべて", ""],
+      ["あげたギフト", GIVEN_DIRECTION],
+      ["もらったギフト", RECEIVED_DIRECTION]
+    ]
   end
 
   def build_user_gift_people_options(base_query)

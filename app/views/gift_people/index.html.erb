@@ -152,34 +152,34 @@
   <% end %>
     
   <% else %>
-    <!-- 空状態 -->
-    <div class="text-center py-8">
-      <div class="mx-auto h-24 w-24 text-gray-300">
-        <i class="fas fa-users text-6xl"></i>
-      </div>
-      <h3 class="mt-3 text-lg font-medium text-gray-900">
-        ギフト相手が登録されていません
-      </h3>
-      <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
-        <% if params[:search].present? || params[:relationship_id].present? %>
-          検索条件に一致する相手が見つかりませんでした。
-        <% else %>
-          最初のギフト相手を登録して、ギフト記録の管理を始めましょう。
-        <% end %>
-      </p>
-      <div class="mt-4">
-        <% if params[:search].present? || params[:relationship_id].present? %>
-          <%= link_to gift_people_path,
-              class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mr-3" do %>
-            <i class="fas fa-list mr-2"></i>
-            すべて表示
-          <% end %>
-        <% end %>
-        <%= link_to new_gift_person_path,
-            class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
-          <i class="fas fa-plus mr-2"></i>
-          最初の相手を登録
-        <% end %>
+    <% filter_keys = [:search, :relationship_id, :event_id, :sort_by] %>
+    <% has_filters = filter_keys.any? { |key| params[key].present? } %>
+    <% secondary_action = if has_filters
+         {
+           url: gift_people_path,
+           icon: 'fas fa-list',
+           label: 'すべて表示',
+           class: 'inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mr-3'
+         }
+       end %>
+    <% primary_action = {
+         url: new_gift_person_path,
+         icon: 'fas fa-plus',
+         label: has_filters ? '新しい相手を登録' : '最初の相手を登録',
+         class: 'inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
+       } %>
+
+    <% empty_title = has_filters ? '検索結果が見つかりませんでした' : 'ギフト相手が登録されていません' %>
+    <% empty_body = has_filters ? '検索条件を変更して再度お試しください。' : '最初のギフト相手を登録して、ギフト記録の管理を始めましょう。' %>
+
+    <div class="gift-card-container col-span-full flex justify-center">
+      <div class="w-[200px] sm:w-[240px] md:w-[260px]">
+        <%= render 'shared/empty_state',
+            icon: 'fas fa-users',
+            title: empty_title,
+            body: empty_body,
+            primary_action: primary_action,
+            secondary_action: secondary_action %>
       </div>
     </div>
   <% end %>

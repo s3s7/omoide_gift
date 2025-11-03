@@ -13,7 +13,7 @@ class User < ApplicationRecord
     :validatable
   ]
   disable_confirmable = ActiveModel::Type::Boolean.new.cast(
-    ENV.fetch("DISABLE_CONFIRMABLE", Rails.env.production? || Rails.env.development?)
+    ENV.fetch("DISABLE_CONFIRMABLE", Rails.env.production? || Rails.env.development? || Rails.env.test?)
   )
   devise_modules << :confirmable unless disable_confirmable
   devise_modules << :omniauthable
