@@ -250,11 +250,12 @@ class GiftRecordsController < ApplicationController
         valid_new_images = new_images.select { |img| img.present? && img.respond_to?(:tempfile) }
         Rails.logger.debug "Valid new images count: #{valid_new_images.count}"
 
-        if valid_new_images.any?
-          # attachを使用して既存画像に追加
-          @gift_record.images.attach(valid_new_images)
-          Rails.logger.debug "新しい画像を追加しました"
-        end
+      if valid_new_images.any?
+        # attachを使用して既存画像に追加
+        @gift_record.images.attach(valid_new_images)
+        @gift_record.images.reload
+        Rails.logger.debug "新しい画像を追加しました (再読込済み)"
+      end
       end
 
       Rails.logger.debug "更新後の画像数: #{@gift_record.images.count}"
@@ -728,9 +729,9 @@ end
     @relationship_options = build_relationship_options(base_query)
     @event_options = build_event_options(base_query)
     @gift_direction_options = [
-      ["すべて", ""],
-      ["あげたギフト", GIVEN_DIRECTION],
-      ["もらったギフト", RECEIVED_DIRECTION]
+      [ "すべて", "" ],
+      [ "あげたギフト", GIVEN_DIRECTION ],
+      [ "もらったギフト", RECEIVED_DIRECTION ]
     ]
   end
 
@@ -783,9 +784,9 @@ end
     @relationship_options = build_relationship_options(base_query)
     @event_options = build_event_options(base_query)
     @gift_direction_options = [
-      ["すべて", ""],
-      ["あげたギフト", GIVEN_DIRECTION],
-      ["もらったギフト", RECEIVED_DIRECTION]
+      [ "すべて", "" ],
+      [ "あげたギフト", GIVEN_DIRECTION ],
+      [ "もらったギフト", RECEIVED_DIRECTION ]
     ]
   end
 
