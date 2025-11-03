@@ -286,9 +286,9 @@ end
     valid_image_attachments.count
   end
 
-  def comments_allowed?
-    commentable?
-  end
+  # def comments_allowed?
+  #   commentable?
+  # end
 
   # 実体のある画像添付のみを返すユーティリティ
   # - blobが存在し、MIMEがimage/*、サイズ>0 を満たすもの
@@ -414,8 +414,8 @@ end
       end
 
       # ファイルサイズチェック（3MBまで）
-      if image.blob.byte_size > 3.megabytes
-        errors.add(:images, "#{index + 1}枚目: ファイルサイズは3MB以下にしてください")
+      if image.blob.byte_size > 5.megabytes
+        errors.add(:images, "#{index + 1}枚目: ファイルサイズは5MB以下にしてください")
       end
     end
   rescue StandardError => e
