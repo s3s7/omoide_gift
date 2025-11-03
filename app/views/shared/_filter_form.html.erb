@@ -2,6 +2,7 @@
 <% relationship_options = Array(local_assigns.fetch(:relationship_options, [])) %>
 <% event_options = Array(local_assigns.fetch(:event_options, [])) %>
 <% gift_people_options = local_assigns.key?(:gift_people_options) ? Array(local_assigns[:gift_people_options]) : nil %>
+<% gift_direction_options = local_assigns.key?(:gift_direction_options) ? Array(local_assigns[:gift_direction_options]) : nil %>
 <% public_filter_options = local_assigns.key?(:public_filter_options) ? Array(local_assigns[:public_filter_options]) : nil %>
 <% filter_type_options = local_assigns.fetch(:filter_type_options, [
   ["選択してください", ""],
@@ -30,6 +31,7 @@
 <% event_select_id = local_assigns.fetch(:event_select_id, prefixed_id.call("event-select")) %>
 <% gift_person_select_id = local_assigns.fetch(:gift_person_select_id, prefixed_id.call("gift-person-select")) %>
 <% public_select_id = local_assigns.fetch(:public_select_id, prefixed_id.call("public-select")) %>
+<% gift_direction_select_id = local_assigns.fetch(:gift_direction_select_id, prefixed_id.call("gift-direction-select")) %>
 <% filter_placeholder_id = local_assigns.fetch(:filter_placeholder_id, prefixed_id.call("filter-placeholder")) %>
 <% search_input_id = local_assigns.fetch(:search_input_id, "gift-records-search-input") %>
 <% search_dropdown_id = local_assigns.fetch(:search_dropdown_id, "gift-records-autocomplete-dropdown") %>
@@ -107,6 +109,19 @@
                 id: public_select_id,
                 data: { "dynamic-filter-target": "publicSelect" },
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'is_public' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
+              } %>
+        <% end %>
+
+        <% if gift_direction_options %>
+          <!-- ギフト種別選択プルダウン -->
+          <%= f.select :gift_direction,
+              options_for_select(gift_direction_options, params[:gift_direction]),
+              {},
+              {
+                id: gift_direction_select_id,
+                data: { "dynamic-filter-target": "giftDirectionSelect" },
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'gift_direction' ? '' : 'hidden'}",
                 style: "background-color: white; color: black;"
               } %>
         <% end %>

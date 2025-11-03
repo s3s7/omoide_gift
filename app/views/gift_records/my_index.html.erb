@@ -36,6 +36,7 @@
       relationship_options: @relationship_options,
       event_options: @event_options,
       gift_people_options: @gift_people_options,
+      gift_direction_options: @gift_direction_options,
       public_filter_options: [
         ["すべて", ""],
         ["公開", "public"],
@@ -46,11 +47,12 @@
         ["ギフト相手", "gift_person"],
         ["関係性", "relationship"],
         ["イベント", "event"],
-        ["公開設定", "is_public"]
+        ["公開設定", "is_public"],
+        ["ギフト種別", "gift_direction"]
       ],
       search_placeholder: "アイテム名、メモ、相手名で検索",
       total_records: @total_records,
-      active_filter_params: [:search, :gift_person_id, :relationship_id, :event_id, :sort_by, :is_public]
+      active_filter_params: [:search, :gift_person_id, :relationship_id, :event_id, :sort_by, :is_public, :gift_direction]
     %>
 
   <!-- ギフト記録一覧 -->
@@ -125,19 +127,32 @@
         </div>
       <% end %>
     <% else %>
+      <% filter_keys = [:search, :gift_person_id, :relationship_id, :event_id, :sort_by, :is_public, :gift_direction] %>
+      <% has_filters = filter_keys.any? { |key| params[key].present? } %>
+      <% secondary_action = if has_filters
+           {
+             url: my_index_gift_records_path,
+             icon: 'fas fa-list',
+             label: 'すべて表示'
+           }
+         end %>
+      <% primary_action = {
+           url: new_gift_record_path,
+           icon: 'fas fa-plus',
+           label: 'ギフト記録を作成',
+           class: 'inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
+         } %>
+      <% empty_title = has_filters ? '検索結果が見つかりませんでした' : 'まだギフト記録がありません' %>
+      <% empty_body = has_filters ? '検索条件を変更して再度お試しください。' : '最初のギフト記録を作成してみましょう！' %>
+
       <div class="gift-card-container col-span-full flex justify-center">
         <div class="w-[165px] sm:w-[165px] md:w-[240px] lg:w-[200px] xl:w-[200px]">
           <%= render 'shared/empty_state',
               icon: 'fas fa-gift',
-              title: 'まだギフト記録がありません',
-              body: '最初のギフト記録を作成してみましょう！',
-              primary_action: {
-                url: new_gift_record_path,
-                icon: 'fas fa-plus',
-                label: 'ギフト記録を作成',
-                class: 'inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary'
-              }
-            %>
+              title: empty_title,
+              body: empty_body,
+              primary_action: primary_action,
+              secondary_action: secondary_action %>
         </div>
       </div>
     <% end %>

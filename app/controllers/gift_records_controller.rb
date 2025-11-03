@@ -250,11 +250,12 @@ class GiftRecordsController < ApplicationController
         valid_new_images = new_images.select { |img| img.present? && img.respond_to?(:tempfile) }
         Rails.logger.debug "Valid new images count: #{valid_new_images.count}"
 
-        if valid_new_images.any?
-          # attachを使用して既存画像に追加
-          @gift_record.images.attach(valid_new_images)
-          Rails.logger.debug "新しい画像を追加しました"
-        end
+      if valid_new_images.any?
+        # attachを使用して既存画像に追加
+        @gift_record.images.attach(valid_new_images)
+        @gift_record.images.reload
+        Rails.logger.debug "新しい画像を追加しました (再読込済み)"
+      end
       end
 
       Rails.logger.debug "更新後の画像数: #{@gift_record.images.count}"
@@ -430,6 +431,13 @@ class GiftRecordsController < ApplicationController
         query = query.where(is_public: false)
       end
     end
+
+    if params[:gift_direction].present?
+      case params[:gift_direction]
+      when GIVEN_DIRECTION, RECEIVED_DIRECTION
+        query = query.where(gift_direction: params[:gift_direction])
+      end
+    end
     query = query.where("gift_at >= ?", params[:date_from]) if params[:date_from].present?
     query = query.where("gift_at <= ?", params[:date_to]) if params[:date_to].present?
 
@@ -592,6 +600,7 @@ class GiftRecordsController < ApplicationController
       :gift_person_id,
       :relationship_id,
       :event_id,
+      :gift_direction,
       :date_from,
       :date_to,
       :sort_by,
@@ -719,6 +728,11 @@ end
   def prepare_filter_options(base_query)
     @relationship_options = build_relationship_options(base_query)
     @event_options = build_event_options(base_query)
+    @gift_direction_options = [
+      [ "すべて", "" ],
+      [ "あげたギフト", GIVEN_DIRECTION ],
+      [ "もらったギフト", RECEIVED_DIRECTION ]
+    ]
   end
 
   def build_relationship_options(base_query)
@@ -769,6 +783,11 @@ end
     @gift_people_options = build_user_gift_people_options(base_query)
     @relationship_options = build_relationship_options(base_query)
     @event_options = build_event_options(base_query)
+    @gift_direction_options = [
+      [ "すべて", "" ],
+      [ "あげたギフト", GIVEN_DIRECTION ],
+      [ "もらったギフト", RECEIVED_DIRECTION ]
+    ]
   end
 
   def build_user_gift_people_options(base_query)
