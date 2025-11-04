@@ -37,8 +37,8 @@ RSpec.describe OmniauthCallbacksController, type: :controller do
         expect(user.uid).to eq('12345')
         expect(user.name).to eq('テストユーザー')
         expect(user.email).to eq('test@example.com')
-        expect(response).to redirect_to(new_user_session_path)
-        expect(flash[:alert]).to eq(I18n.t('devise.failure.unconfirmed'))
+        expect(response).to redirect_to(mypage_path)
+        expect(flash[:notice]).to eq('ログインしました')
       end
     end
 

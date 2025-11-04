@@ -1,0 +1,19 @@
+<% new_gift_path = user_signed_in? ? new_gift_record_path : new_user_session_path %>
+<% new_received_gift_path = user_signed_in? ? new_received_gift_records_path : new_user_session_path %>
+
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-orange-200 shadow-xl md:hidden z-30">
+  <div class="max-w-4xl mx-auto grid grid-cols-3 divide-x divide-orange-100">
+    <%= link_to new_gift_path, class: "flex flex-col items-center justify-center py-3 text-gray-700 hover:text-orange-500 transition-colors", aria: { label: "贈ったギフトを記録" } do %>
+      <i class="fa-solid fa-gift text-lg mb-1"></i>
+      <span class="text-xs font-medium">贈った記録</span>
+    <% end %>
+    <%= link_to new_received_gift_path, class: "flex flex-col items-center justify-center py-3 text-gray-700 hover:text-orange-500 transition-colors", aria: { label: "貰ったギフトを記録" } do %>
+      <i class="fa-solid fa-hand-holding-heart text-lg mb-1"></i>
+      <span class="text-xs font-medium">貰った記録</span>
+    <% end %>
+    <%= link_to gift_records_path, class: "flex flex-col items-center justify-center py-3 text-gray-700 hover:text-orange-500 transition-colors", aria: { label: "みんなのギフトを見る" } do %>
+      <i class="fa-solid fa-people-group text-lg mb-1"></i>
+      <span class="text-xs font-medium">みんなのギフト</span>
+    <% end %>
+  </div>
+</nav>
