@@ -52,28 +52,6 @@
 
     <!-- フォーム -->
     <div class="px-6 py-6">
-      <!-- エラーメッセージ（全体） -->
-      <% if @gift_record.errors.any? %>
-        <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <i class="fas fa-exclamation-triangle text-red-400 text-lg"></i>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-red-800">
-                入力内容にエラーがあります
-              </h3>
-              <div class="mt-2 text-sm text-red-700">
-                <ul class="list-disc list-inside space-y-1">
-                  <% @gift_record.errors.full_messages.each do |message| %>
-                    <li><%= message %></li>
-                  <% end %>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
 
       <!-- フォーム本体 -->
       <div class="max-w-4xl mx-auto">
