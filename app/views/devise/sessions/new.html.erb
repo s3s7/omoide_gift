@@ -1,23 +1,6 @@
 
-  <div style="
-    width: 90%;
-    max-width: 400px;
-    padding: 40px 30px;
-    /* background-color: white; */
-    border-radius: 12px;
-    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
-    text-align: center;
-    margin: 0 auto;
-    position: relative;
-  ">
-    <h2 style="
-      margin: 0 0 40px 0;
-      padding: 0;
-      font-size: 28px;
-      font-weight: 600;
-      color: #333;
-      line-height: 1.4;
-    ">アカウントにログイン</h2>
+  <div class="w-[90%] max-w-[400px] px-8 py-10 rounded-xl text-center mx-auto relative">
+    <h2 class="mb-10 text-2xl font-semibold text-gray-800 leading-snug">アカウントにログイン</h2>
     <%- if devise_mapping.omniauthable? %>
       <%- resource_class.omniauth_providers.each do |provider| %>
         <%= button_to image_tag('line_login.png', alt: "#{OmniAuth::Utils.camelize(provider)}でログイン"), omniauth_authorize_path(resource_name, provider), data: { turbo: false } %>
@@ -25,82 +8,39 @@
       <% end %>
     <% end %>
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-      <div style="margin-bottom: 24px; text-align: left;">
-        <%= f.label :メールアドレス, style: "
-          display: block;
-          margin-bottom: 8px;
-          font-weight: 600;
-          color: #555;
-          font-size: 14px;
-        " %>
-        <%= f.email_field :email, autofocus: true, autocomplete: "email", style: "
-          width: 100%;
-          padding: 14px 16px;
-          border: 2px solid #e1e5e9;
-          border-radius: 8px;
-          font-size: 16px;
-          box-sizing: border-box;
-          transition: border-color 0.3s ease;
-          background-color: white;
-          color: black;
-        " %>
+      <div class="mb-6 text-left">
+        <%= f.label :メールアドレス, class: "block mb-2 font-semibold text-gray-600 text-sm" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+              class: "w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base bg-white text-black focus:outline-none focus:ring-2 focus:ring-orange-400" %>
       </div>
 
-      <div style="margin-bottom: 24px; text-align: left;">
-        <%= f.label :パスワード, style: "
-          display: block;
-          margin-bottom: 8px;
-          font-weight: 600;
-          color: #555;
-          font-size: 14px;
-        " %>
-        <%= f.password_field :password, autocomplete: "current-password", style: "
-          width: 100%;
-          padding: 14px 16px;
-          border: 2px solid #e1e5e9;
-          border-radius: 8px;
-          font-size: 16px;
-          box-sizing: border-box;
-          transition: border-color 0.3s ease;
-          background-color: white;
-          color: black;
-        " %>
+      <div class="mb-6 text-left">
+        <%= f.label :パスワード, class: "block mb-2 font-semibold text-gray-600 text-sm" %>
+        <%= f.password_field :password, autocomplete: "current-password",
+              class: "w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-base bg-white text-black focus:outline-none focus:ring-2 focus:ring-orange-400" %>
         <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-          <%= link_to "パスワードを忘れた方はこちら", new_password_path(resource_name) , class: "text-sm", style: "color: black;"  %><br />
+          <%= link_to "パスワードを忘れた方はこちら", new_password_path(resource_name), class: "text-sm text-gray-700 hover:text-gray-900 inline-block mt-2" %><br />
         <% end %>
       </div>
 
      
 
       <% if devise_mapping.rememberable? %>
-        <div style="margin-bottom: 32px; text-align: left;">
-          <label style="
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            color: #666;
-            cursor: pointer;
-          ">
-            <%= f.check_box :remember_me, class: "checkbox checkbox-primary", style: "margin-right: 8px;" %>
+        <div class="mb-8 text-left">
+          <label class="flex items-center text-sm text-gray-600 cursor-pointer">
+            <%= f.check_box :remember_me, class: "checkbox checkbox-primary mr-2" %>
             ログインしたままにする
           </label>
         </div>
       <% end %>
 
-      <div style="margin-bottom: 32px;">
+      <div class="mb-8">
         <%= f.submit "ログイン", class: "devise-primary-link" %>
       </div>
     <% end %>
 
-    <div style="border-top: 1px solid #FED7AA; padding-top: 24px;">
-      <h2 style="
-      margin: 0 0 40px 0;
-      padding: 0;
-      font-size: 15px;
-      font-weight: 600;
-      color: #333;
-      line-height: 1.4;
-    ">アカウントをお持ちでない方</h2>
+    <div class="border-t border-orange-200 pt-6">
+      <h2 class="mb-6 text-base font-semibold text-gray-800 leading-snug">アカウントをお持ちでない方</h2>
       <%= render "devise/shared/links" %>
     </div>
   </div>

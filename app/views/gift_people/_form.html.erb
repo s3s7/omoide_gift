@@ -1,18 +1,3 @@
-<style>
-  .gift-form-input::placeholder {
-    color: #888 !important;
-  }
-  .gift-form-input::-webkit-input-placeholder {
-    color: #888 !important;
-  }
-  .gift-form-input::-moz-placeholder {
-    color: #888 !important;
-  }
-  .gift-form-input:-ms-input-placeholder {
-    color: #888 !important;
-  }
-</style>
-
 <% line_connected = if local_assigns.key?(:line_connected)
                       local_assigns[:line_connected]
                     elsif defined?(current_user) && current_user.present?

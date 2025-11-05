@@ -1,14 +1,6 @@
 <% content_for(:title, t('.title')) %>
 
-<div style="
-  width: 90%;
-  max-width: 600px;
-  padding: 40px 30px;
-  border-radius: 12px;
-  text-align: center;
-  margin: 0 auto;
-  position: relative;
-">
+<div class="w-[90%] max-w-[600px] py-10 px-[30px] rounded-xl text-center mx-auto relative">
   <h1 class="text-3xl font-semibold text-black mb-10 leading-snug"><%= t('.title') %></h1>
 
   <%= render 'form', gift_record: @gift_record, form_context: :received %>

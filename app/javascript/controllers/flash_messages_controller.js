@@ -62,16 +62,16 @@ export default class extends Controller {
     if (!messageElement || !messageElement.classList.contains('flash-message')) {
       return
     }
+    // Tailwindのトランジションでフェードアウト（初期クラスに戻す）
+    messageElement.style.opacity = ''
+    messageElement.style.transform = ''
 
-    // フェードアウトアニメーションを開始
-    messageElement.classList.add('fade-out')
-    
     // アニメーション完了後にDOMから削除
     const removeTimer = setTimeout(() => {
       if (messageElement && messageElement.isConnected) {
         messageElement.remove()
       }
-    }, 300) // CSSのアニメーション時間と同期
+    }, 300) // transition duration と同期
     
     this.timers.push(removeTimer)
   }
