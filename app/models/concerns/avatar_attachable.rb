@@ -5,11 +5,11 @@ module AvatarAttachable
     validate :avatar_validation
 
     class_attribute :avatar_content_types, instance_writer: false, default: %w[image/jpeg image/jpg image/png image/webp]
-    class_attribute :avatar_max_size, instance_writer: false, default: 2.megabytes
+    class_attribute :avatar_max_size, instance_writer: false, default: 5.megabytes
   end
 
   def avatar_url
-    return unless respond_to?(:avatar) && avatar.attached? && persisted?
+    return unless respond_to?(:avatar) && avatar.attached? && avatar.blob&.persisted? && persisted?
 
     avatar
   rescue ActiveRecord::RecordNotFound, NoMethodError => e
@@ -18,7 +18,7 @@ module AvatarAttachable
   end
 
   def has_avatar?
-    respond_to?(:avatar) && avatar.attached?
+    respond_to?(:avatar) && avatar.attached? && avatar.blob&.persisted?
   end
 
   private
@@ -36,5 +36,20 @@ module AvatarAttachable
   rescue StandardError => e
     Rails.logger.error "#{self.class.name} avatar validation error: #{e.message}"
     errors.add(:avatar, "の検証中にエラーが発生しました")
+  end
+
+  # 画像のWebP変換ジョブを必要時のみ投入（User/GiftPerson 共通）
+  def enqueue_webp_avatar_conversion
+    return unless respond_to?(:avatar) && avatar.attached?
+
+    begin
+      blob = avatar.blob
+      return unless blob.present?
+      return if blob.content_type.to_s == "image/webp" || avatar.filename.to_s.downcase.end_with?(".webp")
+
+      ConvertAttachmentsToWebpJob.perform_later(self.class.name, id, "avatar")
+    rescue => e
+      Rails.logger.warn "#{self.class.name}##{id} avatar convert enqueue skipped: #{e.class} - #{e.message}"
+    end
   end
 end

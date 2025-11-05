@@ -16,7 +16,7 @@ export default class extends Controller {
   ]
   
   static values = {
-    maxFileSize: { type: Number, default: 2097152 }, // ファイルサイズ上限（2MB）
+    maxFileSize: { type: Number, default: 5 * 1024 * 1024 }, // ファイルサイズ上限（5MB）
     allowedTypes: { type: Array, default: ["image/jpeg", "image/jpg", "image/png", "image/webp"] } // 許可する画像形式
   }
 
@@ -85,7 +85,8 @@ export default class extends Controller {
 
     // ファイルサイズの検証
     if (file.size > this.maxFileSizeValue) {
-      this.showError('ファイルサイズは2MB以下にしてください。')
+      const mb = Math.round(this.maxFileSizeValue / (1024 * 1024))
+      this.showError(`ファイルサイズは${mb}MB以下にしてください。`)
       this.clearAvatarInput()
       return
     }
