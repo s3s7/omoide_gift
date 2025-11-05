@@ -18,7 +18,7 @@ export default class extends Controller {
 
   static values = {
     maxFiles: { type: Number, default: 5 },
-    maxSize: { type: Number, default: 10 * 1024 * 1024 }, // 10MB
+    maxSize: { type: Number, default: 5 * 1024 * 1024 }, // 5MB
     acceptedTypes: { type: Array, default: ["image/jpeg", "image/jpg", "image/png", "image/webp"] }
   }
 
@@ -102,18 +102,31 @@ export default class extends Controller {
     
     if (totalFiles > this.maxFilesValue) {
       this.showError(`画像は最大${this.maxFilesValue}枚まで選択できます`)
+      this.resetFileInput()
+      this.updateFileInput()
+      this.updatePreview()
       return
     }
 
-    // ファイル検証と追加
+    // まず全ファイルを検証（1つでもエラーなら全体を拒否）
+    const errors = []
     const validFiles = []
     for (const file of files) {
-      const validation = this.validateFile(file)
-      if (validation.valid) {
-        validFiles.push(file)
-      } else {
-        this.showError(validation.error)
+      const displayIndex = this.selectedFiles.length + validFiles.length + 1
+      const validation = this.validateFile(file, displayIndex)
+      if (!validation.valid) {
+        errors.push(validation.error)
       }
+      validFiles.push(file)
+    }
+
+    if (errors.length > 0) {
+      // 先頭のエラーを表示（ギフト相手フォームと同様の挙動）
+      this.showError(errors[0])
+      this.resetFileInput()
+      this.updateFileInput()
+      this.updatePreview()
+      return
     }
 
     if (validFiles.length > 0) {
@@ -125,21 +138,23 @@ export default class extends Controller {
   }
 
   // ファイル検証
-  validateFile(file) {
+  validateFile(file, displayIndex = null) {
+    const prefix = displayIndex ? `${displayIndex}枚目: ` : ""
+
     // ファイル形式チェック
     if (!this.acceptedTypesValue.includes(file.type)) {
       return {
         valid: false,
-        error: `${file.name}: サポートされていないファイル形式です (JPEG、PNG、WEBP のみ)`
+        error: `${prefix}JPEG、PNG、WEBP形式のファイルのみアップロードできます`
       }
     }
 
     // ファイルサイズチェック
     if (file.size > this.maxSizeValue) {
-      const maxSizeMB = Math.floor(this.maxSizeValue / (1024 * 1024))
+      const maxSizeMB = Math.round(this.maxSizeValue / (1024 * 1024))
       return {
         valid: false,
-        error: `${file.name}: ファイルサイズが大きすぎます (最大${maxSizeMB}MB)`
+        error: `${prefix}ファイルサイズは${maxSizeMB}MB以下にしてください`
       }
     }
 
@@ -227,6 +242,10 @@ export default class extends Controller {
     this.fileInputTarget.files = dataTransfer.files
   }
 
+  resetFileInput() {
+    this.fileInputTarget.value = ""
+  }
+
   // ドロップゾーンスタイルリセット
   resetDropZoneStyle() {
     this.dropZoneTarget.classList.remove('border-orange-400', 'bg-orange-50', 'border-solid')
@@ -235,23 +254,7 @@ export default class extends Controller {
 
   // エラー表示
   showError(message) {
-    // 既存のエラーメッセージ領域を探す
-    let errorContainer = this.element.querySelector('.client-error-message')
-    
-    if (!errorContainer) {
-      errorContainer = document.createElement('div')
-      errorContainer.className = 'client-error-message text-red-600 text-xs mt-2'
-      errorContainer.setAttribute('role', 'alert')
-      
-      // ヘルプテキストの後に挿入
-      const helpText = this.element.querySelector('#image_upload_help')
-      helpText.parentNode.insertBefore(errorContainer, helpText.nextSibling)
-    }
-    
-    errorContainer.innerHTML = `
-      <i class="fas fa-exclamation-triangle mr-1"></i>
-      ${message}
-    `
+    alert(message)
   }
 
   // エラークリア
