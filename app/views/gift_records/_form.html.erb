@@ -15,7 +15,7 @@
 
 <% is_received = (gift_direction_value(gift_record) == "received") %>
 
-<% form_options = { data: { controller: "gift-records image-preview", action: "submit->gift-records#validateForm" } } %>
+<% form_options = { data: { controller: "gift-records image-preview", action: "submit->gift-records#validateForm", "gift-records-is-new-value": gift_record.new_record? } } %>
 <% if gift_record.new_record? && (defined?(form_context) && form_context == :received) %>
   <% form_options[:url] = create_received_gift_records_path %>
 <% end %>
@@ -762,9 +762,21 @@
           <% gift_record.images.each_with_index do |image, index| %>
             <div class="relative group" data-image-id="<%= image.id %>" data-image-preview-target="existingImageItem">
               <div class="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                <%= image_tag image.variant(resize_to_fill: [150, 150]), 
-                    class: "w-full h-full object-cover", 
-                    alt: "現在のギフト画像 #{index + 1}" %>
+                <% begin %>
+                  <% if image&.blob&.persisted? %>
+                    <%= image_tag image.variant(resize_to_fill: [150, 150]),
+                        class: "w-full h-full object-cover",
+                        alt: "現在のギフト画像 #{index + 1}" %>
+                  <% else %>
+                    <%= image_tag "default_gift.webp",
+                        class: "w-full h-full object-cover",
+                        alt: "現在のギフト画像 #{index + 1}" %>
+                  <% end %>
+                <% rescue => e %>
+                  <%= image_tag "default_gift.webp",
+                      class: "w-full h-full object-cover",
+                      alt: "現在のギフト画像 #{index + 1}" %>
+                <% end %>
               </div>
               <!-- 削除ボタン -->
               <div class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -793,16 +805,6 @@
       <i class="fas fa-info-circle mr-1"></i>
       ギフトの画像を追加してください（任意、最大5枚まで）
     </div>
-    
-    <!-- エラーメッセージ -->
-    <% if gift_record.errors[:images].any? %>
-      <div class="text-red-600 text-xs mt-2" role="alert">
-        <i class="fas fa-exclamation-triangle mr-1"></i>
-        <% gift_record.errors[:images].each do |error| %>
-          <div><%= error %></div>
-        <% end %>
-      </div>
-    <% end %>
   </div>
 
   <!-- ギフト分類設定（編集画面のみ表示） -->
@@ -1065,7 +1067,7 @@
 
   <!-- 送信ボタン -->
   <div style="margin-bottom: 32px;">
-    <%= f.submit nil, style: "
+    <%= f.submit nil, data: { "gift-records-target": "submitButton" }, style: "
       width: 100%;
       padding: 16px;
       background: linear-gradient(135deg, #FC913A 100%);

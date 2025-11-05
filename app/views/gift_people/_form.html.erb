@@ -13,7 +13,6 @@
   }
 </style>
 
-<%# Determine LINE linkage directly from current_user to avoid stale locals %>
 <% line_connected = if local_assigns.key?(:line_connected)
                       local_assigns[:line_connected]
                     elsif defined?(current_user) && current_user.present?
@@ -174,16 +173,8 @@
     <!-- ヘルプテキスト -->
     <div style="font-size: 12px; color: #888; margin-top: 8px;">
       <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
-      JPEG、PNG、WEBP形式のファイルをアップロードできます（任意、最大5MB）
+      JPEG、PNG、WEBP形式のファイルをアップロードできます（任意、最大<%= (GiftPerson.avatar_max_size / 1.megabyte).to_i %>MB）
     </div>
-    
-    <!-- エラーメッセージ -->
-    <% if gift_person.errors[:avatar].any? %>
-      <div style="color: #dc3545; font-size: 12px; margin-top: 8px;">
-        <i class="fas fa-exclamation-triangle" style="margin-right: 4px;"></i>
-        <%= gift_person.errors[:avatar].first %>
-      </div>
-    <% end %>
   </div>
 
   <!-- 関係性選択 -->

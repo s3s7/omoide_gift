@@ -1,55 +1,29 @@
 module GiftRecordsHelper
-  def default_gift_direction_checked?(gift_record, direction)
-    if gift_record.new_record?
-      # 新規作成時は、モデルに設定済みの値を優先
-      if gift_record.gift_direction.present?
-        case direction
-        when :received
-          gift_record.gift_direction.to_s == "received"
-        when :given
-          gift_record.gift_direction.to_s == "given"
-        end
+  # 単一のActiveStorage添付画像をサイズ変換しつつ、安全に表示（失敗時はデフォルト画像）
+  # 使用例:
+  #   <%= gift_image_with_fallback(image, size: [300,300], alt: '説明', css_class: '...', loading: 'lazy') %>
+  def gift_image_with_fallback(attachment, size:, alt:, css_class: "", loading: "lazy")
+    begin
+      if attachment&.blob&.persisted?
+        image_tag attachment.variant(resize_to_fill: size),
+                  class: css_class,
+                  alt: alt,
+                  loading: loading
       else
-        # 設定が無い場合のみデフォルトは贈った側
-        direction == :given
+        image_tag "default_gift.webp",
+                  class: css_class,
+                  alt: alt,
+                  loading: loading
       end
-    else
-      # 編集時は現在の値
-      case direction
-      when :received
-        gift_record.received?
-      when :given
-        gift_record.given?
-      end
+    rescue => e
+      Rails.logger.warn "gift_image_with_fallback error: #{e.class} - #{e.message}"
+      image_tag "default_gift.webp", class: css_class, alt: alt, loading: loading
     end
   end
 
-  def gift_direction_value(gift_record)
-    if gift_record.new_record?
-      # 新規時は属性を尊重（未設定ならgiven）
-      gift_record.gift_direction.present? ? gift_record.gift_direction.to_s : "given"
-    else
-      gift_record.received? ? "received" : "given"
-    end
-  end
-
-  def gift_direction_display_text(gift_record)
-    gift_record.received? ? "もらったギフト" : "贈ったギフト"
-  end
-
-  def gift_direction_description_text(gift_record)
-    if gift_record.received?
-      "このユーザーが受け取ったギフトです"
-    else
-      "このユーザーが贈ったギフトです"
-    end
-  end
-
-  def gift_direction_icon_class(gift_record)
-    gift_record.received? ? "fas fa-hand-holding-heart" : "fas fa-gift"
-  end
-
-  def gift_direction_color(gift_record)
-    gift_record.received? ? "#FF6B6B" : "#28a745"
+  # ギフト記録のメイン画像を安全に表示（失敗/未設定時はデフォルト画像）
+  def gift_main_image_with_fallback(record, size:, css_class: "", loading: "lazy")
+    alt = "#{record.display_item_name}のギフト画像"
+    gift_image_with_fallback(record&.main_image, size: size, alt: alt, css_class: css_class, loading: loading)
   end
 end

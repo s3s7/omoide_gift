@@ -30,15 +30,15 @@
     <!-- カードグリッドレイアウト（レスポンシブ対応） -->
     <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-2 md:gap-3 lg:gap-4 justify-items-center">
       <% @gift_records.each do |record| %>
-        <div class="gift-card-container gift-record-card w-[165px] sm:w-[165px] md:w-[240px] lg:w-[200px] xl:w-[200px] bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" onclick="window.location.href='<%= gift_record_path(record, @pagination_params.merge(page: params[:page])) %>'" style="cursor: pointer;">
+        <div class="gift-card-container gift-record-card w-[165px] sm:w-[165px] md:w-[240px] lg:w-[200px] xl:w-[200px] bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" onclick="Turbo.visit('<%= gift_record_path(record, @pagination_params.merge(page: params[:page])) %>')" style="cursor: pointer;">
             <!-- 上半分：ギフト画像または画像プレースホルダー -->
             <div class="h-48 sm:h-52 md:h-56 lg:h-52 xl:h-56 relative overflow-hidden">
               <% if record.has_images? %>
-                <!-- ギフト画像 -->
-                <%= image_tag record.main_image.variant(resize_to_fill: [400, 300]), 
-                    class: "w-full h-full object-cover",
-                    alt: "#{record.display_item_name}のギフト画像",
-                    loading: "lazy" %>
+                <!-- ギフト画像（ヘルパーで安全に表示） -->
+                <%= gift_main_image_with_fallback(record,
+                      size: [400, 300],
+                      css_class: "w-full h-full object-cover",
+                      loading: "lazy") %>
               <% else %>
                 <!-- 画像プレースホルダー -->
                 <div class="w-full h-full bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center">

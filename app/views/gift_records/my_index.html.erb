@@ -65,10 +65,11 @@
              style="cursor: pointer;">
           <!-- 画像部分 -->
           <div class="aspect-w-16 aspect-h-9 bg-gray-100">
-            <% if gift_record.images.any? %>
-              <%= image_tag gift_record.images.first,
-                  class: "w-full h-48 object-cover",
-                  alt: gift_record.item_name %>
+            <% if gift_record.has_images? %>
+              <%= gift_main_image_with_fallback(gift_record,
+                    size: [400, 300],
+                    css_class: "w-full h-48 object-cover",
+                    loading: "lazy") %>
             <% else %>
               <div class="w-full h-48 bg-gray-100 flex items-center justify-center">
                 <i class="fas fa-gift text-4xl text-gray-400"></i>
