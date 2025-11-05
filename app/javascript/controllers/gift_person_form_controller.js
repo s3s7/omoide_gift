@@ -19,7 +19,7 @@ export default class extends Controller {
   ]
   
   static values = {
-    maxFileSize: { type: Number, default: 3145728 }, // ファイルサイズ上限（3MB）
+    maxFileSize: { type: Number, default: 5 * 1024 * 1024 }, // ファイルサイズ上限（5MB）
     allowedTypes: { type: Array, default: ["image/jpeg", "image/jpg", "image/png", "image/webp"] }, // 許可する画像形式
     focusColor: { type: String, default: "#FC913A" }, // フォーカス時の枠線色
     blurColor: { type: String, default: "#e1e5e9" }, // 通常時の枠線色
@@ -81,7 +81,8 @@ export default class extends Controller {
 
     // ファイルサイズの検証
     if (file.size > this.maxFileSizeValue) {
-      this.showError('ファイルサイズは5MB以下にしてください。')
+      const mb = Math.round(this.maxFileSizeValue / (1024 * 1024))
+      this.showError(`ファイルサイズは${mb}MB以下にしてください。`)
       this.clearAvatarInput()
       return
     }
