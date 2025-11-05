@@ -97,43 +97,43 @@ module ApplicationHelper
   def gift_direction_color(record_or_value)
     dir = extract_gift_direction(record_or_value)
     case dir
-    when :received then '#FF6B6B'
-    when :given    then '#28a745'
-    else '#6c757d'
+    when :received then "#FF6B6B"
+    when :given    then "#28a745"
+    else "#6c757d"
     end
   end
 
   def gift_direction_icon_class(record_or_value)
     dir = extract_gift_direction(record_or_value)
     case dir
-    when :received then 'fas fa-hand-holding-heart'
-    when :given    then 'fas fa-gift'
-    else 'fas fa-question-circle'
+    when :received then "fas fa-hand-holding-heart"
+    when :given    then "fas fa-gift"
+    else "fas fa-question-circle"
     end
   end
 
   def gift_direction_display_text(record_or_value)
     dir = extract_gift_direction(record_or_value)
     case dir
-    when :received then 'もらったギフト'
-    when :given    then '贈ったギフト'
-    else '未設定'
+    when :received then "もらったギフト"
+    when :given    then "贈ったギフト"
+    else "未設定"
     end
   end
 
   def gift_direction_description_text(record_or_value)
     dir = extract_gift_direction(record_or_value)
     case dir
-    when :received then 'あなたが受け取ったギフトを記録します'
-    when :given    then 'あなたが贈ったギフトを記録します'
-    else 'ギフトの種別を選択してください'
+    when :received then "あなたが受け取ったギフトを記録します"
+    when :given    then "あなたが贈ったギフトを記録します"
+    else "ギフトの種別を選択してください"
     end
   end
 
   # ビュー補助: 現在の方向値を 'given' / 'received' の文字列で返す
   def gift_direction_value(record_or_value)
     dir = extract_gift_direction(record_or_value)
-    dir ? dir.to_s : ''
+    dir ? dir.to_s : ""
   end
 
   # ビュー補助: トグルのchecked判定（targetに :received などを渡す）
@@ -147,13 +147,13 @@ module ApplicationHelper
   def extract_gift_direction(record_or_value)
     value = if record_or_value.respond_to?(:gift_direction)
               record_or_value.gift_direction
-            else
+    else
               record_or_value
-            end
+    end
 
     case value
-    when :given, 'given', 0 then :given
-    when :received, 'received', 1 then :received
+    when :given, "given", 0 then :given
+    when :received, "received", 1 then :received
     else nil
     end
   end
