@@ -8,8 +8,8 @@ export default class extends Controller {
 
   connect() {
     // 初期状態でもハート色をピンクに強制（CSS未反映ケースの保険）
-    const button = this.buttonTarget || this.element.querySelector('.favorite-button')
-    const heart = this.heartTarget || this.element.querySelector('.favorite-heart')
+    const button = this.hasButtonTarget ? this.buttonTarget : this.element.querySelector('.favorite-button')
+    const heart = this.hasHeartTarget ? this.heartTarget : this.element.querySelector('.favorite-heart')
     if (heart) {
       heart.style.color = '#ec4899'
     }
@@ -36,7 +36,7 @@ export default class extends Controller {
     const giftRecordId = this.recordIdValue || this.element.dataset.giftRecordId
     if (!giftRecordId) return
 
-    const button = this.buttonTarget || this.element.querySelector('.favorite-button')
+    const button = this.hasButtonTarget ? this.buttonTarget : this.element.querySelector('.favorite-button')
     if (!button) return
 
     this.setLoading(button, true)
@@ -65,7 +65,7 @@ export default class extends Controller {
   }
 
   updateButton(button, favorited, favoritesCount) {
-    const heart = this.heartTarget || button.querySelector('.favorite-heart')
+    const heart = this.hasHeartTarget ? this.heartTarget : button.querySelector('.favorite-heart')
     const countEl = this.hasCountTarget ? this.countTarget : button.querySelector('.favorite-count')
 
     button.dataset.favorited = String(favorited)

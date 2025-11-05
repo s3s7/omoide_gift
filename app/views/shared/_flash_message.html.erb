@@ -1,5 +1,5 @@
 <!-- フラッシュメッセージ表示 -->
-<div id="flash-messages" class="fixed top-20 right-4 z-50 space-y-3"
+<div id="flash-messages" class="fixed top-20 right-4 sm:left-auto sm:right-4 left-4 z-50 space-y-3"
      data-controller="flash-messages"
      data-action="turbo:before-visit@document->flash-messages#beforeVisit">
   <% flash.each do |message_type, message| %>
@@ -33,7 +33,7 @@
       end
     %>
     
-    <div class="flash-message <%= bg_color %> <%= border_color %> <%= text_color %> border rounded-lg shadow-lg max-w-md w-full p-4 transform transition-all duration-300 ease-in-out opacity-0 translate-x-full"
+    <div class="flash-message <%= bg_color %> <%= border_color %> <%= text_color %> border rounded-lg shadow-lg max-w-none sm:max-w-md w-full p-4 transform transition-all duration-300 ease-in-out opacity-0 translate-x-full backdrop-blur-[10px] bg-white/95"
          data-message-type="<%= message_type %>"
          data-flash-messages-target="message">
       <div class="flex items-start">
@@ -52,7 +52,7 @@
         <!-- 閉じるボタン -->
         <div class="ml-4 flex-shrink-0 flex">
           <button type="button" 
-                  class="inline-flex <%= text_color %> hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-<%= bg_color.split('-')[1] %>-50 focus:ring-<%= icon_color.split('-')[1] %>-500 rounded-md p-1.5 transition-opacity duration-150"
+                  class="inline-flex <%= text_color %> hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 focus:ring-offset-white/80 rounded-md p-1.5 transition-opacity duration-150"
                   data-action="click->flash-messages#dismiss">
             <span class="sr-only">閉じる</span>
             <i class="fas fa-times text-sm"></i>
@@ -62,52 +62,3 @@
     </div>
   <% end %>
 </div>
-
-<!-- カスタムCSS -->
-<style>
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
-  @keyframes slideOutRight {
-    from {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateX(100%);
-    }
-  }
-  
-  .flash-message {
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.95);
-  }
-  
-  .flash-message.fade-out {
-    animation: slideOutRight 0.3s ease-in forwards;
-  }
-  
-  /* モバイル対応 */
-  @media (max-width: 640px) {
-    #flash-messages {
-      top: 80px;
-      left: 1rem;
-      right: 1rem;
-      max-width: none;
-    }
-    
-    .flash-message {
-      max-width: none;
-    }
-  }
-</style>
-

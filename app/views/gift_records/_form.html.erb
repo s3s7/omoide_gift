@@ -1,18 +1,3 @@
-<style>
-  .gift-form-input::placeholder {
-    color: #888 !important;
-  }
-  .gift-form-input::-webkit-input-placeholder {
-    color: #888 !important;
-  }
-  .gift-form-input::-moz-placeholder {
-    color: #888 !important;
-  }
-  .gift-form-input:-ms-input-placeholder {
-    color: #888 !important;
-  }
-</style>
-
 <% is_received = (gift_direction_value(gift_record) == "received") %>
 
 <% form_options = { data: { controller: "gift-records image-preview", action: "submit->gift-records#validateForm", "gift-records-is-new-value": gift_record.new_record? } } %>

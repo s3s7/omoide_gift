@@ -25,6 +25,7 @@
             <%= link_to "ログイン", new_user_session_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-base font-medium transition-colors duration-200" %>
             <span class="text-black mx-2">|</span>
             <%= link_to "新規登録", new_user_registration_path, class: "px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-base font-medium transition-colors duration-200" %>
+            <%= link_to "みんなのギフト", gift_records_path, class: "ml-2 px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-md text-base font-medium transition-colors duration-200" %>
           </div>
         <% end %>
       </div>
@@ -40,8 +41,6 @@
 
         <% if user_signed_in? %>
           <%= link_to "マイページ", mypage_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
-          <%= link_to "贈ったギフトを追加", new_gift_record_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
-          <%= link_to "貰ったギフトを追加", new_received_gift_records_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
 
           <%= link_to "ギフト相手を追加", new_gift_person_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "記念日登録", new_remind_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
@@ -56,7 +55,6 @@
           <%= link_to "ログイン", new_user_session_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
           <%= link_to "新規登録", new_user_registration_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
         <% end %>
-        <%= link_to "みんなのギフト", gift_records_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
         <% if user_signed_in? %>
           <%= link_to "じぶんのギフト", my_index_gift_records_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "ギフト相手一覧", gift_people_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
