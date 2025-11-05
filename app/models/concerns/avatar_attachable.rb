@@ -37,19 +37,4 @@ module AvatarAttachable
     Rails.logger.error "#{self.class.name} avatar validation error: #{e.message}"
     errors.add(:avatar, "の検証中にエラーが発生しました")
   end
-
-  # 画像のWebP変換ジョブを必要時のみ投入（User/GiftPerson 共通）
-  def enqueue_webp_avatar_conversion
-    return unless respond_to?(:avatar) && avatar.attached?
-
-    begin
-      blob = avatar.blob
-      return unless blob.present?
-      return if blob.content_type.to_s == "image/webp" || avatar.filename.to_s.downcase.end_with?(".webp")
-
-      ConvertAttachmentsToWebpJob.perform_later(self.class.name, id, "avatar")
-    rescue => e
-      Rails.logger.warn "#{self.class.name}##{id} avatar convert enqueue skipped: #{e.class} - #{e.message}"
-    end
-  end
 end

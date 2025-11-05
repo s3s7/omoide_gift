@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   include AvatarAttachable
+  include WebpConvertible
   NAME_MAX_LENGTH = 10
   RECENT_GIFT_RECORDS_DEFAULT_LIMIT = 5
 
@@ -40,6 +41,8 @@ class User < ApplicationRecord
 
   # セキュリティを考慮したエラーメッセージの置き換え
   after_validation :customize_validation_errors
+  # アバターは登録・更新時にWebPへ非同期変換（共通Concernで処理）
+  webp_convert_for :avatar
 
   # LINEログインユーザーの場合はemailを必須にしない
   def email_required?

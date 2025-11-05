@@ -1,4 +1,5 @@
 class GiftRecord < ApplicationRecord
+  include WebpConvertible
   require "tempfile"
   # リレーション
   belongs_to :user
@@ -28,6 +29,8 @@ class GiftRecord < ApplicationRecord
   before_validation :sync_return_gift_flag
   before_validation :set_return_deadline
   after_commit :refresh_generated_ogp_image, on: :update, if: :saved_change_to_item_name?
+  # 画像は登録・更新時にWebPへ非同期変換（共通Concernで処理）
+  webp_convert_for :images
 
   # 必須フィールドのバリデーション（統一されたエラーメッセージ）
   validates :item_name, presence: { message: "を入力してください" }, length: { maximum: 30 }
@@ -410,17 +413,21 @@ end
     images.each_with_index do |image, index|
       # ファイル形式チェック
       unless image.content_type.in?(%w[image/jpeg image/jpg image/png image/webp])
-        errors.add(:images, "#{index + 1}枚目: JPEG、PNG、WEBP形式のファイルのみアップロードできます")
+        add_unique_image_error("#{index + 1}枚目: JPEG、PNG、WEBP形式のファイルのみアップロードできます")
       end
 
-      # ファイルサイズチェック（3MBまで）
+      # ファイルサイズチェック（5MBまで）
       if image.blob.byte_size > 5.megabytes
-        errors.add(:images, "#{index + 1}枚目: ファイルサイズは5MB以下にしてください")
+        add_unique_image_error("#{index + 1}枚目: ファイルサイズは5MB以下にしてください")
       end
     end
   rescue StandardError => e
     Rails.logger.error "Images validation error: #{e.message}"
     errors.add(:images, "画像の検証中にエラーが発生しました")
+  end
+
+  def add_unique_image_error(message)
+    errors.add(:images, message) unless errors[:images].include?(message)
   end
 
   def sync_return_gift_flag
