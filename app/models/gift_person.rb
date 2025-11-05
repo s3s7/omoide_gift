@@ -1,5 +1,6 @@
 class GiftPerson < ApplicationRecord
   include AvatarAttachable
+  include WebpConvertible
   NAME_MIN_LENGTH = 1
   ADDRESS_MAX_LENGTH = 100
 
@@ -12,6 +13,9 @@ class GiftPerson < ApplicationRecord
   validates :name, presence: true, length: { minimum: NAME_MIN_LENGTH }
   validates :name, format: { with: /\A\S+.*\S*\z/, message: "空白のみは無効です" }
   validates :address, length: { maximum: ADDRESS_MAX_LENGTH }, allow_blank: true
+
+  # アバターは登録・更新時にWebPへ非同期変換（共通Concernで処理）
+  webp_convert_for :avatar
 
   # 指定された日付時点での年齢を計算
   def age_at(reference_date = Date.current)
