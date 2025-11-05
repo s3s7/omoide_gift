@@ -37,5 +37,4 @@ module AvatarAttachable
     Rails.logger.error "#{self.class.name} avatar validation error: #{e.message}"
     errors.add(:avatar, "の検証中にエラーが発生しました")
   end
-
 end

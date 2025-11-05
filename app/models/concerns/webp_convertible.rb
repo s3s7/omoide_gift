@@ -5,7 +5,7 @@ module WebpConvertible
     def webp_convert_for(*attachment_names)
       class_attribute :webp_convert_attachment_names, instance_writer: false, default: []
       self.webp_convert_attachment_names += attachment_names.map(&:to_sym)
-      after_commit :enqueue_webp_conversion, on: [:create, :update]
+      after_commit :enqueue_webp_conversion, on: [ :create, :update ]
     end
   end
 
@@ -24,7 +24,7 @@ module WebpConvertible
         needs_conversion = attachment_assoc.attachments.any? do |attachment|
           begin
             blob = attachment.blob
-            blob.present? && blob.content_type.to_s != 'image/webp'
+            blob.present? && blob.content_type.to_s != "image/webp"
           rescue
             false
           end
@@ -32,7 +32,7 @@ module WebpConvertible
       else
         begin
           blob = attachment_assoc.blob
-          needs_conversion = blob.present? && blob.content_type.to_s != 'image/webp'
+          needs_conversion = blob.present? && blob.content_type.to_s != "image/webp"
         rescue
           needs_conversion = false
         end
@@ -42,4 +42,3 @@ module WebpConvertible
     end
   end
 end
-

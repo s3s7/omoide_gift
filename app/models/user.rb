@@ -163,5 +163,4 @@ class User < ApplicationRecord
       errors.add(:password_confirmation, "とパスワードの入力が一致しません")
     end
   end
-
 end

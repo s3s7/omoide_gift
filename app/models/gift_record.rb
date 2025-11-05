@@ -440,5 +440,4 @@ end
       self.return_deadline = Date.current + 1.month
     end
   end
-
 end
