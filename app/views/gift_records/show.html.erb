@@ -232,10 +232,13 @@
                 
                 <!-- 画像 -->
                 <div class="aspect-square">
-                  <%= image_tag image.variant(resize_to_fill: [300, 300]), 
-                      class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-200",
-                      alt: "ギフト画像 #{index + 1}",
-                      loading: "lazy" %>
+                  <%= gift_image_with_fallback(
+                        image,
+                        size: [300, 300],
+                        alt: "ギフト画像 #{index + 1}",
+                        css_class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-200",
+                        loading: "lazy"
+                      ) %>
                 </div>
                 
                 <!-- オーバーレイ -->

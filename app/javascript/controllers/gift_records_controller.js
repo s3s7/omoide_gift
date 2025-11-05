@@ -23,12 +23,14 @@ export default class extends Controller {
     "giftDirectionToggleStatus",
     "giftDirectionToggleDescription",
     "eventSelect",
-    "dateField"
+    "dateField",
+    "submitButton"
   ]
 
   static values = {
     showNewFields: String,
-    hideNewFields: String
+    hideNewFields: String,
+    isNew: { type: Boolean, default: false }
   }
 
   // 初期化時の処理
@@ -333,18 +335,31 @@ export default class extends Controller {
       return false
     }
 
+    // 送信が有効な場合はボタンをローディング状態に
+    if (this.isNewValue) {
+      this.setNewModeSubmitButtonLoading()
+    } else {
+      this.setSubmitButtonLoading()
+    }
+
     return true
   }
 
-  // デバッグ用：現在の状態を出力
-  debug() {
-    return {
-      giftPersonVisible: this.hasNewGiftPersonFieldsTarget ? 
-        this.newGiftPersonFieldsTarget.style.display !== 'none' : false,
-      publicToggleChecked: this.hasPublicToggleTarget ? 
-        this.publicToggleTarget.checked : null,
-      selectedGiftPerson: this.hasGiftPeopleSelectTarget ? 
-        this.giftPeopleSelectTarget.value : null
+  // 新規作成モード用の送信ボタンローディング状態
+  setNewModeSubmitButtonLoading() {
+    if (this.hasSubmitButtonTarget) {
+      this.submitButtonTarget.disabled = true
+      this.originalSubmitText = this.submitButtonTarget.value
+      this.submitButtonTarget.value = '登録中...'
+    }
+  }
+
+  // 送信ボタンをローディング状態に設定
+  setSubmitButtonLoading() {
+    if (this.hasSubmitButtonTarget) {
+      this.submitButtonTarget.disabled = true
+      this.originalSubmitText = this.submitButtonTarget.value
+      this.submitButtonTarget.value = '更新中...'
     }
   }
 }
