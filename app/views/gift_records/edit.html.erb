@@ -34,13 +34,13 @@
           </p>
         </div>
         <div class="flex space-x-2">
-          <%= link_to @gift_record, 
+          <%= link_to gift_record_path(@gift_record, params.permit(:origin, :page)), 
               class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
               aria: { label: "編集をキャンセルして詳細を表示" } do %>
             <i class="fas fa-eye mr-1"></i>
             詳細表示
           <% end %>
-          <%= link_to gift_records_path, 
+          <%= link_to (first_item[:url] || gift_records_path), 
               class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
               aria: { label: "編集をキャンセルして一覧に戻る" } do %>
             <i class="fas fa-list mr-1"></i>
@@ -73,7 +73,7 @@
           </div>
           
           <div class="flex space-x-3">
-            <%= link_to @gift_record, 
+            <%= link_to gift_record_path(@gift_record, params.permit(:origin, :page)), 
                 class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
               <i class="fas fa-times mr-2"></i>
               キャンセル

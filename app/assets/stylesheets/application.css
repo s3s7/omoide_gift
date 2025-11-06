@@ -64,14 +64,14 @@ a[style*="background"] {
   opacity: 1 !important;
 }
 
-/* ログイン・新規登録ボタンの特別な修正 */
-button[style*="#FC913A"],
-input[type="submit"][style*="#FC913A"],
-a[style*="#FC913A"] {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  background-color: #FC913A !important;
-  opacity: 1 !important;
+/* ログイン・新規登録ボタンの特別な修正（scoped to Devise classes to avoid global override） */
+.devise-form-container .devise-form-submit,
+.devise-form-container .devise-primary-link,
+a.devise-primary-link {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #FC913A;
+  opacity: 1;
 }
 
 /* linear-gradientボタンの修正 */

@@ -260,7 +260,8 @@ class GiftRecordsController < ApplicationController
 
       Rails.logger.debug "更新後の画像数: #{@gift_record.images.count}"
       flash_success(:updated, item: GiftRecord.model_name.human)
-      redirect_to @gift_record
+      redirect_params = params.permit(:origin, :page).to_h
+      redirect_to gift_record_path(@gift_record, redirect_params)
     else
       Rails.logger.debug "更新失敗: #{@gift_record.errors.full_messages}"
       @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
