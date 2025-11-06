@@ -21,10 +21,6 @@ export default class extends Controller {
       event.stopPropagation()
     }
     showToast('お気に入りするにはログインが必要です。', 'error')
-    // ここで自動リダイレクトしたい場合は以下を有効化
-    // if (this.hasLoginUrlValue && this.loginUrlValue) {
-    //   setTimeout(() => { window.location.href = this.loginUrlValue }, 1200)
-    // }
   }
 
   async toggle(event) {

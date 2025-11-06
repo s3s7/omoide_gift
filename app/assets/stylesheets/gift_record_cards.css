@@ -252,7 +252,7 @@
 .gift-image-placeholder {
   /* カードの上半分（画像エリア） */
   flex: 0 0 50%; /* 固定で50%の高さ */
-  background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 50%, #fae8ff 100%);
+  background: linear-gradient(135deg, #fff9fc 0%, #fdeffd 50%, #fee6f8 100%);
   position: relative;
   display: flex;
   align-items: center;
@@ -267,8 +267,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+  background: radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.06) 0%, transparent 50%),
+              radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -276,8 +276,9 @@
 .gift-image-placeholder .w-16 {
   position: relative;
   z-index: 1;
-  border: 2px solid #f9a8d4;
   background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 100%);
+  border: none;
+  box-shadow: none;
 }
 
 .gift-image-placeholder p {

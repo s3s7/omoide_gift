@@ -7,6 +7,9 @@
 
 <%= form_with model: gift_record, **form_options do |f| %>
   <%= render 'shared/error_messages', object: f.object %>
+  <%# コンテキスト保持用（パンくず・戻り先のため） %>
+  <%= hidden_field_tag :origin, params[:origin] if params[:origin].present? %>
+  <%= hidden_field_tag :page, params[:page] if params[:page].present? %>
   
   <!-- 削除対象画像IDの隠しフィールド（フォーム内に配置） -->
   <div id="delete-image-fields" style="display: none;" data-image-preview-target="deleteImageContainer"></div>
@@ -448,7 +451,7 @@
                 margin-bottom: 6px;
                 border: 1px solid #FC913A;
                 background-color: transparent;
-                color: #FC913A;
+                color: white#FC913A;
                 border-radius: 4px;
                 font-size: 12px;
                 cursor: pointer;
