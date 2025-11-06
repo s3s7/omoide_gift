@@ -1,6 +1,6 @@
 <% content_for(:title, "マイギフト記録一覧") %>
 <!-- メインコンテナ - 中央寄せ -->
-<div class="max-w-6xl mx-auto">
+<div class="gift-records-container">
   <!-- ヘッダー部分 -->
   <div class="mb-2 mt-2 text-center">
     <h2 class="text-2xl font-bold text-gray-800 mb-3">
@@ -9,7 +9,7 @@
   </div>
 
   <!-- 統計情報 -->
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4 max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4 w-full">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
       <div>
         <div class="text-2xl font-bold text-primary"><%= @total_records %></div>
@@ -56,23 +56,32 @@
     %>
 
   <!-- ギフト記録一覧 -->
-  <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-2 md:gap-3 lg:gap-4 justify-items-center mb-6">
+  <div class="gift-records-grid mb-6">
     <% if @gift_records.any? %>
       <% @gift_records.each do |gift_record| %>
         <% detail_path = gift_record_path(gift_record, @pagination_params.merge(page: params[:page], origin: 'my')) %>
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2 gift-card-container w-[165px] sm:w-[165px] md:w-[240px] lg:w-[200px] xl:w-[200px]"
+        <div class="gift-card-container gift-record-card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2"
              onclick="window.location.href='<%= detail_path %>'"
              style="cursor: pointer;">
-          <!-- 画像部分 -->
-          <div class="aspect-w-16 aspect-h-9 bg-gray-100">
+          <!-- 画像部分（一覧と同じ表示・固定高さ） -->
+          <div class="gift-card-image relative overflow-hidden">
+            <a href="<%= detail_path %>"
+               class="absolute inset-0 z-[4]"
+               onclick="event.stopPropagation()"
+               aria-label="ギフト詳細へ移動"></a>
             <% if gift_record.has_images? %>
               <%= gift_main_image_with_fallback(gift_record,
                     size: [400, 300],
-                    css_class: "w-full h-48 object-cover",
+                    css_class: "w-full h-full object-cover",
                     loading: "lazy") %>
             <% else %>
-              <div class="w-full h-48 bg-gray-100 flex items-center justify-center">
-                <i class="fas fa-gift text-4xl text-gray-400"></i>
+              <div class="gift-image-placeholder">
+                <div class="text-center">
+                  <div class="w-16 h-16 sm:w-18 sm:h-18 lg:w-18 lg:h-18 xl:w-20 xl:h-20 mx-auto mb-2 sm:mb-3 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <i class="fas fa-gift text-2xl sm:text-2xl lg:text-2xl xl:text-3xl text-primary"></i>
+                  </div>
+                  <p class="text-xs sm:text-sm text-gray-500">画像なし</p>
+                </div>
               </div>
             <% end %>
           </div>

@@ -1,5 +1,49 @@
 /* ギフト記録カードレイアウト - シンプル版 */
 
+/* ==================== 一覧ページレイアウト ==================== */
+
+/* 一覧ページの外枠コンテナ（中央寄せ・最大幅） */
+.gift-records-container {
+  max-width: 72rem; /* Tailwind max-w-6xl 相当 */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 見出し周りの余白・中央寄せ */
+.gift-records-header {
+  margin-top: 0.5rem; /* mt-2 */
+  margin-bottom: 0.5rem; /* mb-2 */
+  text-align: center;
+}
+
+/* カードグリッド（レスポンシブ列数・間隔・中央寄せ） */
+.gift-records-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem; /* gap-2 */
+  justify-items: center;
+}
+
+@media (min-width: 768px) { /* md */
+  .gift-records-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem; /* md:gap-3 */
+  }
+}
+
+@media (min-width: 1024px) { /* lg */
+  .gift-records-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem; /* lg:gap-4 */
+  }
+}
+
+@media (min-width: 1280px) { /* xl */
+  .gift-records-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 /* ==================== お気に入りハートボタン ==================== */
 
 .favorite-button-container {
@@ -13,14 +57,13 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid #ec4899; /* Pink border */
-  border-radius: 20px;
+  padding: 6px 8px; /* クリック余白は維持 */
+  background: transparent; /* 背景なし */
+  border: none; /* 枠線なし */
+  border-radius: 0; /* 丸みを削除 */
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4px);
+  box-shadow: none; /* 影なし */
   font-size: 14px;
   font-weight: 500;
   position: relative;
@@ -28,8 +71,6 @@
 }
 
 .favorite-button:hover {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: #ec4899;
   transform: scale(1.05);
 }
 
@@ -48,9 +89,7 @@
   transform: scale(1.1);
 }
 
-.favorite-button.favorited {
-  border-color: #ec4899;
-}
+.favorite-button.favorited { /* 背景・枠線なしのまま */ }
 
 .favorite-button.favorited .favorite-heart {
   color: #ec4899 !important;
@@ -75,9 +114,9 @@
   align-items: center;
   gap: 4px;
   padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 2px solid #ec4899; /* Pink border (static) */
-  border-radius: 20px;
+  background: transparent; /* 背景なし */
+  border: none; /* 枠線なし */
+  border-radius: 0; /* 丸みを削除 */
   font-size: 14px;
 }
 
@@ -90,20 +129,14 @@
 
 /* 詳細ページ用のスタイル調整 */
 .favorite-show-page .favorite-button {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid #ec4899; /* Pink border on show page */
-  color: white;
-  backdrop-filter: blur(8px);
+  background: transparent; /* 詳細でも丸背景を表示しない */
+  border: none;
+  color: inherit;
 }
 
-.favorite-show-page .favorite-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(236, 72, 153, 0.9);
-}
+.favorite-show-page .favorite-button:hover { }
 
-.favorite-show-page .favorite-button.favorited {
-  border-color: rgba(236, 72, 153, 0.9);
-}
+.favorite-show-page .favorite-button.favorited { }
 
 .favorite-show-page .favorite-button.favorited .favorite-heart {
   color: #ec4899 !important;
@@ -164,6 +197,13 @@
 
 /* ==================== カード基本スタイル ==================== */
 
+.gift-title-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .gift-record-card {
   /* 縦長の長方形デザイン */
   width: 200px !important; /* 基本固定幅 - 強制適用 */
@@ -183,6 +223,22 @@
   position: relative;
   overflow: hidden;
   box-sizing: border-box !important;
+}
+
+/* ==================== ギフト相手カード（一覧） ==================== */
+.gift-person-card-fixed {
+  height: 300px; /* PC版 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 内容が溢れるのを防止 */
+  box-sizing: border-box;
+}
+
+/* モバイル */
+@media (max-width: 639px) {
+  .gift-person-card-fixed {
+    height: 220px;
+  }
 }
 
 .gift-record-card:hover {
@@ -248,29 +304,35 @@
 /* ==================== 画像エリア固定高さ（画像あり/なし共通） ==================== */
 .gift-card-image {
   height: 12rem; /* Tailwind h-48 相当 */
+  min-height: 12rem; /* 画像エリアが縮まないよう固定 */
+  flex-shrink: 0; /* テキスト量で画像が縮まないようにする */
 }
 
 @media (min-width: 640px) { /* sm */
   .gift-card-image {
     height: 13rem; /* sm:h-52 相当 */
+    min-height: 13rem;
   }
 }
 
 @media (min-width: 768px) { /* md */
   .gift-card-image {
     height: 14rem; /* md:h-56 相当 */
+    min-height: 14rem;
   }
 }
 
 @media (min-width: 1024px) { /* lg */
   .gift-card-image {
     height: 13rem; /* lg:h-52 相当 */
+    min-height: 13rem;
   }
 }
 
 @media (min-width: 1280px) { /* xl */
   .gift-card-image {
     height: 14rem; /* xl:h-56 相当 */
+    min-height: 14rem;
   }
 }
 
@@ -413,14 +475,14 @@
     width: 160px !important; /* 小さなモバイル用の統一幅 */
     min-width: 160px !important;
     max-width: 160px !important;
-    height: 500px !important; /* 大幅拡大 */
+    height: 338px !important; /* モバイル高さ +15%（294px -> 約338px） */
     flex: 0 0 auto !important;
     flex-shrink: 0 !important;
     flex-grow: 0 !important;
   }
   
   .gift-image-placeholder {
-    min-height: 220px !important; /* 大幅拡大 */
+    min-height: 150px !important; /* 高さ短縮に合わせて縮小 */
   }
   
   .gift-image-placeholder .w-14,
@@ -442,10 +504,8 @@
     left: 0.5rem;
   }
   
-  /* 特小モバイル専用の適切な間隔 */
-  .grid[class*="grid-cols-2"] {
-    gap: 0.5rem !important; /* 重なり防止のため適切な間隔 */
-  }
+  /* 特小モバイル専用の適切な間隔（ギフト一覧に限定して制御） */
+  /* removed global .grid overrides to avoid conflicts */
   
   /* 親コンテナーのパディング調整 */
   .mb-0.mt-0 {
@@ -456,20 +516,25 @@
 
 /* モバイル専用の画面幅最大活用 - 重なり防止 */
 @media (max-width: 640px) {
-  .grid[class*="grid-cols-2"] {
-    gap: 0.5rem !important; /* 適切な間隔で重なりを防止 */
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
+  /* removed global .grid overrides to avoid conflicts */
   
   .gift-record-card {
     width: 165px !important; /* 640px以下用の統一幅 */
     min-width: 165px !important;
     max-width: 165px !important;
+    height: 338px !important; /* モバイル高さ +15%（294px -> 約338px） */
     flex: 0 0 auto !important;
     flex-shrink: 0 !important;
     flex-grow: 0 !important;
+  }
+  
+  /* 画像エリアの高さも縮小 */
+  .gift-card-image {
+    height: 9rem !important; /* 144px程度 */
+    min-height: 9rem !important;
+  }
+  .gift-image-placeholder {
+    min-height: 150px !important;
   }
   
   /* 親コンテナーも最適化 */
@@ -536,15 +601,8 @@
 
 /* ==================== グリッドレイアウト基本設定 ==================== */
 
-/* モバイル版の安全なグリッド設定 */
+/* モバイル版の安全なグリッド設定（グローバル上書きを撤廃） */
 @media (max-width: 767px) {
-  .grid[class*="grid-cols-2"] {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important; /* 確実に2列 */
-    grid-auto-rows: auto !important;
-    align-items: start !important;
-    box-sizing: border-box !important;
-  }
   
   .gift-record-card {
     box-sizing: border-box !important;
@@ -561,83 +619,13 @@
   }
 }
 
-/* ==================== ギフト相手カード固定サイズ ==================== */
+/* ==================== ギフト相手カード固定サイズ（統合） ==================== */
+/* 幅はTailwindクラス（例: w-[90%] sm:w-40 md:w-full）で制御。
+   ここでは強制指定を行わず、上部の .gift-person-card-fixed(height固定) と整合性を保つ。 */
 
-.gift-person-card-fixed {
-  /* 基本固定幅設定 */
-  width: 200px !important;
-  min-width: 200px !important;
-  max-width: 200px !important;
-  height: auto !important; /* 高さは内容に応じて調整 */
-  display: flex !important;
-  flex-direction: column;
-  flex-shrink: 0 !important;
-  flex-grow: 0 !important;
-  flex-basis: auto !important;
-  justify-self: center !important;
-  align-self: start !important;
-  box-sizing: border-box !important;
-}
-
-/* レスポンシブ対応は下のTailwind Grid オーバーライドセクションで統一管理 */
-
-/* ==================== Tailwind Grid オーバーライド ==================== */
-
-/* Tailwindのgrid-colsクラスを固定幅でオーバーライド */
-.grid[class*="grid-cols-"] {
-  grid-template-columns: repeat(auto-fit, 200px) !important;
-  justify-content: center !important;
-  place-items: start center !important;
-}
-
-/* レスポンシブ対応での固定幅オーバーライド */
-@media (min-width: 1280px) {
-  .grid[class*="grid-cols-"] {
-    grid-template-columns: repeat(auto-fit, 200px) !important;
-  }
-}
-
-@media (max-width: 1023px) and (min-width: 768px) {
-  .grid[class*="grid-cols-"] {
-    grid-template-columns: repeat(auto-fit, 200px) !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .grid[class*="grid-cols-"] {
-    grid-template-columns: repeat(auto-fit, 170px) !important;
-  }
-  /* gift_people用のgridサイズ調整 */
-  .gift-person-card-fixed {
-    width: 170px !important;
-    min-width: 170px !important;
-    max-width: 170px !important;
-  }
-}
-
-@media (max-width: 640px) {
-  .grid[class*="grid-cols-"] {
-    grid-template-columns: repeat(auto-fit, 165px) !important;
-  }
-  /* gift_people用のgridサイズ調整 */
-  .gift-person-card-fixed {
-    width: 165px !important;
-    min-width: 165px !important;
-    max-width: 165px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .grid[class*="grid-cols-"] {
-    grid-template-columns: repeat(auto-fit, 160px) !important;
-  }
-  /* gift_people用のgridサイズ調整 */
-  .gift-person-card-fixed {
-    width: 160px !important;
-    min-width: 160px !important;
-    max-width: 160px !important;
-  }
-}
+/* ==================== Tailwind Grid オーバーライド（撤廃） ==================== */
+/* Removed global overrides of Tailwind grid to prevent conflicts.
+   Use .gift-records-grid for gift records pages instead. */
 
 /* ==================== プリント対応 ==================== */
 
@@ -659,9 +647,7 @@
     border-bottom: 1px solid #000000;
   }
   
-  .grid[class*="grid-cols-"] {
-    grid-template-columns: repeat(auto-fit, 200px) !important;
-  }
+  /* Removed global grid override in print as well */
   
   .gift-person-card-fixed {
     width: 200px !important;
