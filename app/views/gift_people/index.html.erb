@@ -1,7 +1,7 @@
 <% content_for(:title, "ギフト相手一覧") %>
 
 <!-- メインコンテナ - 中央寄せ -->
-<div class="max-w-6xl mx-auto">
+<div class="max-w-7xl mx-auto">
 <!-- ヘッダー部分 -->
 <div class="mb-2 mt-2 text-center">
   <h2 class="text-2xl font-bold text-gray-800 mb-3">
@@ -53,10 +53,10 @@
   </div>
 
   <% if @gift_people.any? %>
-    <!-- カードグリッドレイアウト -->
-    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4 justify-items-center">
+    <!-- カードグリッドレイアウト（PCで6列表示／モバイルはカード幅を少し小さく） -->
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 justify-items-center">
       <% @gift_people.each do |person| %>
-        <div class="card bg-white shadow-md compact hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 gift-person-card-fixed cursor-pointer w-40 sm:w-48 md:w-52" onclick="window.location.href='<%= gift_person_path(person) %>'">
+        <div class="card bg-white shadow-md compact hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 gift-person-card-fixed cursor-pointer w-[100%] sm:w-40 md:w-full" onclick="window.location.href='<%= gift_person_path(person) %>'">
 
           <!-- 相手情報 -->
           <div class="p-2 sm:p-3 md:p-4">
