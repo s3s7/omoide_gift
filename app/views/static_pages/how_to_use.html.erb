@@ -93,6 +93,62 @@
           <p class="text-sm text-gray-600">公開設定でアイデアを共有</p>
         </div>
       </div>
+
+      <!-- プライバシー注記 -->
+      <div class="mt-4 bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <p class="text-sm text-orange-800">
+          <i class="fas fa-shield-alt mr-2"></i>
+          プライバシーについて：公開設定にしても、ギフト相手の名前などの個人情報は公開されません。
+        </p>
+      </div>
+    </div>
+
+    <!-- ステップ5 -->
+    <div class="bg-white rounded-lg shadow-md p-8">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-orange-600 text-white rounded-full flex items-center justify-center font-bold text-lg mr-4">
+          5
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">LINE通知（記念日リマインダー）を設定</h2>
+      </div>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        大切な記念日を忘れないように、記念日と通知タイミングを設定すると、LINEでお知らせを受け取れます（LINE連携が必要）。
+      </p>
+      <ul class="list-disc list-inside text-gray-600 space-y-2 mb-4">
+        <li>通知したい相手と記念日の日付を選択</li>
+        <li>何日前に通知するか、通知時刻を指定</li>
+        <li>LINE連携済みアカウントに通知を送信</li>
+      </ul>
+      <div>
+        <%= link_to new_remind_path, class: "btn-primary inline-flex items-center" do %>
+          <i class="fas fa-bell mr-2"></i>
+          記念日を設定
+        <% end %>
+      </div>
+    </div>
+
+    <!-- ステップ6 -->
+    <div class="bg-white rounded-lg shadow-md p-8">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-lg mr-4">
+          6
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">もらったギフトを記録</h2>
+      </div>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        贈ったギフトだけでなく、誰から何をもらったかも記録できます。お礼の管理や次回以降の参考に便利です。
+      </p>
+      <ul class="list-disc list-inside text-gray-600 space-y-2 mb-4">
+        <li>贈ってくれた人（相手）を選択</li>
+        <li>もらった日付とイベント（任意）を登録</li>
+        <li>アイテム名・費用・メモ・写真などを保存</li>
+      </ul>
+      <div>
+        <%= link_to new_received_gift_records_path, class: "btn-primary-outline inline-flex items-center" do %>
+          <i class="fas fa-gift mr-2"></i>
+          もらったギフトを記録する
+        <% end %>
+      </div>
     </div>
   </div>
 
