@@ -56,8 +56,8 @@ ja:
       submit: 登録
       to_gift_record_index: ギフト記録一覧へ
     new_received:
-      title: もらったギフト登録
-      subtitle: もらったギフトを登録します
+      title: 貰ったギフト登録
+      subtitle: 貰ったギフトを登録します
   #   edit:
   #     title: ギフト記録編集
   #     subtitle: ギフト記録を編集します

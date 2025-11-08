@@ -92,7 +92,7 @@ module ApplicationHelper
     }
   end
 
-  # === ギフト方向（贈った/もらった）表示ユーティリティ ===
+  # === ギフト方向（贈った/貰った）表示ユーティリティ ===
   # 引数には GiftRecord あるいはシンボル/文字列(:given/:received/"given"/"received") を受け取る
   def gift_direction_color(record_or_value)
     dir = extract_gift_direction(record_or_value)
@@ -115,7 +115,7 @@ module ApplicationHelper
   def gift_direction_display_text(record_or_value)
     dir = extract_gift_direction(record_or_value)
     case dir
-    when :received then "もらったギフト"
+    when :received then "貰ったギフト"
     when :given    then "贈ったギフト"
     else "未設定"
     end

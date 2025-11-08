@@ -143,7 +143,7 @@ class GiftRecordsController < ApplicationController
     end
   end
 
-  # もらったギフト用の作成エンドポイント（
+  # 貰ったギフト用の作成エンドポイント（
   def create_received
     if params[:gift_record][:gift_people_id] == "new"
       unless params[:gift_person].present?
@@ -732,7 +732,7 @@ end
     @gift_direction_options = [
       [ "すべて", "" ],
       [ "あげたギフト", GIVEN_DIRECTION ],
-      [ "もらったギフト", RECEIVED_DIRECTION ]
+      [ "貰ったギフト", RECEIVED_DIRECTION ]
     ]
   end
 
@@ -787,7 +787,7 @@ end
     @gift_direction_options = [
       [ "すべて", "" ],
       [ "あげたギフト", GIVEN_DIRECTION ],
-      [ "もらったギフト", RECEIVED_DIRECTION ]
+      [ "貰ったギフト", RECEIVED_DIRECTION ]
     ]
   end
 

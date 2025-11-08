@@ -100,7 +100,7 @@ export default class extends Controller {
     }
 
     const shouldShowFields = this.giftPeopleSelectTarget.value === "new"
-    
+
     if (shouldShowFields) {
       this.newGiftPersonFieldsTarget.style.display = 'block'
     } else {
@@ -268,7 +268,7 @@ export default class extends Controller {
       if (isReceived) {
         this.giftDirectionToggleIconTarget.className = 'fas fa-hand-holding-heart'
         this.giftDirectionToggleIconTarget.style.color = '#FF6B6B'
-        this.giftDirectionToggleStatusTarget.textContent = 'もらったギフト'
+        this.giftDirectionToggleStatusTarget.textContent = '貰ったギフト'
       } else {
         this.giftDirectionToggleIconTarget.className = 'fas fa-gift'
         this.giftDirectionToggleIconTarget.style.color = '#28a745'
@@ -302,7 +302,7 @@ export default class extends Controller {
     const today = new Date()
     let targetDate
 
-    switch(dateType) {
+    switch (dateType) {
       case 'today':
         targetDate = today
         break
@@ -324,14 +324,14 @@ export default class extends Controller {
   // フォーム送信時のバリデーション
   validateForm(event) {
     // ギフト相手が選択されていない場合
-    if (this.hasGiftPeopleSelectTarget && 
-        (!this.giftPeopleSelectTarget.value || this.giftPeopleSelectTarget.value === '')) {
+    if (this.hasGiftPeopleSelectTarget &&
+      (!this.giftPeopleSelectTarget.value || this.giftPeopleSelectTarget.value === '')) {
       event.preventDefault()
-      
+
       this.giftPeopleSelectTarget.setCustomValidity('このフィールドを入力してください')
       this.giftPeopleSelectTarget.reportValidity()
       this.giftPeopleSelectTarget.focus()
-      
+
       return false
     }
 
