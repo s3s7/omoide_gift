@@ -40,7 +40,7 @@ ja:
       gift_record: ギフト記録
       no_gift_records: ギフト記録がありません
     new:
-      title: ギフト記録登録
+      title: 贈ったギフト登録
       subtitle: ギフト記録を登録します
       event: イベント名
       gift_people: ギフト相手
