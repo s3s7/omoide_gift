@@ -311,6 +311,7 @@ class GiftRecordsController < ApplicationController
     end
 
     query = query.where(event_id: params[:event_id]) if params[:event_id].present?
+    query = query.where(gift_item_category_id: params[:gift_item_category_id]) if params[:gift_item_category_id].present?
     # 公開設定フィルタ（my_index などで使用）
     if params[:is_public].present?
       case params[:is_public]
@@ -495,6 +496,7 @@ class GiftRecordsController < ApplicationController
       :gift_person_id,
       :relationship_id,
       :event_id,
+      :gift_item_category_id,
       :gift_direction,
       :date_from,
       :date_to,
@@ -653,6 +655,7 @@ end
   def prepare_filter_options(base_query)
     @relationship_options = build_relationship_options(base_query)
     @event_options = build_event_options(base_query)
+    @gift_item_category_options = build_gift_item_category_options(base_query)
     @gift_direction_options = [
       [ "すべて", "" ],
       [ "あげたギフト", GIVEN_DIRECTION ],
@@ -661,19 +664,35 @@ end
   end
 
   def build_relationship_options(base_query)
-    base_query
+    # 現在の対象レコードから一意な関係性IDを抽出し、position順で取得
+    relationship_ids = base_query
       .joins(gift_person: :relationship)
-      .group("relationships.id, relationships.name")
-      .order("relationships.position")
-      .pluck("relationships.name", "relationships.id")
+      .select("DISTINCT gift_people.relationship_id")
+
+    Relationship.where(id: relationship_ids)
+      .ordered
+      .pluck(:name, :id)
   end
 
   def build_event_options(base_query)
-    base_query
+    # 現在の対象レコードから一意なイベントIDを抽出し、position順で取得
+    event_ids = base_query
       .joins(:event)
-      .group("events.id, events.name")
-      .order("events.position")
-      .pluck("events.name", "events.id")
+      .select("DISTINCT gift_records.event_id")
+
+    Event.where(id: event_ids)
+      .order(:position)
+      .pluck(:name, :id)
+  end
+
+  def build_gift_item_category_options(base_query)
+    # 現在の対象レコードから一意なカテゴリIDを抽出し、position順で取得
+    category_ids = base_query
+      .select("DISTINCT gift_records.gift_item_category_id")
+
+    GiftItemCategory.where(id: category_ids)
+      .ordered
+      .pluck(:name, :id)
   end
 
   def apply_search_and_filters_for_user(base_query)
@@ -708,6 +727,7 @@ end
     @gift_people_options = build_user_gift_people_options(base_query)
     @relationship_options = build_relationship_options(base_query)
     @event_options = build_event_options(base_query)
+    @gift_item_category_options = build_gift_item_category_options(base_query)
     @gift_direction_options = [
       [ "すべて", "" ],
       [ "あげたギフト", GIVEN_DIRECTION ],

@@ -554,7 +554,7 @@
       font-size: 14px;
     " %>
     <%= f.collection_select :gift_item_category_id,
-          GiftItemCategory.order(:name), :id, :name,
+          GiftItemCategory.ordered, :id, :name,
           { include_blank: "選択してください" },
           {
             style: "
