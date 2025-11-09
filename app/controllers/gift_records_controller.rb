@@ -76,128 +76,16 @@ class GiftRecordsController < ApplicationController
   end
 
   def create
-    # 新しいギフト相手を作成する場合
-    if params[:gift_record][:gift_people_id] == "new"
-      # gift_personパラメータが存在しない場合
-      unless params[:gift_person].present?
-        # gift_recordは一時的なオブジェクトとして作成（バリデーションは実行しない）
-        @gift_record = GiftRecord.new(gift_record_params.except(:gift_people_id))
-        apply_gift_direction_default(@gift_record)
-        @gift_record.user = current_user
-        @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-        prepare_events_for_form
-        @gift_person = current_user.gift_people.build  # エラー表示用の空オブジェクト
-        # ギフト相手のバリデーションのみ実行
-        @gift_person.valid?
-        render(@gift_record.received? ? :new_received : :new, status: :unprocessable_entity)
-        return
-      end
-
-      # ギフト相手を先に作成（gift_record_idなし）
-      @gift_person = current_user.gift_people.build(gift_person_params)
-
-      if @gift_person.save
-        # ギフト記録を作成してギフト相手と関連付け
-        @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
-        apply_gift_direction_default(@gift_record)
-        @gift_record.gift_person = @gift_person
-
-        if @gift_record.save
-          flash_success(:created, item: GiftRecord.model_name.human)
-          redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
-        else
-          # ギフト記録の作成に失敗した場合、ギフト相手を削除
-          @gift_person.destroy
-          @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
-          apply_gift_direction_default(@gift_record)
-          @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-          prepare_events_for_form
-
-          flash.now[:alert] = "ギフト記録の作成に失敗しました"
-          render(@gift_record.received? ? :new_received : :new, status: :unprocessable_entity)
-        end
-      else
-        # gift_recordは一時的なオブジェクトとして作成（バリデーションは実行しない）
-        @gift_record = GiftRecord.new(gift_record_params.except(:gift_people_id))
-        apply_gift_direction_default(@gift_record)
-        @gift_record.user = current_user
-        @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-        prepare_events_for_form
-
-        # ギフト相手のバリデーションエラーをフォームで表示
-        render(@gift_record.received? ? :new_received : :new, status: :unprocessable_entity)
-      end
-    else
-      # 既存のギフト相手を選択する場合
-      @gift_record = current_user.gift_records.build(gift_record_params)
-      apply_gift_direction_default(@gift_record)
-      if @gift_record.save
-        flash_success(:created, item: GiftRecord.model_name.human)
-        redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
-      else
-        # エラー時のフォーム再表示用データ準備
-        @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-        prepare_events_for_form
-        render(@gift_record.received? ? :new_received : :new, status: :unprocessable_entity)
-      end
-    end
+    handle_gift_record_submission
   end
 
   # 貰ったギフト用の作成エンドポイント（
   def create_received
-    if params[:gift_record][:gift_people_id] == "new"
-      unless params[:gift_person].present?
-        @gift_record = GiftRecord.new(gift_record_params.except(:gift_people_id))
-        @gift_record.gift_direction = :received
-        @gift_record.user = current_user
-        @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-        prepare_events_for_form
-        @gift_person = current_user.gift_people.build
-        @gift_person.valid?
-        render :new_received, status: :unprocessable_entity
-        return
-      end
-
-      @gift_person = current_user.gift_people.build(gift_person_params)
-
-      if @gift_person.save
-        @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
-        @gift_record.gift_person = @gift_person
-        @gift_record.gift_direction = :received
-
-        if @gift_record.save
-          flash_success(:created, item: GiftRecord.model_name.human)
-          redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
-        else
-          @gift_person.destroy
-          @gift_record = current_user.gift_records.build(gift_record_params.except(:gift_people_id))
-          @gift_record.gift_direction = :received
-          @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-          prepare_events_for_form
-          flash.now[:alert] = "ギフト記録の作成に失敗しました"
-          render :new_received, status: :unprocessable_entity
-        end
-      else
-        @gift_record = GiftRecord.new(gift_record_params.except(:gift_people_id))
-        @gift_record.gift_direction = :received
-        @gift_record.user = current_user
-        @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-        prepare_events_for_form
-        render :new_received, status: :unprocessable_entity
-      end
-    else
-      @gift_record = current_user.gift_records.build(gift_record_params)
-      @gift_record.gift_direction = :received
-
-      if @gift_record.save
-        flash_success(:created, item: GiftRecord.model_name.human)
-        redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
-      else
-        @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-        prepare_events_for_form
-        render :new_received, status: :unprocessable_entity
-      end
-    end
+    handle_gift_record_submission(
+      force_direction: :received,
+      default_direction: :received,
+      template: :new_received
+    )
   end
 
   def show
@@ -557,6 +445,12 @@ class GiftRecordsController < ApplicationController
     params.require(:gift_person).permit(:name, :relationship_id, :birthday, :likes, :dislikes, :address, :memo)
   end
 
+  def gift_person_params_if_present
+    return unless params[:gift_person].present?
+
+    gift_person_params
+  end
+
   # セキュリティ: ギフト記録を取得
   def set_gift_record
     if action_name == "show"
@@ -622,12 +516,41 @@ class GiftRecordsController < ApplicationController
       .limit(POPULAR_EVENTS_LIMIT)
   end
 
-  # gift_directionが未指定の場合に、新規画面の種別に基づいて自動設定
-  def apply_gift_direction_default(record)
-    return if record.gift_direction.present?
+  def handle_gift_record_submission(force_direction: nil, default_direction: nil, template: nil)
+    form = GiftRecordForm.new(
+      user: current_user,
+      gift_record_params: gift_record_params,
+      gift_person_params: gift_person_params_if_present,
+      gift_direction_default: default_direction || gift_direction_default_from_session,
+      forced_gift_direction: force_direction
+    )
 
-    default = session[:gift_direction_default]
-    record.gift_direction = (default == RECEIVED_DIRECTION) ? :received : :given
+    @gift_record = form.gift_record
+    @gift_person = form.gift_person
+
+    if form.save
+      flash_success(:created, item: GiftRecord.model_name.human)
+      redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
+    else
+      flash.now[:alert] = "ギフト記録の作成に失敗しました" if @gift_record.errors.any?
+      prepare_form_dependencies
+      render(template || form_template_for(@gift_record), status: :unprocessable_entity)
+    end
+  end
+
+  def prepare_form_dependencies
+    @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
+    prepare_events_for_form
+  end
+
+  def form_template_for(record)
+    record&.received? ? :new_received : :new
+  end
+
+  def gift_direction_default_from_session
+    direction = session[:gift_direction_default]
+    direction = direction.to_sym if direction.present?
+    %i[given received].include?(direction) ? direction : :given
   end
 
   # オートコンプリート用ヘルパーメソッド
