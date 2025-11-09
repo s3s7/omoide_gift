@@ -6,7 +6,7 @@
     <div class="mb-2 font-semibold text-gray-600 text-sm">Lineで新規登録</div>
     <%- if devise_mapping.omniauthable? %>
       <%- resource_class.omniauth_providers.each do |provider| %>
-        <%= button_to image_tag('line_login.png', alt: "#{OmniAuth::Utils.camelize(provider)}で新規登録"), omniauth_authorize_path(resource_name, provider), data: { turbo: false } %>
+        <%= button_to image_tag('line_login.webp', alt: "#{OmniAuth::Utils.camelize(provider)}で新規登録"), omniauth_authorize_path(resource_name, provider), data: { turbo: false } %>
         <br />
       <% end %>
     <% end %>
