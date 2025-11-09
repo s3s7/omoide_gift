@@ -509,7 +509,8 @@ class GiftRecordsController < ApplicationController
 
   # イベント選択肢の準備
   def prepare_events_for_form
-    @events = Event.all.order(:name)
+    # 作成/編集フォームのイベント選択は管理画面の並び順（position順）で表示
+    @events = Event.ordered
     @popular_events = Event.joins(:gift_records)
       .group("events.id")
       .order("COUNT(gift_records.id) DESC")
