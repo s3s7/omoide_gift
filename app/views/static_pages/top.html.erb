@@ -16,8 +16,8 @@
   <!-- サービス説明テキスト -->
   <div class="text-center mb-12">
     <p class="text-xl text-black max-w-3xl mx-auto">
-      めぐりギフトは自分が贈ったギフトを記録し
-      <br>思い出を振り返るとともにギフト選びのサポートをするサービスです。
+      めぐりギフトは自分が贈った<br class="sm:hidden md:hidden ">ギフトを記録し
+      <br class="sm:hidden md:hidden lg:hidden">思い出を振り返るとともに<br class="sm:hidden md:hidden ">ギフト選びのサポートをする<br class="sm:hidden md:hidden ">サービスです。
     </p>
   </div
 
@@ -33,7 +33,7 @@
     <!-- 中央：詳細説明テキスト -->
     <div class="text-center">
       <p class="text-xl text-black <%= user_signed_in? ? 'mb-10' : 'mb-8' %> leading-relaxed">
-      「相手のことを考えながらギフトを選ぶ時間」<br><br>「ギフトを贈るときのワクワク」<br><br><strong>その思い出、記録に残しませんか？</strong>
+      「相手のことを考えながら<br class="sm:hidden md:hidden">ギフトを選ぶ時間」<br><br>「ギフトを贈るときのワクワク」<br><br><strong>その思い出、記録に残しませんか？</strong>
       </p>
     </div>
 
@@ -179,7 +179,7 @@
           <p class="text-gray-600 leading-relaxed mb-6">
             <strong>大切な日を登録しよう！</strong><br><br>
             大切な日を登録することで<br>事前にLINE通知が届きます<br><br>
-            えっ…過ぎてる！？こんなお祝い忘れを防止出来ます
+            えっ…過ぎてる！？<br>こんなお祝い忘れを防止出来ます
           </p>
           <%= link_to gift_records_path, 
               class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white transition-colors duration-300 shadow-sm hover:shadow-md",
@@ -219,7 +219,7 @@
         </div>
          <!-- 右側：画像 -->
         <div class="flex-shrink-0">
-          <%= image_tag "top_remind.png", alt: "記念日通知機能", class: "w-65 md:w-72 lg:w-[300px] xl:w-[340px] 2xl:w-[380px]  h-auto object-contain rounded-lg" %>
+          <%= image_tag "moratta_gift.png", alt: "記念日通知機能", class: "w-65 md:w-72 lg:w-[300px] xl:w-[340px] 2xl:w-[380px]  h-auto object-contain rounded-lg" %>
         </div>
       </div>
     </div>

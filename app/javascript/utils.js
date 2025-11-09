@@ -73,7 +73,7 @@ export function showToast(message, type = 'info') {
   if (existingToast) existingToast.remove();
 
   const toast = document.createElement('div');
-  toast.className = 'favorite-toast fixed top-4 right-4 z-50 px-4 py-2 rounded-lg shadow-lg max-w-xs transform transition-all duration-300 translate-x-full opacity-0';
+  toast.className = 'favorite-toast fixed right-4 top-16 sm:top-20 md:top-24 z-50 px-4 py-2 rounded-lg shadow-lg max-w-xs transform transition-all duration-300 translate-x-full opacity-0';
 
   if (type === 'success') {
     toast.classList.add('bg-green-500', 'text-white');

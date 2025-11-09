@@ -400,7 +400,7 @@
 
   <!-- ギフト日付入力 -->
   <div style="margin-bottom: 24px; text-align: left;" data-controller="gift-date-selector">
-    <%= f.label :gift_at, (is_received ? "ギフトをもらった日" : "ギフトを贈った日"), style: "
+    <%= f.label :gift_at, (is_received ? "ギフトを貰った日" : "ギフトを贈った日"), style: "
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
@@ -429,7 +429,7 @@
     <!-- ヘルプテキスト -->
     <div style="font-size: 12px; color: #888; margin-top: 8px;">
       <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
-      <%= is_received ? "ギフトをもらった日を選択してください（必須）" : "ギフトを贈った日または贈る予定日を選択してください（必須）" %>
+      <%= is_received ? "ギフトを貰った日を選択してください（必須）" : "ギフトを贈った日または贈る予定日を選択してください（必須）" %>
     </div>
     
     <!-- エラーメッセージ -->
@@ -533,7 +533,7 @@
     
     <div style="font-size: 12px; color: #888; margin-top: 8px;">
       <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
-      <%= is_received ? "もらったギフトの名前を入力してください（必須、最大30文字）" : "贈ったギフトの名前を入力してください（必須、最大30文字）" %>
+      <%= is_received ? "貰ったギフトの名前を入力してください（必須、最大30文字）" : "贈ったギフトの名前を入力してください（必須、最大30文字）" %>
     </div>
     
     <% if gift_record.errors[:item_name].any? %>
@@ -871,7 +871,7 @@
     
     <div style="font-size: 12px; color: #888; margin-top: 8px;">
       <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
-      贈ったギフトか、もらったギフトか選択してください
+      贈ったギフトか、貰ったギフトか選択してください
     </div>
     
     <% if gift_record.errors[:gift_direction].any? %>
