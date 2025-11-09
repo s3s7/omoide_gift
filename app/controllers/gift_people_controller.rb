@@ -365,21 +365,16 @@ class GiftPeopleController < ApplicationController
   end
 
   def build_relationship_options
-    current_user.gift_people
-      .joins(:relationship)
-      .select("relationships.name, relationships.id")
-      .distinct
-      .order("relationships.position")
-      .pluck("relationships.name", "relationships.id")
+    # サブクエリで現在ユーザーに紐づく関係性IDを一意に抽出し、
+    # Relationship側でposition順に取得する（DB方言差異の影響を避ける）
+    rel_ids = current_user.gift_people.select('DISTINCT relationship_id')
+    Relationship.where(id: rel_ids).ordered.pluck(:name, :id)
   end
 
   def build_event_options
-    current_user.gift_people
+    event_ids = current_user.gift_people
       .joins(:gift_records)
-      .joins("INNER JOIN events ON gift_records.event_id = events.id")
-      .select("events.name, events.id")
-      .distinct
-      .order("events.name")
-      .pluck("events.name", "events.id")
+      .select('DISTINCT gift_records.event_id')
+    Event.where(id: event_ids).order(:name).pluck(:name, :id)
   end
 end
