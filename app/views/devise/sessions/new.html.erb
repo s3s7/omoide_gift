@@ -3,7 +3,7 @@
     <h2 class="mb-10 text-2xl font-semibold text-gray-800 leading-snug">アカウントにログイン</h2>
     <%- if devise_mapping.omniauthable? %>
       <%- resource_class.omniauth_providers.each do |provider| %>
-        <%= button_to image_tag('line_login.png', alt: "#{OmniAuth::Utils.camelize(provider)}でログイン"), omniauth_authorize_path(resource_name, provider), data: { turbo: false } %>
+        <%= button_to image_tag('line_login.webp', alt: "#{OmniAuth::Utils.camelize(provider)}でログイン"), omniauth_authorize_path(resource_name, provider), data: { turbo: false } %>
         <br />
       <% end %>
     <% end %>
