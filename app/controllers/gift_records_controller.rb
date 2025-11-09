@@ -667,7 +667,7 @@ end
     # 現在の対象レコードから一意な関係性IDを抽出し、position順で取得
     relationship_ids = base_query
       .joins(gift_person: :relationship)
-      .select('DISTINCT gift_people.relationship_id')
+      .select("DISTINCT gift_people.relationship_id")
 
     Relationship.where(id: relationship_ids)
       .ordered
@@ -678,7 +678,7 @@ end
     # 現在の対象レコードから一意なイベントIDを抽出し、position順で取得
     event_ids = base_query
       .joins(:event)
-      .select('DISTINCT gift_records.event_id')
+      .select("DISTINCT gift_records.event_id")
 
     Event.where(id: event_ids)
       .order(:position)
@@ -688,7 +688,7 @@ end
   def build_gift_item_category_options(base_query)
     # 現在の対象レコードから一意なカテゴリIDを抽出し、position順で取得
     category_ids = base_query
-      .select('DISTINCT gift_records.gift_item_category_id')
+      .select("DISTINCT gift_records.gift_item_category_id")
 
     GiftItemCategory.where(id: category_ids)
       .ordered

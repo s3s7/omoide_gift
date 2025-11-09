@@ -367,14 +367,14 @@ class GiftPeopleController < ApplicationController
   def build_relationship_options
     # サブクエリで現在ユーザーに紐づく関係性IDを一意に抽出し、
     # Relationship側でposition順に取得する（DB方言差異の影響を避ける）
-    rel_ids = current_user.gift_people.select('DISTINCT relationship_id')
+    rel_ids = current_user.gift_people.select("DISTINCT relationship_id")
     Relationship.where(id: rel_ids).ordered.pluck(:name, :id)
   end
 
   def build_event_options
     event_ids = current_user.gift_people
       .joins(:gift_records)
-      .select('DISTINCT gift_records.event_id')
+      .select("DISTINCT gift_records.event_id")
     Event.where(id: event_ids).order(:name).pluck(:name, :id)
   end
 end
