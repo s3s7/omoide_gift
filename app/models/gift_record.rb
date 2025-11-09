@@ -375,9 +375,9 @@ end
       errors.add(:gift_at, "は100年以内の日付を入力してください")
     end
 
-    # 未来1年以内の妥当性チェック（ギフトの予定日も考慮）
-    if date > 1.year.from_now
-      errors.add(:gift_at, "は1年以内の日付を入力してください")
+    #未来30年以内の妥当性チェック（ギフトの予定日も考慮）
+    if date > 30.year.from_now
+      errors.add(:gift_at, "は30年以内の日付を入力してください")
     end
   end
 

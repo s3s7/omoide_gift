@@ -369,7 +369,7 @@ class GiftPeopleController < ApplicationController
       .joins(:relationship)
       .select("relationships.name, relationships.id")
       .distinct
-      .order("relationships.name")
+      .order("relationships.position")
       .pluck("relationships.name", "relationships.id")
   end
 
