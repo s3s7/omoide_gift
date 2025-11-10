@@ -46,7 +46,7 @@ class GiftRecord < ApplicationRecord
 
   # オプションフィールドのバリデーション
   validates :amount, numericality: { greater_than: 0, allow_nil: true }
-  validates :memo, length: { maximum: 100 }
+  validates :memo, length: { maximum: 300 }
 
   # カスタムバリデーション
   validate :gift_at_is_valid_date
