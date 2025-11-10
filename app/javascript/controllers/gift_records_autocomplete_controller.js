@@ -106,12 +106,14 @@ export default class extends Controller {
     this.currentAbortController = new AbortController()
 
     this.showLoading()
-    const url = `${this.endpointValue}?q=${encodeURIComponent(query)}`
+    const endpoint = this.normalizeEndpoint(this.endpointValue)
+    const url = `${endpoint}?q=${encodeURIComponent(query)}`
 
     try {
       const response = await fetch(url, {
         signal: this.currentAbortController.signal,
-        headers: getAPIHeaders()
+        headers: getAPIHeaders(),
+        credentials: "same-origin"
       })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
@@ -228,4 +230,12 @@ export default class extends Controller {
   }
 
   // escapeHtml: use shared utils.escapeHtml
+
+  // Normalize endpoint that might be passed with stray quotes from HTML data attributes
+  normalizeEndpoint(value) {
+    let s = String(value || "").trim()
+    // Remove surrounding single/double quotes if present
+    s = s.replace(/^['"]+|['"]+$/g, "")
+    return s
+  }
 }
