@@ -222,7 +222,7 @@ export default class extends Controller {
     if (!this.hasMemoFieldTarget || !this.hasMemoCounterTarget) return
     
     const currentLength = this.memoFieldTarget.value.length
-    const maxLength = parseInt(this.memoFieldTarget.getAttribute('maxlength')) || 100
+    const maxLength = parseInt(this.memoFieldTarget.getAttribute('maxlength')) || 300
     
     this.memoCounterTarget.textContent = `${currentLength}/${maxLength}文字`
     

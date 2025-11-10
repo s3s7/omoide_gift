@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_22_005948) do
+ActiveRecord::Schema[7.2].define(version: 2025_11_10_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -89,7 +89,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_22_005948) do
     t.string "likes"
     t.string "dislikes"
     t.date "birthday"
-    t.string "memo"
+    t.text "memo"
     t.string "gift_peoples_image"
     t.bigint "user_id", null: false
     t.bigint "relationship_id", null: false
@@ -101,7 +101,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_22_005948) do
   end
 
   create_table "gift_records", force: :cascade do |t|
-    t.string "memo"
+    t.text "memo"
     t.string "gift_image"
     t.string "item_name"
     t.integer "amount"

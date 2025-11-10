@@ -273,11 +273,11 @@
               rows: 4,
               class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 #{@gift_person.errors[:memo].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
               placeholder: "その他のメモや覚えておきたいこと...",
-              maxlength: 500 %>
+              maxlength: 300 %>
           
           <!-- 文字数カウンタ -->
           <div class="mt-1 text-xs text-gray-400 text-right">
-            <span id="memo-count">0</span>/500文字
+            <span id="memo-count">0</span>/300文字
           </div>
           
           <!-- ヘルプテキスト -->

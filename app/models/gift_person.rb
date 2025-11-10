@@ -13,6 +13,7 @@ class GiftPerson < ApplicationRecord
   validates :name, presence: true, length: { minimum: NAME_MIN_LENGTH }
   validates :name, format: { with: /\A\S+.*\S*\z/, message: "空白のみは無効です" }
   validates :address, length: { maximum: ADDRESS_MAX_LENGTH }, allow_blank: true
+  validates :memo, length: { maximum: 300 }, allow_blank: true
 
   # アバターは登録・更新時にWebPへ非同期変換（共通Concernで処理）
   webp_convert_for :avatar
