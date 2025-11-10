@@ -10,4 +10,3 @@ class ChangeMemoColumnsToText < ActiveRecord::Migration[7.2]
     change_column :gift_people, :memo, :string, limit: 255
   end
 end
-
