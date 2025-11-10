@@ -142,11 +142,11 @@
               rows: 4,
               class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 #{@gift_record.errors[:memo].any? ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}",
               placeholder: "このギフトに関するメモや思い出を記録...",
-              maxlength: 1000 %>
+              maxlength: 300 %>
           
           <!-- 文字数カウンタ -->
           <div class="mt-1 text-xs text-gray-400 text-right">
-            <span id="memo-count">0</span>/1000文字
+            <span id="memo-count">0</span>/300文字
           </div>
           
           <!-- ヘルプテキスト -->

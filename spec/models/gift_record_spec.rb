@@ -44,8 +44,8 @@ RSpec.describe GiftRecord, type: :model do
         expect(subject).to be_invalid
       end
 
-      it 'memoは100文字以下である' do
-        subject.memo = 'a' * 101
+      it 'memoは300文字以下である' do
+        subject.memo = 'a' * 301
         expect(subject).to be_invalid
       end
     end
