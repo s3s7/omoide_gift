@@ -45,12 +45,6 @@
           <%= link_to "ギフト相手を追加", new_gift_person_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "記念日登録", new_remind_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
           <%= link_to "お気に入り一覧", favorites_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
-          <%= link_to "ログアウト", destroy_user_session_path, 
-              data: { 
-                turbo_method: :delete,
-                confirm: "ログアウトしますか？"
-              }, 
-              class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
         <% else %>
           <%= link_to "ログイン", new_user_session_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
           <%= link_to "新規登録", new_user_registration_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100 md:hidden" %>
@@ -65,6 +59,17 @@
         
         <!-- Additional Pages -->
         <%= link_to "使い方", how_to_use_path, class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+
+        <% if user_signed_in? %>
+          <!-- Divider above logout to keep it at bottom -->
+          <div class="border-t border-gray-200 my-2"></div>
+          <%= link_to "ログアウト", destroy_user_session_path, 
+              data: { 
+                turbo_method: :delete,
+                confirm: "ログアウトしますか？"
+              }, 
+              class: "block px-4 py-2 text-gray-800 hover:bg-gray-100" %>
+        <% end %>
 
       </div>
     </div>

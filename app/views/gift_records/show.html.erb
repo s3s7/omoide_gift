@@ -133,7 +133,7 @@
             <i class="fas fa-users text-indigo-500 mr-2"></i>
             贈り先情報
           </h2>
-          
+
           <% if @gift_record.gift_person.present? %>
             <div class="bg-gray-50 rounded-lg p-4">
               <div class="space-y-4">
@@ -318,13 +318,12 @@
         <div>
           作成日: <%= l(@gift_record.created_at, format: :long) %>
           <% if @gift_record.updated_at != @gift_record.created_at %>
-            <span class="ml-4">
+            <span class="block sm:inline mt-1 sm:mt-0 sm:ml-4">
               更新日: <%= l(@gift_record.updated_at, format: :long) %>
             </span>
           <% end %>
         </div>
         <div class="text-gray-600">
-          <%# Build tweet text including item name, relationship, and event %>
           <% item_name = @gift_record.item_name.presence || "未設定" %>
           <% relationship_name = @gift_record.gift_person&.relationship&.name.presence || "未設定" %>
           <% event_name = @gift_record.event&.name.presence || "未設定" %>
@@ -339,7 +338,7 @@
               ["#めぐりギフト", "#ギフト記録", "#プレゼント", (event_tag.present? ? "##{event_tag}" : nil)].compact.join(' ')
             ].join("\n") %>
           <% x_intent_url = "https://x.com/intent/tweet?text=#{CGI.escape(tweet_text)}&url=#{CGI.escape(gift_record_url(@gift_record))}" %>
-          <div class="flex flex-wrap items-center gap-4 mt-4">
+          <div class="flex flex-wrap items-center gap-4 mt-4 justify-end">
             <%= link_to back_link_path,
                  class: "inline-flex items-center text-primary hover:text-primary-hover font-medium" do %>
               <i class="fas fa-arrow-left mr-1"></i>
@@ -350,8 +349,7 @@
                         rel: 'noopener',
                         data: { toggle: "tooltip", placement: "bottom" },
                         title: "Xでシェア",
-                        class: "btn btn-primary gap-2 inline-flex items-center" do %>
-              <i class="fa-brands fa-square-x-twitter text-lg"></i>
+                        class: "btn btn-primary border-2 border-primary shadow-none gap-2 inline-flex items-center" do %>
               Xでシェア
             <% end %>
           </div>

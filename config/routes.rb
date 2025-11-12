@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     sessions: "users/sessions",
     registrations: "users/registrations"
   }
-  # User mypage routes
+
   get "mypage", to: "users#show"
   get "mypage/edit", to: "users#edit"
   patch "mypage", to: "users#update"
@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     resources :users, only: [ :index, :show, :edit, :update ] do
       member do
         patch :toggle_role  # 管理者権限の切り替え
-        patch :toggle_status  # アカウント有効/無効の切り替え（将来的な拡張用）
+        patch :toggle_status  # アカウント有効/無効の切り替え
       end
     end
 
@@ -67,7 +67,6 @@ Rails.application.routes.draw do
     get "statistics", to: "statistics#index"
   end
 
-  # Static pages for footer links and navigation
   get "how_to_use", to: "static_pages#how_to_use"
   get "terms", to: "static_pages#terms"
   get "privacy", to: "static_pages#privacy"
@@ -100,16 +99,11 @@ Rails.application.routes.draw do
       patch :resend  # 通知リセット用
     end
   end
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/*
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
-  # Defines the root path route ("/")
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 end
