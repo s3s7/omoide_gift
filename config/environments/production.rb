@@ -54,7 +54,7 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
   # Preserve HTTP method on redirect to HTTPS to avoid losing OmniAuth POST state
-  # config.ssl_options = { redirect: { status: 308 } }
+  config.ssl_options = { redirect: { status: 308 } }
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
