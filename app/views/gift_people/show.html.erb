@@ -2,19 +2,35 @@
 
 <!-- メインコンテナ - 中央寄せ -->
 <div class="max-w-6xl mx-auto">
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-2 mb-2 max-w-4xl mx-auto">
+  <div class=" rounded-lg  p-2 mb-2 max-w-4xl mx-auto">
   <div class="mb-6 mt-4">
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center">
+    <div class="flex items-center justify-center lg:justify-between mb-2">
+      <div class="flex-1 min-w-0 text-center lg:text-left">
         <%= link_to gift_people_path, class: "mr-4 text-gray-600 hover:text-gray-800" do %>
           <i class="fas fa-arrow-left text-lg"></i>
         <% end %>
-        <h2 class="text-2xl font-bold text-gray-800">
+        <h2 class="inline text-2xl font-bold text-gray-800 align-middle">
           <%= @gift_person.name %>さんの詳細
         </h2>
+        <!-- スマホ/タブレットのみ 小さなアクションリンク -->
+        <div class="mt-2 lg:hidden">
+          <div class="flex items-center justify-center gap-2">
+            <%= link_to edit_gift_person_path(@gift_person),
+                class: "inline-flex items-center px-3 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" do %>
+              <i class="fas fa-edit mr-1"></i>
+              編集
+            <% end %>
+            <%= link_to new_gift_record_path(gift_person_id: @gift_person.id),
+                class: "inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white btn-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" do %>
+              <i class="fas fa-gift mr-1"></i>
+              ギフト記録を追加
+            <% end %>
+          </div>
+        </div>
       </div>
       
-      <div class="flex space-x-3">
+      <!-- デスクトップのみ 大きなアクションボタン -->
+      <div class="hidden lg:flex space-x-3">
         <%= link_to edit_gift_person_path(@gift_person),
             class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" do %>
           <i class="fas fa-edit mr-2"></i>
