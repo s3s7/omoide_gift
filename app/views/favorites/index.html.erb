@@ -78,13 +78,7 @@
                 <%= gift_record.display_item_name %>
               </h4>
             </div>
-            <% if gift_record.amount.present? %>
-              <div class="mb-2">
-                <span class="text-base font-bold text-green-600">
-                  <%= gift_record.display_amount %>
-                </span>
-              </div>
-            <% end %>
+            <%# スマホ版では金額を表示しない %>
             <div class="mb-2">
               <div class="flex items-center text-sm">
                 <i class="fas fa-calendar mr-2 text-blue-500"></i>
