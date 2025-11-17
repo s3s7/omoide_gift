@@ -6,6 +6,8 @@ export default class extends Controller {
     "filterTypeHidden",
     "giftPersonSelect",
     "relationshipSelect",
+    "genderSelect",
+    "ageSelect",
     "eventSelect",
     "giftItemCategorySelect",
     "publicSelect",
@@ -26,6 +28,8 @@ export default class extends Controller {
 
     if (this.hasGiftPersonSelectTarget) this.hide(this.giftPersonSelectTarget)
     if (this.hasRelationshipSelectTarget) this.hide(this.relationshipSelectTarget)
+    if (this.hasGenderSelectTarget) this.hide(this.genderSelectTarget)
+    if (this.hasAgeSelectTarget) this.hide(this.ageSelectTarget)
     if (this.hasEventSelectTarget) this.hide(this.eventSelectTarget)
     if (this.hasGiftItemCategorySelectTarget) this.hide(this.giftItemCategorySelectTarget)
     if (this.hasPublicSelectTarget) this.hide(this.publicSelectTarget)
@@ -44,6 +48,28 @@ export default class extends Controller {
       // 関係性のセレクトのみ表示
       if (this.hasRelationshipSelectTarget) this.show(this.relationshipSelectTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
+      if (this.hasGenderSelectTarget) this.clearValue(this.genderSelectTarget)
+      if (this.hasAgeSelectTarget) this.clearValue(this.ageSelectTarget)
+      if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
+      if (this.hasGiftItemCategorySelectTarget) this.clearValue(this.giftItemCategorySelectTarget)
+      if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
+      if (this.hasGiftDirectionSelectTarget) this.clearValue(this.giftDirectionSelectTarget)
+    } else if (selectedType === "age") {
+      // 年齢のセレクトのみ表示
+      if (this.hasAgeSelectTarget) this.show(this.ageSelectTarget)
+      if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
+      if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasGenderSelectTarget) this.clearValue(this.genderSelectTarget)
+      if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
+      if (this.hasGiftItemCategorySelectTarget) this.clearValue(this.giftItemCategorySelectTarget)
+      if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
+      if (this.hasGiftDirectionSelectTarget) this.clearValue(this.giftDirectionSelectTarget)
+    } else if (selectedType === "gender") {
+      // 性別のセレクトのみ表示
+      if (this.hasGenderSelectTarget) this.show(this.genderSelectTarget)
+      if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
+      if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasAgeSelectTarget) this.clearValue(this.ageSelectTarget)
       if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
       if (this.hasGiftItemCategorySelectTarget) this.clearValue(this.giftItemCategorySelectTarget)
       if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
@@ -53,6 +79,8 @@ export default class extends Controller {
       if (this.hasEventSelectTarget) this.show(this.eventSelectTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
       if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasGenderSelectTarget) this.clearValue(this.genderSelectTarget)
+      if (this.hasAgeSelectTarget) this.clearValue(this.ageSelectTarget)
       if (this.hasGiftItemCategorySelectTarget) this.clearValue(this.giftItemCategorySelectTarget)
       if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
       if (this.hasGiftDirectionSelectTarget) this.clearValue(this.giftDirectionSelectTarget)
@@ -61,6 +89,8 @@ export default class extends Controller {
       if (this.hasGiftItemCategorySelectTarget) this.show(this.giftItemCategorySelectTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
       if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasGenderSelectTarget) this.clearValue(this.genderSelectTarget)
+      if (this.hasAgeSelectTarget) this.clearValue(this.ageSelectTarget)
       if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
       if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
       if (this.hasGiftDirectionSelectTarget) this.clearValue(this.giftDirectionSelectTarget)
@@ -69,6 +99,8 @@ export default class extends Controller {
       if (this.hasPublicSelectTarget) this.show(this.publicSelectTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
       if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasGenderSelectTarget) this.clearValue(this.genderSelectTarget)
+      if (this.hasAgeSelectTarget) this.clearValue(this.ageSelectTarget)
       if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
       if (this.hasGiftItemCategorySelectTarget) this.clearValue(this.giftItemCategorySelectTarget)
       if (this.hasGiftDirectionSelectTarget) this.clearValue(this.giftDirectionSelectTarget)
@@ -77,6 +109,8 @@ export default class extends Controller {
       if (this.hasGiftDirectionSelectTarget) this.show(this.giftDirectionSelectTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
       if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasGenderSelectTarget) this.clearValue(this.genderSelectTarget)
+      if (this.hasAgeSelectTarget) this.clearValue(this.ageSelectTarget)
       if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
       if (this.hasGiftItemCategorySelectTarget) this.clearValue(this.giftItemCategorySelectTarget)
       if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
@@ -85,6 +119,8 @@ export default class extends Controller {
       if (this.hasPlaceholderTarget) this.show(this.placeholderTarget)
       if (this.hasGiftPersonSelectTarget) this.clearValue(this.giftPersonSelectTarget)
       if (this.hasRelationshipSelectTarget) this.clearValue(this.relationshipSelectTarget)
+      if (this.hasGenderSelectTarget) this.clearValue(this.genderSelectTarget)
+      if (this.hasAgeSelectTarget) this.clearValue(this.ageSelectTarget)
       if (this.hasEventSelectTarget) this.clearValue(this.eventSelectTarget)
       if (this.hasGiftItemCategorySelectTarget) this.clearValue(this.giftItemCategorySelectTarget)
       if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
