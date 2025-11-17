@@ -144,7 +144,8 @@ RSpec.describe 'GiftPeople Filter', type: :request do
     it '認証必須' do
       sign_out user
       get autocomplete_gift_people_path, params: { q: 'test' }
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:found)
+      expect(response).to redirect_to(new_user_session_path)
     end
   end
 end

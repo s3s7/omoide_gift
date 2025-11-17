@@ -106,11 +106,11 @@ RSpec.describe "オートコンプリート機能", type: :request do
       expect(names).to include("田中太郎")
     end
 
-    it "未ログインは認証不可（403）" do
+    it "未ログインは認証エラー（401）" do
       sign_out user
       get autocomplete_gift_people_path(format: :json), params: { q: "test" }
 
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 end
