@@ -1,4 +1,5 @@
 class GiftPeopleController < ApplicationController
+  include AgeFilterable
   MIN_QUERY_LENGTH = 1
   NAME_RESULTS_LIMIT = 5
   SECONDARY_RESULTS_LIMIT = 3
@@ -293,6 +294,9 @@ class GiftPeopleController < ApplicationController
     params.permit(
       :search,
       :relationship_id,
+      :age_group,
+      :gender,
+      :filter_type,
       :event_id,
       :sort_by,
       :sort_order
@@ -317,6 +321,21 @@ class GiftPeopleController < ApplicationController
 
     # 関係性でフィルタリング
     @gift_people = @gift_people.where(relationship_id: params[:relationship_id]) if params[:relationship_id].present?
+
+    # 性別（関係性名ベース）でフィルタリング（カラムを追加せず運用）
+    if params[:gender].present?
+      @gift_people = @gift_people.where(relationship_id: Relationship.ids_for_gender(params[:gender]))
+    end
+
+    # 年齢（年代）でフィルタリング（誕生日から算出）
+    if params[:age_group].present?
+      from, to = birthday_range_for(params[:age_group])
+      if from && to
+        @gift_people = @gift_people.where(birthday: from..to)
+      elsif to
+        @gift_people = @gift_people.where("birthday <= ?", to)
+      end
+    end
 
     # イベントでフィルタリング（ギフト記録経由）
     if params[:event_id].present?

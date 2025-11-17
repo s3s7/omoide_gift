@@ -38,6 +38,7 @@
       gift_item_category_options: @gift_item_category_options,
       gift_people_options: @gift_people_options,
       gift_direction_options: @gift_direction_options,
+      gender_options: [["男性", "male"], ["女性", "female"]],
       public_filter_options: [
         ["すべて", ""],
         ["公開", "public"],
@@ -50,11 +51,14 @@
         ["イベント", "event"],
         ["カテゴリ", "gift_item_category"],
         ["公開設定", "is_public"],
-        ["ギフト種別", "gift_direction"]
+        ["ギフト種別", "gift_direction"],
+        ["年齢", "age"],
+        ["性別", "gender"]
       ],
+      age_options: [["10代", "10s"], ["20代", "20s"], ["30代", "30s"], ["40代", "40s"], ["50代", "50s"], ["60代", "60s"], ["70代", "70s"], ["80代以上", "80plus"]],
       search_placeholder: "アイテム名、メモ、相手名で検索",
       total_records: @total_records,
-      active_filter_params: [:search, :gift_person_id, :relationship_id, :event_id, :gift_item_category_id, :sort_by, :is_public, :gift_direction]
+      active_filter_params: [:search, :gift_person_id, :relationship_id, :age_group, :gender, :event_id, :gift_item_category_id, :sort_by, :is_public, :gift_direction]
     %>
 
   <!-- ギフト記録一覧 -->
@@ -146,7 +150,7 @@
         </div>
       <% end %>
     <% else %>
-      <% filter_keys = [:search, :gift_person_id, :relationship_id, :event_id, :gift_item_category_id, :sort_by, :is_public, :gift_direction] %>
+      <% filter_keys = [:search, :gift_person_id, :relationship_id, :age_group, :gender, :event_id, :gift_item_category_id, :sort_by, :is_public, :gift_direction] %>
       <% has_filters = filter_keys.any? { |key| params[key].present? } %>
       <% secondary_action = if has_filters
            {

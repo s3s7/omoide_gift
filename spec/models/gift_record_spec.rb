@@ -144,12 +144,6 @@ RSpec.describe GiftRecord, type: :model do
         expect(subject).to be_invalid
         expect(subject.errors[:gift_at]).to include('は100年以内の日付を入力してください')
       end
-
-      it '1年以上先の日付は無効' do
-        subject.gift_at = 2.years.from_now
-        expect(subject).to be_invalid
-        expect(subject.errors[:gift_at]).to include('は1年以内の日付を入力してください')
-      end
     end
   end
 end

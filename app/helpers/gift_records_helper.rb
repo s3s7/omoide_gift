@@ -1,7 +1,4 @@
 module GiftRecordsHelper
-  # 単一のActiveStorage添付画像をサイズ変換しつつ、安全に表示（失敗時はデフォルト画像）
-  # 使用例:
-  #   <%= gift_image_with_fallback(image, size: [300,300], alt: '説明', css_class: '...', loading: 'lazy') %>
   def gift_image_with_fallback(attachment, size:, alt:, css_class: "", loading: "lazy")
     begin
       if attachment&.blob&.persisted?

@@ -11,7 +11,8 @@ RSpec.describe 'GiftPeople', type: :request do
     context '未ログインユーザー' do
       it 'ギフト相手一覧にアクセスできないこと' do
         get gift_people_path
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(new_user_session_path)
       end
     end
   end
@@ -25,7 +26,7 @@ RSpec.describe 'GiftPeople', type: :request do
 
     it '自分のギフト相手のみ表示されること' do
       get gift_people_path
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:ok)
     end
 
     context 'ソート機能' do
@@ -36,7 +37,7 @@ RSpec.describe 'GiftPeople', type: :request do
       context 'デフォルト（名前順）' do
         it '名前順で表示されること' do
           get gift_people_path
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:ok)
         end
       end
 
@@ -50,19 +51,19 @@ RSpec.describe 'GiftPeople', type: :request do
 
         it '降順でソートされること' do
           get gift_people_path, params: { sort_by: 'gift_records_count', sort_order: 'desc' }
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:ok)
         end
 
         it '昇順でソートされること' do
           get gift_people_path, params: { sort_by: 'gift_records_count', sort_order: 'asc' }
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:ok)
         end
       end
 
       context '無効なソートパラメータ' do
         it '無効なsort_byでもエラーにならないこと' do
           get gift_people_path, params: { sort_by: 'invalid' }
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:ok)
         end
       end
     end
@@ -87,9 +88,8 @@ RSpec.describe 'GiftPeople', type: :request do
       it 'ギフト相手が作成されること' do
         expect {
           post gift_people_path, params: valid_params
-        }.not_to change(user.gift_people, :count)
-
-        expect(response).to have_http_status(:forbidden)
+        }.to change(user.gift_people, :count).by(1)
+        expect(response).to have_http_status(:found)
       end
     end
 
@@ -107,8 +107,7 @@ RSpec.describe 'GiftPeople', type: :request do
         expect {
           post gift_people_path, params: invalid_params
         }.not_to change(GiftPerson, :count)
-
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
@@ -119,14 +118,15 @@ RSpec.describe 'GiftPeople', type: :request do
     context '自分のギフト相手' do
       it '詳細が表示されること' do
         get gift_person_path(gift_person)
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
     end
 
     context '他人のギフト相手' do
       it 'アクセスが拒否されること' do
         get gift_person_path(other_user_gift_person)
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(gift_people_path)
       end
     end
   end
@@ -146,7 +146,8 @@ RSpec.describe 'GiftPeople', type: :request do
 
       it 'ギフト相手が更新されること' do
         patch gift_person_path(gift_person), params: update_params
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(gift_person_path(gift_person))
       end
     end
 
@@ -155,7 +156,8 @@ RSpec.describe 'GiftPeople', type: :request do
         patch gift_person_path(other_user_gift_person), params: {
           gift_person: { name: '不正更新' }
         }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(gift_people_path)
       end
     end
   end
@@ -168,16 +170,17 @@ RSpec.describe 'GiftPeople', type: :request do
         gift_person # create
         expect {
           delete gift_person_path(gift_person)
-        }.not_to change(user.gift_people, :count)
-
-        expect(response).to have_http_status(:forbidden)
+        }.to change(user.gift_people, :count).by(-1)
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(gift_people_path)
       end
     end
 
     context '他人のギフト相手' do
       it 'アクセスが拒否されること' do
         delete gift_person_path(other_user_gift_person)
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(gift_people_path)
       end
     end
   end

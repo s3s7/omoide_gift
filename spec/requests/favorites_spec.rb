@@ -11,12 +11,13 @@ RSpec.describe 'Favorites', type: :request do
     context '未ログインユーザー' do
       it 'お気に入り一覧にアクセスできないこと' do
         get favorites_path
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(new_user_session_path)
       end
 
       it 'お気に入りtoggle機能を使用できないこと' do
         post toggle_favorite_gift_record_path(public_gift_record), headers: { 'Accept' => 'application/json' }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end
@@ -30,7 +31,7 @@ RSpec.describe 'Favorites', type: :request do
 
     it 'お気に入りした記録が表示されること' do
       get favorites_path
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -39,25 +40,25 @@ RSpec.describe 'Favorites', type: :request do
 
     context 'JSON形式のリクエスト' do
       context '公開されたギフト記録' do
-        it 'お気に入り追加リクエストが拒否されること' do
+        it 'お気に入り追加リクエストが成功すること' do
           expect {
             post toggle_favorite_gift_record_path(public_gift_record),
                  headers: { 'Accept' => 'application/json' }
-          }.not_to change(user.favorites, :count)
+          }.to change(user.favorites, :count).by(1)
 
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:ok)
         end
 
         context 'すでにお気に入りに追加済み' do
           before { create(:favorite, user: user, gift_record: public_gift_record) }
 
-          it 'お気に入り削除リクエストも拒否されること' do
+          it 'お気に入り削除リクエストが成功すること' do
             expect {
               post toggle_favorite_gift_record_path(public_gift_record),
                    headers: { 'Accept' => 'application/json' }
-            }.not_to change(user.favorites, :count)
+            }.to change(user.favorites, :count).by(-1)
 
-            expect(response).to have_http_status(:forbidden)
+            expect(response).to have_http_status(:ok)
           end
         end
       end
@@ -72,44 +73,46 @@ RSpec.describe 'Favorites', type: :request do
       end
 
       context '自分のギフト記録' do
-        it 'リクエストが拒否されること' do
+        it 'お気に入り追加リクエストが成功すること' do
           expect {
             post toggle_favorite_gift_record_path(user_gift_record),
                  headers: { 'Accept' => 'application/json' }
-          }.not_to change(user.favorites, :count)
+          }.to change(user.favorites, :count).by(1)
 
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:ok)
         end
       end
 
       context '存在しないギフト記録' do
-        it 'アクセスが拒否されること' do
+        it '見つからないため404になること' do
           post toggle_favorite_gift_record_path(99999),
                headers: { 'Accept' => 'application/json' }
 
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:not_found)
         end
       end
     end
 
     context 'HTML形式のリクエスト' do
-      it 'お気に入り追加リクエストが拒否されること' do
+      it 'お気に入り追加リクエストが成功しリダイレクトすること' do
         expect {
           post toggle_favorite_gift_record_path(public_gift_record)
-        }.not_to change(user.favorites, :count)
+        }.to change(user.favorites, :count).by(1)
 
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:found)
+        expect(response).to redirect_to(gift_records_path)
       end
 
       context 'すでにお気に入りに追加済み' do
         before { create(:favorite, user: user, gift_record: public_gift_record) }
 
-        it 'お気に入り削除リクエストが拒否されること' do
+        it 'お気に入り削除リクエストが成功しリダイレクトすること' do
           expect {
             post toggle_favorite_gift_record_path(public_gift_record)
-          }.not_to change(user.favorites, :count)
+          }.to change(user.favorites, :count).by(-1)
 
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:found)
+          expect(response).to redirect_to(gift_records_path)
         end
       end
     end

@@ -1,4 +1,5 @@
 class GiftRecordsController < ApplicationController
+  include AgeFilterable
   MIN_AUTOCOMPLETE_QUERY_LENGTH = 1
   AUTOCOMPLETE_ITEM_LIMIT = 4
   AUTOCOMPLETE_MEMO_LIMIT = 3
@@ -7,7 +8,6 @@ class GiftRecordsController < ApplicationController
   PER_PAGE_DESKTOP = 15
   MEMO_AUTOCOMPLETE_TRUNCATE_LENGTH = 15
   DEFAULT_TRUNCATE_LENGTH = 20
-  SHARE_CONFIRM_VALUE = "true".freeze
   RECEIVED_DIRECTION = "received".freeze
   GIVEN_DIRECTION = "given".freeze
   DEFAULT_ITEM_NAME = "ギフト記録".freeze
@@ -20,7 +20,8 @@ class GiftRecordsController < ApplicationController
   DEFAULT_OGP_IMAGE = "ogp.webp".freeze
   LOG_BACKTRACE_LINES = 3
 
-  before_action :authenticate_user!, except: [ :index, :show ]
+  # 公開ページ（みんなのギフト + オートコンプリート）は未ログインでも利用可
+  before_action :authenticate_user!, except: [ :index, :show, :autocomplete ]
   before_action :set_gift_record, only: [ :show, :edit, :update, :destroy ]
   before_action :ensure_owner, only: [ :edit, :update, :destroy ]
   before_action :ensure_accessible, only: [ :show ]
@@ -310,6 +311,23 @@ class GiftRecordsController < ApplicationController
       query = query.joins(:gift_person).where(gift_people: { relationship_id: params[:relationship_id] })
     end
 
+    # 年齢（年代）でフィルタリング（誕生日から算出）
+    if params[:age_group].present?
+      from, to = birthday_range_for(params[:age_group])
+      query = query.joins(:gift_person)
+      if from && to
+        query = query.where(gift_people: { birthday: from..to })
+      elsif to
+        query = query.where("gift_people.birthday <= ?", to)
+      end
+    end
+
+    # 性別（関係性名ベース）でフィルタリング（カラム追加なし）
+    if params[:gender].present?
+      gender_relationship_ids = Relationship.ids_for_gender(params[:gender])
+      query = query.joins(:gift_person).where(gift_people: { relationship_id: gender_relationship_ids })
+    end
+
     query = query.where(event_id: params[:event_id]) if params[:event_id].present?
     query = query.where(gift_item_category_id: params[:gift_item_category_id]) if params[:gift_item_category_id].present?
     # 公開設定フィルタ（my_index などで使用）
@@ -418,7 +436,7 @@ class GiftRecordsController < ApplicationController
   end
 
   def prepare_share_confirmation_data
-    return unless user_signed_in? && params[:share_confirm] == SHARE_CONFIRM_VALUE && params[:gift_record_id].present?
+    return unless user_signed_in? && params[:share_confirm] == true && params[:gift_record_id].present?
 
     gift_record_id = params[:gift_record_id].to_s
     dismissed_records = session[:dismissed_share_records] || []
@@ -495,6 +513,8 @@ class GiftRecordsController < ApplicationController
       :search,
       :gift_person_id,
       :relationship_id,
+      :age_group,
+      :gender,
       :event_id,
       :gift_item_category_id,
       :gift_direction,
@@ -533,7 +553,7 @@ class GiftRecordsController < ApplicationController
 
     if form.save
       flash_success(:created, item: GiftRecord.model_name.human)
-      redirect_to gift_records_path(share_confirm: SHARE_CONFIRM_VALUE, gift_record_id: @gift_record.id)
+      redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
     else
       flash.now[:alert] = "ギフト記録の作成に失敗しました" if @gift_record.errors.any?
       prepare_form_dependencies

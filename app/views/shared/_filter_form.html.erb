@@ -3,6 +3,8 @@
 <% event_options = Array(local_assigns.fetch(:event_options, [])) %>
 <% gift_item_category_options = Array(local_assigns.fetch(:gift_item_category_options, [])) %>
 <% gift_people_options = local_assigns.key?(:gift_people_options) ? Array(local_assigns[:gift_people_options]) : nil %>
+<% gender_options = local_assigns.key?(:gender_options) ? Array(local_assigns[:gender_options]) : nil %>
+<% age_options = local_assigns.key?(:age_options) ? Array(local_assigns[:age_options]) : nil %>
 <% gift_direction_options = local_assigns.key?(:gift_direction_options) ? Array(local_assigns[:gift_direction_options]) : nil %>
 <% public_filter_options = local_assigns.key?(:public_filter_options) ? Array(local_assigns[:public_filter_options]) : nil %>
 <% filter_type_options = local_assigns.fetch(:filter_type_options, [
@@ -29,6 +31,8 @@
 <% filter_type_select_id = local_assigns.fetch(:filter_type_select_id, prefixed_id.call("filter-type-select")) %>
 <% filter_type_hidden_id = local_assigns.fetch(:filter_type_hidden_id, prefixed_id.call("filter-type-hidden")) %>
 <% relationship_select_id = local_assigns.fetch(:relationship_select_id, prefixed_id.call("relationship-select")) %>
+<% gender_select_id = local_assigns.fetch(:gender_select_id, prefixed_id.call("gender-select")) %>
+<% age_select_id = local_assigns.fetch(:age_select_id, prefixed_id.call("age-select")) %>
 <% event_select_id = local_assigns.fetch(:event_select_id, prefixed_id.call("event-select")) %>
 <% gift_item_category_select_id = local_assigns.fetch(:gift_item_category_select_id, prefixed_id.call("gift-item-category-select")) %>
 <% gift_person_select_id = local_assigns.fetch(:gift_person_select_id, prefixed_id.call("gift-person-select")) %>
@@ -79,6 +83,8 @@
                 style: "background-color: white; color: black;"
               } %>
         <% end %>
+
+        
 
         <!-- 関係性選択プルダウン -->
         <%= f.select :relationship_id,
@@ -135,6 +141,32 @@
                 id: gift_direction_select_id,
                 data: { "dynamic-filter-target": "giftDirectionSelect" },
                 class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'gift_direction' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
+              } %>
+        <% end %>
+
+        <% if age_options %>
+          <!-- 年齢（年代）選択プルダウン（性別の直前に表示） -->
+          <%= f.select :age_group,
+              options_for_select([["すべて", ""]] + age_options, params[:age_group]),
+              {},
+              {
+                id: age_select_id,
+                data: { "dynamic-filter-target": "ageSelect" },
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'age' ? '' : 'hidden'}",
+                style: "background-color: white; color: black;"
+              } %>
+        <% end %>
+
+        <% if gender_options %>
+          <!-- 性別選択プルダウン（最後に表示） -->
+          <%= f.select :gender,
+              options_for_select([["すべて", ""]] + gender_options, params[:gender]),
+              {},
+              {
+                id: gender_select_id,
+                data: { "dynamic-filter-target": "genderSelect" },
+                class: "w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary #{params[:filter_type] == 'gender' ? '' : 'hidden'}",
                 style: "background-color: white; color: black;"
               } %>
         <% end %>

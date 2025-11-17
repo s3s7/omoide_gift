@@ -30,7 +30,10 @@
       search_loading_id: "search-loading",
       search_autocomplete_data: { 'gift-records-autocomplete-endpoint-value': '/gift_people/autocomplete' },
       field_id_prefix: 'people',
-      active_filter_params: [:search, :relationship_id, :event_id, :sort_by]
+      filter_type_options: [["選択してください", ""], ["関係性", "relationship"], ["イベント", "event"], ["年齢", "age"], ["性別", "gender"]],
+      age_options: [["10代", "10s"], ["20代", "20s"], ["30代", "30s"], ["40代", "40s"], ["50代", "50s"], ["60代", "60s"], ["70代", "70s"], ["80代以上", "80plus"]],
+      gender_options: [["男性", "male"], ["女性", "female"]],
+      active_filter_params: [:search, :relationship_id, :event_id, :age_group, :gender, :filter_type, :sort_by]
     %>
   
   <!-- 補助情報 -->
@@ -76,7 +79,7 @@
             <!-- 名前 -->
             <div class="mb-2">
               <h4 class="text-sm sm:text-base md:text-lg font-bold leading-tight text-gray-800">
-                <%= person.name %>
+                <%= truncate(person.name, length: 11) %>
               </h4>
             </div>
 
@@ -152,7 +155,7 @@
   <% end %>
     
   <% else %>
-    <% filter_keys = [:search, :relationship_id, :event_id, :sort_by] %>
+    <% filter_keys = [:search, :relationship_id, :event_id, :age_group, :gender, :filter_type, :sort_by] %>
     <% has_filters = filter_keys.any? { |key| params[key].present? } %>
     <% secondary_action = if has_filters
          {
