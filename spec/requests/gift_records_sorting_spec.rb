@@ -34,28 +34,28 @@ RSpec.describe 'GiftRecords Sorting', type: :request do
     end
 
     context 'アクセス制御' do
-      it '未ログインでは一覧が閲覧できないこと' do
+      it '未ログインでも一覧を閲覧できること' do
         get gift_records_path
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
     end
 
     context 'デフォルト（投稿日降順）' do
-      it '公開フィード自体がアクセス拒否されること' do
+      it '公開フィードを閲覧できること' do
         get gift_records_path
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
     end
 
     context '投稿日順ソート' do
-      it '昇順パラメータでもアクセスが拒否されること' do
+      it '昇順パラメータでも閲覧できること' do
         get gift_records_path, params: { sort_by: 'created_at', sort_order: 'asc' }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
 
-      it '降順パラメータでもアクセスが拒否されること' do
+      it '降順パラメータでも閲覧できること' do
         get gift_records_path, params: { sort_by: 'created_at', sort_order: 'desc' }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -66,14 +66,14 @@ RSpec.describe 'GiftRecords Sorting', type: :request do
         create_list(:favorite, 2, gift_record: new_record)
       end
 
-      it '降順ソート要求が拒否されること' do
+      it '降順ソート要求で閲覧できること' do
         get gift_records_path, params: { sort_by: 'favorites', sort_order: 'desc' }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
 
-      it '昇順ソート要求が拒否されること' do
+      it '昇順ソート要求で閲覧できること' do
         get gift_records_path, params: { sort_by: 'favorites', sort_order: 'asc' }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
 
       context 'お気に入り0件の記録が含まれる場合' do
@@ -85,27 +85,27 @@ RSpec.describe 'GiftRecords Sorting', type: :request do
           )
         end
 
-        it '降順要求も拒否されること' do
+        it '降順要求でも閲覧できること' do
           get gift_records_path, params: { sort_by: 'favorites', sort_order: 'desc' }
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:ok)
         end
 
-        it '昇順要求も拒否されること' do
+        it '昇順要求でも閲覧できること' do
           get gift_records_path, params: { sort_by: 'favorites', sort_order: 'asc' }
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:ok)
         end
       end
     end
 
     context '無効なソートパラメータ' do
-      it '無効なsort_byでもアクセスが拒否されること' do
+      it '無効なsort_byでもエラーにならないこと' do
         get gift_records_path, params: { sort_by: 'invalid' }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
 
-      it '無効なsort_orderでもアクセスが拒否されること' do
+      it '無効なsort_orderでもエラーにならないこと' do
         get gift_records_path, params: { sort_by: 'created_at', sort_order: 'invalid' }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -115,9 +115,9 @@ RSpec.describe 'GiftRecords Sorting', type: :request do
         Favorite.destroy_all
       end
 
-      it '記録が存在しなくてもアクセスが拒否されること' do
+      it '記録が存在しなくてもエラーにならないこと' do
         get gift_records_path, params: { sort_by: 'favorites' }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:ok)
       end
     end
   end
