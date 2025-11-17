@@ -83,11 +83,11 @@ RSpec.describe 'Favorites', type: :request do
       end
 
       context '存在しないギフト記録' do
-        it 'アクセスが拒否されること' do
+        it '見つからないため404になること' do
           post toggle_favorite_gift_record_path(99999),
                headers: { 'Accept' => 'application/json' }
 
-          expect(response).to have_http_status(:forbidden)
+          expect(response).to have_http_status(:not_found)
         end
       end
     end
