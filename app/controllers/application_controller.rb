@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  # allow_browser versions: :modern
+  allow_browser versions: :modern
 
   # CSRFトークン検証を有効化（セキュリティ強化）
   protect_from_forgery with: :exception
