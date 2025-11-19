@@ -433,10 +433,10 @@
 /* モバイル対応 - より大きなカード（重なり防止） */
 @media (max-width: 768px) {
   .gift-record-card {
-    width: 170px !important; /* 2列レイアウト用の統一幅 */
-    min-width: 170px !important;
-    max-width: 170px !important;
-    height: 520px !important; /* カードを大幅に拡大 */
+    width: 179px !important; /* +5% */
+    min-width: 179px !important;
+    max-width: 179px !important;
+    height: 546px !important; /* +5% */
     margin-bottom: 0.25rem;
     overflow: hidden !important;
     flex-shrink: 0 !important;
@@ -444,7 +444,7 @@
   }
   
   .gift-image-placeholder {
-    min-height: 240px !important; /* 画像エリアを大幅拡大 */
+    min-height: 252px !important; /* +5% */
   }
   
   .gift-record-card .p-3,
@@ -473,17 +473,17 @@
 /* 小さなモバイル対応 - 重なり防止 */
 @media (max-width: 480px) {
   .gift-record-card {
-    width: 160px !important; /* 小さなモバイル用の統一幅 */
-    min-width: 160px !important;
-    max-width: 160px !important;
-    height: 338px !important; /* モバイル高さ +15%（294px -> 約338px） */
+    width: 168px !important; /* +5% */
+    min-width: 168px !important;
+    max-width: 168px !important;
+    height: 355px !important; /* +5% */
     flex: 0 0 auto !important;
     flex-shrink: 0 !important;
     flex-grow: 0 !important;
   }
   
   .gift-image-placeholder {
-    min-height: 150px !important; /* 高さ短縮に合わせて縮小 */
+    min-height: 158px !important; /* +5% */
   }
   
   .gift-image-placeholder .w-14,
@@ -520,10 +520,10 @@
   /* removed global .grid overrides to avoid conflicts */
   
   .gift-record-card {
-    width: 165px !important; /* 640px以下用の統一幅 */
-    min-width: 165px !important;
-    max-width: 165px !important;
-    height: 338px !important; /* モバイル高さ +15%（294px -> 約338px） */
+    width: 173px !important; /* +5% */
+    min-width: 173px !important;
+    max-width: 173px !important;
+    height: 355px !important; /* +5% */
     flex: 0 0 auto !important;
     flex-shrink: 0 !important;
     flex-grow: 0 !important;
@@ -531,11 +531,11 @@
   
   /* 画像エリアの高さも縮小 */
   .gift-card-image {
-    height: 9rem !important; /* 144px程度 */
-    min-height: 9rem !important;
+    height: 9.45rem !important; /* +5% */
+    min-height: 9.45rem !important;
   }
   .gift-image-placeholder {
-    min-height: 150px !important;
+    min-height: 158px !important; /* +5% */
   }
   
   /* 親コンテナーも最適化 */
