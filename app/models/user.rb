@@ -163,4 +163,17 @@ class User < ApplicationRecord
       errors.add(:password_confirmation, "とパスワードの入力が一致しません")
     end
   end
+
+  # Ransack ホワイトリスト 管理者画面で使用
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      name email role provider created_at updated_at
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[
+      gift_records gift_people favorites reminds comments
+    ]
+  end
 end

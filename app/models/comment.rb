@@ -26,4 +26,17 @@ class Comment < ApplicationRecord
   def excerpt(limit = EXCERPT_DEFAULT_LIMIT)
     body.length > limit ? "#{body[0, limit]}..." : body
   end
+
+  # Ransack ホワイトリスト 管理者画面で使用
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      body user_id gift_record_id created_at updated_at
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[
+      user gift_record
+    ]
+  end
 end

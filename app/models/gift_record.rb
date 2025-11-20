@@ -289,10 +289,6 @@ end
     valid_image_attachments.count
   end
 
-  # def comments_allowed?
-  #   commentable?
-  # end
-
   # 実体のある画像添付のみを返すユーティリティ
   # - blobが存在し、MIMEがimage/*、サイズ>0 を満たすもの
   # - 遅延パージや不完全な添付を除外
@@ -390,7 +386,7 @@ end
       return
     end
 
-    # イベントが有効な状態かチェック（将来の拡張用）
+    # イベントが有効な状態かチェック
     event_record = Event.find_by(id: event_id)
     if event_record&.name.blank?
       errors.add(:event_id, "選択されたイベントは無効です")
@@ -439,5 +435,20 @@ end
       # 一般的に内祝いは1ヶ月以内
       self.return_deadline = Date.current + 1.month
     end
+  end
+
+  # Ransack ホワイトリスト 管理者画面で使用
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      item_name memo gift_at created_at updated_at
+      user_id gift_people_id event_id gift_item_category_id
+      is_public gift_direction
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[
+      gift_person event user gift_item_category
+    ]
   end
 end

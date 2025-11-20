@@ -46,14 +46,15 @@ class Admin::GiftPeopleController < Admin::BaseController
   end
 
   def filter_and_sort_gift_people
-    people = GiftPerson.includes(:user, :relationship)
+    base = GiftPerson.includes(:user, :relationship)
 
-    if params[:search].present?
-      search_term = "%#{params[:search]}%"
-      people = people.where("name ILIKE ?", search_term)
-    end
+    q_params = {}
+    q_params[:name_cont] = params[:search] if params[:search].present?
 
-    people.order(created_at: :desc).page(params[:page]).per(per_page)
+    @q = base.ransack(q_params)
+    @q.result(distinct: true)
+      .order(created_at: :desc)
+      .page(params[:page]).per(per_page)
   end
 
   # ギフト相手の統計情報構築

@@ -310,39 +310,31 @@ class GiftPeopleController < ApplicationController
   end
 
   def apply_search_and_filters
-    # 検索機能
-    if params[:search].present?
-      search_term = "%#{params[:search]}%"
-      @gift_people = @gift_people.where(
-        "gift_people.name ILIKE ? OR gift_people.memo ILIKE ? OR gift_people.likes ILIKE ? OR gift_people.dislikes ILIKE ?",
-        search_term, search_term, search_term, search_term
-      )
-    end
+    base = @gift_people
 
-    # 関係性でフィルタリング
-    @gift_people = @gift_people.where(relationship_id: params[:relationship_id]) if params[:relationship_id].present?
+    # Ransack用に検索・絞り込みパラメータをマッピング
+    q_params = {}
+    q_params[:name_or_memo_or_likes_or_dislikes_cont] = params[:search] if params[:search].present?
+    q_params[:relationship_id_eq] = params[:relationship_id] if params[:relationship_id].present?
+    q_params[:gift_records_event_id_eq] = params[:event_id] if params[:event_id].present?
 
-    # 性別（関係性名ベース）でフィルタリング（カラムを追加せず運用）
-    if params[:gender].present?
-      @gift_people = @gift_people.where(relationship_id: Relationship.ids_for_gender(params[:gender]))
-    end
-
-    # 年齢（年代）でフィルタリング（誕生日から算出）
+    # 年齢帯は誕生日レンジに変換（Ransackの範囲検索に渡す）
     if params[:age_group].present?
       from, to = birthday_range_for(params[:age_group])
-      if from && to
-        @gift_people = @gift_people.where(birthday: from..to)
-      elsif to
-        @gift_people = @gift_people.where("birthday <= ?", to)
-      end
+      q_params[:birthday_gteq] = from if from
+      q_params[:birthday_lteq] = to if to
     end
 
-    # イベントでフィルタリング（ギフト記録経由）
-    if params[:event_id].present?
-      @gift_people = @gift_people.joins(:gift_records)
-        .where(gift_records: { event_id: params[:event_id] })
-        .distinct
+    # Ransack 検索の実行（event経由検索時の重複排除のためdistinct）
+    @q = base.ransack(q_params)
+    result = @q.result(distinct: true)
+
+    # 性別（関係性名ベース）は既存ヘルパを利用して後段でフィルタ
+    if params[:gender].present?
+      result = result.where(relationship_id: Relationship.ids_for_gender(params[:gender]))
     end
+
+    @gift_people = result
   end
 
   def calculate_statistics

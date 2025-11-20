@@ -54,28 +54,16 @@ class Admin::CommentsController < Admin::BaseController
 
   # コメントのフィルタリングとソート
   def filter_and_sort_comments
-    comments = Comment.includes(:user, :gift_record)
+    base = Comment.includes(:user, :gift_record)
 
-    # 検索フィルタ
-    if params[:search].present?
-      search_term = "%#{params[:search]}%"
-      comments = comments.joins(:user)
-                        .where("comments.body ILIKE ? OR users.name ILIKE ?",
-                               search_term, search_term)
-    end
+    q_params = {}
+    q_params[:body_or_user_name_cont] = params[:search] if params[:search].present?
+    q_params[:user_id_eq] = params[:user_id] if params[:user_id].present?
+    q_params[:created_at_gteq] = Date.parse(params[:date_from]) if params[:date_from].present?
+    q_params[:created_at_lteq] = Date.parse(params[:date_to]) if params[:date_to].present?
 
-    # ユーザーフィルタ
-    if params[:user_id].present?
-      comments = comments.where(user_id: params[:user_id])
-    end
-
-    # 日付範囲フィルタ
-    if params[:date_from].present?
-      comments = comments.where("comments.created_at >= ?", Date.parse(params[:date_from]))
-    end
-    if params[:date_to].present?
-      comments = comments.where("comments.created_at <= ?", Date.parse(params[:date_to]))
-    end
+    @q = base.ransack(q_params)
+    comments = @q.result(distinct: true)
 
     # ソート
     case params[:sort]

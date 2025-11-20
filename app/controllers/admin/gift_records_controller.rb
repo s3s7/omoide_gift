@@ -71,44 +71,27 @@ class Admin::GiftRecordsController < Admin::BaseController
 
   # ギフト記録のフィルタリングとソート
   def filter_and_sort_gift_records
-    records = GiftRecord.includes(:user, :gift_person, :event, :gift_item_category)
+    base = GiftRecord.includes(:user, :gift_person, :event, :gift_item_category)
 
-    # 検索フィルタ
-    if params[:search].present?
-      search_term = "%#{params[:search]}%"
-      records = records.joins(:user, :gift_person)
-                      .where("gift_records.item_name ILIKE ? OR users.name ILIKE ? OR gift_people.name ILIKE ?",
-                             search_term, search_term, search_term)
-    end
+    q_params = {}
+    q_params[:item_name_or_user_name_or_gift_person_name_cont] = params[:search] if params[:search].present?
+    q_params[:user_id_eq] = params[:user_id] if params[:user_id].present?
+    q_params[:gift_direction_eq] = params[:gift_direction] if %w[given received].include?(params[:gift_direction])
+    q_params[:event_id_eq] = params[:event_id] if params[:event_id].present?
+    q_params[:gift_item_category_id_eq] = params[:gift_item_category_id] if params[:gift_item_category_id].present?
 
-    # 公開設定フィルタ
     case params[:is_public]
     when "true"
-      records = records.where(is_public: true)
+      q_params[:is_public_true] = true
     when "false"
-      records = records.where(is_public: false)
+      q_params[:is_public_false] = true
     end
 
-    # ギフト分類フィルタ
-    case params[:gift_direction]
-    when "received"
-      records = records.where(gift_direction: :received)
-    when "given"
-      records = records.where(gift_direction: :given)
-    end
+    q_params[:gift_at_gteq] = Date.parse(params[:date_from]) if params[:date_from].present?
+    q_params[:gift_at_lteq] = Date.parse(params[:date_to]) if params[:date_to].present?
 
-    # ユーザーフィルタ
-    if params[:user_id].present?
-      records = records.where(user_id: params[:user_id])
-    end
-
-    # 日付範囲フィルタ
-    if params[:date_from].present?
-      records = records.where("gift_at >= ?", Date.parse(params[:date_from]))
-    end
-    if params[:date_to].present?
-      records = records.where("gift_at <= ?", Date.parse(params[:date_to]))
-    end
+    @q = base.ransack(q_params)
+    records = @q.result(distinct: true)
 
     # ソート
     case params[:sort]
