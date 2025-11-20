@@ -240,7 +240,6 @@ class GiftRecordsController < ApplicationController
 
   # シェア拒否を記録
   def dismiss_share
-
     gift_record_id = params[:gift_record_id]
 
     if gift_record_id.present?
