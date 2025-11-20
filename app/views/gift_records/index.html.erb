@@ -36,7 +36,7 @@
     <!-- カードグリッドレイアウト（レスポンシブ対応） -->
     <div class="gift-records-grid">
       <% @gift_records.each do |record| %>
-        <div class="gift-card-container gift-record-card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" onclick="Turbo.visit('<%= gift_record_path(record, @pagination_params.merge(page: params[:page])) %>')" style="cursor: pointer;">
+        <div class="gift-card-container gift-record-card bg-white rounded-lg shadow-md overflow-hidden" onclick="Turbo.visit('<%= gift_record_path(record, @pagination_params.merge(page: params[:page])) %>')" style="cursor: pointer;">
             <!-- 上半分：ギフト画像または画像プレースホルダー -->
             <div class="gift-card-image relative overflow-hidden">
               <a href="<%= gift_record_path(record, @pagination_params.merge(page: params[:page])) %>"

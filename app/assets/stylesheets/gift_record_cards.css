@@ -564,9 +564,9 @@
 }
 
 /* Turboプレビュー表示時はアニメーションを無効化（プレビュー→本描画の二重アニメ回避） */
-/* html[data-turbo-preview] .gift-record-card {
+html[data-turbo-preview] .gift-record-card {
   animation: none !important;
-} */
+}
 
 /* ==================== アクセシビリティ対応 ==================== */
 
