@@ -44,7 +44,7 @@
       <% gift_record = favorite.gift_record %>
       <% next unless gift_record.present? %>
       
-      <div class="gift-card-container gift-record-card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform hover:shadow-xl hover:-translate-y-2" onclick="Turbo.visit('<%= gift_record_path(gift_record, origin: 'favorites') %>')" style="cursor: pointer;">
+      <div class="gift-card-container gift-record-card bg-white rounded-lg shadow-md overflow-hidden" onclick="Turbo.visit('<%= gift_record_path(gift_record, origin: 'favorites') %>')" style="cursor: pointer;">
         <div class="gift-card-image relative overflow-hidden">
           <a href="<%= gift_record_path(gift_record, origin: 'favorites') %>"
              class="absolute inset-0 z-[4]"
