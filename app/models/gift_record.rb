@@ -289,10 +289,6 @@ end
     valid_image_attachments.count
   end
 
-  # def comments_allowed?
-  #   commentable?
-  # end
-
   # 実体のある画像添付のみを返すユーティリティ
   # - blobが存在し、MIMEがimage/*、サイズ>0 を満たすもの
   # - 遅延パージや不完全な添付を除外
@@ -390,7 +386,7 @@ end
       return
     end
 
-    # イベントが有効な状態かチェック（将来の拡張用）
+    # イベントが有効な状態かチェック
     event_record = Event.find_by(id: event_id)
     if event_record&.name.blank?
       errors.add(:event_id, "選択されたイベントは無効です")

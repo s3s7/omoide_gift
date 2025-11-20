@@ -111,11 +111,11 @@ class GiftRecordsController < ApplicationController
 
         Rails.logger.debug "削除対象画像ID: #{image_id}"
 
-        # セキュリティ：この記録に属する画像かチェック
+        # この記録に属する画像かチェック
         image = @gift_record.images.find_by(id: image_id)
         if image
           Rails.logger.debug "画像を削除: #{image.id}"
-          image.purge_later  # 非同期で削除（パフォーマンス向上）
+          image.purge_later  # 非同期で削除
         else
           Rails.logger.debug "削除対象画像が見つからない: #{image_id}"
         end
@@ -126,41 +126,33 @@ class GiftRecordsController < ApplicationController
 
     # 新しい画像を取得（既存画像は保持するため、別途処理）
     new_images = params.dig(:gift_record, :images)
-    Rails.logger.debug "New images: #{new_images.inspect}"
 
     # 画像以外のフィールドを更新（imagesとdelete_image_idsを除外）
     update_params = gift_record_params.except(:images, :delete_image_ids)
-    Rails.logger.debug "Update params (without images): #{update_params.inspect}"
 
     if @gift_record.update(update_params)
       # 新しい画像がある場合のみ追加（既存画像は保持）
       if new_images.present?
         # 空の要素を除外して有効な画像のみを取得
         valid_new_images = new_images.select { |img| img.present? && img.respond_to?(:tempfile) }
-        Rails.logger.debug "Valid new images count: #{valid_new_images.count}"
 
       if valid_new_images.any?
         # attachを使用して既存画像に追加
         @gift_record.images.attach(valid_new_images)
         @gift_record.images.reload
-        Rails.logger.debug "新しい画像を追加しました (再読込済み)"
       end
       end
 
-      Rails.logger.debug "更新後の画像数: #{@gift_record.images.count}"
       flash_success(:updated, item: GiftRecord.model_name.human)
       redirect_params = params.permit(:origin, :page).to_h
       redirect_to gift_record_path(@gift_record, redirect_params)
     else
-      Rails.logger.debug "更新失敗: #{@gift_record.errors.full_messages}"
       @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
       prepare_events_for_form
       flash.now[:alert] = t("defaults.flash_message.not_updated", item: GiftRecord.model_name.human)
       render :edit, status: :unprocessable_entity
     end
   rescue StandardError => e
-    Rails.logger.error "GiftRecord update error: #{e.message}"
-    Rails.logger.error e.backtrace.join("\n")
     @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
     prepare_events_for_form
     flash.now[:alert] = "更新中にエラーが発生しました。再度お試しください。"
@@ -178,7 +170,6 @@ class GiftRecordsController < ApplicationController
       redirect_to gift_records_path
     end
   rescue StandardError => e
-    Rails.logger.error "GiftRecord deletion error: #{e.message}"
     flash[:alert] = "削除中にエラーが発生しました。"
     redirect_to gift_records_path
   end
@@ -240,7 +231,6 @@ class GiftRecordsController < ApplicationController
     end
 
   rescue StandardError => e
-    Rails.logger.error "GiftRecords autocomplete error: #{e.message}"
     render json: {
       results: [],
       total_count: 0,
@@ -250,10 +240,6 @@ class GiftRecordsController < ApplicationController
 
   # シェア拒否を記録
   def dismiss_share
-    unless user_signed_in?
-      render json: { success: false, error: "Authentication required" }, status: :unauthorized
-      return
-    end
 
     gift_record_id = params[:gift_record_id]
 
@@ -576,15 +562,19 @@ class GiftRecordsController < ApplicationController
     %i[given received].include?(direction) ? direction : :given
   end
 
-  # オートコンプリート用ヘルパーメソッド
+  # オートコンプリート用ヘルパーメソッド（XSS対策版）
+  # 入力文字列と検索語をHTMLエスケープし、<mark> だけを差し込む
   def highlight_match(text, query)
-    return text unless text.present? && query.present?
+    return ERB::Util.html_escape(text) unless text.present? && query.present?
 
-    text.gsub(Regexp.new(Regexp.escape(query), Regexp::IGNORECASE)) do |match|
+    escaped_text  = ERB::Util.html_escape(text)
+    escaped_query = ERB::Util.html_escape(query)
+
+    escaped_text.gsub(Regexp.new(Regexp.escape(escaped_query), Regexp::IGNORECASE)) do |match|
       "<mark>#{match}</mark>"
-    end
+    end.html_safe
   rescue StandardError
-    text
+    ERB::Util.html_escape(text)
   end
 
   def truncate_text(text, length = DEFAULT_TRUNCATE_LENGTH)
