@@ -436,4 +436,19 @@ end
       self.return_deadline = Date.current + 1.month
     end
   end
+
+  # Ransack ホワイトリスト 管理者画面で使用
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      item_name memo gift_at created_at updated_at
+      user_id gift_people_id event_id gift_item_category_id
+      is_public gift_direction
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[
+      gift_person event user gift_item_category
+    ]
+  end
 end

@@ -72,18 +72,15 @@ class Admin::UsersController < Admin::BaseController
 
   # ユーザーのフィルタリングとソート
   def filter_and_sort_users
-    users = User.all
+    base = User.all
 
-    # 検索フィルタ
-    if params[:search].present?
-      search_term = "%#{params[:search]}%"
-      users = users.where("name ILIKE ? OR email ILIKE ?", search_term, search_term)
-    end
+    # Ransack 検索（名前/メール）と基本フィルタ（役割）
+    q_params = {}
+    q_params[:name_or_email_cont] = params[:search] if params[:search].present?
+    q_params[:role_eq] = params[:role] if params[:role].present? && User.roles.key?(params[:role])
 
-    # ロールフィルタ
-    if params[:role].present? && User.roles.key?(params[:role])
-      users = users.where(role: params[:role])
-    end
+    @q = base.ransack(q_params)
+    users = @q.result(distinct: true)
 
     # 登録方法フィルタ（LINE登録 vs 通常登録）
     case params[:provider]
