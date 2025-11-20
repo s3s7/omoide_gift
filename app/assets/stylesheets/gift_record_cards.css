@@ -563,7 +563,7 @@
   animation: cardFadeIn 0.6s ease-out;
 }
 
-/* Turboプレビュー表示時はアニメーションを無効化（プレビュー→本描画の二重アニメ回避） */
+/* Turboプレビュー表示時はアニメーション */
 html[data-turbo-preview] .gift-record-card {
   animation: none !important;
 }
