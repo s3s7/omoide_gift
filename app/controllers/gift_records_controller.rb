@@ -268,7 +268,7 @@ class GiftRecordsController < ApplicationController
 
   def build_base_query
     GiftRecord.where(is_public: true)
-      .includes(:gift_person, :event, :user, gift_person: :relationship, images_attachments: :blob)
+      .includes(:gift_person, :event, :user, gift_person: :relationship)
   end
 
   def apply_search_and_filters(base_query)
@@ -284,7 +284,7 @@ class GiftRecordsController < ApplicationController
         )
     end
 
-    # フィルタリング機能
+    # フィルタリング機能（画像のpreloadはページング後に実施）
     result = apply_filters(result)
     result
   end
@@ -362,9 +362,11 @@ class GiftRecordsController < ApplicationController
     when "created_at"
       @gift_records = @gift_records.order("gift_records.created_at #{sort_order}")
         .page(params[:page]).per(per_page_count)
+        .with_attached_images
     else
       @gift_records = @gift_records.order(created_at: :desc)
         .page(params[:page]).per(per_page_count)
+        .with_attached_images
     end
   end
 
@@ -406,7 +408,9 @@ class GiftRecordsController < ApplicationController
     current_page_ids = paginated_ids.to_a
 
     if current_page_ids.any?
-      records_hash = @gift_records.where(id: current_page_ids).index_by(&:id)
+      records_hash = @gift_records.where(id: current_page_ids)
+        .with_attached_images
+        .index_by(&:id)
       sorted_records = current_page_ids.filter_map { |id| records_hash[id] }
 
       @gift_records = Kaminari.paginate_array(
@@ -706,7 +710,7 @@ end
 
   def apply_search_and_filters_for_user(base_query)
     result = base_query
-      .includes(:gift_person, :event, :user, gift_person: :relationship, images_attachments: :blob)
+      .includes(:gift_person, :event, :user, gift_person: :relationship)
 
     # 検索機能
     if params[:search].present?
@@ -718,7 +722,7 @@ end
         )
     end
 
-    # フィルタリング機能
+    # フィルタリング機能（画像のpreloadはページング後に実施）
     result = apply_filters(result)
     result
   end

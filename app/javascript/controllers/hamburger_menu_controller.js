@@ -6,16 +6,40 @@ export default class extends Controller {
 
   connect() {
     console.log("🍔 [STIMULUS] HamburgerMenuController connected")
+
+    // ① 接続時に必ず閉じた状態にする
+    if (this.hasMenuTarget) {
+      this.menuTarget.classList.add('hidden')
+    }
+
     // ESCキーでメニューを閉じる
     this.boundHandleEscape = this.handleEscape.bind(this)
     document.addEventListener('keydown', this.boundHandleEscape)
+
+    // ② Turbo がスナップショット保存する前に必ず閉じる
+    this.boundBeforeCache = () => {
+      console.log("🍔 [STIMULUS] turbo:before-cache -> メニューを閉じる")
+      this.close()
+    }
+    document.addEventListener("turbo:before-cache", this.boundBeforeCache)
   }
 
   disconnect() {
-    // クリーンアップ
+    // ESC キー
     if (this.boundHandleEscape) {
       document.removeEventListener('keydown', this.boundHandleEscape)
+      this.boundHandleEscape = null
     }
+
+    // turbo:before-cache
+    if (this.boundBeforeCache) {
+      document.removeEventListener("turbo:before-cache", this.boundBeforeCache)
+      this.boundBeforeCache = null
+    }
+
+    // ③ 外側クリック検知もここで確実に解除しておく
+    this.disableOutsideClickDetection()
+
     console.log("🍔 [STIMULUS] HamburgerMenuController disconnected")
   }
 
