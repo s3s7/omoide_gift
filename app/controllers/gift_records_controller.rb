@@ -565,7 +565,7 @@ class GiftRecordsController < ApplicationController
     %i[given received].include?(direction) ? direction : :given
   end
 
-  # オートコンプリート用ヘルパーメソッド（XSS対策版）
+  # オートコンプリート用ヘルパーメソッド
   # 入力文字列と検索語をHTMLエスケープし、<mark> だけを差し込む
   def highlight_match(text, query)
     return ERB::Util.html_escape(text) unless text.present? && query.present?
