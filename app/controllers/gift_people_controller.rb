@@ -306,6 +306,7 @@ class GiftPeopleController < ApplicationController
   def build_base_query
     current_user.gift_people
       .includes(:relationship)
+      .with_attached_avatar
       .where.not(name: [ nil, "" ])
   end
 

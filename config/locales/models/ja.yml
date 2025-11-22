@@ -132,33 +132,3 @@ ja:
               invalid_time_window: 通知時刻は0:00-23:30の範囲で30分刻みで設定してください
               timing_invalid: 通知タイミングの設定に問題があります
               schedule_error: "通知日時の設定でエラーが発生しました: %{error}"
-  # shared:
-  #   error_messages:
-  #     title: エラー
-  #     message: 以下のエラーが発生しました:
-  #     item: アイテム
-  #     errors: エラー
-  #     not_found: アイテムが見つかりません
-  #     not_authorized: アクセス権限がありません
-  #     require_login: ログインが必要です
-  # layouts:
-  #   application:
-  #     title: Omoide Gift
-  #     subtitle: 思い出のギフトを共有する
-  #     home: ホーム
-  #     gift_records: ギフト記録
-  #     new_gift_record: ギフト記録登録
-  #     edit_gift_record: ギフト記録編集
-  #     user_profile: ユーザープロフィール
-  #     login: ログイン
-  #     logout: ログアウト
-  #     register: ユーザー登録
-  #     edit_profile: プロフィール編集
-  #     submit: 保存
-  #     cancel: キャンセル
-  #     back: 戻る
-  #     footer: © 2023 Omoide Gift. All rights reserved.
-  #     powered_by: Powered by Omoide Gift
-  #     privacy_policy: プライバシーポリシー
-  #     terms_of_service: 利用規約
-  #     contact: お問い合わせ
