@@ -6,29 +6,20 @@ export default class extends Controller {
   static values = { deleteUrl: String, itemName: String, csrfToken: String }
 
   connect() {
-    console.log("🗑️ [STIMULUS] DeleteModalController connected")
-    console.log("🗑️ [STIMULUS] Modal target found:", this.hasModalTarget)
     if (this.hasModalTarget) {
-      console.log("🗑️ [STIMULUS] Modal element:", this.modalTarget)
+      // no-op
     }
   }
 
   // モーダルを表示
   show(event) {
     event.preventDefault()
-    console.log("🗑️ [STIMULUS] 削除モーダル表示開始")
     
     // データを取得
     const button = event.currentTarget
     this.deleteUrlValue = button.dataset.deleteUrl
     this.itemNameValue = button.dataset.itemName
     this.csrfTokenValue = button.dataset.csrfToken
-
-    console.log("🗑️ [STIMULUS] データ取得:", {
-      item: this.itemNameValue,
-      hasUrl: !!this.deleteUrlValue,
-      hasToken: !!this.csrfTokenValue
-    })
 
     // モーダルターゲットの確認
     if (!this.hasModalTarget) {
@@ -49,8 +40,6 @@ export default class extends Controller {
     // ESCキー対応
     this.boundHandleEscape = this.handleEscape.bind(this)
     document.addEventListener('keydown', this.boundHandleEscape)
-    
-    console.log("🗑️ [STIMULUS] 削除モーダル表示完了")
   }
 
   // モーダルを非表示
@@ -58,8 +47,6 @@ export default class extends Controller {
     if (event) {
       event.preventDefault()
     }
-    
-    console.log("🗑️ [STIMULUS] モーダル非表示開始")
     
     this.modalTarget.classList.add('hidden')
     this.modalTarget.classList.remove('flex')
@@ -69,14 +56,11 @@ export default class extends Controller {
     if (this.boundHandleEscape) {
       document.removeEventListener('keydown', this.boundHandleEscape)
     }
-    
-    console.log("🗑️ [STIMULUS] モーダル非表示完了")
   }
 
   // 削除を確認して実行
   confirm(event) {
     event.preventDefault()
-    console.log("🗑️ [STIMULUS] 削除確認ボタンクリック")
     
     this.hide()
     this.submitDeleteForm()
@@ -85,14 +69,12 @@ export default class extends Controller {
   // キャンセル
   cancel(event) {
     event.preventDefault()
-    console.log("🗑️ [STIMULUS] キャンセルボタンクリック")
     this.hide()
   }
 
   // 背景クリックでモーダルを閉じる
   backdropClick(event) {
     if (event.target === this.modalTarget) {
-      console.log("🗑️ [STIMULUS] 背景クリックでモーダルを閉じる")
       this.hide()
     }
   }
@@ -100,18 +82,12 @@ export default class extends Controller {
   // ESCキーでモーダルを閉じる
   handleEscape(event) {
     if (event.key === 'Escape') {
-      console.log("🗑️ [STIMULUS] ESCキーでモーダルを閉じる")
       this.hide()
     }
   }
 
   // 削除フォームを送信
   submitDeleteForm() {
-    console.log("🗑️ [STIMULUS] 削除フォーム送信:", {
-      deleteUrl: this.deleteUrlValue,
-      csrfToken: !!this.csrfTokenValue
-    })
-
     if (!this.deleteUrlValue || !this.csrfTokenValue) {
       console.error("🗑️ [STIMULUS] 削除URLまたはCSRFトークンが不足しています")
       return
@@ -138,8 +114,6 @@ export default class extends Controller {
     // フォームをDOMに追加して送信
     document.body.appendChild(form)
     form.submit()
-
-    console.log("🗑️ [STIMULUS] 削除フォーム送信完了")
   }
 
   disconnect() {
@@ -152,6 +126,5 @@ export default class extends Controller {
       this.modalTarget.classList.remove('flex')
     }
     document.body.style.overflow = 'auto'
-    console.log("🗑️ [STIMULUS] DeleteModalController disconnected")
   }
 }

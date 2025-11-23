@@ -41,7 +41,6 @@ export default class extends Controller {
     if (this.debouncedSearch && this.debouncedSearch.cancel) this.debouncedSearch.cancel()
   }
 
-  // Arrow functions to preserve 'this'
   handleInput = (event) => {
     const query = (event.target.value || "").trim()
 
@@ -122,15 +121,12 @@ export default class extends Controller {
       this.displayResults(Array.isArray(data.results) ? data.results.slice(0, this.maxResultsValue) : [])
     } catch (error) {
       if (error.name !== 'AbortError') {
-        // eslint-disable-next-line no-console
         console.error('[Autocomplete] error', error)
         this.hideLoading()
         this.hideDropdown()
       }
     }
   }
-
-  // headers: use shared getAPIHeaders
 
   displayResults(results) {
     if (!this.hasDropdownTarget) return
@@ -229,12 +225,9 @@ export default class extends Controller {
     }
   }
 
-  // escapeHtml: use shared utils.escapeHtml
 
-  // Normalize endpoint that might be passed with stray quotes from HTML data attributes
   normalizeEndpoint(value) {
     let s = String(value || "").trim()
-    // Remove surrounding single/double quotes if present
     s = s.replace(/^['"]+|['"]+$/g, "")
     return s
   }

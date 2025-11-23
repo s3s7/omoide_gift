@@ -7,7 +7,7 @@ export default class extends Controller {
   static values = { recordId: Number, loginUrl: String }
 
   connect() {
-    // 初期状態でもハート色をピンクに強制（CSS未反映ケースの保険）
+    // 初期状態でもハート色をピンク
     const button = this.hasButtonTarget ? this.buttonTarget : this.element.querySelector('.favorite-button')
     const heart = this.hasHeartTarget ? this.heartTarget : this.element.querySelector('.favorite-heart')
     if (heart) {

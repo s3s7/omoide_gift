@@ -347,7 +347,6 @@ export default class extends Controller {
 
   // ユーティリティメソッド
   showError(message) {
-    // 現在はブラウザのalertを使用、将来的にはより良いUIに変更可能
     alert(message)
   }
 
@@ -418,12 +417,6 @@ export default class extends Controller {
       this.originalSubmitText = this.submitButtonTarget.value
       this.submitButtonTarget.value = '登録中...'
     }
-  }
-
-  // フォーム送信バリデーション（必要に応じて追加のバリデーションを実装）
-  validateForm() {
-    // 追加のバリデーションロジックをここに記述
-    return true
   }
 
   // 通知設定セクションの表示切り替え

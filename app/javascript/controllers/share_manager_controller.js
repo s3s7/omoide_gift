@@ -20,12 +20,10 @@ export default class extends Controller {
     this.shareGiftRecord = null
     this.lastCreatedGiftRecordId = null
 
-    // Handle initial share from URL params
     const params = new URLSearchParams(window.location.search)
     const giftRecordId = params.get("gift_record_id")
     if (params.get("share_confirm") === "true" && giftRecordId) {
       this.lastCreatedGiftRecordId = parseInt(giftRecordId, 10)
-      // Prefer server-provided details via data-* values
       if (this.hasItemNameValue || this.hasGiftPersonNameValue || this.hasEventNameValue || this.hasRelationshipNameValue || this.hasMemoValue) {
         this.shareGiftRecord = {
           id: this.lastCreatedGiftRecordId,
@@ -68,13 +66,11 @@ export default class extends Controller {
     document.removeEventListener("keydown", this.boundEscHandler)
   }
 
-  // Actions
   open() {
     if (!this.hasModalTarget) return
     this.updatePreview()
     this.updateTextPreview()
     this.modalTarget.classList.remove("hidden")
-    // Let CSS classes control layout; avoid forcing flex here
     this.modalTarget.style.removeProperty("display")
     document.body.style.overflow = "hidden"
   }
@@ -86,7 +82,6 @@ export default class extends Controller {
       document.body.style.overflow = "auto"
     }
 
-    // Dismiss record on server (best-effort)
     const id = this.shareGiftRecord?.id || this.lastCreatedGiftRecordId
     if (id) {
       try {
@@ -96,11 +91,9 @@ export default class extends Controller {
           body: JSON.stringify({ gift_record_id: id })
         })
       } catch (_) {
-        // ignore
       }
     }
 
-    // Redirect to list without params
     window.location.href = "/gift_records"
   }
 

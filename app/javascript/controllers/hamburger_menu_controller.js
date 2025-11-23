@@ -5,8 +5,6 @@ export default class extends Controller {
   static targets = ["menu", "toggle"]
 
   connect() {
-    console.log("🍔 [STIMULUS] HamburgerMenuController connected")
-
     // ① 接続時に必ず閉じた状態にする
     if (this.hasMenuTarget) {
       this.menuTarget.classList.add('hidden')
@@ -18,7 +16,6 @@ export default class extends Controller {
 
     // ② Turbo がスナップショット保存する前に必ず閉じる
     this.boundBeforeCache = () => {
-      console.log("🍔 [STIMULUS] turbo:before-cache -> メニューを閉じる")
       this.close()
     }
     document.addEventListener("turbo:before-cache", this.boundBeforeCache)
@@ -40,15 +37,12 @@ export default class extends Controller {
     // ③ 外側クリック検知もここで確実に解除しておく
     this.disableOutsideClickDetection()
 
-    console.log("🍔 [STIMULUS] HamburgerMenuController disconnected")
   }
 
   // メニューボタンがクリックされた時
   toggle(event) {
     event.preventDefault()
     event.stopPropagation()
-    
-    console.log("🍔 [STIMULUS] メニュー切り替え")
     
     if (this.hasMenuTarget) {
       this.menuTarget.classList.toggle('hidden')
@@ -69,8 +63,6 @@ export default class extends Controller {
       event.stopPropagation()
     }
     
-    console.log("🍔 [STIMULUS] メニューを閉じる")
-    
     if (this.hasMenuTarget) {
       this.menuTarget.classList.add('hidden')
       this.disableOutsideClickDetection()
@@ -80,7 +72,6 @@ export default class extends Controller {
   // ESCキーでメニューを閉じる
   handleEscape(event) {
     if (event.key === 'Escape' && this.hasMenuTarget && !this.menuTarget.classList.contains('hidden')) {
-      console.log("🍔 [STIMULUS] ESCキーでメニューを閉じる")
       this.close()
     }
   }
@@ -92,7 +83,6 @@ export default class extends Controller {
     this.outsideClickListener = (event) => {
       // 削除ボタンや削除モーダル関連の場合は無視
       if (this.isDeleteRelatedElement(event.target)) {
-        console.log("🍔 [STIMULUS] 削除関連要素をクリック、メニュー処理をスキップ")
         return
       }
       
@@ -100,13 +90,11 @@ export default class extends Controller {
       if (this.hasMenuTarget && 
           !this.menuTarget.contains(event.target) && 
           (!this.hasToggleTarget || !this.toggleTarget.contains(event.target))) {
-        console.log("🍔 [STIMULUS] 外側クリック検知、メニューを閉じる")
         this.close()
       }
     }
     
     document.addEventListener('click', this.outsideClickListener)
-    console.log("🍔 [STIMULUS] 外側クリック検知を有効化")
   }
 
   // 外側クリック検知を無効にする
@@ -114,7 +102,6 @@ export default class extends Controller {
     if (this.outsideClickListener) {
       document.removeEventListener('click', this.outsideClickListener)
       this.outsideClickListener = null
-      console.log("🍔 [STIMULUS] 外側クリック検知を無効化")
     }
   }
 
