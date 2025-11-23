@@ -34,7 +34,6 @@ export default class extends Controller {
     const form = this.element.closest('form')
     if (form) {
       form.addEventListener('submit', (event) => {
-        console.log('フォーム送信直前 - 削除対象IDs:', this.deleteImageIds)
         this.updateDeleteImageIds()  // 送信前に最新の削除IDを反映
       })
     }
@@ -372,12 +371,8 @@ export default class extends Controller {
 
   // 削除対象IDを隠しフィールドに反映
   updateDeleteImageIds() {
-    // デバッグ情報をコンソールに出力
-    console.log('削除対象IDs:', this.deleteImageIds)
-    
     // deleteImageContainerTargetが存在するかチェック
     if (!this.hasDeleteImageContainerTarget) {
-      console.error('deleteImageContainer target not found')
       return
     }
     
@@ -386,22 +381,18 @@ export default class extends Controller {
     
     // 削除対象IDがある場合のみ隠しフィールドを作成
     this.deleteImageIds.forEach(imageId => {
-      console.log('Creating hidden field for imageId:', imageId)
       
       const hiddenField = document.createElement('input')
       hiddenField.type = 'hidden'
       hiddenField.name = 'gift_record[delete_image_ids][]'
       hiddenField.value = imageId
       
-      // デバッグ用の属性を追加
-      hiddenField.setAttribute('data-debug', 'delete-image-id')
       
       this.deleteImageContainerTarget.appendChild(hiddenField)
     })
     
     // 作成された隠しフィールドの確認
     const createdFields = this.deleteImageContainerTarget.querySelectorAll('input[type="hidden"]')
-    console.log('作成された隠しフィールド数:', createdFields.length)
   }
 
   // 既存画像数表示を更新
