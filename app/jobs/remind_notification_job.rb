@@ -7,7 +7,6 @@ class RemindNotificationJob < ApplicationJob
     return unless remind
     return unless remind.should_notify?
 
-    Rails.logger.info "RemindNotificationJob: sending remind_id=#{remind.id}"
     LineNotificationService.new.send_reminder_notification(remind)
   rescue StandardError => e
     Rails.logger.error "RemindNotificationJob error: remind_id=#{remind_id} #{e.class}: #{e.message}"

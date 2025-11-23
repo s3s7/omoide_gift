@@ -15,12 +15,6 @@ class Admin::StatisticsController < Admin::BaseController
   private
 
   def build_detailed_statistics
-    Rails.logger.info "=== 統計データ構築開始 ==="
-    Rails.logger.info "現在の年: #{Date.current.year}"
-    Rails.logger.info "総ユーザー数: #{User.count}"
-    Rails.logger.info "総ギフト記録数: #{GiftRecord.count}"
-    Rails.logger.info "総コメント数: #{Comment.count}"
-
     stats = {
       users: build_user_statistics,
       gift_records: build_gift_record_statistics,
@@ -28,7 +22,6 @@ class Admin::StatisticsController < Admin::BaseController
       activity: build_activity_statistics
     }
 
-    Rails.logger.info "=== 統計データ構築完了 ==="
     stats
   end
 
@@ -42,20 +35,14 @@ class Admin::StatisticsController < Admin::BaseController
     year_start = Time.zone.local(current_year, FIRST_MONTH, FIRST_DAY_OF_MONTH).beginning_of_day
     year_end = Time.zone.local(current_year, LAST_MONTH, LAST_DAY_OF_YEAR).end_of_day
 
-    Rails.logger.info "ユーザー統計: #{current_year}年の範囲 #{year_start} - #{year_end}"
-
     monthly_data = User.where(created_at: year_start..year_end)
                       .group("EXTRACT(month FROM created_at)")
                       .count
-
-    Rails.logger.info "月別ユーザー登録データ: #{monthly_data}"
 
     # EXTRACTの結果は文字列または数値の可能性があるため、両方チェック
     monthly_registrations = (FIRST_MONTH..LAST_MONTH).map do |month|
       monthly_data[month.to_f] || monthly_data[month.to_s] || monthly_data[month] || 0
     end
-
-    Rails.logger.info "月別登録配列: #{monthly_registrations}"
 
     {
       total: User.count,
@@ -67,7 +54,6 @@ class Admin::StatisticsController < Admin::BaseController
     }
   rescue => e
     Rails.logger.error "統計データ取得エラー (ユーザー): #{e.message}"
-    Rails.logger.error "スタックトレース: #{e.backtrace.first(BACKTRACE_LINES).join("\n")}"
     {
       total: 0,
       admins: 0,
@@ -87,20 +73,14 @@ class Admin::StatisticsController < Admin::BaseController
     year_start = Time.zone.local(current_year, FIRST_MONTH, FIRST_DAY_OF_MONTH).beginning_of_day
     year_end = Time.zone.local(current_year, LAST_MONTH, LAST_DAY_OF_YEAR).end_of_day
 
-    Rails.logger.info "ギフト記録統計: #{current_year}年の範囲 #{year_start} - #{year_end}"
-
     monthly_data = GiftRecord.where(created_at: year_start..year_end)
                             .group("EXTRACT(month FROM created_at)")
                             .count
-
-    Rails.logger.info "月別ギフト記録データ: #{monthly_data}"
 
     # EXTRACTの結果は文字列または数値の可能性があるため、両方チェック
     monthly_posts = (FIRST_MONTH..LAST_MONTH).map do |month|
       monthly_data[month.to_f] || monthly_data[month.to_s] || monthly_data[month] || 0
     end
-
-    Rails.logger.info "月別投稿配列: #{monthly_posts}"
 
     {
       total: GiftRecord.count,
@@ -111,7 +91,6 @@ class Admin::StatisticsController < Admin::BaseController
     }
   rescue => e
     Rails.logger.error "統計データ取得エラー (ギフト記録): #{e.message}"
-    Rails.logger.error "スタックトレース: #{e.backtrace.first(BACKTRACE_LINES).join("\n")}"
     {
       total: 0,
       public: 0,
@@ -127,20 +106,14 @@ class Admin::StatisticsController < Admin::BaseController
     year_start = Time.zone.local(current_year, FIRST_MONTH, FIRST_DAY_OF_MONTH).beginning_of_day
     year_end = Time.zone.local(current_year, LAST_MONTH, LAST_DAY_OF_YEAR).end_of_day
 
-    Rails.logger.info "コメント統計: #{current_year}年の範囲 #{year_start} - #{year_end}"
-
     monthly_data = Comment.where(created_at: year_start..year_end)
                          .group("EXTRACT(month FROM created_at)")
                          .count
-
-    Rails.logger.info "月別コメントデータ: #{monthly_data}"
 
     # EXTRACTの結果は文字列または数値の可能性があるため、両方チェック
     monthly_comments = (FIRST_MONTH..LAST_MONTH).map do |month|
       monthly_data[month.to_f] || monthly_data[month.to_s] || monthly_data[month] || 0
     end
-
-    Rails.logger.info "月別コメント配列: #{monthly_comments}"
 
     {
       total: Comment.count,
@@ -172,13 +145,10 @@ class Admin::StatisticsController < Admin::BaseController
 
   # EXTRACT関数がうまく動作しない場合の代替方法
   def calculate_monthly_data_alternative(model, year_start, year_end)
-    Rails.logger.info "代替方式で月別データを計算: #{model.name}"
-
     (FIRST_MONTH..LAST_MONTH).map do |month|
       month_start = Time.zone.local(Date.current.year, month, FIRST_DAY_OF_MONTH).beginning_of_month
       month_end = month_start.end_of_month
       count = model.where(created_at: month_start..month_end).count
-      Rails.logger.debug "#{month}月: #{count}件"
       count
     end
   rescue => e

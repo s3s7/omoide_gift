@@ -130,7 +130,6 @@ class GiftRecord < ApplicationRecord
         host: request.base_url
       )
 
-      Rails.logger.info "Using resized first image: #{resized_url}"
       resized_url
     rescue => e
       Rails.logger.error "Error resizing first image: #{e.message}"
@@ -149,14 +148,12 @@ class GiftRecord < ApplicationRecord
       variant = attachment.variant(resize_to_limit: [ 1200, 630 ])
       url = helpers.rails_representation_url(variant.processed, host: request.base_url)
       url = url.sub(%r{^http://}, "https://") if Rails.env.production?
-      Rails.logger.info "Using suitable uploaded image (variant): #{url}"
       url
     rescue => e
       Rails.logger.warn "Variant generation failed for suitable image: #{e.message}"
       begin
         url = helpers.rails_blob_url(attachment, host: request.base_url)
         url = url.sub(%r{^http://}, "https://") if Rails.env.production?
-        Rails.logger.info "Using suitable uploaded image (original): #{url}"
         url
       rescue => e2
         Rails.logger.error "Blob URL generation failed: #{e2.message}"
@@ -172,7 +169,6 @@ class GiftRecord < ApplicationRecord
     if ogp_image.attached?
       url = helpers.rails_blob_url(ogp_image, host: request.base_url)
       url = url.sub(%r{^http://}, "https://") if Rails.env.production?
-      Rails.logger.info "Using dynamically generated OGP image: #{url}"
       url
     else
       default_ogp_fallback_url(request)
@@ -192,7 +188,6 @@ class GiftRecord < ApplicationRecord
   # 本番環境でのHTTPS強制
   url = url.sub(%r{^http://}, "https://") if Rails.env.production?
 
-  Rails.logger.info "Using default OGP image: #{url}"
   url
 rescue => e
   Rails.logger.error "Error getting default image: #{e.message}"
@@ -334,8 +329,6 @@ end
     suitable_size = metadata["width"] >= 600 && metadata["height"] >= 315
 
     result = suitable_ratio && suitable_size
-
-    Rails.logger.info "OGP適性チェック: #{attachment.filename} - 幅:#{metadata['width']}, 高さ:#{metadata['height']}, 比率:#{aspect_ratio.round(2)}, 適性:#{result}"
 
     result
   rescue => e
