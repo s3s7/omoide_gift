@@ -51,9 +51,7 @@ export default class extends Controller {
       } else {
         showToast(data.error || 'エラーが発生しました', 'error')
       }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Favorite toggle error:', error)
+    } catch {
       showToast('ネットワークエラーが発生しました', 'error')
     } finally {
       this.setLoading(button, false)
@@ -103,5 +101,4 @@ export default class extends Controller {
     button.disabled = isLoading
   }
 
-  // toast: use shared utils.showToast
 }

@@ -121,7 +121,6 @@ export default class extends Controller {
       this.displayResults(Array.isArray(data.results) ? data.results.slice(0, this.maxResultsValue) : [])
     } catch (error) {
       if (error.name !== 'AbortError') {
-        console.error('[Autocomplete] error', error)
         this.hideLoading()
         this.hideDropdown()
       }

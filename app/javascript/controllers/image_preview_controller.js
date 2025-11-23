@@ -373,7 +373,6 @@ export default class extends Controller {
   updateDeleteImageIds() {
     // deleteImageContainerTargetが存在するかチェック
     if (!this.hasDeleteImageContainerTarget) {
-      console.error('deleteImageContainer target not found')
       return
     }
     
@@ -388,8 +387,6 @@ export default class extends Controller {
       hiddenField.name = 'gift_record[delete_image_ids][]'
       hiddenField.value = imageId
       
-      // デバッグ用の属性を追加
-      hiddenField.setAttribute('data-debug', 'delete-image-id')
       
       this.deleteImageContainerTarget.appendChild(hiddenField)
     })

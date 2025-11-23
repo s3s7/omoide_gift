@@ -23,7 +23,6 @@ export default class extends Controller {
 
     // モーダルターゲットの確認
     if (!this.hasModalTarget) {
-      console.error("🗑️ [STIMULUS] ERROR: Modal target not found!")
       return
     }
 
@@ -89,7 +88,6 @@ export default class extends Controller {
   // 削除フォームを送信
   submitDeleteForm() {
     if (!this.deleteUrlValue || !this.csrfTokenValue) {
-      console.error("🗑️ [STIMULUS] 削除URLまたはCSRFトークンが不足しています")
       return
     }
 

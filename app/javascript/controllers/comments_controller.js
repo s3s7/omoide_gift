@@ -77,8 +77,7 @@ export default class extends Controller {
         this.showNotification('削除に失敗しました', 'error')
       }
     })
-    .catch(error => {
-      console.error('Error:', error)
+    .catch(() => {
       this.showNotification('通信エラーが発生しました', 'error')
     })
   }
@@ -114,8 +113,7 @@ export default class extends Controller {
         this.showNotification('更新に失敗しました: ' + data.errors.join(', '), 'error')
       }
     })
-    .catch(error => {
-      console.error('Error:', error)
+    .catch(() => {
       this.showNotification('通信エラーが発生しました', 'error')
     })
   }
@@ -152,8 +150,7 @@ export default class extends Controller {
         this.showNotification('コメントの投稿に失敗しました: ' + data.errors.join(', '), 'error')
       }
     })
-    .catch(error => {
-      console.error('Error:', error)
+    .catch(() => {
       this.showNotification('通信エラーが発生しました', 'error')
     })
     .finally(() => {
