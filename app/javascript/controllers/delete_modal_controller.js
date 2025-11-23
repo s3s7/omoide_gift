@@ -5,12 +5,6 @@ export default class extends Controller {
   static targets = ["modal", "itemName", "confirmButton", "cancelButton"]
   static values = { deleteUrl: String, itemName: String, csrfToken: String }
 
-  connect() {
-    if (this.hasModalTarget) {
-      // no-op
-    }
-  }
-
   // モーダルを表示
   show(event) {
     event.preventDefault()

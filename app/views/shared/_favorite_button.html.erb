@@ -3,11 +3,6 @@
   <% favorited = Favorite.favorited_by_user?(current_user, gift_record) %>
   <% favorites_count = Favorite.favorites_count_for_gift_record(gift_record) %>
   
-  <!-- デバッグ情報（一時的） -->
-  <div style="display: none;">
-    Debug: favorited=<%= favorited %>, favorites_count=<%= favorites_count %>, user_id=<%= current_user.id %>, gift_record_id=<%= gift_record.id %>
-  </div>
-  
   <div class="favorite-button-container" data-controller="favorites" data-favorites-record-id-value="<%= gift_record.id %>" data-gift-record-id="<%= gift_record.id %>">
     <button type="button" 
             class="favorite-button <%= favorited ? 'favorited' : '' %>"
