@@ -1,4 +1,4 @@
-<%# ハートボタン - Twitterライクなお気に入り機能 %>
+<%# お気に入り機能 %>
 <% if user_signed_in? %>
   <% favorited = Favorite.favorited_by_user?(current_user, gift_record) %>
   <% favorites_count = Favorite.favorites_count_for_gift_record(gift_record) %>

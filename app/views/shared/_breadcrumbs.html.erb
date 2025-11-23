@@ -1,11 +1,3 @@
-<%# Generic breadcrumb partial
-    Expected locals:
-      :items - array of hashes/objects with keys:
-        :label (String or safe HTML)
-        :url (optional, path or URL)
-        :icon (optional, font-awesome class)
-        :current (boolean, optional) %>
-
 <% items = Array(local_assigns.fetch(:items)) %>
 
 <nav class="flex mb-6" aria-label="Breadcrumb">
