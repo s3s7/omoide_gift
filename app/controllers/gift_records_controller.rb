@@ -104,24 +104,16 @@ class GiftRecordsController < ApplicationController
     # 削除対象画像の処理（バリデーション前に実行）
     delete_image_ids = params.dig(:gift_record, :delete_image_ids)
     if delete_image_ids.present?
-      Rails.logger.debug "処理する削除対象画像ID: #{delete_image_ids.inspect}"
-
       delete_image_ids.each do |image_id|
         next if image_id.blank?
-
-        Rails.logger.debug "削除対象画像ID: #{image_id}"
 
         # この記録に属する画像かチェック
         image = @gift_record.images.find_by(id: image_id)
         if image
-          Rails.logger.debug "画像を削除: #{image.id}"
           image.purge_later  # 非同期で削除
         else
-          Rails.logger.debug "削除対象画像が見つからない: #{image_id}"
         end
       end
-    else
-      Rails.logger.debug "削除対象画像なし"
     end
 
     # 新しい画像を取得（既存画像は保持するため、別途処理）
@@ -613,15 +605,10 @@ def setup_meta_tags
   end
 
 def gift_record_image_url(gift_record)
-  Rails.logger.info "=== gift_record_image_url Debug ==="
-  Rails.logger.info "gift_record: #{gift_record.inspect}"
-
   return view_context.image_url(DEFAULT_GIFT_IMAGE) if gift_record.nil?
 
   gift_record.ogp_image_url(request)
 rescue => e
-  Rails.logger.error "Error generating gift record image URL: #{e.class} - #{e.message}"
-  Rails.logger.error e.backtrace.first(LOG_BACKTRACE_LINES).join("\n")
   view_context.image_url(DEFAULT_GIFT_IMAGE)
 end
 

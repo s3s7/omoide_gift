@@ -22,7 +22,6 @@ Sidekiq.configure_server do |config|
   if schedule.present?
     Sidekiq.schedule = schedule
     Sidekiq::Scheduler.reload_schedule!
-    Rails.logger.info("Sidekiq Scheduler: loaded #{schedule.keys.size} schedules")
   else
     Rails.logger.warn("Sidekiq Scheduler: schedule section not found in config/sidekiq.yml")
   end

@@ -91,10 +91,6 @@ gift_item_categories = [
   'その他'
 ]
 
-# gift_item_categories.each do |name|
-#   GiftItemCategory.find_or_create_by(name: name)
-# end
-
 gift_item_categories.each_with_index do |gift_item_name, index|
   gift_item_category = GiftItemCategory.find_or_create_by(name: gift_item_name)
   # 既にpositionが設定されている場合はスキップ（重複を避けるため）
@@ -122,7 +118,6 @@ end
 puts "\n=== データ整合性チェック ==="
 puts "Events count: #{Event.count}"
 puts "Relationships count: #{Relationship.count}"
-puts "Ages count: #{Age.count}"
 puts "Users count: #{User.count}"
 
 if Event.count == 0
