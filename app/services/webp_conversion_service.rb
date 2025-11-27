@@ -49,7 +49,6 @@ class WebpConversionService
     base = File.basename(original_name, File.extname(original_name))
     "#{base}.webp"
   end
-  private_class_method :build_webp_filename
 
   def self.purge_blob_if_unattached(blob)
     return unless blob.present?
@@ -57,5 +56,6 @@ class WebpConversionService
       blob.purge_later
     end
   end
-  private_class_method :purge_blob_if_unattached
+
+  private_class_method :build_webp_filename, :purge_blob_if_unattached
 end
