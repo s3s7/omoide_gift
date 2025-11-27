@@ -5,5 +5,4 @@ class Rack::Attack
       req.params["email"].to_s.downcase.gsub(/\s+/, "").presence
     end
   end
-
 end
