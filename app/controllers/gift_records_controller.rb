@@ -121,34 +121,29 @@ class GiftRecordsController < ApplicationController
 
     # 画像以外のフィールドを更新（imagesとdelete_image_idsを除外）
     update_params = gift_record_params.except(:images, :delete_image_ids)
+    creating_new_gift_person = new_gift_person_selected?
+
+    if creating_new_gift_person
+      @gift_person = current_user.gift_people.build(gift_person_params_if_present || {})
+
+      unless @gift_person.save
+        @gift_record.assign_attributes(update_params.except(:gift_people_id))
+        handle_update_failure
+        return
+      end
+
+      update_params[:gift_people_id] = @gift_person.id
+    end
 
     if @gift_record.update(update_params)
-      # 新しい画像がある場合のみ追加（既存画像は保持）
-      if new_images.present?
-        # 空の要素を除外して有効な画像のみを取得
-        valid_new_images = new_images.select { |img| img.present? && img.respond_to?(:tempfile) }
-
-      if valid_new_images.any?
-        # attachを使用して既存画像に追加
-        @gift_record.images.attach(valid_new_images)
-        @gift_record.images.reload
-      end
-      end
-
+      attach_new_images(new_images)
       flash_success(:updated, item: GiftRecord.model_name.human)
       redirect_params = params.permit(:origin, :page).to_h
       redirect_to gift_record_path(@gift_record, redirect_params)
     else
-      @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-      prepare_events_for_form
-      flash.now[:alert] = t("defaults.flash_message.not_updated", item: GiftRecord.model_name.human)
-      render :edit, status: :unprocessable_entity
+      cleanup_new_gift_person(@gift_person) if creating_new_gift_person
+      handle_update_failure
     end
-  rescue StandardError => e
-    @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
-    prepare_events_for_form
-    flash.now[:alert] = "更新中にエラーが発生しました。再度お試しください。"
-    render :edit, status: :unprocessable_entity
   end
 
   def destroy
@@ -518,6 +513,38 @@ class GiftRecordsController < ApplicationController
       .group("events.id")
       .order("COUNT(gift_records.id) DESC")
       .limit(POPULAR_EVENTS_LIMIT)
+  end
+
+  def attach_new_images(new_images)
+    return if new_images.blank?
+
+    valid_new_images = Array(new_images).select do |image|
+      image.present? && image.respond_to?(:tempfile)
+    end
+
+    return if valid_new_images.empty?
+
+    @gift_record.images.attach(valid_new_images)
+    @gift_record.images.reload
+  end
+
+  def new_gift_person_selected?
+    params.dig(:gift_record, :gift_people_id) == "new"
+  end
+
+  def handle_update_failure
+    @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
+    prepare_events_for_form
+    flash.now[:alert] = t("defaults.flash_message.not_updated", item: GiftRecord.model_name.human)
+    render :edit, status: :unprocessable_entity
+  end
+
+  def cleanup_new_gift_person(person)
+    return unless person&.persisted?
+
+    person.destroy
+  rescue StandardError
+    # best-effort cleanup
   end
 
   def handle_gift_record_submission(force_direction: nil, default_direction: nil, template: nil)

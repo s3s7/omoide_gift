@@ -58,7 +58,8 @@
 
   <!-- ギフト相手のプロフィール画像セクション -->
   <div style="margin-bottom: 24px; text-align: left;">
-    <label style="
+    <label for="gift_person_avatar"
+      style="
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
@@ -259,7 +260,9 @@
     <% remind_form_values = local_assigns[:remind_form_values] || {} %>
     <% remind_form_enabled = line_connected && local_assigns.fetch(:remind_form_enabled, remind_form_values.values.any?(&:present?)) %>
     <div style="margin-bottom: 24px; text-align: left;">
-      <label style="
+      <label
+        for="notification-toggle"
+        style="
         color-scheme: light;
         display: block;
         margin-bottom: 8px;
@@ -270,6 +273,8 @@
         通知設定
       </label>
       <select
+        id="notification-toggle"
+        name="notification_toggle"
         class="gift-form-input <%= line_connected ? '' : 'bg-gray-100 text-gray-400 cursor-not-allowed' %>"
         style="
           width: 100%;

@@ -4,6 +4,7 @@ export default class extends Controller {
   static targets = [
     "filterTypeSelect",
     "filterTypeHidden",
+    "detailLabel",
     "giftPersonSelect",
     "relationshipSelect",
     "genderSelect",
@@ -126,13 +127,17 @@ export default class extends Controller {
       if (this.hasPublicSelectTarget) this.clearValue(this.publicSelectTarget)
       if (this.hasGiftDirectionSelectTarget) this.clearValue(this.giftDirectionSelectTarget)
     }
+
+    this.updateLabelAssociation(selectedType)
   }
 
   show(element) {
     if (!element) return
     element.classList.remove("hidden")
     element.removeAttribute("aria-hidden")
-    if (element.disabled !== undefined) element.disabled = false
+    if (element.disabled !== undefined && !this.isPlaceholder(element)) {
+      element.disabled = false
+    }
   }
 
   hide(element) {
@@ -147,5 +152,44 @@ export default class extends Controller {
     if (element.tagName === "SELECT") {
       element.value = ""
     }
+  }
+
+  updateLabelAssociation(selectedType) {
+    if (!this.hasDetailLabelTarget) return
+
+    const targetElement = this.elementForType(selectedType)
+
+    if (targetElement && targetElement.id) {
+      this.detailLabelTarget.setAttribute("for", targetElement.id)
+    } else {
+      this.detailLabelTarget.removeAttribute("for")
+    }
+  }
+
+  elementForType(selectedType) {
+    switch (selectedType) {
+      case "gift_person":
+        return this.hasGiftPersonSelectTarget ? this.giftPersonSelectTarget : null
+      case "relationship":
+        return this.hasRelationshipSelectTarget ? this.relationshipSelectTarget : null
+      case "gender":
+        return this.hasGenderSelectTarget ? this.genderSelectTarget : null
+      case "age":
+        return this.hasAgeSelectTarget ? this.ageSelectTarget : null
+      case "event":
+        return this.hasEventSelectTarget ? this.eventSelectTarget : null
+      case "gift_item_category":
+        return this.hasGiftItemCategorySelectTarget ? this.giftItemCategorySelectTarget : null
+      case "is_public":
+        return this.hasPublicSelectTarget ? this.publicSelectTarget : null
+      case "gift_direction":
+        return this.hasGiftDirectionSelectTarget ? this.giftDirectionSelectTarget : null
+      default:
+        return !selectedType && this.hasPlaceholderTarget ? this.placeholderTarget : null
+    }
+  }
+
+  isPlaceholder(element) {
+    return element?.dataset?.dynamicFilterPlaceholder === "true"
   }
 }
