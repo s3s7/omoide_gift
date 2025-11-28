@@ -72,7 +72,7 @@
   <h3 class="text-sm font-medium text-gray-700">通知タイミング</h3>
 
   <div>
-    <%= label_tag :notification_days_before, "通知日", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= label_tag "remind_notification_days_before", "通知日", class: "block text-sm font-medium text-gray-700 mb-2" %>
     <%= select_tag "remind[notification_days_before]",
         options_for_select(Remind.notification_days_before_options, selected_notification_days_before),
         {
@@ -87,7 +87,7 @@
   </div>
 
   <div>
-    <%= label_tag :notification_time, "通知時刻", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= label_tag "remind_notification_time", "通知時刻", class: "block text-sm font-medium text-gray-700 mb-2" %>
     <%= select_tag "remind[notification_time]",
         options_for_select([["時刻を選択してください", ""]] + Remind.notification_time_options, selected_notification_time),
         {
