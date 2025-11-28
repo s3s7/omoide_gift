@@ -211,7 +211,7 @@ GEM
       actionmailer (>= 3.2)
       letter_opener (~> 1.0)
       railties (>= 3.2)
-    line-bot-api (2.0.0)
+    line-bot-api (2.5.0)
       base64 (~> 0.2)
       multipart-post (~> 2.4)
     lint_roller (1.1.0)
