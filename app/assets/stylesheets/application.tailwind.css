@@ -21,4 +21,11 @@
   .btn-primary-lg {
     @apply btn-primary px-6 py-3 text-lg;
   }
+
+
 }
+  @property --radialprogress {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+  }
