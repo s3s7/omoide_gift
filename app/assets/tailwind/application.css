@@ -1,31 +1,35 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* app/assets/tailwind/application.css（v4 の標準） */
+
+@import "tailwindcss";
+/* 旧 tailwind.config.js を読みたいなら */
+@config "../../../config/tailwind.config.js";
+@plugin "daisyui";
 
 @layer components {
   .btn-primary {
     @apply inline-block px-4 py-2 bg-primary text-white rounded-lg font-semibold text-center transition-all duration-200 ease-in-out;
-    @apply hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+    @apply hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/50;
     @apply active:bg-primary-dark transform active:scale-95;
   }
-  
+
   .btn-primary-outline {
     @apply inline-block px-4 py-2 border-2 border-primary text-primary rounded-lg font-semibold text-center transition-all duration-200 ease-in-out;
-    @apply hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+    @apply hover:bg-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-primary/50;
   }
-  
+
   .btn-primary-sm {
     @apply btn-primary px-3 py-1.5 text-sm;
   }
-  
+
   .btn-primary-lg {
     @apply btn-primary px-6 py-3 text-lg;
   }
-
-
 }
-  @property --radialprogress {
-  syntax: "<percentage>";
+
+
+/* これも number にしておくと安全 */
+@property --radialprogress {
+  syntax: "<number>";
   inherits: false;
-  initial-value: 0%;
-  }
+  initial-value: 0;
+}

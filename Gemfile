@@ -65,8 +65,8 @@ group :test do
   gem "simplecov", require: false
 end
 
-gem "tailwindcss-rails"
-gem "tailwindcss-ruby", "3.4.17"
+gem "tailwindcss-rails", "~> 4.0"
+gem "tailwindcss-ruby", "4.1.16"
 
 # i18n
 gem "rails-i18n", "~> 7.0.0"
