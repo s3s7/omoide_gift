@@ -127,15 +127,7 @@
                 <%= gift_record.display_item_name %>
               </h4>
             </div>
-            <div class="flex justify-between items-center mb-3">
-              <% if gift_record.amount.present? %>
-                <div class="text-right">
-                  <span class="text-lg lg:text-xl xl:text-xl font-bold" style="color: #059669 !important;">
-                    <%= gift_record.display_amount %>
-                  </span>
-                </div>
-              <% end %>
-            </div>
+            
             <div class="mb-2">
               <div class="flex items-center text-sm">
                 <i class="fas fa-calendar mr-2 text-blue-500"></i>
