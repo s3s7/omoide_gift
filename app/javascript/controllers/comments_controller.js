@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { showToast } from "../utils"
 
 export default class extends Controller {
   static targets = ["form", "list", "editModal", "editForm", "editBody"]
@@ -60,7 +61,7 @@ export default class extends Controller {
       if (data.success) {
         commentElement.remove()
         this.updateCommentsCount(-1)
-        this.showNotification('コメントを削除しました', 'success')
+        showToast('コメントを削除しました', 'success')
         
         // コメントが0になったら空メッセージを表示
         const commentsList = document.getElementById('comments-list')
@@ -74,11 +75,11 @@ export default class extends Controller {
           `
         }
       } else {
-        this.showNotification('削除に失敗しました', 'error')
+        showToast('削除に失敗しました', 'error')
       }
     })
     .catch(() => {
-      this.showNotification('通信エラーが発生しました', 'error')
+      showToast('通信エラーが発生しました', 'error')
     })
   }
 
@@ -108,13 +109,13 @@ export default class extends Controller {
       if (data.success) {
         bodyElement.textContent = data.comment.body
         this.closeEditModal()
-        this.showNotification('コメントを更新しました', 'success')
+        showToast('コメントを更新しました', 'success')
       } else {
-        this.showNotification('更新に失敗しました: ' + data.errors.join(', '), 'error')
+        showToast('更新に失敗しました: ' + data.errors.join(', '), 'error')
       }
     })
     .catch(() => {
-      this.showNotification('通信エラーが発生しました', 'error')
+      showToast('通信エラーが発生しました', 'error')
     })
   }
 
@@ -124,6 +125,8 @@ export default class extends Controller {
     const form = event.target
     const formData = new FormData(form)
     const submitBtn = form.querySelector('#comment-submit-btn')
+
+    this.hideInlineError()
     
     // ボタンを無効化
     submitBtn.disabled = true
@@ -144,14 +147,17 @@ export default class extends Controller {
         this.addCommentToList(data.comment)
         form.reset()
         this.updateCommentsCount(1)
-        this.showNotification('コメントを投稿しました', 'success')
+        this.hideInlineError()
+        showToast('コメントを投稿しました', 'success')
       } else {
         // エラー表示
-        this.showNotification('コメントの投稿に失敗しました: ' + data.errors.join(', '), 'error')
+        const errorMessage = this.buildErrorMessage(data.errors)
+        showToast(errorMessage, 'error')
       }
     })
     .catch(() => {
-      this.showNotification('通信エラーが発生しました', 'error')
+      const errorMessage = 'コメントの投稿に失敗しました: 通信エラーが発生しました'
+      showToast('通信エラーが発生しました', 'error')
     })
     .finally(() => {
       // ボタンを有効化
@@ -220,30 +226,30 @@ export default class extends Controller {
     }
   }
 
-  showNotification(message, type) {
-    // 既存の通知があれば削除
-    const existingNotification = document.querySelector('.notification')
-    if (existingNotification) {
-      existingNotification.remove()
-    }
-    
-    const notification = document.createElement('div')
-    notification.className = `notification fixed top-4 right-4 z-50 px-4 py-3 rounded-md shadow-lg ${
-      type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-    }`
-    notification.textContent = message
-    
-    document.body.appendChild(notification)
-    
-    // 3秒後に自動削除
-    setTimeout(() => {
-      notification.remove()
-    }, 3000)
-  }
-
   escapeHtml(text) {
     const div = document.createElement('div')
     div.textContent = text
     return div.innerHTML
+  }
+
+  showInlineError(message) {
+    const errorElement = document.getElementById('comment-error-message')
+    if (!errorElement) return
+    errorElement.textContent = message
+    errorElement.classList.remove('hidden')
+  }
+
+  hideInlineError() {
+    const errorElement = document.getElementById('comment-error-message')
+    if (!errorElement) return
+    errorElement.textContent = ''
+    errorElement.classList.add('hidden')
+  }
+
+  buildErrorMessage(errors) {
+    if (errors && errors.length > 0) {
+      return `コメントの投稿に失敗しました: ${errors.join(', ')}`
+    }
+    return 'コメントの投稿に失敗しました'
   }
 }

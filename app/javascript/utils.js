@@ -81,6 +81,9 @@ export function showToast(message, type = 'info') {
   } else if (type === 'error') {
     toast.classList.add('bg-red-500', 'text-white');
     toast.innerHTML = `<i class="fas fa-exclamation-triangle mr-2"></i>${message}`;
+  } else if (type === 'warning') {
+    toast.classList.add('bg-yellow-500', 'text-white');
+    toast.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
   } else {
     toast.classList.add('bg-blue-500', 'text-white');
     toast.innerHTML = `<i class="fas fa-info-circle mr-2"></i>${message}`;
