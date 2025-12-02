@@ -352,8 +352,8 @@ class GiftPeopleController < ApplicationController
 
   def apply_sorting_and_pagination
     sort_by = params[:sort_by].presence
-    # Allow only 'asc' or 'desc' to prevent SQL injection via ORDER clause
-    sort_order = params[:sort_order].to_s.downcase == 'asc' ? 'asc' : 'desc'
+
+    sort_order = params[:sort_order].to_s.downcase == "asc" ? "asc" : "desc"
 
     case sort_by
     when "gift_records_count"
