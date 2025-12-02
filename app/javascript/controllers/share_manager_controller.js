@@ -1,6 +1,9 @@
 import { Controller } from "@hotwired/stimulus"
 import { getAPIHeaders, escapeHtml } from "../utils"
 
+// Temporary kill-switch to disable all behavior of this controller
+const DISABLED = true
+
 // Connects to data-controller="share-manager"
 export default class extends Controller {
   static targets = ["modal", "preview", "textPreview", "lengthCounter"]
@@ -17,6 +20,7 @@ export default class extends Controller {
   }
 
   connect() {
+    if (DISABLED) return
     this.shareGiftRecord = null
     this.lastCreatedGiftRecordId = null
 
@@ -67,6 +71,7 @@ export default class extends Controller {
   }
 
   open() {
+    if (DISABLED) return
     if (!this.hasModalTarget) return
     this.updatePreview()
     this.updateTextPreview()
@@ -76,6 +81,7 @@ export default class extends Controller {
   }
 
   async close() {
+    if (DISABLED) return
     if (this.hasModalTarget) {
       this.modalTarget.classList.add("hidden")
       this.modalTarget.style.display = "none"
@@ -98,6 +104,7 @@ export default class extends Controller {
   }
 
   shareToX() {
+    if (DISABLED) return
     if (!this.shareGiftRecord && this.lastCreatedGiftRecordId) {
       this.shareGiftRecord = { id: this.lastCreatedGiftRecordId }
     }
@@ -122,6 +129,7 @@ export default class extends Controller {
 
   // Helpers
   updatePreview() {
+    if (DISABLED) return
     if (!this.hasPreviewTarget) return
     const record = this.shareGiftRecord || {}
 
@@ -147,6 +155,7 @@ export default class extends Controller {
   }
 
   updateTextPreview() {
+    if (DISABLED) return
     if (!this.hasTextPreviewTarget || !this.hasLengthCounterTarget) return
     const text = this.generateShareText(this.shareGiftRecord || {})
     this.textPreviewTarget.innerHTML = escapeHtml(text).replace(/\n/g, "<br>")

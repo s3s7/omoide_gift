@@ -50,8 +50,8 @@ import UserFormController from "./user_form_controller"
 application.register("user-form", UserFormController)
 
 
-import FlashMessagesController from "./flash_messages_controller"
-application.register("flash-messages", FlashMessagesController)
-
 import CharacterCounterController from "./character_counter_controller"
 application.register("character-counter", CharacterCounterController)
+
+import ToastController from "./toast_controller"
+application.register("toast", ToastController)
