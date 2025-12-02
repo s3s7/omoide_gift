@@ -352,7 +352,8 @@ class GiftPeopleController < ApplicationController
 
   def apply_sorting_and_pagination
     sort_by = params[:sort_by].presence
-    sort_order = params[:sort_order].presence || "desc"
+    # Allow only 'asc' or 'desc' to prevent SQL injection via ORDER clause
+    sort_order = params[:sort_order].to_s.downcase == 'asc' ? 'asc' : 'desc'
 
     case sort_by
     when "gift_records_count"
@@ -360,7 +361,7 @@ class GiftPeopleController < ApplicationController
         .left_joins(:gift_records)
         .select("gift_people.*, COUNT(gift_records.id) as gift_records_count")
         .group("gift_people.id")
-        .order("gift_records_count #{sort_order}, gift_people.name #{sort_order}")
+        .order(Arel.sql("gift_records_count #{sort_order}, gift_people.name #{sort_order}"))
         .page(params[:page]).per(per_page_count)
     else
       # デフォルト：名前順
