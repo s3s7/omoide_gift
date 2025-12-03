@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Favorite, type: :model do
-  describe 'associations' do
+  describe 'アソシエーション' do
     it 'userに属すること' do
       expect(Favorite.reflect_on_association(:user).macro).to eq(:belongs_to)
     end
@@ -11,7 +11,7 @@ RSpec.describe Favorite, type: :model do
     end
   end
 
-  describe 'validations' do
+  describe 'バリデーション' do
     let(:user) { create(:user) }
     let(:gift_record) { create(:gift_record, user: user) }
 

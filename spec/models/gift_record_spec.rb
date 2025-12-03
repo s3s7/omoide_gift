@@ -82,7 +82,7 @@ RSpec.describe GiftRecord, type: :model do
   describe 'インスタンスメソッド' do
     let(:gift_record) { create(:gift_record, amount: 1500) }
 
-    describe '#display_amount' do
+    describe '金額表示（#display_amount）' do
       it 'amountが設定されている場合、フォーマットされた金額を返す' do
         expect(gift_record.display_amount).to eq('¥1,500')
       end
@@ -93,14 +93,14 @@ RSpec.describe GiftRecord, type: :model do
       end
     end
 
-    describe '#display_gift_date' do
+    describe '贈った日付表示（#display_gift_date）' do
       it 'gift_atが設定されている場合、フォーマットされた日付を返す' do
         gift_record.gift_at = Date.new(2024, 12, 25)
         expect(gift_record.display_gift_date).to eq('12/25')
       end
     end
 
-    describe '#display_item_name' do
+    describe '贈り物名表示（#display_item_name）' do
       it 'item_nameが設定されている場合、その値を返す' do
         expect(gift_record.display_item_name).to eq(gift_record.item_name)
       end
@@ -116,14 +116,14 @@ RSpec.describe GiftRecord, type: :model do
     let!(:recent_record) { create(:gift_record, created_at: 1.day.ago) }
     let!(:old_record) { create(:gift_record, created_at: 1.week.ago) }
 
-    describe '.recent' do
+    describe '最新順スコープ（.recent）' do
       it '作成日の降順で並んでいる' do
         records = GiftRecord.recent.where(id: [ recent_record.id, old_record.id ]).to_a
         expect(records).to eq([ recent_record, old_record ])
       end
     end
 
-    describe '.with_amount' do
+    describe '金額ありスコープ（.with_amount）' do
       let!(:record_with_amount) { create(:gift_record, amount: 1000) }
       let!(:record_without_amount) { create(:gift_record, amount: nil) }
 
@@ -138,7 +138,7 @@ RSpec.describe GiftRecord, type: :model do
   describe 'カスタムバリデーション' do
     subject { build(:gift_record, user: user, event: event, gift_person: gift_person) }
 
-    describe 'gift_at_is_reasonable_date' do
+    describe '日付妥当性検証（#gift_at_is_reasonable_date）' do
       it '100年以上前の日付は無効' do
         subject.gift_at = 101.years.ago
         expect(subject).to be_invalid

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'GiftRecords Sorting', type: :request do
+RSpec.describe 'ギフト記録のソート', type: :request do
   let(:user1) { create(:user) }
   let(:user2) { create(:user) }
   let(:user3) { create(:user) }

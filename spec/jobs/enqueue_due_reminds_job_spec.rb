@@ -42,7 +42,6 @@ RSpec.describe EnqueueDueRemindsJob, type: :job do
         described_class.perform_now
       }.to have_enqueued_job(RemindNotificationJob).with(due.id).exactly(:once)
 
-      # Ensure nothing else enqueued
       enqueued_ids = ActiveJob::Base.queue_adapter.enqueued_jobs.map { |j| j[:args].first }
       expect(enqueued_ids).to include(due.id)
       expect(enqueued_ids).not_to include(not_due_future.id)

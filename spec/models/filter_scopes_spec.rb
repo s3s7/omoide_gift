@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'フィルタースコープ', type: :model do
   let(:user) { create(:user) }
 
-  describe 'GiftRecord.by_date_range' do
+  describe '日付範囲スコープ' do
     let!(:target_record) { create(:gift_record, user: user, gift_at: 1.week.ago) }
     let!(:outside_record) { create(:gift_record, user: user, gift_at: 1.month.ago) }
 
@@ -15,7 +15,7 @@ RSpec.describe 'フィルタースコープ', type: :model do
     end
   end
 
-  describe 'GiftRecord.by_gift_person' do
+  describe 'ギフト相手スコープ' do
     let(:person1) { create(:gift_person, user: user) }
     let(:person2) { create(:gift_person, user: user) }
     let!(:record1) { create(:gift_record, user: user, gift_people_id: person1.id) }
@@ -29,7 +29,7 @@ RSpec.describe 'フィルタースコープ', type: :model do
     end
   end
 
-  describe 'Event.frequently_used' do
+  describe 'よく使うイベント' do
     let(:popular_event) { create(:event) }
     let(:rare_event) { create(:event) }
 
@@ -47,7 +47,7 @@ RSpec.describe 'フィルタースコープ', type: :model do
     end
   end
 
-  describe 'Relationship.active' do
+  describe '有効な関係性スコープ' do
     let!(:valid_rel) { create(:relationship) }
     let!(:empty_rel) do
       # バリデーションをスキップして空の名前のRelationshipを作成

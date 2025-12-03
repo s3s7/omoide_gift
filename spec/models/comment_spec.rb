@@ -20,7 +20,7 @@ RSpec.describe Comment, type: :model do
     let(:other_user) { create(:user) }
     let(:other_comment) { create(:comment, user: other_user, gift_record: gift_record) }
 
-    describe '#can_edit_or_delete?' do
+    describe '編集・削除権限の判定' do
       it 'コメント投稿者は編集・削除権限を持つ' do
         expect(comment.can_edit_or_delete?(user)).to be true
       end
@@ -58,7 +58,7 @@ RSpec.describe Comment, type: :model do
       expect(short_comment.body).to eq("短いコメント")
     end
 
-    describe '#excerpt' do
+    describe 'コメント抜粋表示（#excerpt）' do
       it '長いコメントを切り詰める' do
         result = long_comment.excerpt
         expect(result.length).to eq(53) # 50文字 + "..."
@@ -70,7 +70,7 @@ RSpec.describe Comment, type: :model do
       end
     end
 
-    describe '#display_created_at' do
+    describe '作成日時の表示（#display_created_at）' do
       context '今日のコメント' do
         before { allow(comment).to receive(:created_at).and_return(Time.current) }
 

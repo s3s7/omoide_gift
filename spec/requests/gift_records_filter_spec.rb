@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'GiftRecords Filter', type: :request do
+RSpec.describe 'ギフト記録のフィルター', type: :request do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
   let(:relationship) { create(:relationship) }
@@ -28,7 +28,7 @@ RSpec.describe 'GiftRecords Filter', type: :request do
     )
   end
 
-  describe 'GET /gift_records フィルター機能' do
+  describe 'ギフト記録のフィルター機能' do
     before { sign_in user }
 
     context '検索機能' do
@@ -128,7 +128,7 @@ RSpec.describe 'GiftRecords Filter', type: :request do
     end
   end
 
-  describe 'GET /gift_records/autocomplete' do
+  describe 'ギフト記録のオートコンプリート' do
     before { sign_in user }
 
     it '公開記録のオートコンプリートは200（JSON）' do
