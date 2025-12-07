@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Authentication', type: :request do
+RSpec.describe '認証', type: :request do
   let!(:user) { create(:user) }
 
   # HTMLリクエスト用（allow_browser を確実に通すモダンUA + Sec-CH）

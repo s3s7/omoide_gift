@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Favorites', type: :request do
+RSpec.describe 'お気に入り', type: :request do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
   let(:public_gift_record) { create(:gift_record, user: other_user, is_public: true) }

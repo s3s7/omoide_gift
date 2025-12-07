@@ -6,7 +6,7 @@ RSpec.describe "オートコンプリート機能", type: :request do
 
   before { sign_in user }
 
-  describe "GET /gift_records/autocomplete" do
+  describe "ギフト記録のオートコンプリート" do
     let!(:searchable_record) do
       create(:gift_record,
         user: user,
@@ -70,7 +70,7 @@ RSpec.describe "オートコンプリート機能", type: :request do
     end
   end
 
-  describe "GET /gift_people/autocomplete" do
+  describe "ギフト相手のオートコンプリート" do
     let!(:searchable_person) do
       create(:gift_person,
         user: user,

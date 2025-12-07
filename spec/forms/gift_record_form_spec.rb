@@ -6,8 +6,8 @@ RSpec.describe GiftRecordForm, type: :form do
   let(:relationship) { create(:relationship) }
   let(:existing_gift_person) { create(:gift_person, user: user, relationship: relationship) }
 
-  describe "#save" do
-    it "creates a gift record with an existing gift person" do
+  describe "保存処理" do
+    it "既存のギフト相手でギフト記録を作成できる" do
       form = described_class.new(
         user: user,
         gift_record_params: permitted_gift_record_params,
@@ -21,7 +21,7 @@ RSpec.describe GiftRecordForm, type: :form do
       expect(form.gift_record.gift_person).to eq(existing_gift_person)
     end
 
-    it "creates a new gift person when requested" do
+    it "新しいギフト相手を指定した場合に作成できる" do
       form = described_class.new(
         user: user,
         gift_record_params: permitted_gift_record_params(gift_people_id: "new"),
@@ -40,7 +40,7 @@ RSpec.describe GiftRecordForm, type: :form do
       expect(form.gift_record.gift_person.user).to eq(user)
     end
 
-    it "exposes validation errors when the new gift person is invalid" do
+    it "新規ギフト相手が無効な場合はバリデーションエラーを示す" do
       form = described_class.new(
         user: user,
         gift_record_params: permitted_gift_record_params(gift_people_id: "new"),
@@ -53,7 +53,7 @@ RSpec.describe GiftRecordForm, type: :form do
       expect(form.gift_record).not_to be_persisted
     end
 
-    it "rolls back the newly created gift person when the gift record is invalid" do
+    it "ギフト記録が無効な場合は新規作成したギフト相手をロールバックする" do
       form = described_class.new(
         user: user,
         gift_record_params: permitted_gift_record_params(gift_people_id: "new", event_id: nil),
@@ -70,7 +70,7 @@ RSpec.describe GiftRecordForm, type: :form do
       expect(form.gift_record.errors[:event_id]).to be_present
     end
 
-    it "honors a forced gift direction" do
+    it "強制指定の贈受方向を反映する" do
       form = described_class.new(
         user: user,
         gift_record_params: permitted_gift_record_params,

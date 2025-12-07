@@ -78,7 +78,7 @@ RSpec.describe Remind, type: :model do
     end
   end
 
-  describe 'scopes' do
+  describe 'スコープ' do
     it '.due_todayは過去時刻で未送信のリマインドを含む' do
       past_person = create(:gift_person, user: user)
       future_person = create(:gift_person, user: user)

@@ -6,7 +6,7 @@ RSpec.describe GiftRecordsController, type: :controller do
   let(:event) { create(:event) }
   let(:gift_person) { create(:gift_person, user: user) }
 
-  describe 'GET #index' do
+  describe '一覧表示' do
     let!(:public_record) { create(:gift_record, user: user, event: event, gift_person: gift_person, is_public: true) }
     let!(:private_record) { create(:private_gift_record, user: other_user, event: event, gift_person: create(:gift_person, user: other_user), is_public: false) }
 
@@ -42,7 +42,7 @@ RSpec.describe GiftRecordsController, type: :controller do
     end
   end
 
-  describe 'GET #show' do
+  describe '詳細表示' do
     let!(:public_record) { create(:gift_record, user: other_user, event: event, gift_person: create(:gift_person, user: other_user), is_public: true) }
     let!(:private_record) { create(:private_gift_record, user: user, event: event, gift_person: gift_person, is_public: false) }
 
@@ -75,7 +75,7 @@ RSpec.describe GiftRecordsController, type: :controller do
     end
   end
 
-  describe 'GET #new' do
+  describe '新規作成フォーム' do
     context '未ログイン状態' do
       it 'ログイン画面にリダイレクト' do
         get :new
@@ -95,7 +95,7 @@ RSpec.describe GiftRecordsController, type: :controller do
     end
   end
 
-  describe 'POST #create' do
+  describe '作成' do
     let(:valid_attributes) do
       {
         item_name: 'テストプレゼント',
@@ -147,7 +147,7 @@ RSpec.describe GiftRecordsController, type: :controller do
     end
   end
 
-  describe 'GET #edit' do
+  describe '編集フォーム' do
     let!(:gift_record) { create(:gift_record, user: user, event: event, gift_person: gift_person) }
     let!(:other_user_record) { create(:gift_record, user: other_user, event: event, gift_person: create(:gift_person, user: other_user)) }
 
@@ -175,7 +175,7 @@ RSpec.describe GiftRecordsController, type: :controller do
     end
   end
 
-  describe 'PATCH #update' do
+  describe '更新' do
     let!(:gift_record) { create(:gift_record, user: user, event: event, gift_person: gift_person) }
     let(:update_attributes) { { item_name: '更新されたプレゼント' } }
 
@@ -211,7 +211,7 @@ RSpec.describe GiftRecordsController, type: :controller do
     end
   end
 
-  describe 'DELETE #destroy' do
+  describe '削除' do
     let!(:gift_record) { create(:gift_record, user: user, event: event, gift_person: gift_person) }
     let!(:other_user_record) { create(:gift_record, user: other_user, event: event, gift_person: create(:gift_person, user: other_user)) }
 

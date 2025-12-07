@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe GiftPerson, type: :model do
-  describe 'associations' do
+  describe 'アソシエーション' do
     it 'userに属すること' do
       expect(GiftPerson.reflect_on_association(:user).macro).to eq(:belongs_to)
     end
@@ -19,10 +19,10 @@ RSpec.describe GiftPerson, type: :model do
     end
   end
 
-  describe 'validations' do
+  describe 'バリデーション' do
     let(:gift_person) { build(:gift_person) }
 
-    context 'name' do
+    context '名前' do
       it '名前があると有効であること' do
         expect(gift_person).to be_valid
       end

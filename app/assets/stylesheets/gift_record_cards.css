@@ -241,11 +241,11 @@
   }
 }
 
-.gift-record-card:hover {
+/* .gift-record-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   border-color: #f9a8d4;
-}
+} */
 
 /* ==================== 画像プレースホルダーエリア ==================== */
 
@@ -629,9 +629,6 @@ html[data-turbo-preview] .gift-record-card {
 /* 幅はTailwindクラス（例: w-[90%] sm:w-40 md:w-full）で制御。
    ここでは強制指定を行わず、上部の .gift-person-card-fixed(height固定) と整合性を保つ。 */
 
-/* ==================== Tailwind Grid オーバーライド（撤廃） ==================== */
-/* Removed global overrides of Tailwind grid to prevent conflicts.
-   Use .gift-records-grid for gift records pages instead. */
 
 /* ==================== プリント対応 ==================== */
 
@@ -653,8 +650,6 @@ html[data-turbo-preview] .gift-record-card {
     border-bottom: 1px solid #000000;
   }
   
-  /* Removed global grid override in print as well */
-  
   .gift-person-card-fixed {
     width: 200px !important;
     min-width: 200px !important;
@@ -663,3 +658,14 @@ html[data-turbo-preview] .gift-record-card {
 }
 
 /* (reverted) 詳細ページのギャラリーはTailwindのデフォルトグリッドを使用 */
+
+/* ==================== ページ単位のモーション無効化 ==================== */
+/* .no-lift を付与したページでは、ホバーの移動と初回フェードインを無効化 */
+.no-lift .gift-record-card {
+  animation: none !important;
+  transition: none !important;
+}
+
+.no-lift .gift-record-card:hover {
+  transform: none !important;
+}

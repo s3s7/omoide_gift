@@ -6,7 +6,7 @@ RSpec.describe LineNotificationService, type: :service do
   let(:user) { create(:user, :line_user) }
   let(:gift_person) { create(:gift_person, user: user) }
 
-  describe '#send_reminder_notification' do
+  describe 'リマインダー通知送信' do
     let(:remind) { create(:remind, user: user, gift_person: gift_person, notification_offset_minutes: 10) }
 
     before do
@@ -58,7 +58,7 @@ RSpec.describe LineNotificationService, type: :service do
     end
   end
 
-  describe '#send_due_reminders' do
+  describe '期限到来リマインド送信' do
     it '期限到来リマインドの成功数と失敗数を集計する' do
       # 準備: 期限到来と未到来をそれぞれ用意
       due_remind = create(:remind, user: user, gift_person: gift_person, notification_offset_minutes: 5)

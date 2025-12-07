@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'GiftPeople', type: :request do
+RSpec.describe 'ギフト相手', type: :request do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
   let(:relationship) { create(:relationship) }

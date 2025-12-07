@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'GiftPeople Filter', type: :request do
+RSpec.describe 'ギフト相手のフィルター', type: :request do
   let(:user) { create(:user) }
   let(:relationship) { create(:relationship) }
   let(:other_relationship) { create(:relationship) }
@@ -30,7 +30,7 @@ RSpec.describe 'GiftPeople Filter', type: :request do
 
   before { sign_in user }
 
-  describe 'GET /gift_people 検索フィルター' do
+  describe 'ギフト相手の検索フィルター' do
     context '複数フィールド検索（ログイン時は許可）' do
       it 'メモ内容での検索要求は成功する' do
         get gift_people_path, params: { search: 'お世話になっている' }
@@ -127,7 +127,7 @@ RSpec.describe 'GiftPeople Filter', type: :request do
     end
   end
 
-  describe 'GET /gift_people/autocomplete' do
+  describe 'ギフト相手のオートコンプリート' do
     it 'JSON形式の検索結果' do
       get autocomplete_gift_people_path, params: { q: '田中' }
       expect(response).to have_http_status(:ok)
