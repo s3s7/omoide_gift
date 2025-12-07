@@ -1,7 +1,8 @@
 
 <% content_for(:title, "ギフト相手の編集") %>
-<!-- メインコンテナ - 中央寄せ -->
-<div class="max-w-6xl mx-auto">
+<div data-controller="delete-modal" class="max-w-6xl mx-auto">
+  <!-- メインコンテナ - 中央寄せ -->
+  <div class="max-w-6xl mx-auto">
   <!-- ヘッダー部分 -->
   <div class="mb-6 mt-4">
     <div class="flex items-center justify-between mb-4">
@@ -51,6 +52,7 @@
       <%= render 'form', gift_person: @gift_person, edit_mode: true %>
     </div>
   </div>
+  </div>
+  <!-- 削除確認モーダル -->
+  <%= render 'shared/delete_confirmation_modal' %>
 </div>
-<!-- 削除確認モーダル -->
-<%= render 'shared/delete_confirmation_modal' %>

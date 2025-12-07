@@ -1,99 +1,101 @@
 <%#ギフト記録編集ページ %>
 <% content_for(:title, "#{@gift_record.display_item_name} - ギフト記録編集") %>
-<!-- メインコンテナ - 中央寄せ -->
-<div class="max-w-6xl mx-auto">
-  <% back_params = (params.permit(:page).to_h || {}).dup %>
-  <% back_params[:page] = params[:page] if params[:page].present? %>
-  <% first_item = case params[:origin]
-     when 'my'
-       { label: '自分のギフト', url: my_index_gift_records_path(back_params), icon: 'fas fa-gift text-primary' }
-     when 'favorites'
-       { label: 'お気に入り一覧', url: favorites_path, icon: 'fas fa-heart text-red-500' }
-     else
-       { label: 'みんなのギフト', url: gift_records_path(back_params), icon: 'fas fa-home text-primary' }
-     end %>
+<div data-controller="delete-modal" class="max-w-6xl mx-auto">
+  <!-- メインコンテナ - 中央寄せ -->
+  <div class="max-w-6xl mx-auto">
+    <% back_params = (params.permit(:page).to_h || {}).dup %>
+    <% back_params[:page] = params[:page] if params[:page].present? %>
+    <% first_item = case params[:origin]
+      when 'my'
+        { label: '自分のギフト', url: my_index_gift_records_path(back_params), icon: 'fas fa-gift text-primary' }
+      when 'favorites'
+        { label: 'お気に入り一覧', url: favorites_path, icon: 'fas fa-heart text-red-500' }
+      else
+        { label: 'みんなのギフト', url: gift_records_path(back_params), icon: 'fas fa-home text-primary' }
+      end %>
 
-  <%= render 'shared/breadcrumbs', items: [
+      <%= render 'shared/breadcrumbs', items: [
         first_item,
         { label: truncate(@gift_record.display_item_name, length: 20), url: @gift_record },
         { label: '編集', current: true }
       ] %>
 
-  <!-- メインコンテンツ -->
-  <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-    <!-- ヘッダー -->
-    <div class="px-6 py-4 text-white" style="background-color: #FC913A;">
-      <div class="flex justify-between items-start">
-        <div>
-          <h1 class="text-2xl font-bold">
-            <i class="fas fa-edit mr-2"></i>
-            ギフト記録を編集
-          </h1>
-          <p class="text-orange-100 mt-1">
-            「<%= @gift_record.display_item_name %>」の情報を更新します
-          </p>
-        </div>
-        <div class="flex space-x-2">
-          <%= link_to gift_record_path(@gift_record, params.permit(:origin, :page)), 
-              class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
-              aria: { label: "編集をキャンセルして詳細を表示" } do %>
-            <i class="fas fa-eye mr-1"></i>
-            詳細表示
-          <% end %>
-          <%= link_to (first_item[:url] || gift_records_path), 
-              class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
-              aria: { label: "編集をキャンセルして一覧に戻る" } do %>
-            <i class="fas fa-list mr-1"></i>
-            一覧に戻る
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <!-- フォーム -->
-    <div class="px-6 py-6">
-
-      <!-- フォーム本体 -->
-      <div class="max-w-4xl mx-auto">
-        <%= render 'form', gift_record: @gift_record %>
-      </div>
-
-      <!-- 補助操作 -->
-      <div class="mt-8 pt-6 border-t border-gray-200">
-        <div class="flex justify-between items-center">
-          <div class="text-sm text-gray-500">
-            <i class="fas fa-clock mr-1"></i>
-            作成日: <%= l(@gift_record.created_at, format: :long) %>
-            <% if @gift_record.updated_at != @gift_record.created_at %>
-              <span class="ml-4">
-                <i class="fas fa-edit mr-1"></i>
-                最終更新: <%= l(@gift_record.updated_at, format: :long) %>
-              </span>
+    <!-- メインコンテンツ -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <!-- ヘッダー -->
+      <div class="px-6 py-4 text-white" style="background-color: #FC913A;">
+        <div class="flex justify-between items-start">
+          <div>
+            <h1 class="text-2xl font-bold">
+              <i class="fas fa-edit mr-2"></i>
+              ギフト記録を編集
+            </h1>
+            <p class="text-orange-100 mt-1">
+              「<%= @gift_record.display_item_name %>」の情報を更新します
+            </p>
+          </div>
+          <div class="flex space-x-2">
+            <%= link_to gift_record_path(@gift_record, params.permit(:origin, :page)), 
+                class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
+                aria: { label: "編集をキャンセルして詳細を表示" } do %>
+              <i class="fas fa-eye mr-1"></i>
+              詳細表示
+            <% end %>
+            <%= link_to (first_item[:url] || gift_records_path), 
+                class: "inline-flex items-center px-3 py-2 border border-white/30 rounded-md text-sm font-medium text-white hover:bg-white/20 transition-colors",
+                aria: { label: "編集をキャンセルして一覧に戻る" } do %>
+              <i class="fas fa-list mr-1"></i>
+              一覧に戻る
             <% end %>
           </div>
-          
-          <div class="flex space-x-3">
-            <%= link_to gift_record_path(@gift_record, params.permit(:origin, :page)), 
-                class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
-              <i class="fas fa-times mr-2"></i>
-              キャンセル
-            <% end %>
+        </div>
+      </div>
+
+      <!-- フォーム -->
+      <div class="px-6 py-6">
+
+        <!-- フォーム本体 -->
+        <div class="max-w-4xl mx-auto">
+          <%= render 'form', gift_record: @gift_record %>
+        </div>
+
+        <!-- 補助操作 -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+          <div class="flex justify-between items-center">
+            <div class="text-sm text-gray-500">
+              <i class="fas fa-clock mr-1"></i>
+              作成日: <%= l(@gift_record.created_at, format: :long) %>
+              <% if @gift_record.updated_at != @gift_record.created_at %>
+                <span class="ml-4">
+                  <i class="fas fa-edit mr-1"></i>
+                  最終更新: <%= l(@gift_record.updated_at, format: :long) %>
+                </span>
+              <% end %>
+            </div>
             
-            <button type="button"
-                    data-action="click->delete-modal#show"
-                    data-item-name="<%= j(@gift_record.display_item_name) %>"
-                    data-delete-url="<%= gift_record_path(@gift_record) %>"
-                    data-csrf-token="<%= form_authenticity_token %>"
-                    class="inline-flex items-center px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-              <i class="fas fa-trash mr-2"></i>
-              削除
-            </button>
+            <div class="flex space-x-3">
+              <%= link_to gift_record_path(@gift_record, params.permit(:origin, :page)), 
+                  class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" do %>
+                <i class="fas fa-times mr-2"></i>
+                キャンセル
+              <% end %>
+              
+              <button type="button"
+                      data-action="click->delete-modal#show"
+                      data-item-name="<%= j(@gift_record.display_item_name) %>"
+                      data-delete-url="<%= gift_record_path(@gift_record) %>"
+                      data-csrf-token="<%= form_authenticity_token %>"
+                      class="inline-flex items-center px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <i class="fas fa-trash mr-2"></i>
+                削除
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- 削除確認モーダル -->
-<%= render 'shared/delete_confirmation_modal' %>
+  <!-- 削除確認モーダル -->
+  <%= render 'shared/delete_confirmation_modal' %>
+</div>
