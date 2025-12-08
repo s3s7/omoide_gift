@@ -14,7 +14,7 @@
  *= require_self
 */
 
-.\n+/* Prevent horizontal scroll on mobile */
+/* Prevent horizontal scroll on mobile */
 html, body {
   overflow-x: hidden;
 }
