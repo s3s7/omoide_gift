@@ -46,7 +46,6 @@ export default class extends Controller {
   stopEvent(event) {
     if (event) {
       if (typeof event.stopPropagation === 'function') event.stopPropagation()
-      // iOS/Safari でのネイティブ UI 操作時の不意な既定動作抑止は避ける
       // ここでは preventDefault は行わず、バブリングのみ止める
     }
   }

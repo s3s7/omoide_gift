@@ -13,9 +13,9 @@
   
   <!-- 削除対象画像IDの隠しフィールド（フォーム内に配置） -->
   <div id="delete-image-fields" style="display: none;" data-image-preview-target="deleteImageContainer"></div>
-  
+
   <!-- イベント選択 -->
-  <div style="margin-bottom: 24px; text-align: left;" data-controller="event-selector">
+  <div style="margin-bottom: 24px; text-align: left;">
     <%= f.label :event_id, "イベント", style: "
       display: block;
       margin-bottom: 8px;
@@ -47,11 +47,11 @@
           ",
           id: "gift_record_event_id",
           required: true,
-          data: { gift_records_target: "eventSelect", event_selector_target: "select", action: "pointerdown->gift-records#stopEvent touchstart->gift-records#stopEvent click->gift-records#stopEvent change->gift-records#stopEvent" }
+          data: { gift_records_target: "eventSelect", action: "pointerdown->gift-records#stopEvent click->gift-records#stopEvent change->gift-records#stopEvent" }
         } %>
     
     <!-- ヘルプテキスト -->
-    <div style="font-size: 12px; color: #888; margin-top: 8px;" data-event-selector-target="help">
+    <div style="font-size: 12px; color: #888; margin-top: 8px;">
       <i class="fas fa-info-circle" style="margin-right: 4px;"></i>
       このギフトに関連するイベントを選択してください（必須）
     </div>
@@ -135,7 +135,7 @@
           required: true,
           data: { 
             gift_records_target: "giftPeopleSelect",
-            action: "pointerdown->gift-records#stopEvent touchstart->gift-records#stopEvent change->gift-records#giftPersonChanged change->gift-records#stopEvent click->gift-records#stopEvent"
+            action: "pointerdown->gift-records#stopEvent change->gift-records#giftPersonChanged change->gift-records#stopEvent click->gift-records#stopEvent"
           }
         } %>
 
@@ -235,7 +235,7 @@
                 color: black;
               ",
               id: "gift_person_relationship_id",
-              data: { action: "pointerdown->gift-records#stopEvent touchstart->gift-records#stopEvent change->gift-records#stopEvent click->gift-records#stopEvent" }
+              data: { action: "pointerdown->gift-records#stopEvent change->gift-records#stopEvent click->gift-records#stopEvent" }
             } %>
         <!-- ヘルプテキスト -->
         <div style="font-size: 12px; color: #888; margin-top: 8px;">
@@ -570,7 +570,7 @@
               color: black;
             ",
             id: "gift_record_gift_item_category_id",
-            data: { action: "pointerdown->gift-records#stopEvent touchstart->gift-records#stopEvent change->gift-records#stopEvent click->gift-records#stopEvent" }
+            data: { action: "pointerdown->gift-records#stopEvent change->gift-records#stopEvent click->gift-records#stopEvent" }
           }
     %>
 

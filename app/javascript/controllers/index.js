@@ -4,14 +4,10 @@
 
 import { application } from "./application"
 
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
 
 import DeleteModalController from "./delete_modal_controller"
 application.register("delete-modal", DeleteModalController)
 
-import HamburgerMenuController from "./hamburger_menu_controller"
-application.register("hamburger-menu", HamburgerMenuController)
 
 import GiftRecordsController from "./gift_records_controller"
 application.register("gift-records", GiftRecordsController)
@@ -28,8 +24,9 @@ application.register("dynamic-filter", DynamicFilterController)
 import FavoritesController from "./favorites_controller"
 application.register("favorites", FavoritesController)
 
-import EventSelectorController from "./event_selector_controller"
-application.register("event-selector", EventSelectorController)
+import HamburgerMenuController from "./hamburger_menu_controller"
+application.register("hamburger-menu", HamburgerMenuController)
+
 
 import GiftDateSelectorController from "./gift_date_selector_controller"
 application.register("gift-date-selector", GiftDateSelectorController)
