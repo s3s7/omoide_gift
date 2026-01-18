@@ -91,21 +91,23 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 LINE Messaging API
 
 ## 技術スタック
-- Railsのバージョン
-7系
-
-- 使用予定のデプロイサーバー
-Render
-
-- 使用予定のDB
-Postgresql
-
-- 使用予定のストレージサーバー
-AWS s3 （拡張予定の機能で使用）
-
-- 高度な技術で使う予定のGemやライブラリなど
-
-LINE Messaging API
+| 区分 | 技術・ツール | 補足 |
+|---|---|---|
+| バックエンド | ruby:3.3.6 / Ruby on Rails 7.2.1 |  |
+| フロントエンド | Ruby on Rails / JavaScript / Hotwire (Turbo, Stimulus) |  |
+| CSSフレームワーク | Tailwind CSS + daisyUI | 効率的なUI開発とデザインシステムの統一 |
+| Web API | LINE Messaging API |  |
+| データベースサーバー | PostgreSQL |  |
+| インメモリデータベース | Redis |  |
+| 認証 | Devise / OmniAuth (Line OAuth2) |  |
+| ファイルサーバー | Amazon S3 |  |
+| 環境構築 | Docker |  |
+| CI/CD | GitHub Actions |  |
+| アプリケーションサーバー | Render |  |
+| テスト | RSpec / Factory Bot / Capybara |  |
+| バックグラウンドジョブ | Sidekiq |  |
+| その他 | Kaminari (ページネーション) / Meta-tags (OGP) |  |
+| 画像管理 | Active Storage + ImageMagick | ギフト画像やプロフィール画像の効率的な管理と最適化 |
 
 ##画面遷移図
 Figma：https://www.figma.com/design/sWr8c1NOlXmtgciSjGa4qQ/giftApp?node-id=0-1&p=f&t=eRLWYUXpuCbIHNnY-0
