@@ -1,10 +1,6 @@
 class ImagesController < ApplicationController
-  DEFAULT_TEXT = "ギフト記録".freeze
   MAX_TEXT_LENGTH = 50
-  TRUNCATED_SUFFIX = "...".freeze
-  ETAG_VERSION = "v1".freeze
   OGP_CACHE_TTL = 1.hour
-  CACHE_CONTROL_HEADER = "public, max-age=3600".freeze
   DEFAULT_OGP_PATH = Rails.root.join("app/assets/images/default_ogp.webp")
   FALLBACK_OGP_PATH = Rails.root.join("app/assets/images/ogp.webp")
 
@@ -33,15 +29,15 @@ class ImagesController < ApplicationController
 
   def sanitize_text(text)
     # テキストのサニタイズと長さ制限
-    return DEFAULT_TEXT if text.blank?
+    return "ギフト記録" if text.blank?
 
     # 改行や特殊文字を除去、長さを制限
     sanitized = text.to_s.gsub(/[\r\n\t]/, " ").strip
-    sanitized.length > MAX_TEXT_LENGTH ? sanitized[0...MAX_TEXT_LENGTH] + TRUNCATED_SUFFIX : sanitized
+    sanitized.length > MAX_TEXT_LENGTH ? sanitized[0...MAX_TEXT_LENGTH] + "..." : sanitized
   end
 
   def generate_etag(text)
-    Digest::MD5.hexdigest("ogp_#{text}_#{ETAG_VERSION}")
+    Digest::MD5.hexdigest("ogp_#{text}_v1")
   end
 
   def render_ogp_image(text, etag)
@@ -52,7 +48,7 @@ class ImagesController < ApplicationController
     end
 
     if image_data
-      response.headers["Cache-Control"] = CACHE_CONTROL_HEADER
+      response.headers["Cache-Control"] = "public, max-age=3600"
       response.headers["ETag"] = etag
 
       send_data image_data, type: "image/webp", disposition: "inline"
