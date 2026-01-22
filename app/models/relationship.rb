@@ -15,13 +15,10 @@ class Relationship < ApplicationRecord
   scope :active, -> { where.not(name: [ nil, "" ]) }
 
   # 性別推定（カラム追加なし）：関係性名から判定
-  MALE_NAMES = %w[父 兄 弟 祖父 息子 義父].freeze
-  FEMALE_NAMES = %w[母 姉 妹 祖母 娘 義母].freeze
-
   def self.ids_for_gender(gender)
     names = case gender.to_s
-    when "male" then MALE_NAMES
-    when "female" then FEMALE_NAMES
+    when "male" then %w[父 兄 弟 祖父 息子 義父]
+    when "female" then %w[母 姉 妹 祖母 娘 義母]
     else []
     end
     where(name: names).pluck(:id)

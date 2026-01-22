@@ -1,11 +1,5 @@
 class Remind < ApplicationRecord
-  DAYS_RANGE = (0..30).freeze
-  HOURS_RANGE = (0..23).freeze
-  HALF_HOUR_MINUTES = [ 0, 30 ].freeze
   MAX_MINUTE = 59
-  NOTIFY_RANGE_START_LABEL = "0:00".freeze
-  NOTIFY_RANGE_END_LABEL = "23:30".freeze
-  NOTIFY_RANGE_ERROR_MESSAGE = "通知時刻は#{NOTIFY_RANGE_START_LABEL}-#{NOTIFY_RANGE_END_LABEL}の範囲で30分刻みで設定してください".freeze
 
   belongs_to :user
   belongs_to :gift_person
@@ -29,7 +23,7 @@ class Remind < ApplicationRecord
 
   # 通知日数の選択肢
   def self.notification_days_before_options
-    DAYS_RANGE.map do |days|
+    (0..30).map do |days|
       label = case days
       when 0
         "記念日当日"
@@ -44,8 +38,8 @@ class Remind < ApplicationRecord
 
   # 通知時刻の選択肢
   def self.notification_time_options
-    HOURS_RANGE.flat_map do |hour|
-      HALF_HOUR_MINUTES.map do |minute|
+    (0..23).flat_map do |hour|
+      [ 0, 30 ].map do |minute|
         time_str = sprintf("%02d:%02d", hour, minute)
         display_str = sprintf("%d時%s", hour, minute.zero? ? "00分" : "30分")
         [ display_str, time_str ]
@@ -114,7 +108,7 @@ class Remind < ApplicationRecord
 
     # 時刻をパース
     hour, minute = time_str.split(":").map(&:to_i)
-    unless HOURS_RANGE.cover?(hour) && minute.between?(0, MAX_MINUTE)
+    unless (0..23).cover?(hour) && minute.between?(0, MAX_MINUTE)
       errors.add(:base, "通知時刻の形式が無効です")
       return false
     end
@@ -200,8 +194,8 @@ class Remind < ApplicationRecord
 
     hour, minute = time_str.split(":").map(&:to_i)
 
-    unless HOURS_RANGE.cover?(hour) && HALF_HOUR_MINUTES.include?(minute)
-      errors.add(:base, NOTIFY_RANGE_ERROR_MESSAGE)
+    unless (0..23).cover?(hour) && [ 0, 30 ].include?(minute)
+      errors.add(:base, "通知時刻は0:00-23:30の範囲で30分刻みで設定してください")
     end
   rescue StandardError
     errors.add(:base, "通知タイミングの設定に問題があります")

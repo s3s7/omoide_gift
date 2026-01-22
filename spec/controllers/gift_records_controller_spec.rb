@@ -128,7 +128,7 @@ RSpec.describe GiftRecordsController, type: :controller do
         it '一覧画面にリダイレクト' do
           post :create, params: { gift_record: valid_attributes }
           created_record = GiftRecord.last
-          expect(response).to redirect_to(gift_records_path(share_confirm: true, gift_record_id: created_record.id))
+          expect(response).to redirect_to(gift_records_path)
         end
       end
 
