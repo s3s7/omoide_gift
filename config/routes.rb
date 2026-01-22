@@ -78,7 +78,6 @@ Rails.application.routes.draw do
       post :create_received
       get :my_index
       get :autocomplete
-      post :dismiss_share
     end
     # お気に入り機能
     member do

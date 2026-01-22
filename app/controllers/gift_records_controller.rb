@@ -8,16 +8,8 @@ class GiftRecordsController < ApplicationController
   PER_PAGE_DESKTOP = 15
   MEMO_AUTOCOMPLETE_TRUNCATE_LENGTH = 15
   DEFAULT_TRUNCATE_LENGTH = 20
-  RECEIVED_DIRECTION = "received".freeze
-  GIVEN_DIRECTION = "given".freeze
-  DEFAULT_ITEM_NAME = "ギフト記録".freeze
-  META_TITLE_SUFFIX = " - めぐりギフト".freeze
-  META_DESCRIPTION_SUFFIX = "のギフト記録です。".freeze
   META_DESCRIPTION_TRUNCATE_LENGTH = 50
-  BASE_KEYWORDS = [ "ギフト", "プレゼント", "記録", "思い出" ].freeze
   POPULAR_EVENTS_LIMIT = 5
-  DEFAULT_GIFT_IMAGE = "default_gift.webp".freeze
-  DEFAULT_OGP_IMAGE = "ogp.webp".freeze
   LOG_BACKTRACE_LINES = 3
 
   # 公開ページ（みんなのギフト + オートコンプリート）は未ログインでも利用可
@@ -34,7 +26,6 @@ class GiftRecordsController < ApplicationController
 
     calculate_statistics(base_query)
     apply_sorting_and_pagination
-    prepare_share_confirmation_data
     prepare_pagination_params
     prepare_filter_options(base_query)
   end
@@ -66,14 +57,14 @@ class GiftRecordsController < ApplicationController
     @gift_record = GiftRecord.new(gift_direction: :given)
     @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
     prepare_events_for_form
-    session[:gift_direction_default] = GIVEN_DIRECTION
+    session[:gift_direction_default] = "given"
   end
 
   def new_received
     @gift_record = GiftRecord.new(gift_direction: :received)
     @gift_people = current_user.gift_people.where.not(name: [ nil, "" ])
     prepare_events_for_form
-    session[:gift_direction_default] = RECEIVED_DIRECTION
+    session[:gift_direction_default] = "received"
   end
 
   def create
@@ -147,7 +138,7 @@ class GiftRecordsController < ApplicationController
   end
 
   def destroy
-    item_name = @gift_record.item_name.presence || DEFAULT_ITEM_NAME
+    item_name = @gift_record.item_name.presence || "ギフト記録"
 
     if @gift_record.destroy
       flash[:notice] = "#{item_name}を削除しました。"
@@ -225,30 +216,7 @@ class GiftRecordsController < ApplicationController
     }, status: :internal_server_error
   end
 
-  # シェア拒否を記録
-  def dismiss_share
-    gift_record_id = params[:gift_record_id]
 
-    if gift_record_id.present?
-      # 指定されたギフト記録が現在のユーザーのものかチェック
-      gift_record = current_user.gift_records.find_by(id: gift_record_id)
-      unless gift_record
-        render json: { success: false, error: "Gift record not found" }, status: :not_found
-        return
-      end
-
-      # セッションに拒否したギフト記録IDを保存
-      session[:dismissed_share_records] ||= []
-      session[:dismissed_share_records] << gift_record_id.to_s
-      session[:dismissed_share_records].uniq!
-
-      render json: { success: true }
-    else
-      render json: { success: false, error: "Invalid gift record ID" }, status: :bad_request
-    end
-  rescue StandardError => e
-    render json: { success: false, error: "Internal server error" }, status: :internal_server_error
-  end
 
 
   private
@@ -314,7 +282,7 @@ class GiftRecordsController < ApplicationController
 
     if params[:gift_direction].present?
       case params[:gift_direction]
-      when GIVEN_DIRECTION, RECEIVED_DIRECTION
+      when "given", "received"
         query = query.where(gift_direction: params[:gift_direction])
       end
     end
@@ -408,19 +376,6 @@ class GiftRecordsController < ApplicationController
       ).page(params[:page]).per(per_page_count)
     else
       @gift_records = @gift_records.page(params[:page]).per(per_page_count)
-    end
-  end
-
-  def prepare_share_confirmation_data
-    return unless user_signed_in? && params[:share_confirm] == true && params[:gift_record_id].present?
-
-    gift_record_id = params[:gift_record_id].to_s
-    dismissed_records = session[:dismissed_share_records] || []
-
-    unless dismissed_records.include?(gift_record_id)
-      @share_gift_record = current_user.gift_records
-        .includes(:gift_person, :event, gift_person: :relationship)
-        .find_by(id: params[:gift_record_id])
     end
   end
 
@@ -561,7 +516,7 @@ class GiftRecordsController < ApplicationController
 
     if form.save
       flash_success(:created, item: GiftRecord.model_name.human)
-      redirect_to gift_records_path(share_confirm: true, gift_record_id: @gift_record.id)
+      redirect_to gift_records_path
     else
       flash.now[:alert] = "ギフト記録の作成に失敗しました" if @gift_record.errors.any?
       prepare_form_dependencies
@@ -608,9 +563,9 @@ class GiftRecordsController < ApplicationController
 private
 
 def setup_meta_tags
-    item_name = @gift_record.item_name.presence || DEFAULT_ITEM_NAME
-    description = "#{item_name}#{META_DESCRIPTION_SUFFIX}"
-    title =  "#{item_name}#{META_TITLE_SUFFIX}"
+    item_name = @gift_record.item_name.presence || "ギフト記録"
+    description = "#{item_name}のギフト記録です。"
+    title =  "#{item_name} - めぐりギフト"
 
     set_meta_tags(
       title: title,
@@ -632,11 +587,11 @@ def setup_meta_tags
   end
 
 def gift_record_image_url(gift_record)
-  return view_context.image_url(DEFAULT_GIFT_IMAGE) if gift_record.nil?
+  return view_context.image_url("default_gift.webp") if gift_record.nil?
 
   gift_record.ogp_image_url(request)
 rescue => e
-  view_context.image_url(DEFAULT_GIFT_IMAGE)
+  view_context.image_url("default_gift.webp")
 end
 
 
@@ -644,7 +599,7 @@ def generate_ogp_image_url(gift_record)
   return default_ogp_image_url unless gift_record&.item_name.present?
 
   begin
-    "#{request.base_url}/images/#{DEFAULT_OGP_IMAGE}?text=#{CGI.escape(gift_record.item_name)}"
+    "#{request.base_url}/images/ogp.webp?text=#{CGI.escape(gift_record.item_name)}"
   rescue => e
     Rails.logger.error "OGP URL生成エラー: #{e.message}"
     default_ogp_image_url
@@ -652,13 +607,13 @@ def generate_ogp_image_url(gift_record)
 end
 
 def build_page_title(gift_record)
-  item_name = gift_record.item_name.presence || DEFAULT_ITEM_NAME
-  "#{item_name}#{META_TITLE_SUFFIX}"
+  item_name = gift_record.item_name.presence || "ギフト記録"
+  "#{item_name} - めぐりギフト"
 end
 
 def build_page_description(gift_record)
-  name = gift_record.item_name.presence || DEFAULT_ITEM_NAME
-  base_description = "#{name}#{META_DESCRIPTION_SUFFIX}"
+  name = gift_record.item_name.presence || "ギフト記録"
+  base_description = "#{name}のギフト記録です。"
 
   if gift_record.item_name.present?
     base_description = "#{gift_record.item_name}からいただいた#{base_description}"
@@ -669,13 +624,13 @@ def build_page_description(gift_record)
 end
 
   def build_keywords(gift_record)
-    keywords = BASE_KEYWORDS.dup
+    keywords = [ "ギフト", "プレゼント", "記録", "思い出" ]
     keywords << gift_record.item_name if gift_record.item_name.present?
     keywords.join(",")
   end
 
   def default_ogp_image_url
-    url = "#{request.base_url}#{image_path(DEFAULT_OGP_IMAGE)}"
+    url = "#{request.base_url}#{image_path("ogp.webp")}"
     Rails.env.production? ? url.sub(%r{^http://}, "https://") : url
   end
 
@@ -685,8 +640,8 @@ end
     @gift_item_category_options = build_gift_item_category_options(base_query)
     @gift_direction_options = [
       [ "すべて", "" ],
-      [ "あげたギフト", GIVEN_DIRECTION ],
-      [ "貰ったギフト", RECEIVED_DIRECTION ]
+      [ "あげたギフト", "given" ],
+      [ "貰ったギフト", "received" ]
     ]
   end
 
@@ -757,8 +712,8 @@ end
     @gift_item_category_options = build_gift_item_category_options(base_query)
     @gift_direction_options = [
       [ "すべて", "" ],
-      [ "あげたギフト", GIVEN_DIRECTION ],
-      [ "貰ったギフト", RECEIVED_DIRECTION ]
+      [ "あげたギフト", "given" ],
+      [ "貰ったギフト", "received" ]
     ]
   end
 

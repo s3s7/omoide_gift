@@ -15,9 +15,6 @@ application.register("gift-records", GiftRecordsController)
 import GiftRecordsAutocompleteController from "./gift_records_autocomplete_controller"
 application.register("gift-records-autocomplete", GiftRecordsAutocompleteController)
 
-import ShareManagerController from "./share_manager_controller"
-application.register("share-manager", ShareManagerController)
-
 import DynamicFilterController from "./dynamic_filter_controller"
 application.register("dynamic-filter", DynamicFilterController)
 
