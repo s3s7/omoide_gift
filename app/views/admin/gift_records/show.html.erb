@@ -256,17 +256,10 @@
       
       <div class="px-6 py-6">
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <% @gift_record.images.each_with_index do |image, index| %>
-            <div class="group relative bg-gray-200 rounded-lg overflow-hidden aspect-square">
+          <% @gift_record.images.each do |image| %>
+            <div class="bg-gray-200 rounded-lg overflow-hidden aspect-square">
               <%= image_tag image.variant(resize_to_fill: [300, 300, { gravity: "center" }]), 
-                  class: "w-full h-full object-cover group-hover:opacity-75 transition-opacity cursor-pointer",
-                  data: { 
-                    "action": "click->image-gallery#show",
-                    "image-gallery-index-param": index 
-                  } %>
-              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 transition-all duration-200 flex items-center justify-center">
-                <i class="fas fa-search-plus text-white opacity-0 group-hover:opacity-100 transition-opacity text-xl"></i>
-              </div>
+                  class: "w-full h-full object-cover" %>
             </div>
           <% end %>
         </div>
