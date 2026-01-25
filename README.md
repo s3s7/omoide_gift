@@ -111,4 +111,5 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 Figma：https://www.figma.com/design/sWr8c1NOlXmtgciSjGa4qQ/giftApp?node-id=0-1&p=f&t=eRLWYUXpuCbIHNnY-0
 
 ##ER図
-[![Image from Gyazo](https://i.gyazo.com/ed80af959066191d2ab1de6c6ab95316.png)](https://gyazo.com/ed80af959066191d2ab1de6c6ab95316)
+[![Image from Gyazo](https://i.gyazo.com/43aead4a56c42fecd03fbf128f7c8df7.png)](https://gyazo.com/43aead4a56c42fecd03fbf128f7c8df7)
+
