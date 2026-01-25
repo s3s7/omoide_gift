@@ -1,5 +1,5 @@
 
-めぐりギフト
+## めぐりギフト
 〜誰かの定番が誰かの特別なギフトに〜
 
 サービスURL : https://meguri-gift.com/
@@ -107,9 +107,9 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 | その他 | Kaminari (ページネーション) / Meta-tags (OGP) |
 | 画像管理 | Active Storage + ImageMagick |
 
-##画面遷移図
+## 画面遷移図
 Figma：https://www.figma.com/design/sWr8c1NOlXmtgciSjGa4qQ/giftApp?node-id=0-1&p=f&t=eRLWYUXpuCbIHNnY-0
 
-##ER図
+## ER図
 [![Image from Gyazo](https://i.gyazo.com/43aead4a56c42fecd03fbf128f7c8df7.png)](https://gyazo.com/43aead4a56c42fecd03fbf128f7c8df7)
 
