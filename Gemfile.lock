@@ -229,8 +229,8 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.3)
-    meta-tags (2.22.1)
-      actionpack (>= 6.0.0, < 8.1)
+    meta-tags (2.22.3)
+      actionpack (>= 6.0.0)
     mini_magick (5.3.0)
       logger
     mini_mime (1.1.5)
@@ -298,7 +298,7 @@ GEM
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.7.0)
+    prism (1.8.0)
     psych (5.3.1)
       date
       stringio
