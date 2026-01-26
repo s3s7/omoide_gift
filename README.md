@@ -55,7 +55,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 
 ## ギフト相手管理
 
-<table>
+<table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <th width="50%">ギフト相手の一覧・詳細</th>
     <th width="50%">ギフト相手を登録</th>
@@ -81,7 +81,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 
 ## ギフト記録管理
 
-<table>
+<table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <th width="50%">ギフト記録一覧・詳細</th>
     <th width="50%">ギフト記録投稿</th>
@@ -106,7 +106,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 
 <br>
 
-<table>
+<table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <th width="50%">コメント</th>
     <th width="50%">お気に入り</th>
@@ -131,7 +131,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 
 <br>
 
-<table>
+<table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <th width="50%">公開/非公開切り替え</th>
     <th width="50%">SNSシェア</th>
@@ -157,7 +157,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 
 ## ギフト記録検索
 
-<table>
+<table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <th width="50%">ギフトアイテム名、メモ内容で検索</th>
     <th width="50%">関係性、イベント等フィルター検索</th>
@@ -185,7 +185,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 
 ## ギフトリマインド機能
 
-<table>
+<table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <th width="50%">記念日登録機能</th>
     <th width="50%">記念日リマインド機能</th>
@@ -211,7 +211,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 
 ## ユーザー機能
 
-<table>
+<table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <th width="50%">ユーザー登録・ログイン</th>
     <th width="50%">マイページ</th>
@@ -233,8 +233,6 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
     </td>
   </tr>
 </table>
-
-
 
 
 # ■技術スタック
