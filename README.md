@@ -56,61 +56,45 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 ### ギフト相手管理
 | ギフト相手の一覧・詳細 | ギフト相手を登録 |
 |---|---|
-| [![Image from Gyazo](https://i.gyazo.com/79a87805bc4d67131233d961ae1d5029.gif)](https://gyazo.com/79a87805bc4d67131233d961ae1d5029) | [![Image from Gyazo](https://i.gyazo.com/a5eae68955c441b7ee33bf8bc66a811a.gif)](https://gyazo.com/a5eae68955c441b7ee33bf8bc66a811a) |
+| [![Image from Gyazo](https://i.gyazo.com/79a87805bc4d67131233d961ae1d5029.gif)](https://gyazo.com/79a87805bc4d67131233d961ae1d5029) | [![Image from Gyazo](https://i.gyazo.com/cc1e1c7afc4708f0b3a56b637bb3131d.gif)](https://gyazo.com/cc1e1c7afc4708f0b3a56b637bb3131d) |
 | ギフト相手を一覧で管理。関係性・誕生日・好きなものや趣味・苦手なもの・住所・メモを登録できます。 | ギフト相手を作成。誕生日や好きなものや住所やメモなどを登録し、ギフト選びの参考にできます |
 
 ### ギフト記録管理
 | ギフト記録一覧・詳細| ギフト記録投稿 |
-|||
+|---|---|
+| [![Image from Gyazo](https://i.gyazo.com/b486abe7751ecc40d35d6dbc1e381f84.gif)](https://gyazo.com/b486abe7751ecc40d35d6dbc1e381f84) |  [![Image from Gyazo](https://i.gyazo.com/a5eae68955c441b7ee33bf8bc66a811a.gif)](https://gyazo.com/a5eae68955c441b7ee33bf8bc66a811a) |
 | 他のユーザーのギフト記録を閲覧。ギフト記録の参考に出来ます※ログイン不要 | ギフト相手を選択または、作成し、ギフト記録を登録できます。記録内容は後から編集/削除可能 |
 
 | コメント| お気に入り |
-|||
+|---|---|
+| [![Image from Gyazo](https://i.gyazo.com/acfdea28a723fdb0a570254dd481175c.gif)](https://gyazo.com/acfdea28a723fdb0a570254dd481175c) | [![Image from Gyazo](https://i.gyazo.com/8436c2ebfc2a243c25cd083892771f84.gif)](https://gyazo.com/8436c2ebfc2a243c25cd083892771f84) |
 |  ギフト記録にコメントで交流。贈った/貰ったギフトについて盛り上がろう！| 気になるギフト記録をお気に入りに保存。コメントやお気に入りは非同期で使いやすく。|
 
 | 公開/非公開切り替え| SNSシェア |
-|||
+|---|---|
+| [![Image from Gyazo](https://i.gyazo.com/a66853f85a7b9ac871c8a985b5366f20.gif)](https://gyazo.com/a66853f85a7b9ac871c8a985b5366f20) | [![Image from Gyazo](https://i.gyazo.com/b7c2a81b9a93e5f30625821e88a21ed7.gif)](https://gyazo.com/b7c2a81b9a93e5f30625821e88a21ed7) |
 | ギフト記録の公開・非公開を自由に切り替え可能。プライベートなギフトは非公開、おすすめしたいギフトは公開設定に。 | おすすめのギフト記録をXでシェアしてアイディアを共有しよう！ |
 
 ### ギフト記録検索
 | ギフトアイテム名、メモ内容で検索| 関係性、イベント等フィルター検索 |
-|||
+|---|---|
+| [![Image from Gyazo](https://i.gyazo.com/9864ae2c533334b01a008920193a9e3b.gif)](https://gyazo.com/9864ae2c533334b01a008920193a9e3b) | [![Image from Gyazo](https://i.gyazo.com/211e495365d9a4c9f56f7b3e105b4e42.gif)](https://gyazo.com/211e495365d9a4c9f56f7b3e105b4e42) |
 | ギフトアイテム名またはメモの内容を入力してギフト記録一覧からギフト記録を検索できます。キーワード入力時にはオートコンプリートで検索候補を表示し検索をサポートします。| ドロップダウンから選択。キーワード検索と複合もできます。|
 
 ギフト記録一覧の中から絞り込んで参考にしたいギフト探しをサポート。 検索結果件数の表示や、検索中のキーワード・フィルターを表示し現在の状況をわかりやすく。
 
 ### ギフトリマインド機能
 | 記念日登録機能| 記念日リマインド機能 |
-|||
+|---|---|
+| [![Image from Gyazo](https://i.gyazo.com/5b8e5fc98d752c05966e5612d4d03401.gif)](https://gyazo.com/5b8e5fc98d752c05966e5612d4d03401) | [![Image from Gyazo](https://i.gyazo.com/3d087801bfe51c359d576a3c3ac384bf.gif)](https://gyazo.com/3d087801bfe51c359d576a3c3ac384bf) |
 | ギフト相手の記念日を登録し忘れることを防げます。 | ギフト相手の記念日の前に好きな時間に通知を設定でき、お祝いメッセージ、ギフトの用意をサポートします。|
 
 ### ユーザー機能
 | ユーザー登録・ログイン| マイページ |
-|||
+|---|---|
+| https://gyazo.com/e12657643ea9d7a53d2eecae8f792b9c | [![Image from Gyazo](https://i.gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb.gif)](https://gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb) |
 | メールアドレス＋パスワード、またはLine連携でログイン。| マイページではプロフィールの閲覧・編集ができます。総ギフト数、総ギフト相手数、総記念日設定数などまとめて確認できます|
 
-- 検索・整理
-  - 関係性・イベント名・年代での検索
-  - 検索機能のオートコンプリート
-
-- 通知・シェア機能
-  - 記念日リマインド（LINE Messaging API）
-  - X（旧Twitter）へのシェア
-  - OGPによる動的サムネイル生成
-
-- ギフト相手管理
-  - ギフト相手ごとの情報記録
-    - 名前・年代・関係性・イベント・ギフトアイテム・費用・ギフトプロファイル機能（ギフト相手ごとの好みやNGリスト可視化）
-
-- ギフト記録関連
-  - ギフト記事の投稿
-    - 写真
-    - アイテム名のオートコンプリート
-
-- ギフト記録のお気に入り機能
-- コメント機能
-- ギフト相手の画像
-- 自分のアイコン機能
 
 ## 技術スタック
 | カテゴリ | 技術 |
