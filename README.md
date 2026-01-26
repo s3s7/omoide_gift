@@ -62,10 +62,10 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/79a87805bc4d67131233d961ae1d5029.gif" width="416">
+      <img src="https://i.gyazo.com/79a87805bc4d67131233d961ae1d5029.gif" width="350">
     </td>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/cc1e1c7afc4708f0b3a56b637bb3131d.gif" width="416">
+      <img src="https://i.gyazo.com/cc1e1c7afc4708f0b3a56b637bb3131d.gif" width="350">
     </td>
   </tr>
   <tr>
@@ -88,10 +88,10 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/b486abe7751ecc40d35d6dbc1e381f84.gif" width="416">
+      <img src="https://i.gyazo.com/b486abe7751ecc40d35d6dbc1e381f84.gif" width="350">
     </td>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/a5eae68955c441b7ee33bf8bc66a811a.gif" width="416">
+      <img src="https://i.gyazo.com/a5eae68955c441b7ee33bf8bc66a811a.gif" width="350">
     </td>
   </tr>
   <tr>
@@ -113,10 +113,10 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/acfdea28a723fdb0a570254dd481175c.gif" width="416">
+      <img src="https://i.gyazo.com/acfdea28a723fdb0a570254dd481175c.gif" width="350">
     </td>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/8436c2ebfc2a243c25cd083892771f84.gif" width="416">
+      <img src="https://i.gyazo.com/8436c2ebfc2a243c25cd083892771f84.gif" width="350">
     </td>
   </tr>
   <tr>
@@ -138,10 +138,10 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/a66853f85a7b9ac871c8a985b5366f20.gif" width="416">
+      <img src="https://i.gyazo.com/a66853f85a7b9ac871c8a985b5366f20.gif" width="350">
     </td>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/b7c2a81b9a93e5f30625821e88a21ed7.gif" width="416">
+      <img src="https://i.gyazo.com/b7c2a81b9a93e5f30625821e88a21ed7.gif" width="350">
     </td>
   </tr>
   <tr>
@@ -164,10 +164,10 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/9864ae2c533334b01a008920193a9e3b.gif" width="416">
+      <img src="https://i.gyazo.com/9864ae2c533334b01a008920193a9e3b.gif" width="350">
     </td>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/211e495365d9a4c9f56f7b3e105b4e42.gif" width="416">
+      <img src="https://i.gyazo.com/211e495365d9a4c9f56f7b3e105b4e42.gif" width="350">
     </td>
   </tr>
   <tr>
@@ -192,10 +192,10 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/5b8e5fc98d752c05966e5612d4d03401.gif" width="416">
+      <img src="https://i.gyazo.com/5b8e5fc98d752c05966e5612d4d03401.gif" width="350">
     </td>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/3d087801bfe51c359d576a3c3ac384bf.gif" width="416">
+      <img src="https://i.gyazo.com/3d087801bfe51c359d576a3c3ac384bf.gif" width="350">
     </td>
   </tr>
   <tr>
@@ -218,10 +218,10 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/e12657643ea9d7a53d2eecae8f792b9c.gif" width="416">
+      <img src="https://i.gyazo.com/e12657643ea9d7a53d2eecae8f792b9c.gif" width="350">
     </td>
     <td width="50%" align="center">
-      <img src="https://i.gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb.gif" width="416">
+      <img src="https://i.gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb.gif" width="350">
     </td>
   </tr>
   <tr>
@@ -233,6 +233,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
     </td>
   </tr>
 </table>
+
 
 
 # ■技術スタック
