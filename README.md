@@ -96,7 +96,20 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 | [![Image from Gyazo](https://i.gyazo.com/e12657643ea9d7a53d2eecae8f792b9c.gif)](https://gyazo.com/e12657643ea9d7a53d2eecae8f792b9c) | [![Image from Gyazo](https://i.gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb.gif)](https://gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb) |
 | メールアドレス＋パスワード、またはLine連携でログイン。| マイページではプロフィールの閲覧・編集ができます。総ギフト数、総ギフト相手数、総記念日設定数などまとめて確認できます|
 
-
+<table>
+  <tr>
+    <td width="50%">
+      <a href="https://gyazo.com/79a87805bc4d67131233d961ae1d5029">
+        <img src="https://i.gyazo.com/79a87805bc4d67131233d961ae1d5029.gif" width="320">
+      </a>
+    </td>
+    <td width="50%">
+      <a href="https://gyazo.com/cc1e1c7afc4708f0b3a56b637bb3131d">
+        <img src="https://i.gyazo.com/cc1e1c7afc4708f0b3a56b637bb3131d.gif" width="320">
+      </a>
+    </td>
+  </tr>
+</table>
 # ■技術スタック
 | カテゴリ | 技術 |
 |---|---|
