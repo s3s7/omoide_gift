@@ -62,7 +62,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 ### ギフト記録管理
 | ギフト記録一覧・詳細| ギフト記録投稿 |
 |---|---|
-| [![Image from Gyazo](https://i.gyazo.com/b486abe7751ecc40d35d6dbc1e381f84.gif)](https://gyazo.com/b486abe7751ecc40d35d6dbc1e381f84) |  [![Image from Gyazo](https://i.gyazo.com/a5eae68955c441b7ee33bf8bc66a811a.gif)](https://gyazo.com/a5eae68955c441b7ee33bf8bc66a811a) |
+| [![Image from Gyazo](https://i.gyazo.com/b486abe7751ecc40d35d6dbc1e381f84.gif)](https://gyazo.com/b486abe7751ecc40d35d6dbc1e381f84) | [![Image from Gyazo](https://i.gyazo.com/a5eae68955c441b7ee33bf8bc66a811a.gif)](https://gyazo.com/a5eae68955c441b7ee33bf8bc66a811a) |
 | 他のユーザーのギフト記録を閲覧。ギフト記録の参考に出来ます※ログイン不要 | ギフト相手を選択または、作成し、ギフト記録を登録できます。記録内容は後から編集/削除可能 |
 
 | コメント| お気に入り |
@@ -92,7 +92,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 ### ユーザー機能
 | ユーザー登録・ログイン| マイページ |
 |---|---|
-| https://gyazo.com/e12657643ea9d7a53d2eecae8f792b9c | [![Image from Gyazo](https://i.gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb.gif)](https://gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb) |
+| [![Image from Gyazo](https://i.gyazo.com/e12657643ea9d7a53d2eecae8f792b9c.gif)](https://gyazo.com/e12657643ea9d7a53d2eecae8f792b9c) | [![Image from Gyazo](https://i.gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb.gif)](https://gyazo.com/e1e8b71547bb0ef4eeeb6b2286ce8efb) |
 | メールアドレス＋パスワード、またはLine連携でログイン。| マイページではプロフィールの閲覧・編集ができます。総ギフト数、総ギフト相手数、総記念日設定数などまとめて確認できます|
 
 
