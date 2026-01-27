@@ -8,11 +8,11 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-   
+
     <!-- Google Fonts: Zen Maru Gothic -->
-    <%# <link rel="preload" href="https://fonts.googleapis.com">
+    <link rel="preload" href="https://fonts.googleapis.com">
     <link rel="preload" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet"> %>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <%# <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -60,7 +60,7 @@
     </script>
   </head>
 
-  <body class="overflow-x-hidden pb-24 md:pb-0">
+  <body class="min-h-screen flex flex-col overflow-x-hidden pb-24 md:pb-0">
     <%= render 'shared/header' %>
     
     <!-- トップページでのみヒーロー画像を表示 -->
@@ -68,7 +68,7 @@
       <%= render 'shared/hero_image' %>
     <% end %>
     
-    <main class="mx-auto <%= request.path == root_path ? 'mt-12' : 'mt-28' %> px-5 <%= request.path == root_path ? 'block' : 'flex' %>">
+    <main class="flex-1 mx-auto <%= request.path == root_path ? 'mt-12' : 'mt-28' %> px-5 <%= request.path == root_path ? 'block' : 'flex' %>">
       <%= yield %>
     </main>
     <%= render 'shared/flash_message' %>

@@ -3,6 +3,7 @@
 class Admin::BaseController < ApplicationController
   # 管理者認可機能をインクルード
   include AdminAuthorization
+  helper_method :search_params
 
   # 管理者専用レイアウトを使用
   layout "admin"
