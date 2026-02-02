@@ -1,8 +1,8 @@
 class RemindsController < ApplicationController
   PAST_REMIND_LIMIT = 10
   before_action :authenticate_user!
-  before_action :set_remind, only: [ :show, :edit, :update, :destroy, :resend ]
-  before_action :ensure_owner, only: [ :show, :edit, :update, :destroy, :resend ]
+  before_action :set_remind, only: [ :show, :edit, :update, :destroy ]
+  before_action :ensure_owner, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @reminds = current_user.reminds
@@ -92,16 +92,6 @@ class RemindsController < ApplicationController
     person_name = @remind.gift_person.name
     @remind.destroy
     redirect_to reminds_path, notice: "#{person_name}さんの記念日リマインダーを削除しました。"
-  end
-
-  # 通知をリセットして再送可能にする
-  def resend
-    @remind.update!(is_sent: false)
-    @remind.save!
-    redirect_to reminds_path, notice: "#{@remind.gift_person.name}さんの通知をリセットしました。次回の定期実行時に再送されます。"
-  rescue StandardError => e
-    Rails.logger.error "Remind resend error: #{e.message}"
-    redirect_to reminds_path, alert: "通知のリセットに失敗しました。"
   end
 
   private

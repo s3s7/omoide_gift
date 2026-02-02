@@ -93,11 +93,7 @@ Rails.application.routes.draw do
   end
 
   # 記念日リマインダー機能
-  resources :reminds do
-    member do
-      patch :resend  # 通知リセット用
-    end
-  end
+  resources :reminds
 
   get "up" => "rails/health#show", as: :rails_health_check
 
