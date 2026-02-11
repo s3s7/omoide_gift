@@ -5,7 +5,7 @@ module AvatarAttachable
     validate :avatar_validation
 
     class_attribute :avatar_content_types, instance_writer: false, default: %w[image/jpeg image/jpg image/png image/webp]
-    class_attribute :avatar_max_size, instance_writer: false, default: 5.megabytes
+    class_attribute :avatar_max_size, instance_writer: false, default: 10.megabytes
   end
 
   def avatar_url
