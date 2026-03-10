@@ -405,9 +405,9 @@ end
         add_unique_image_error("#{index + 1}枚目: JPEG、PNG、WEBP形式のファイルのみアップロードできます")
       end
 
-      # ファイルサイズチェック（5MBまで）
-      if image.blob.byte_size > 5.megabytes
-        add_unique_image_error("#{index + 1}枚目: ファイルサイズは5MB以下にしてください")
+      # ファイルサイズチェック（10MBまで）
+      if image.blob.byte_size > 10.megabytes
+        add_unique_image_error("#{index + 1}枚目: ファイルサイズは10MB以下にしてください")
       end
     end
   rescue StandardError => e
