@@ -18,7 +18,7 @@ export default class extends Controller {
 
   static values = {
     maxFiles: { type: Number, default: 5 },
-    maxSize: { type: Number, default: 5 * 1024 * 1024 }, // 5MB
+    maxSize: { type: Number, default: 10 * 1024 * 1024 }, // 10MB
     acceptedTypes: { type: Array, default: ["image/jpeg", "image/jpg", "image/png", "image/webp"] }
   }
 
