@@ -94,5 +94,5 @@ gem "meta-tags", require: "meta_tags"
 gem "rack-attack"
 
 # RAG機能
-gem "neighbor"          
-gem "ruby-openai"       
+gem "neighbor"
+gem "ruby-openai"
