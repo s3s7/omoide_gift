@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_03_144727) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_11_085713) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "vector"
@@ -113,6 +113,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_03_144727) do
     t.boolean "needs_return", default: false, null: false, comment: "お返しが必要かどうか"
     t.integer "return_status", default: 0, null: false, comment: "お返し状況"
     t.date "return_deadline", comment: "お返し期限"
+    t.vector "embedding", limit: 1536
+    t.index ["embedding"], name: "index_gift_records_on_embedding", opclass: :vector_cosine_ops, using: :hnsw
     t.index ["event_id"], name: "index_gift_records_on_event_id"
     t.index ["gift_direction", "needs_return"], name: "index_gift_records_on_direction_and_return"
     t.index ["gift_direction"], name: "index_gift_records_on_gift_direction"
