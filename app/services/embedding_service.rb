@@ -6,15 +6,15 @@ class EmbeddingService
     @client ||= OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
   end
 
-  # GiftRecordのembeddingを生成してDBに保存する
-  # def self.generate_and_save(gift_record)
-  #   text = build_text(gift_record)
-  #   vector = embed(text)
-  #   gift_record.update_column(:embedding, vector)
-  # rescue StandardError => e
-  #   Rails.logger.error "EmbeddingService error for GiftRecord##{gift_record.id}: #{e.message}"
-  #   nil
-  # end
+  GiftRecordのembeddingを生成してDBに保存する
+  def self.generate_and_save(gift_record)
+    text = build_text(gift_record)
+    vector = embed(text)
+    gift_record.update_column(:embedding, vector)
+  rescue StandardError => e
+    Rails.logger.error "EmbeddingService error for GiftRecord##{gift_record.id}: #{e.message}"
+    nil
+  end
 
   # # テキストをベクトルに変換して返す
   # def self.embed(text)
