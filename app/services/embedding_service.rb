@@ -16,17 +16,17 @@ class EmbeddingService
     nil
   end
 
-  # # テキストをベクトルに変換して返す
-  # def self.embed(text)
-  #   response = client.embeddings(
-  #     parameters: {
-  #       model: MODEL,
-  #       input: text,
-  #       dimensions: DIMENSIONS
-  #     }
-  #   )
-  #   response.dig("data", 0, "embedding")
-  # end
+  # テキストをベクトルに変換して返す
+  def self.embed(text)
+    response = client.embeddings(
+      parameters: {
+        model: MODEL,
+        input: text,
+        dimensions: DIMENSIONS
+      }
+    )
+    response.dig("data", 0, "embedding")
+  end
 
   # private
 
