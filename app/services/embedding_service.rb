@@ -28,19 +28,19 @@ class EmbeddingService
     response.dig("data", 0, "embedding")
   end
 
-  # private
+  private
 
-  # embeddingの元となるテキストを構築する
-  # def self.build_text(gift_record)
-  #   parts = [
-  #     gift_record.item_name,
-  #     gift_record.event&.name,
-  #     gift_record.gift_person&.name,
-  #     gift_record.gift_direction == "received" ? "もらった" : "あげた",
-  #     gift_record.amount ? "#{gift_record.amount}円" : nil,
-  #     gift_record.gift_at ? gift_record.gift_at.strftime("%Y年%m月%d日") : nil,
-  #     gift_record.memo
-  #   ]
-  #   parts.compact.join(" ")
-  # end
+  embeddingの元となるテキストを構築する
+  def self.build_text(gift_record)
+    parts = [
+      gift_record.item_name,
+      gift_record.event&.name,
+      gift_record.gift_person&.name,
+      gift_record.gift_direction == "received" ? "もらった" : "あげた",
+      gift_record.amount ? "#{gift_record.amount}円" : nil,
+      gift_record.gift_at ? gift_record.gift_at.strftime("%Y年%m月%d日") : nil,
+      gift_record.memo
+    ]
+    parts.compact.join(" ")
+  end
 end
