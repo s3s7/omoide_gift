@@ -187,7 +187,10 @@ RSpec.describe GiftRecordsController, type: :controller do
     end
 
     context 'ログイン状態' do
-      before { sign_in user }
+      before do
+        sign_in user
+        allow(GenerateEmbeddingJob).to receive(:perform_later)
+      end
 
       context '有効なパラメータ' do
         it 'ギフト記録が更新される' do
