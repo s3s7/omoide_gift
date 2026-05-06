@@ -5,7 +5,7 @@ class GiftRecordSearchService
     query_vector = EmbeddingService.embed(query)
     return [] if query_vector.nil?
 
-    vector_literal = "[#{query_vector.join(',')}]"
+    vector_literal = "[#{query_vector.map { |v| Float(v) }.join(',')}]"
 
     GiftRecord
       .where(user: user)
