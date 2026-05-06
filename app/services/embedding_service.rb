@@ -2,10 +2,6 @@ class EmbeddingService
   MODEL = "text-embedding-3-small"
   DIMENSIONS = 1536
 
-  def self.client
-    @client ||= OpenAI::Client.new(access_token: ENV["OPENAI_API_KEY"])
-  end
-
   # GiftRecordのembeddingを生成してDBに保存する
   def self.generate_and_save(gift_record)
     text = build_text(gift_record)
@@ -18,7 +14,7 @@ class EmbeddingService
 
   # テキストをベクトルに変換して返す
   def self.embed(text)
-    response = client.embeddings(
+    response = OpenAI::Client.new.embeddings(
       parameters: {
         model: MODEL,
         input: text,
