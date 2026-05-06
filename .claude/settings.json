@@ -1,0 +1,50 @@
+{
+  "enabledMcpjsonServers": [
+    "serena"
+  ],
+  "enableAllProjectMcpServers": true,
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"承認待ちです\" with title \"Claude Code\" sound name \"default\"' && afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      },
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"入力待ちです\" with title \"Claude Code\" sound name \"Ping\"' && afplay /System/Library/Sounds/Ping.aiff"
+          }
+        ]
+      },
+      {
+        "matcher": "completed",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"処理が完了しました\" with title \"Claude Code\" sound name \"Pop\"' && afplay /System/Library/Sounds/Pop.aiff"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "file=$(jq -r '.tool_input.file_path // empty'); [[ \"$file\" == *.rb ]] && docker compose exec -T web bin/rubocop -a \"$file\" 2>/dev/null || true",
+            "timeout": 60,
+            "statusMessage": "RuboCop 自動整形中..."
+          }
+        ]
+      }
+    ]
+  }
+}

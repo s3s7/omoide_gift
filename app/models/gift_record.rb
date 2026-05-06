@@ -29,6 +29,8 @@ class GiftRecord < ApplicationRecord
   before_validation :sync_return_gift_flag
   before_validation :set_return_deadline
   after_commit :refresh_generated_ogp_image, on: :update, if: :saved_change_to_item_name?
+  after_commit :enqueue_embedding_generation, on: :create
+  after_commit :enqueue_embedding_generation, on: :update, if: :embedding_fields_changed?
   # 画像は登録・更新時にWebPへ非同期変換（共通Concernで処理）
   webp_convert_for :images
 
@@ -417,6 +419,14 @@ end
 
   def add_unique_image_error(message)
     errors.add(:images, message) unless errors[:images].include?(message)
+  end
+
+  def enqueue_embedding_generation
+    GenerateEmbeddingJob.perform_later(id)
+  end
+
+  def embedding_fields_changed?
+    (saved_changes.keys & %w[item_name memo amount gift_at gift_direction gift_people_id event_id]).any?
   end
 
   def sync_return_gift_flag
