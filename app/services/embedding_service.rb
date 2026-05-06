@@ -14,6 +14,8 @@ class EmbeddingService
 
   # テキストをベクトルに変換して返す
   def self.embed(text)
+    raise ArgumentError, "text is blank" if text.blank?
+
     response = OpenAI::Client.new.embeddings(
       parameters: {
         model: MODEL,
@@ -21,22 +23,27 @@ class EmbeddingService
         dimensions: DIMENSIONS
       }
     )
-    response.dig("data", 0, "embedding")
+    embedding = response.dig("data", 0, "embedding")
+    raise "OpenAI embedding missing in response: #{response.inspect}" unless embedding
+
+    embedding
   end
 
-  private
+  class << self
+    private
 
-  embeddingの元となるテキストを構築する
-  def self.build_text(gift_record)
-    parts = [
-      gift_record.item_name,
-      gift_record.event&.name,
-      gift_record.gift_person&.name,
-      gift_record.gift_direction == "received" ? "もらった" : "あげた",
-      gift_record.amount ? "#{gift_record.amount}円" : nil,
-      gift_record.gift_at ? gift_record.gift_at.strftime("%Y年%m月%d日") : nil,
-      gift_record.memo
-    ]
-    parts.compact.join(" ")
+    # embeddingの元となるテキストを構築する
+    def build_text(gift_record)
+      parts = [
+        gift_record.item_name,
+        gift_record.event&.name,
+        gift_record.gift_person&.name,
+        gift_record.gift_direction == "received" ? "もらった" : "あげた",
+        gift_record.amount ? "#{gift_record.amount}円" : nil,
+        gift_record.gift_at ? gift_record.gift_at.strftime("%Y年%m月%d日") : nil,
+        gift_record.memo
+      ]
+      parts.compact.join(" ")
+    end
   end
 end
