@@ -95,6 +95,8 @@ Rails.application.routes.draw do
   # 記念日リマインダー機能
   resources :reminds
 
+  post "ai/chat", to: "ai#chat"
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
