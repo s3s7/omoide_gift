@@ -210,7 +210,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 <table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
   <tr>
     <th width="50%">ギフトのアドバイスをもらえる</th>
-    <th width="50%">記念日リマインド機能</th>
+    <th width="50%">これまでのギフトを分析</th>
   </tr>
   <tr>
     <td width="50%" align="center">
