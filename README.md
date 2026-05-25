@@ -205,6 +205,32 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 </table>
 
 
+## RAGを使ったAIアシスタント機能
+
+<table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <th width="50%">ギフトのアドバイスをもらえる</th>
+    <th width="50%">記念日リマインド機能</th>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <img src="https://i.gyazo.com/a3c0491dbc8bf29e9c68c3ad5a1d191b.gif" width="350">
+    </td>
+    <td width="50%" align="center">
+      <img src="https://i.gyazo.com/99fcf36b6cae1122428348b844ae03fd.gif" width="350">
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      AIアシスタントに聞いてみよう！
+    </td>
+    <td width="50%">
+      おすすめは「これまで贈ったことがないギフトのアドバイス」「相手が特に喜んでくれたギフトの共通点」
+    </td>
+  </tr>
+</table>
+
+
 ## ユーザー機能
 
 <table width="700" align="center" cellpadding="0" cellspacing="0" border="0">
