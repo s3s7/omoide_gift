@@ -28,9 +28,8 @@ class GiftRecord < ApplicationRecord
   # コールバック（データ整合性の自動保証）
   before_validation :sync_return_gift_flag
   before_validation :set_return_deadline
-  after_commit :refresh_generated_ogp_image, on: :update, if: :saved_change_to_item_name?
-  after_commit :enqueue_embedding_generation, on: :create
   after_commit :enqueue_embedding_generation, on: :update, if: :embedding_fields_changed?
+  after_commit :refresh_generated_ogp_image, on: :update, if: :saved_change_to_item_name?
   # 画像は登録・更新時にWebPへ非同期変換（共通Concernで処理）
   webp_convert_for :images
 
