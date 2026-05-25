@@ -7,9 +7,6 @@ class EmbeddingService
     text = build_text(gift_record)
     vector = embed(text)
     gift_record.update_column(:embedding, vector)
-  rescue StandardError => e
-    Rails.logger.error "EmbeddingService error for GiftRecord##{gift_record.id}: #{e.message}"
-    nil
   end
 
   # テキストをベクトルに変換して返す

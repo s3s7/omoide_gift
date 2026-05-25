@@ -119,6 +119,8 @@ RSpec.describe GiftRecordsController, type: :controller do
       before { sign_in user }
 
       context '有効なパラメータ' do
+        before { allow(GenerateEmbeddingJob).to receive(:perform_later) }
+
         it 'ギフト記録が作成される' do
           expect {
             post :create, params: { gift_record: valid_attributes }

@@ -22,6 +22,7 @@ class GiftRecordForm
       gift_record.save!
     end
 
+    GenerateEmbeddingJob.perform_later(gift_record.id)
     true
   rescue ActiveRecord::RecordInvalid
     cleanup_new_gift_person
