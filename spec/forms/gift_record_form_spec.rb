@@ -7,6 +7,8 @@ RSpec.describe GiftRecordForm, type: :form do
   let(:existing_gift_person) { create(:gift_person, user: user, relationship: relationship) }
 
   describe "保存処理" do
+    before { allow(GenerateEmbeddingJob).to receive(:perform_later) }
+
     it "既存のギフト相手でギフト記録を作成できる" do
       form = described_class.new(
         user: user,
