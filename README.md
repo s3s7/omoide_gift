@@ -264,7 +264,7 @@ Xでの共有機能、ギフトを送るイベントの時期にSNSを使って�
 | バックエンド | Ruby:3.3.6 / Ruby on Rails 7.2.1 |
 | フロントエンド | Ruby on Rails / JavaScript / Hotwire (Turbo, Stimulus) |
 | CSSフレームワーク | Tailwind CSS + daisyUI |
-| Web API | LINE Messaging API |
+| Web API | LINE Messaging API / OpenAI API|
 | データベースサーバー | PostgreSQL |
 | インメモリデータベース | Redis |
 | 認証 | Devise / OmniAuth (Line OAuth2) |
